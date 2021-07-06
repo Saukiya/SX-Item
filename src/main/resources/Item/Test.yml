@@ -1,0 +1,6 @@
+test01:
+  ID:
+    - 'STONE_SWORD'
+    - 'STONE_SHOVEL'
+    - 'STONE_PICKAXE'
+    - 'STONE_AXE'
