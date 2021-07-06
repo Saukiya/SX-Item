@@ -1,0 +1,26 @@
+plugins {
+    id 'java'
+}
+
+group 'github.saukiya'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    //Github Project
+    maven {url "https://jitpack.io"}
+    //bstats-bukkit
+    maven {url "https://repo.codemc.org/repository/maven-public"}
+}
+
+dependencies {
+    implementation fileTree('lib')
+    implementation 'org.bstats:bstats-bukkit:2.2.+'
+    implementation 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
+    implementation 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+}
+
+processResources {
+    expand(version: version)
+}

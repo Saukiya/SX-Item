@@ -1,0 +1,5 @@
+head_my:
+  Type: Default
+  Name: '&e%player_name%'
+  ID: PLAYER_HEAD
+  SkullName: '%player_uuid%'
