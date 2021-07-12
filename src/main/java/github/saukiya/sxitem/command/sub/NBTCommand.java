@@ -1,7 +1,7 @@
-package github.saukiya.foxcraft.command.sub;
+package github.saukiya.sxitem.command.sub;
 
-import github.saukiya.foxcraft.SXItem;
-import github.saukiya.foxcraft.command.SubCommand;
+import github.saukiya.sxitem.SXItem;
+import github.saukiya.sxitem.command.SubCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

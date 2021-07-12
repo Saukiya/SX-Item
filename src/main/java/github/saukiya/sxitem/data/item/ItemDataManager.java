@@ -1,7 +1,7 @@
-package github.saukiya.foxcraft.data.item;
+package github.saukiya.sxitem.data.item;
 
-import github.saukiya.foxcraft.SXItem;
-import github.saukiya.foxcraft.util.Message;
+import github.saukiya.sxitem.SXItem;
+import github.saukiya.sxitem.util.Message;
 import lombok.Getter;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;

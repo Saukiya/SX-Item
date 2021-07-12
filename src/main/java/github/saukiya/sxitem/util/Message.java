@@ -1,6 +1,6 @@
-package github.saukiya.foxcraft.util;
+package github.saukiya.sxitem.util;
 
-import github.saukiya.foxcraft.SXItem;
+import github.saukiya.sxitem.SXItem;
 import lombok.Getter;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatMessageType;

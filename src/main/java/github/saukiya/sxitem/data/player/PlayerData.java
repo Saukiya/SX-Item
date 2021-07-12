@@ -1,6 +1,6 @@
-package github.saukiya.foxcraft.data.player;
+package github.saukiya.sxitem.data.player;
 
-import github.saukiya.foxcraft.SXItem;
+import github.saukiya.sxitem.SXItem;
 import lombok.Getter;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -22,7 +22,7 @@ public class PlayerData extends YamlConfiguration {
     /**
      * 建立玩家数据并自行读取
      *
-     * @param UUID uuid
+     * @param uuid UUID
      */
     PlayerData(UUID uuid) {
         this.key = uuid.toString();
