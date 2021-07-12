@@ -29,3 +29,7 @@ shadowJar {
     // bstats重定向
     relocate ('org.bstats', 'github.saukiya.sxitem.bstats')
 }
+
+processResources {
+    expand(version: version)
+}
