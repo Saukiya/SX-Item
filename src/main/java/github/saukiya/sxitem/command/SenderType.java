@@ -1,4 +1,4 @@
-package github.saukiya.foxcraft.command;
+package github.saukiya.sxitem.command;
 
 /**
  * @author Saukiya

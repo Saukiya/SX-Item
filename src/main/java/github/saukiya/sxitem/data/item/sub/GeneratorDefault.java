@@ -1,9 +1,9 @@
-package github.saukiya.foxcraft.data.item.sub;
+package github.saukiya.sxitem.data.item.sub;
 
-import github.saukiya.foxcraft.SXItem;
-import github.saukiya.foxcraft.data.item.IGenerator;
-import github.saukiya.foxcraft.data.item.IUpdate;
-import github.saukiya.foxcraft.util.Message;
+import github.saukiya.sxitem.SXItem;
+import github.saukiya.sxitem.data.item.IGenerator;
+import github.saukiya.sxitem.data.item.IUpdate;
+import github.saukiya.sxitem.util.Message;
 import lombok.NoArgsConstructor;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.chat.BaseComponent;

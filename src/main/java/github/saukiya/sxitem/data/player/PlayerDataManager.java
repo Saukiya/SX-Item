@@ -1,6 +1,6 @@
-package github.saukiya.foxcraft.data.player;
+package github.saukiya.sxitem.data.player;
 
-import github.saukiya.foxcraft.SXItem;
+import github.saukiya.sxitem.SXItem;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;

@@ -1,14 +1,14 @@
-package github.saukiya.foxcraft;
+package github.saukiya.sxitem;
 
-import github.saukiya.foxcraft.command.MainCommand;
-import github.saukiya.foxcraft.data.item.ItemDataManager;
-import github.saukiya.foxcraft.data.item.sub.GeneratorDefault;
-import github.saukiya.foxcraft.data.item.sub.GeneratorImport;
-import github.saukiya.foxcraft.data.player.PlayerDataManager;
-import github.saukiya.foxcraft.util.Config;
-import github.saukiya.foxcraft.util.Message;
-import github.saukiya.foxcraft.util.NbtUtil;
-import github.saukiya.foxcraft.util.Placeholders;
+import github.saukiya.sxitem.command.MainCommand;
+import github.saukiya.sxitem.data.item.ItemDataManager;
+import github.saukiya.sxitem.data.item.sub.GeneratorDefault;
+import github.saukiya.sxitem.data.item.sub.GeneratorImport;
+import github.saukiya.sxitem.data.player.PlayerDataManager;
+import github.saukiya.sxitem.util.Config;
+import github.saukiya.sxitem.util.Message;
+import github.saukiya.sxitem.util.NbtUtil;
+import github.saukiya.sxitem.util.Placeholders;
 import lombok.Getter;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
@@ -86,7 +86,7 @@ public class SXItem extends JavaPlugin {
         itemDataManager = new ItemDataManager();
         playerDataManager = new PlayerDataManager();
 
-        mainCommand.setup("github/saukiya/foxcraft");
+        mainCommand.setup("sxitem");
         getLogger().info("Loading Time: " + (System.currentTimeMillis() - oldTimes) + " ms");
         getLogger().info("Author: Saukiya");
     }

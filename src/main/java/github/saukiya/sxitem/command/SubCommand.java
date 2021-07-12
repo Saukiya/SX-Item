@@ -1,7 +1,7 @@
-package github.saukiya.foxcraft.command;
+package github.saukiya.sxitem.command;
 
-import github.saukiya.foxcraft.SXItem;
-import github.saukiya.foxcraft.util.Message;
+import github.saukiya.sxitem.SXItem;
+import github.saukiya.sxitem.util.Message;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 
