@@ -1,6 +1,6 @@
-package github.saukiya.foxcraft.util;
+package github.saukiya.sxitem.util;
 
-import github.saukiya.foxcraft.SXItem;
+import github.saukiya.sxitem.SXItem;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 
@@ -32,8 +32,8 @@ public class Placeholders extends PlaceholderExpansion {
 
     @Override
     public String onPlaceholderRequest(Player player, String str) {
-        if (str.startsWith("test")) {
-
+        if (str.startsWith("random")) {
+            //TODO 添加随机字符的占位符
         }
         return "Error: %si_" + str + "%";
     }

@@ -1,4 +1,4 @@
-package github.saukiya.foxcraft.util;
+package github.saukiya.sxitem.util;
 
 import lombok.Getter;
 import net.minecraft.nbt.NBTTagCompound;

@@ -1,11 +1,11 @@
-package github.saukiya.foxcraft.command.sub;
+package github.saukiya.sxitem.command.sub;
 
-import github.saukiya.foxcraft.SXItem;
-import github.saukiya.foxcraft.command.SenderType;
-import github.saukiya.foxcraft.command.SubCommand;
-import github.saukiya.foxcraft.data.item.IGenerator;
-import github.saukiya.foxcraft.data.item.ItemDataManager;
-import github.saukiya.foxcraft.util.Message;
+import github.saukiya.sxitem.SXItem;
+import github.saukiya.sxitem.command.SenderType;
+import github.saukiya.sxitem.command.SubCommand;
+import github.saukiya.sxitem.data.item.IGenerator;
+import github.saukiya.sxitem.data.item.ItemDataManager;
+import github.saukiya.sxitem.util.Message;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

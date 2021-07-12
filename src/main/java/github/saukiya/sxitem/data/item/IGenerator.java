@@ -1,4 +1,4 @@
-package github.saukiya.foxcraft.data.item;
+package github.saukiya.sxitem.data.item;
 
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.configuration.ConfigurationSection;

@@ -1,4 +1,4 @@
-package github.saukiya.foxcraft.data.item;
+package github.saukiya.sxitem.data.item;
 
 /**
  * 用于表示这个 IGenerator 适合更新
