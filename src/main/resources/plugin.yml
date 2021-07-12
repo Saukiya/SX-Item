@@ -1,9 +1,9 @@
-name: Foxcraft
-main: github.saukiya.foxcraft.Foxcraft
-version: ${version}
+name: SX-Item
+main: github.saukiya.sxitem.SXItem
+version: $version
 author: Saukiya
 api-version: 1.17
-#website:
+website: https://github.com/Saukiya/SX-Item
 depend:
   - PlaceholderAPI
 
@@ -14,15 +14,5 @@ softdepend:
   - Vault
 
 commands:
-  foxcraft:
-    aliases: [fox]
-
-permissions:
-  foxcraft.use:
-    default: true
-  foxcraft.show:
-    default: true
-  foxcraft.chat:
-    default: true
-  foxcraft.plugins:
-    default: true
+  sxitem:
+    aliases: [sxi,si]
