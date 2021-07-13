@@ -16,15 +16,18 @@ repositories {
 }
 
 dependencies {
+
+    implementation 'org.bstats:bstats-bukkit:2.2.+'
+
     compileOnly fileTree('lib')
     compileOnly 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
     compileOnly 'org.projectlombok:lombok:1.18.20'
     annotationProcessor 'org.projectlombok:lombok:1.18.20'
-    testCompileOnly fileTree('lib')
-    testCompileOnly 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
-    testCompileOnly 'org.projectlombok:lombok:1.18.20'
+
+    testImplementation fileTree('lib')
+    testImplementation 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
+    testImplementation 'org.projectlombok:lombok:1.18.20'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
-    implementation 'org.bstats:bstats-bukkit:2.2.+'
 }
 
 shadowJar {
