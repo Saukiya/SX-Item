@@ -1,53 +1,49 @@
 package github.saukiya.sxitem.data.random;
 
 import github.saukiya.sxitem.SXItem;
-import github.saukiya.sxitem.data.item.IGenerator;
-import github.saukiya.sxitem.data.item.IUpdate;
-import github.saukiya.sxitem.util.Message;
-import lombok.Getter;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.MemoryConfiguration;
+import net.minecraft.util.Tuple;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.PlayerItemHeldEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 /**
  * @author Saukiya
  */
 public class RandomStringManager {
-    @Getter
-    private static final List<IGenerator> generators = new ArrayList<>();
 
     private final File file = new File(SXItem.getInst().getDataFolder(), "RandomString");
 
-    private final Map<String, List<String>> map = new HashMap<>();
+    Map<String, List<Tuple<Double, String>>> randomMap = new HashMap();
+
+    //TODO 多数随机由ItemManager完成，RandomManager只提供相应Key的返回值,并且不会进行自身迭代（如果迭代，则大概率会冲突？）
 
     public RandomStringManager() {
         loadData();
     }
+
+    public static String loadDataString(Object obj) {
+//        if (obj == null) return "";
+        if (obj instanceof String) {
+            return obj.toString().replace("\n", "/n");
+        }
+        if (obj instanceof List) {
+            return String.join("/n", (List) obj);
+        }
+        return "无法识别";
+    }
+
     public void loadData() {
-        map.clear();
+        randomMap.clear();
         if (!file.exists() || Objects.requireNonNull(file.listFiles()).length == 0) {
             SXItem.getInst().saveResource("RandomString/DefaultRandom.yml", true);
             SXItem.getInst().saveResource("RandomString/10Level/Random.yml", true);
         }
         loadRandom(file);
-        SXItem.getInst().getLogger().info("Loaded " + map.size() + " RandomString");
+        SXItem.getInst().getLogger().info("Loaded " + randomMap.size() + " RandomString");
     }
+
     /**
      * 遍历读取随机字符串数据
      *
@@ -59,32 +55,58 @@ public class RandomStringManager {
                 loadRandom(file);
             } else {
                 YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
-                for (String name : yml.getKeys(false)) {
-                    if (map.containsKey(name)) {
-                        SXItem.getInst().getLogger().info("不要重复随机字符组名: " + file.getName().replace("plugins" + File.separator + SXItem.getInst().getName() + File.separator, "") + File.separator + name + " !");
+                for (String key : yml.getKeys(false)) {
+                    if (randomMap.containsKey(key)) {
+                        SXItem.getInst().getLogger().info("字符组名重复: " + file.getName().replace("plugins" + File.separator + SXItem.getInst().getName() + File.separator, "") + File.separator + key + " !");
+                        continue;
                     }
-                    map.put(name, loadRandomData(yml.get(name)));
+                    Object obj = yml.get(key);
+                    //单行 key - v
+                    if (obj instanceof String) {
+                        randomMap.put(key, Collections.singletonList(new Tuple<>(1D, obj.toString())));
+                    }
+                    // 多行 key - vList
+                    else if (obj instanceof List) {
+                        List<Tuple<Double, String>> list = new ArrayList<>();
+                        Object unitObj = ((List<?>) obj).get(0);
+                        if (unitObj instanceof Map) {
+                            List<Map> listMap = (List<Map>) obj;
+                            for (Map map : listMap) {
+                                list.add(new Tuple<>(Double.valueOf(map.get("rate").toString()), loadDataString(map.get("string"))));
+                            }
+                        } else {// Deprecated
+                            // TODO 标记可转化文本并备份
+                            Map<String, Integer> tempMap = new HashMap<>();
+                            String value;
+                            for (Object objs : (List) obj) {
+                                value = loadDataString(objs);
+                                tempMap.put(value, tempMap.getOrDefault(value, 0) + 1);
+                            }
+                            for (Map.Entry<String, Integer> entry : tempMap.entrySet()) {
+                                list.add(new Tuple<>(Double.valueOf(entry.getValue()), entry.getKey()));
+                            }
+                        }
+
+                        list.sort(Comparator.comparing(Tuple::a));
+                        randomMap.put(key, list);
+                    }
                 }
             }
         }
     }
 
-    public List<String> loadRandomData(Object obj) {
-        if (obj instanceof String) {
-            return Collections.singletonList(obj.toString());
-        }
-        List<String> list = new ArrayList<>();
-        if (obj instanceof List) {
-            for (Object objs : (List) obj) {
-                if (objs instanceof List ) {
-                    list.add(String.join("/n", (Iterable<? extends CharSequence>) objs));
-                } else {
-                    list.add(objs.toString());
-                }
-            }
-        }
-        return list;
+
+    private void random(ItemStack item) {
+
     }
+
+    public class RandomData extends HashMap<String, Object> {
+
+        public <V> V get(Class<V> c, String str) {
+            return (V) super.get(str);
+        }
+    }
+
 //    /**
 //     * 注册物品生成器
 //     *
