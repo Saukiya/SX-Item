@@ -1,7 +1,10 @@
 package github.saukiya.sxitem.command;
 
 import github.saukiya.sxitem.SXItem;
-import github.saukiya.sxitem.command.sub.*;
+import github.saukiya.sxitem.command.sub.GiveCommand;
+import github.saukiya.sxitem.command.sub.NBTCommand;
+import github.saukiya.sxitem.command.sub.ReloadCommand;
+import github.saukiya.sxitem.command.sub.SaveCommand;
 import github.saukiya.sxitem.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -24,7 +27,6 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         new GiveCommand().registerCommand();
         new SaveCommand().registerCommand();
         new NBTCommand().registerCommand();
-        new KitCommand().registerCommand();
         new ReloadCommand().registerCommand();
     }
 
