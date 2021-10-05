@@ -4,3 +4,7 @@ test01:
     - 'STONE_SHOVEL'
     - 'STONE_PICKAXE'
     - 'STONE_AXE'
+  Random:
+    Test:
+      - rate: 0.3
+        string: "233"

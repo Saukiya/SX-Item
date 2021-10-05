@@ -21,9 +21,7 @@ public class CommandUtil {
      */
     public static void onPlayCommand(Player player, List<String> commandList) {
         int delay = 0;
-        if (SXItem.isPlaceholderApi()) {
-            commandList = PlaceholderAPI.setPlaceholders(player, commandList);
-        }
+        commandList = PlaceholderAPI.setPlaceholders(player, commandList);
         for (String cmd : commandList) {
             String command = cmd.replace("%player%", player.getName());
             if (command.startsWith("[DELAY] ")) {
