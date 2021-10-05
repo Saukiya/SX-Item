@@ -231,7 +231,7 @@ public class ItemDataManager implements Listener {
         int filterSize = 0, size = 0;
         // 文件
         if (search.length > 0 && search[0].equals("")) {
-            sender.spigot().sendMessage(Message.getTextComponent("§eDirectoryList§8 - §7ClickOpen", "/fox give |", "§8§o§lTo ItemList"));
+            sender.spigot().sendMessage(Message.getTextComponent("§eDirectoryList§8 - §7ClickOpen", "/sxitem give |", "§8§o§lTo ItemList"));
 
             Map<String, String> map = new HashMap<>();
             for (IGenerator ig : itemMap.values()) {
@@ -239,7 +239,7 @@ public class ItemDataManager implements Listener {
                 map.put(ig.getPathName(), str + "§b" + (str.replaceAll("[^\n]", "").length() + 1) + " - §a" + ig.getKey() + " §8[§7" + ig.getName() + "§8]§7 - §8[§cType:" + ig.getType() + "§8]\n");
             }
             for (Map.Entry<String, String> entry : map.entrySet()) {
-                String key = entry.getKey(), value = entry.getValue(), command = "/fox give |" + key + "<";
+                String key = entry.getKey(), value = entry.getValue(), command = "/sxitem give |" + key + "<";
                 TextComponent tc = Message.getTextComponent(" §8[§c" + key.replace(">", "§b>§c") + "§8]", command, null);
                 tc.addExtra(Message.getTextComponent("§7 - Has §c" + value.split("\n").length + "§7 Item", command, value.substring(0, value.length() - 1)));
                 sender.spigot().sendMessage(tc);
@@ -247,7 +247,7 @@ public class ItemDataManager implements Listener {
         } else
         // 物品
         {
-            sender.spigot().sendMessage(Message.getTextComponent("§eItemList§8 - §7ClickGet " + (search.length > 0 ? "§8[§c" + search[0].replaceAll("^\\|", "").replaceAll("<$", "") + "§8]" : ""), "/fox give", "§8§o§lTo DirectoryList"));
+            sender.spigot().sendMessage(Message.getTextComponent("§eItemList§8 - §7ClickGet " + (search.length > 0 ? "§8[§c" + search[0].replaceAll("^\\|", "").replaceAll("<$", "") + "§8]" : ""), "/sxitem give", "§8§o§lTo DirectoryList"));
 
             String right = "§8]§7 - ";
             for (IGenerator ig : itemMap.values()) {
@@ -260,12 +260,12 @@ public class ItemDataManager implements Listener {
                 String end = "§8[§cType:" + ig.getType() + "§8]";
                 size++;
                 if (sender instanceof Player) {
-                    TextComponent tc = Message.getTextComponent(left, "/fox give " + ig.getKey(), null);
+                    TextComponent tc = Message.getTextComponent(left, "/sxitem give " + ig.getKey(), null);
                     tc.addExtra(ig.getNameComponent());
                     tc.addExtra(right);
                     YamlConfiguration yaml = new YamlConfiguration();
                     ig.getConfig().getValues(false).forEach(yaml::set);
-                    tc.addExtra(Message.getTextComponent(end, "/fox give " + ig.getKey(), "§7" + yaml.saveToString() + "§8§o§lPath: " + ig.getPathName()));
+                    tc.addExtra(Message.getTextComponent(end, "/sxitem give " + ig.getKey(), "§7" + yaml.saveToString() + "§8§o§lPath: " + ig.getPathName()));
                     sender.spigot().sendMessage(tc);
                 } else {
                     sender.sendMessage(left + ig.getName() + right + end);
