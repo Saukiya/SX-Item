@@ -17,7 +17,7 @@ public class Placeholders extends PlaceholderExpansion {
 
     @Override
     public String getIdentifier() {
-        return "fox";
+        return "sxitem";
     }
 
     @Override

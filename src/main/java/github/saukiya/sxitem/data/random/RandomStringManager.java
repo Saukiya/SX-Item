@@ -1,9 +1,10 @@
 package github.saukiya.sxitem.data.random;
 
 import github.saukiya.sxitem.SXItem;
+import github.saukiya.sxitem.data.random.sub.*;
 import net.minecraft.util.Tuple;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.util.*;
@@ -15,109 +16,129 @@ public class RandomStringManager {
 
     private final File file = new File(SXItem.getInst().getDataFolder(), "RandomString");
 
-    Map<String, List<Tuple<Double, String>>> randomMap = new HashMap();
+    //公共变量
+    Map<String, List<Tuple<Double, String>>> globalMap = new HashMap();
 
-    //TODO 多数随机由ItemManager完成，RandomManager只提供相应Key的返回值,并且不会进行自身迭代（如果迭代，则大概率会冲突？）
+    //局部变量
+    Map<String, Map<String, List<Tuple<Double, String>>>> localMap = new HashMap<>();
+
+    //随机处理
+    Map<Character, IRandom> randoms = new HashMap<>();
+
+    //TODO 自动转化
+    boolean deprecated = false;
 
     public RandomStringManager() {
         loadData();
+        randoms.put('c', new CalculatorRandom());
+        randoms.put('l', new LockStringRandom());
+        randoms.put('s', new StringRandom());
+        randoms.put('t', new TimeRandom());
+        randoms.put('d', new DoubleRandom());
+        randoms.put('i', new IntRandom());
+        randoms.put('r', randoms.get('i'));
     }
 
-    public static String loadDataString(Object obj) {
-//        if (obj == null) return "";
-        if (obj instanceof String) {
-            return obj.toString().replace("\n", "/n");
-        }
-        if (obj instanceof List) {
-            return String.join("/n", (List) obj);
-        }
-        return "无法识别";
-    }
-
+    /**
+     * 加载数据
+     */
     public void loadData() {
-        randomMap.clear();
+        globalMap.clear();
+        localMap.clear();
         if (!file.exists() || Objects.requireNonNull(file.listFiles()).length == 0) {
             SXItem.getInst().saveResource("RandomString/DefaultRandom.yml", true);
             SXItem.getInst().saveResource("RandomString/10Level/Random.yml", true);
         }
-        loadRandom(file);
-        SXItem.getInst().getLogger().info("Loaded " + randomMap.size() + " RandomString");
+        loadRandomFile(file);
+        SXItem.getInst().getLogger().info("Loaded " + globalMap.size() + " RandomString");
     }
 
     /**
-     * 遍历读取随机字符串数据
+     * 加载数据-遍历文件读取yaml
      *
      * @param files File
      */
-    private void loadRandom(File files) {
+    private void loadRandomFile(File files) {
         for (File file : Objects.requireNonNull(files.listFiles())) {
             if (file.isDirectory()) {
-                loadRandom(file);
+                loadRandomFile(file);
             } else {
                 YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
-                for (String key : yml.getKeys(false)) {
-                    if (randomMap.containsKey(key)) {
-                        SXItem.getInst().getLogger().info("字符组名重复: " + file.getName().replace("plugins" + File.separator + SXItem.getInst().getName() + File.separator, "") + File.separator + key + " !");
-                        continue;
-                    }
-                    Object obj = yml.get(key);
-                    //单行 key - v
-                    if (obj instanceof String) {
-                        randomMap.put(key, Collections.singletonList(new Tuple<>(1D, obj.toString())));
-                    }
-                    // 多行 key - vList
-                    else if (obj instanceof List) {
-                        List<Tuple<Double, String>> list = new ArrayList<>();
-                        Object unitObj = ((List<?>) obj).get(0);
-                        if (unitObj instanceof Map) {
-                            List<Map> listMap = (List<Map>) obj;
-                            for (Map map : listMap) {
-                                list.add(new Tuple<>(Double.valueOf(map.get("rate").toString()), loadDataString(map.get("string"))));
-                            }
-                        } else {// Deprecated
-                            // TODO 标记可转化文本并备份
-                            Map<String, Integer> tempMap = new HashMap<>();
-                            String value;
-                            for (Object objs : (List) obj) {
-                                value = loadDataString(objs);
-                                tempMap.put(value, tempMap.getOrDefault(value, 0) + 1);
-                            }
-                            for (Map.Entry<String, Integer> entry : tempMap.entrySet()) {
-                                list.add(new Tuple<>(Double.valueOf(entry.getValue()), entry.getKey()));
-                            }
-                        }
-
-                        list.sort(Comparator.comparing(Tuple::a));
-                        randomMap.put(key, list);
-                    }
-                }
+                loadRandom(globalMap, yml);
             }
         }
     }
 
-
-    private void random(ItemStack item) {
-
+    /**
+     * 加载局部数据
+     *
+     * @param key    关联key值
+     * @param config config
+     */
+    public void loadRandomLocal(String key, ConfigurationSection config) {
+        loadRandom(localMap.computeIfAbsent(key, k -> new HashMap<>()), config);
     }
 
-    public class RandomData extends HashMap<String, Object> {
+    private void loadRandom(Map<String, List<Tuple<Double, String>>> inputMap, ConfigurationSection config) {
+        for (String key : config.getKeys(false)) {
+            if (inputMap.containsKey(key)) {
+                SXItem.getInst().getLogger().info("Random Key Repeat: " + key + " !");
+                continue;
+            }
+            Object obj = config.get(key);
+            //单行 key - v
+            if (obj instanceof String) {
+                inputMap.put(key, Collections.singletonList(new Tuple<>(1D, obj.toString())));
+            }
+            // 多行 key - vList
+            else if (obj instanceof List) {
+                List<Tuple<Double, String>> list = new ArrayList<>();
+                Object unitObj = ((List<?>) obj).get(0);
+                if (unitObj instanceof Map) {
+                    List<Map> listMap = (List<Map>) obj;
+                    for (Map map : listMap) {
+                        list.add(new Tuple<>(Double.valueOf(map.get("rate").toString()), loadDataString(map.get("string"))));
+                    }
+                } else {// Deprecated
+                    deprecated = true;
+                    Map<String, Integer> tempMap = new HashMap<>();
+                    String value;
+                    for (Object objs : (List) obj) {
+                        value = loadDataString(objs);
+                        tempMap.put(value, tempMap.getOrDefault(value, 0) + 1);
+                    }
+                    for (Map.Entry<String, Integer> entry : tempMap.entrySet()) {
+                        list.add(new Tuple<>(Double.valueOf(entry.getValue()), entry.getKey()));
+                    }
+                }
 
-        public <V> V get(Class<V> c, String str) {
-            return (V) super.get(str);
+                double value = 1;
+                double temp;
+                double sum = list.stream().mapToDouble(Tuple::a).sum();
+                for (int i = list.size() - 1; i >= 0; i--) {
+                    Tuple<Double, String> tuple = list.get(i);
+                    temp = tuple.a() / sum;
+                    tuple.a(value);
+                    value -= temp;
+                }
+                inputMap.put(key, list);
+            }
         }
     }
 
-//    /**
-//     * 注册物品生成器
-//     *
-//     * @param generator ItemGenerator
-//     */
-//    public static void registerGenerator(IGenerator generator) {
-//        if (generator.getType() == null || generators.stream().anyMatch((ig) -> ig.getType().equals(generator.getType()))) {
-//            SXItem.getInst().getLogger().warning("ItemGenerator >>  [" + generator.getClass().getSimpleName() + "] Type Error!");
-//            return;
-//        }
-//        generators.add(generator);
-//        SXItem.getInst().getLogger().info("ItemGenerator >> Register [" + generator.getClass().getSimpleName() + "] To Type " + generator.getType() + " !");
-//    }
+    /**
+     * 加载数据-读取V值
+     *
+     * @param value
+     * @return
+     */
+    private String loadDataString(Object value) {
+        if (value instanceof String) {
+            return value.toString().replace("\n", "/n");
+        }
+        if (value instanceof List) {
+            return String.join("/n", (List) value);
+        }
+        return "N/A";
+    }
 }

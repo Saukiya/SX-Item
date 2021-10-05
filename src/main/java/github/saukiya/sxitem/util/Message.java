@@ -117,9 +117,7 @@ public enum Message {
 
     public static void send(LivingEntity entity, String msg) {
         if (entity instanceof Player player) {
-            if (SXItem.isPlaceholderApi()) {
-                msg = PlaceholderAPI.setPlaceholders(player, msg);
-            }
+            msg = PlaceholderAPI.setPlaceholders(player, msg);
             if (msg.startsWith("[ACTIONBAR]")) {
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(msg.substring(11)));
             } else if (msg.startsWith("[TITLE]")) {

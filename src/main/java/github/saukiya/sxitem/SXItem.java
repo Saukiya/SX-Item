@@ -10,6 +10,7 @@ import github.saukiya.sxitem.util.Message;
 import github.saukiya.sxitem.util.NbtUtil;
 import github.saukiya.sxitem.util.Placeholders;
 import lombok.Getter;
+import lombok.Setter;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
@@ -17,6 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.script.ScriptEngineManager;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Random;
 
 /**
@@ -26,7 +28,11 @@ import java.util.Random;
 public class SXItem extends JavaPlugin {
 
     @Getter
-    private static final DecimalFormat df = new DecimalFormat("#.##");
+    private static final ThreadLocal<SimpleDateFormat> sdf = ThreadLocal.withInitial(() -> new SimpleDateFormat(Config.getConfig().getString(Config.TIME_FORMAT)));
+
+    @Getter
+    @Setter
+    private static DecimalFormat df = new DecimalFormat("#.##");
 
     @Getter
     private static final Random random = new Random();
@@ -35,13 +41,7 @@ public class SXItem extends JavaPlugin {
     private static final ScriptEngineManager jsManager = new ScriptEngineManager();
 
     @Getter
-    private static final boolean vault = false;
-
-    @Getter
     private static SXItem inst = null;
-
-    @Getter
-    private static boolean placeholderApi = false;
 
     @Getter
     private static MainCommand mainCommand;
@@ -70,13 +70,7 @@ public class SXItem extends JavaPlugin {
     public void onEnable() {
         new Metrics(this, 11948);
         long oldTimes = System.currentTimeMillis();
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            Placeholders.setup();
-            placeholderApi = true;
-            getLogger().info("Find PlaceholderAPI");
-        } else {
-            getLogger().warning("No Find PlaceholderAPI");
-        }
+        Placeholders.setup();
         nbtUtil = new NbtUtil();
 
         randomStringManager = new RandomStringManager();

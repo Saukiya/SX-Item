@@ -73,9 +73,7 @@ public class ItemDataManager implements Listener {
     public void loadItemData() {
         itemMap.clear();
         if (!itemFiles.exists() || Objects.requireNonNull(itemFiles.listFiles()).length == 0) {
-            SXItem.getInst().saveResource("Item/head/head.yml", true);
-            SXItem.getInst().saveResource("Item/kit/kit.yml", true);
-            SXItem.getInst().saveResource("Item/Test.yml", true);
+            SXItem.getInst().saveResource("Item/Default/Default.yml", true);
             SXItem.getInst().saveResource("Item/NoLoad/Default.yml", true);
         }
         loadItem(itemFiles);
@@ -131,7 +129,7 @@ public class ItemDataManager implements Listener {
      * @return PathName
      */
     private String getPathName(File file) {
-        return file.toString().replace("plugins" + File.separator + "Foxcraft" + File.separator, "").replace(File.separator, ">");
+        return file.toString().replace("plugins" + File.separator + "SX-Item" + File.separator, "").replace(File.separator, ">");
     }
 
     /**
