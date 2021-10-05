@@ -46,6 +46,7 @@ public class RandomStringManager {
         globalMap.clear();
         localMap.clear();
         if (!file.exists() || Objects.requireNonNull(file.listFiles()).length == 0) {
+            SXItem.getInst().saveResource("RandomString/NewRandom.yml", true);
             SXItem.getInst().saveResource("RandomString/DefaultRandom.yml", true);
             SXItem.getInst().saveResource("RandomString/10Level/Random.yml", true);
         }
