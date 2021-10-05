@@ -15,4 +15,4 @@ softdepend:
 
 commands:
   sxitem:
-    aliases: [ sxi,si ]
+    aliases: [sxi,si]
