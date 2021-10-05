@@ -5,8 +5,7 @@ import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.text.DecimalFormat;
 
 /**
  * @author Saukiya
@@ -15,42 +14,21 @@ import java.util.Map;
 @Getter
 public class Config {
 
+    public static final String DECIMAL_FORMAT = "DecimalFormat";
+    public static final String TIME_FORMAT = "TimeFormat";
     @Getter
-    private static final Map<String, Config> configs = new HashMap<>();
-
-    private final String key;
-    private final File file;
-    private YamlConfiguration config;
-
-    private Config(String key) {
-        this.key = key;
-        this.file = new File(SXItem.getInst().getDataFolder(), key + ".yml");
-        load();
-
-    }
-
-    public static void regConfig(String key) {
-        configs.put(key, new Config(key));
-    }
-
-    public static YamlConfiguration getConfig(String key) {
-        return configs.get(key).getConfig();
-    }
+    private static YamlConfiguration config;
 
     /**
      * 加载Config类
      */
     public static void loadConfig() {
-        for (Config config : configs.values()) {
-            config.load();
-        }
-    }
-
-    void load() {
+        File file = new File(SXItem.getInst().getDataFolder(), "Config.yml");
         if (!file.exists()) {
-            SXItem.getInst().getLogger().info("create " + key + ".yml");
-            SXItem.getInst().saveResource(key + ".yml", true);
+            SXItem.getInst().getLogger().info("Create Config.yml");
+            SXItem.getInst().saveResource("Config.yml", true);
         }
-        this.config = YamlConfiguration.loadConfiguration(file);
+        config = YamlConfiguration.loadConfiguration(file);
+        SXItem.setDf(new DecimalFormat(config.getString(DECIMAL_FORMAT)));
     }
 }

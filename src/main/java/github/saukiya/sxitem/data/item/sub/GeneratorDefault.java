@@ -3,6 +3,7 @@ package github.saukiya.sxitem.data.item.sub;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.item.IGenerator;
 import github.saukiya.sxitem.data.item.IUpdate;
+import github.saukiya.sxitem.data.random.RandomDocker;
 import github.saukiya.sxitem.util.Message;
 import lombok.NoArgsConstructor;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -22,9 +23,7 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import javax.annotation.Nonnull;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -76,6 +75,9 @@ public class GeneratorDefault implements IGenerator, IUpdate {
         this.skullName = config.getString("SkullName");
         this.hashCode = config.getValues(true).hashCode();
         this.update = config.getBoolean("Update");
+        if (config.contains("Random")) {
+            SXItem.getRandomStringManager().loadRandomLocal(key, config.getConfigurationSection("Random"));
+        }
     }
 
     @Override
@@ -127,11 +129,43 @@ public class GeneratorDefault implements IGenerator, IUpdate {
 
     @Override
     public ItemStack getItem(@Nonnull Player player) {
-        String displayName = this.displayName != null ? PlaceholderAPI.setPlaceholders(player, this.displayName) : this.displayName;
-        String id = ids.get(SXItem.getRandom().nextInt(ids.size()));
-        List<String> loreList = PlaceholderAPI.setPlaceholders(player, this.loreList);
+        RandomDocker docker = new RandomDocker(key);
+
+        String id = docker.setRandom(ids.get(SXItem.getRandom().nextInt(ids.size())));
+
+        String itemName = docker.setRandom(this.displayName);
+        if (itemName != null) itemName = PlaceholderAPI.setPlaceholders(player, itemName);
+
+        List<String> loreList = new ArrayList<>();
+        for (String lore : this.loreList) {
+            lore = docker.setRandom(lore);
+            if (!lore.contains("%DeleteLore%")) {
+                loreList.addAll(Arrays.asList(lore.split("/n|\n")));
+            }
+        }
+        loreList = PlaceholderAPI.setPlaceholders(player, loreList);
+
+
+        List<String> enchantList = new ArrayList<>();
+        for (String enchant : this.enchantList) {
+            enchant = docker.setRandom(enchant);
+            if (!enchant.contains("%DeleteLore%")) {
+                enchantList.addAll(Arrays.asList(enchant.split("//n|\n")));
+            }
+        }
+
         String skullName = this.skullName != null ? PlaceholderAPI.setPlaceholders(player, this.skullName) : this.skullName;
-        return getItemStack(displayName, id, amount, loreList, this.enchantList, itemFlagList, unbreakable, color, skullName);
+        ItemStack item = getItemStack(itemName, id, amount, loreList, enchantList, itemFlagList, unbreakable, color, skullName);
+
+        //Deprecated
+        if (docker.getLockMap().size() > 0) {
+            List<String> list = new ArrayList<>();
+            for (Map.Entry<String, String> entry : docker.getLockMap().entrySet()) {
+                list.add(entry.getKey() + "§e§k|§e§r" + entry.getValue());
+            }
+            SXItem.getNbtUtil().setNBTList(item, SXItem.getInst().getName() + "-Lock", list);
+        }
+        return item;
     }
 
     @Override

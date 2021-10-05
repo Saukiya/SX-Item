@@ -6,6 +6,8 @@ DefaultLore:
     string: &replace
       - "第一行"
       - "第二行"
+  - rate: 50
+    string: ~
   - rate: 20
     string: |-
       第一行
@@ -13,8 +15,8 @@ DefaultLore:
       第三行
   - rate: 30
     string: *replace
-  - rate: 50
-    string: ~
+  - rate: 20
+    string: "?"
 #旧版
 Test:
   - '233'
