@@ -1,26 +1,24 @@
-package github.saukiya.sxitem.nms;
+package github.saukiya.sxitem.util;
 
 import lombok.SneakyThrows;
-import org.bukkit.Bukkit;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public abstract class NMS {
 
-    public static String version = "v1_16_R1";
+    public static String version = "v1_17_R1";
 //    public static String version = Bukkit.getServer().getClass().getPackage().getName().split("^.+\\.")[1];
 
     public static Map<Class<? extends NMS>, NMS> map = new HashMap<>();
 
     @SneakyThrows
     protected static <T extends NMS> T getInst(Class<T> target) {
-        System.out.println(Thread.currentThread().getStackTrace()[1].getClassName());
         NMS t = map.get(target);
         if (t == null) {
             synchronized (target) {
                 if (!map.containsKey(target)) {
-                    t = (NMS) Class.forName(NMS.class.getPackage().getName() + "." + version + ".NMS" + target.getSimpleName()).getDeclaredConstructor().newInstance();
+                    t = (NMS) Class.forName(target.getPackage().getName() + "." + target.getSimpleName() + "_" + version).getDeclaredConstructor().newInstance();
                     map.put(target, t);
                 } else {
                     t = map.get(target);
@@ -34,6 +32,7 @@ public abstract class NMS {
 //
 //    @SneakyThrows
 //    protected static <T extends NMS> T getInst() {
+//        System.out.println(Thread.currentThread().getStackTrace()[1].getClassName());
 //        String className = Thread.currentThread().getStackTrace()[2].getClassName().split("^.+\\.")[1];
 //        System.out.println(className);
 //        NMS t = map.get(className);
