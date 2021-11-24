@@ -1,11 +1,11 @@
 package github.saukiya.sxitem.data.random;
 
 import github.saukiya.sxitem.SXItem;
+import github.saukiya.sxitem.util.Tuple;
 import lombok.Getter;
-import net.minecraft.util.Tuple;
-import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.text.StrLookup;
-import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.text.StrMatcher;
-import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.lang.text.StrMatcher;
+import org.apache.commons.lang.text.StrLookup;
+import org.apache.commons.lang.text.StrSubstitutor;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  * 2. docker.setRandom() -> get()
  * 3. docker.getLockMap()
  */
-public class RandomDocker extends StrLookup<String> {
+public class RandomDocker extends StrLookup {
 
     static final StrMatcher PRE_MATCHER = StrMatcher.charMatcher('<');
     static final StrMatcher SUF_MATCHER = StrMatcher.charMatcher('>');
