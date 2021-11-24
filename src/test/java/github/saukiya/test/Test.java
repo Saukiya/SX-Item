@@ -3,11 +3,14 @@ package github.saukiya.test;
 
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.RandomDocker;
-import net.minecraft.util.Tuple;
+import github.saukiya.sxitem.util.MessageUtil;
+import github.saukiya.sxitem.util.Tuple;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import org.apache.commons.lang.text.StrLookup;
+import org.apache.commons.lang.text.StrMatcher;
+import org.apache.commons.lang.text.StrSubstitutor;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.text.StrLookup;
-import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.text.StrMatcher;
-import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.text.StrSubstitutor;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -22,15 +25,13 @@ public class Test {
 
     static Map<String, List<Tuple<Double, String>>> dataMap = new HashMap();
 
-
-
     public static void main(String[] args) {
-        for (int i = 0; i < 30; i++) {
-//            System.out.println(replaceInt("2_4", null));
-            System.out.println(replaceDouble("50_2", null));
-        }
+//        for (int i = 0; i < 30; i++) {
+////            System.out.println(replaceInt("2_4", null));
+//            System.out.println(replaceDouble("50_2", null));
+//        }
 //        loadData();
-//        distinguish();
+        distinguish();
     }
 
     public static String replaceInt(String key, RandomDocker docker) {
@@ -154,7 +155,7 @@ public class Test {
         return null;
     }
 
-    static class CustomLookup extends StrLookup<String> {
+    static class CustomLookup extends StrLookup {
 
         static Pattern regex = Pattern.compile("^.:.+?");
 
