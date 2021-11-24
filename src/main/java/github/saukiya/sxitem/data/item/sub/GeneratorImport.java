@@ -1,7 +1,7 @@
 package github.saukiya.sxitem.data.item.sub;
 
 import github.saukiya.sxitem.data.item.IGenerator;
-import github.saukiya.sxitem.util.Message;
+import github.saukiya.sxitem.util.MessageUtil;
 import lombok.NoArgsConstructor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.configuration.ConfigurationSection;
@@ -53,7 +53,7 @@ public class GeneratorImport implements IGenerator {
 
     @Override
     public BaseComponent getNameComponent() {
-        return Message.showItem(item);
+        return MessageUtil.getInst().showItem(item);
     }
 
     @Override

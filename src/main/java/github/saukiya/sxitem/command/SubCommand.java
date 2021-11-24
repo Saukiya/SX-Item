@@ -2,6 +2,7 @@ package github.saukiya.sxitem.command;
 
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.util.Message;
+import github.saukiya.sxitem.util.MessageUtil;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 
@@ -67,8 +68,8 @@ public abstract class SubCommand {
 
     public void sendIntroduction(CommandSender sender, String color, String label) {
         String clickCommand = MessageFormat.format("/{0} {1}", label, cmd);
-        TextComponent tc = Message.getTextComponent(color + MessageFormat.format("/{0} {1}{2}§7 - §c" + getIntroduction(), label, cmd, arg), clickCommand, sender.isOp() ? "§8§oPermission: " + permission() : null);
-        Message.send(sender, tc);
+        TextComponent tc = MessageUtil.getInst().getTextComponent(color + MessageFormat.format("/{0} {1}{2}§7 - §c" + getIntroduction(), label, cmd, arg), clickCommand, sender.isOp() ? "§8§oPermission: " + permission() : null);
+        MessageUtil.getInst().send(sender, tc);
     }
 
     public void onEnable() {

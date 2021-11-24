@@ -4,7 +4,7 @@ import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.item.IGenerator;
 import github.saukiya.sxitem.data.item.IUpdate;
 import github.saukiya.sxitem.data.random.RandomDocker;
-import github.saukiya.sxitem.util.Message;
+import github.saukiya.sxitem.util.MessageUtil;
 import lombok.NoArgsConstructor;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -106,7 +106,7 @@ public class GeneratorDefault implements IGenerator, IUpdate {
         BaseComponent bc = new TextComponent();
         for (String id : ids) {
             if (bc.getExtra() != null) bc.addExtra("§8|");
-            bc.addExtra(Message.showItem(Material.getMaterial(id)));
+            bc.addExtra(MessageUtil.getInst().showItem(Material.getMaterial(id)));
         }
         return bc;
     }
