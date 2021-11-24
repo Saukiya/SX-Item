@@ -2,7 +2,7 @@ package github.saukiya.sxitem.data.random;
 
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.sub.*;
-import net.minecraft.util.Tuple;
+import github.saukiya.sxitem.util.Tuple;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
