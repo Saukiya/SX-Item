@@ -58,20 +58,18 @@ public class MessageUtil_v1_8_R3 extends MessageUtil {
 
     @Override
     public TranslatableComponent showItem(@Nonnull Material material) {
-        TranslatableComponent translatableComponent;
-        return null;
+        return new TranslatableComponent((material.isBlock() ? "block" : "item") + "." + material.name());
 //        return new TranslatableComponent((material.isBlock() ? "block" : "item") + "." + material.getNamespace() + "." + material.getKey().getKey());
     }
+
     @Override
     public BaseComponent showItem(@Nullable ItemStack item) {
         if (item == null) item = new ItemStack(Material.AIR);
         ItemMeta meta = item.getItemMeta();
         BaseComponent bc = meta != null && meta.hasDisplayName() ? new TextComponent(meta.getDisplayName()) : showItem(item.getType());
-        NBTTagCompound nbt = CraftItemStack.asNMSCopy(item).getTag();
-
-        return null;
-//        bc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new Item(item.getType().getKey().getKey(), item.getAmount(), ItemTag.ofNbt(nbt == null ? null : nbt.toString()))));
-//        return bc;
+        NBTTagCompound nbt = CraftItemStack.asNMSCopy(item).save(new NBTTagCompound());
+        bc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new BaseComponent[]{ new TextComponent(nbt.toString())}));
+        return bc;
     }
 
     @Override
