@@ -20,44 +20,32 @@ allprojects {
 
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
-}
 
-
-// 子项目设置
-subprojects {
     dependencies {
         compileOnly fileTree('lib')
-        compileOnly getRootProject()
         compileOnly 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
         compileOnly 'org.projectlombok:lombok:1.18.22'
         annotationProcessor 'org.projectlombok:lombok:1.18.22'
     }
+}
 
-//    tasks.withType<Classes> {
-//        destinationDirectory.set(file("$rootDir/build/libs"))
-//    }
+// 子项目设置
+subprojects {
+    dependencies {
+        compileOnly getRootProject()
+    }
 }
 
 dependencies {
-
     implementation 'org.bstats:bstats-bukkit:2.2.1'
 
-    compileOnly fileTree('lib')
-    compileOnly 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
-    compileOnly 'org.projectlombok:lombok:1.18.22'
-    annotationProcessor 'org.projectlombok:lombok:1.18.22'
-
-    getRootProject()
     testImplementation fileTree('lib')
-    // getSubprojects().forEach(sub -> testImplementation sub)
     testImplementation 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
     testImplementation 'org.projectlombok:lombok:1.18.22'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
 }
 
 shadowJar {
-//    依赖指定task
-//    dependsOn(':Module-NMS-V1_8_R3:build', ':Module-NMS-V1_17_R1:build')
     // 过滤未使用的依赖
     minimize()
     // bstats重定向
@@ -66,8 +54,10 @@ shadowJar {
     getSubprojects().forEach(sub -> {
         from(sub.getBuildDir().toString() + '/classes/java/main')
     })
-    org.gradle.jvm.tasks.Jar
-
+    // 设置导出名称
+    archiveFileName.set("${project.name}.jar")
+    // 设置导出路径
+    destinationDirectory.set(file("$rootDir/plugins/$project.version"))
 }
 
 //执行该task前必须执行子模块的task
