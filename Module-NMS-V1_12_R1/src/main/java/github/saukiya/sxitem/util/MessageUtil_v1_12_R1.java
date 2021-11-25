@@ -1,11 +1,9 @@
 package github.saukiya.sxitem.util;
 
 import net.md_5.bungee.api.chat.*;
-import net.minecraft.server.v1_11_R1.NBTTagCompound;
+import net.minecraft.server.v1_12_R1.NBTTagCompound;
 import org.bukkit.Material;
-import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_11_R1.inventory.CraftItemStack;
-import org.bukkit.entity.Player;
+import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -13,17 +11,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Locale;
 
-public class MessageUtil_v1_11_R1 extends MessageUtil {
-
-    @Override
-    public void send(CommandSender sender, TextComponent tc) {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
-            player.spigot().sendMessage(tc);
-        } else {
-            sender.sendMessage(tc.getText());
-        }
-    }
+public class MessageUtil_v1_12_R1 extends MessageUtil {
 
     @Override
     public TextComponent getTextComponent(String msg, String command, String showText) {
