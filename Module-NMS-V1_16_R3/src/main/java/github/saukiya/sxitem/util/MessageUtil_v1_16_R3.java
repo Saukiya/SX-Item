@@ -3,16 +3,16 @@ package github.saukiya.sxitem.util;
 import net.md_5.bungee.api.chat.*;
 import net.md_5.bungee.api.chat.hover.content.Item;
 import net.md_5.bungee.api.chat.hover.content.Text;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class MessageUtil_v1_17_R1 extends MessageUtil {
+public class MessageUtil_v1_16_R3 extends MessageUtil {
 
     @Override
     public TextComponent getTextComponent(String msg, String command, String showText) {
