@@ -10,6 +10,7 @@ import lombok.Data;
 import org.apache.commons.lang.text.StrLookup;
 import org.apache.commons.lang.text.StrMatcher;
 import org.apache.commons.lang.text.StrSubstitutor;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -31,7 +32,10 @@ public class Test {
 //            System.out.println(replaceDouble("50_2", null));
 //        }
 //        loadData();
-        distinguish();
+//        distinguish();
+
+        //MaterialKey ??
+//        System.out.println(Material.DIAMOND_ORE.name().toLowerCase(Locale.ROOT));;
     }
 
     public static String replaceInt(String key, RandomDocker docker) {
@@ -73,8 +77,8 @@ public class Test {
     public static void loadData() {
 
         // 配置读取的方式
-        File file = new File("./src/main/resources/RandomString/NewRandom.yml");
-//        File file = new File("./src/main/resources/RandomString/DefaultRandom.yml");
+//        File file = new File("./src/main/resources/RandomString/NewRandom.yml");
+        File file = new File("./src/main/resources/RandomString/DefaultRandom.yml");
 
         YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
         for (String key : yml.getKeys(false)) {
