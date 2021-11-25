@@ -29,26 +29,30 @@ subprojects {
         compileOnly fileTree('lib')
         compileOnly getRootProject()
         compileOnly 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
-        compileOnly 'org.projectlombok:lombok:1.18.20'
-        annotationProcessor 'org.projectlombok:lombok:1.18.20'
+        compileOnly 'org.projectlombok:lombok:1.18.22'
+        annotationProcessor 'org.projectlombok:lombok:1.18.22'
     }
+
+//    tasks.withType<Classes> {
+//        destinationDirectory.set(file("$rootDir/build/libs"))
+//    }
 }
 
 dependencies {
 
-    implementation 'org.bstats:bstats-bukkit:2.2.+'
+    implementation 'org.bstats:bstats-bukkit:2.2.1'
 
     compileOnly fileTree('lib')
     compileOnly 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
-    compileOnly 'org.projectlombok:lombok:1.18.20'
-    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+    compileOnly 'org.projectlombok:lombok:1.18.22'
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
 
     getRootProject()
     testImplementation fileTree('lib')
     // getSubprojects().forEach(sub -> testImplementation sub)
     testImplementation 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
-    testImplementation 'org.projectlombok:lombok:1.18.20'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
+    testImplementation 'org.projectlombok:lombok:1.18.22'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
 }
 
 shadowJar {
@@ -75,7 +79,3 @@ shadowJar.dependsOn() {
 processResources {
     expand(version: version)
 }
-
-//tasks.withType<Jar> {
-//    destinationDirectory.set(file("$rootDir/build/libs"))
-//}
