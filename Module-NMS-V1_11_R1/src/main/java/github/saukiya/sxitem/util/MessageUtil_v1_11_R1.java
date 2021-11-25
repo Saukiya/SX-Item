@@ -3,12 +3,14 @@ package github.saukiya.sxitem.util;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.*;
-import net.minecraft.server.v1_8_R3.*;
+import net.minecraft.server.v1_11_R1.NBTTagCompound;
+import net.minecraft.server.v1_11_R1.PacketPlayOutChat;
+import net.minecraft.server.v1_11_R1.PacketPlayOutTitle;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.v1_8_R3.util.CraftChatMessage;
+import org.bukkit.craftbukkit.v1_11_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_11_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_11_R1.util.CraftChatMessage;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -17,7 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class MessageUtil_v1_8_R3 extends MessageUtil {
+public class MessageUtil_v1_11_R1 extends MessageUtil {
 
     @Override
     public void send(LivingEntity entity, String msg) {
@@ -25,22 +27,10 @@ public class MessageUtil_v1_8_R3 extends MessageUtil {
             CraftPlayer player = (CraftPlayer) entity;
             msg = PlaceholderAPI.setPlaceholders(player, msg);
             if (msg.startsWith("[ACTIONBAR]")) {
-                ChatMessageType position = ChatMessageType.ACTION_BAR;
-                BaseComponent[] components = new ComponentBuilder(msg.substring(11)).create();
-                PacketPlayOutChat packet = new PacketPlayOutChat(null, (byte) position.ordinal());
-                packet.components = components;
-                player.getHandle().playerConnection.sendPacket(packet);
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(msg.substring(11)));
             } else if (msg.startsWith("[TITLE]")) {
                 String[] split = msg.substring(7).split(":");
-
-                PacketPlayOutTitle packetSubtitle;
-                packetSubtitle = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.TITLE, CraftChatMessage.fromString(split[0])[0], 5, 20, 5);
-                player.getHandle().playerConnection.sendPacket(packetSubtitle);
-
-                if (split.length > 1) {
-                    packetSubtitle = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.SUBTITLE, CraftChatMessage.fromString(split[1])[0], 5, 20, 5);
-                    player.getHandle().playerConnection.sendPacket(packetSubtitle);
-                }
+                player.sendTitle(split[0], split.length > 1 ? split[1] : null, 5, 20, 5);
             } else {
                 player.sendMessage(msg);
             }
