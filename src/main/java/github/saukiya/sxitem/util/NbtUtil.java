@@ -4,6 +4,11 @@ import lombok.Getter;
 //import net.minecraft.nbt.NBTTagCompound;
 //import net.minecraft.nbt.NBTTagList;
 //import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
+import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -23,12 +28,12 @@ public class NbtUtil {
      * @return String
      */
     public String getAllNBT(ItemStack item) {
-//        net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
-//        if (nmsItem != null) {
-//            NBTTagCompound itemTag = nmsItem.hasTag() ? nmsItem.getTag() : new NBTTagCompound();
-//            return "§c[" + item.getType().name() + ":" + item.getDurability() + "-" + item.hashCode() + "]§7 " + itemTag.toString().replace("§", "&");
-//        }
-        return "§c[" + item.getType().name() + ":" + item.getDurability() + "-" + item.hashCode() + "]§7 §cNULL";
+        net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
+        String base = "§c[" + item.getType().name() + ":" + item.getDurability() + "-" + item.hashCode() + "]§7 ";
+        if (nmsItem != null && nmsItem.hasTag()) {
+            return base + nmsItem.getTag().toString().replace("§", "&");
+        }
+        return base;
     }
 
     /**
@@ -40,14 +45,13 @@ public class NbtUtil {
      * @return ItemStack
      */
     public ItemStack setNBT(ItemStack item, String key, Object value) {
-//        net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
-//        if (nmsItem != null) {
-//            NBTTagCompound itemTag = nmsItem.hasTag() ? nmsItem.getTag() : new NBTTagCompound();
-////            NBTTagString tagString = new NBTTagString(value.toString());
-////            itemTag.set(key, tagString);
-//            nmsItem.setTag(itemTag);
-//            item.setItemMeta((CraftItemStack.asBukkitCopy(nmsItem)).getItemMeta());
-//        }
+        net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
+        if (nmsItem != null) {
+            NBTTagCompound itemTag = nmsItem.getOrCreateTag();
+            itemTag.set(key, NBTTagString.a(value.toString()));
+            nmsItem.setTag(itemTag);
+            item.setItemMeta((CraftItemStack.asBukkitCopy(nmsItem)).getItemMeta());
+        }
         return item;
     }
 
@@ -60,17 +64,17 @@ public class NbtUtil {
      * @return ItemStack
      */
     public ItemStack setNBTList(ItemStack item, String key, List<String> list) {
-//        net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
-//        if (nmsItem != null) {
-//            NBTTagCompound itemTag = nmsItem.hasTag() ? nmsItem.getTag() : new NBTTagCompound();
-//            NBTTagList tagList = new NBTTagList();
-//            for (int i = 0; i < list.size(); i++) {
-////                tagList.add(i, new NBTTagString(list.get(i)));
-//            }
-//            itemTag.set(key, tagList);
-//            nmsItem.setTag(itemTag);
-//            item.setItemMeta((CraftItemStack.asBukkitCopy(nmsItem)).getItemMeta());
-//        }
+        net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
+        if (nmsItem != null) {
+            NBTTagCompound itemTag = nmsItem.getOrCreateTag();
+            NBTTagList tagList = new NBTTagList();
+            for (int i = 0; i < list.size(); i++) {
+                tagList.add(i, NBTTagString.a(list.get(i)));
+            }
+            itemTag.set(key, tagList);
+            nmsItem.setTag(itemTag);
+            item.setItemMeta((CraftItemStack.asBukkitCopy(nmsItem)).getItemMeta());
+        }
         return item;
     }
 
@@ -82,19 +86,19 @@ public class NbtUtil {
      * @return String
      */
     public String getNBT(ItemStack item, String key) {
-//        net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
-//        if (nmsItem != null) {
-//            NBTTagCompound itemTag = nmsItem.hasTag() ? nmsItem.getTag() : new NBTTagCompound();
-//            if (itemTag.hasKey(key)) {
-//                return itemTag.getString(key);
-//            }
-//        }
+        net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
+        if (nmsItem != null) {
+            NBTTagCompound itemTag = nmsItem.getTag();
+            if (itemTag != null && itemTag.hasKey(key)) {
+                return itemTag.getString(key);
+            }
+        }
         return null;
     }
 
 
     /**
-     * 设置物品NBT数据 List
+     * 获取物品NBT数据 List
      *
      * @param item ItemStack
      * @param key  String
@@ -102,14 +106,19 @@ public class NbtUtil {
      */
     public List<String> getNBTList(ItemStack item, String key) {
         List<String> list = new ArrayList<>();
-//        net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
-//        if (nmsItem != null) {
-//            NBTTagCompound itemTag = nmsItem.hasTag() ? nmsItem.getTag() : new NBTTagCompound();
-//            NBTTagList tagList = itemTag.hasKey(key) ? itemTag.getList(key, 8) : new NBTTagList();
-//            for (int i = 0; i < tagList.size(); i++) {
-//                list.add(tagList.getString(i));
-//            }
-//        }
+        net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
+        if (nmsItem != null) {
+            NBTTagCompound itemTag = nmsItem.getTag();
+            if (itemTag != null && itemTag.hasKey(key)) {
+                NBTTagList tagList = itemTag.getList(key, 8);
+                for (NBTBase nbtBase : tagList) {
+                    list.add(nbtBase.asString());
+                }
+//                for (int i = 0; i < tagList.size(); i++) {
+//                    list.add(tagList.getString(i));
+//                }
+            }
+        }
         return list;
     }
 
@@ -121,12 +130,8 @@ public class NbtUtil {
      * @return Boolean
      */
     public boolean hasNBT(ItemStack item, String key) {
-//        net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
-//        if (nmsItem != null) {
-//            NBTTagCompound itemTag = nmsItem.hasTag() ? nmsItem.getTag() : new NBTTagCompound();
-//            return itemTag.hasKey(key);
-//        }
-        return false;
+        net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
+        return nmsItem != null && nmsItem.hasTag() && nmsItem.getTag().hasKey(key);
     }
 
 
@@ -138,16 +143,20 @@ public class NbtUtil {
      * @return boolean
      */
     public boolean removeNBT(ItemStack item, String key) {
-//        net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
-//        if (nmsItem != null) {
-//            NBTTagCompound itemTag = nmsItem.hasTag() ? nmsItem.getTag() : new NBTTagCompound();
-//            if (itemTag.hasKey(key)) {
+        net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
+        if (nmsItem != null) {
+            nmsItem.removeTag(key);
+            item.setItemMeta((CraftItemStack.asBukkitCopy(nmsItem)).getItemMeta());
+            return true;
+
+//            NBTTagCompound itemTag = nmsItem.getTag();
+//            if (itemTag != null && itemTag.hasKey(key)) {
 //                itemTag.remove(key);
 //                nmsItem.setTag(itemTag);
 //                item.setItemMeta((CraftItemStack.asBukkitCopy(nmsItem)).getItemMeta());
+//                return true;
 //            }
-//            return true;
-//        }
+        }
         return false;
     }
 }
