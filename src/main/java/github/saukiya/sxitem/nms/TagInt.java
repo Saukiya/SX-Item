@@ -11,9 +11,4 @@ public class TagInt extends TagNumber<Integer> {
     public Integer getValue() {
         return value;
     }
-
-    @Override
-    public String toString() {
-        return getValue().toString();
-    }
 }
