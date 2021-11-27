@@ -3,6 +3,7 @@ package github.saukiya.sxitem.data.random;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.util.Tuple;
 import lombok.Getter;
+import lombok.experimental.PackagePrivate;
 import org.apache.commons.lang.text.StrMatcher;
 import org.apache.commons.lang.text.StrLookup;
 import org.apache.commons.lang.text.StrSubstitutor;
@@ -28,12 +29,12 @@ public class RandomDocker extends StrLookup {
 
     static final Pattern REGEX = Pattern.compile("^.:.+?");
 
+    final StrSubstitutor ss = new StrSubstitutor(this, PRE_MATCHER, SUF_MATCHER, StrSubstitutor.DEFAULT_ESCAPE);
+
     @Getter
-    private final Map<String, String> lockMap = new HashMap<>();
+    final Map<String, String> lockMap = new HashMap<>();
 
-    private final StrSubstitutor ss = new StrSubstitutor(this, PRE_MATCHER, SUF_MATCHER, StrSubstitutor.DEFAULT_ESCAPE);
-
-    private Map<String, List<Tuple<Double, String>>> localMap = null;
+    Map<String, List<Tuple<Double, String>>> localMap = null;
 
     public RandomDocker(String local) {
         this();
