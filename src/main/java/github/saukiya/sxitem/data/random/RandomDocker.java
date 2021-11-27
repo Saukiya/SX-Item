@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
  * 2. docker.setRandom() -> get()
  * 3. docker.getLockMap()
  */
+@PackagePrivate
 public class RandomDocker extends StrLookup {
 
     static final StrMatcher PRE_MATCHER = StrMatcher.charMatcher('<');
