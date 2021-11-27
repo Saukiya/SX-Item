@@ -7,7 +7,7 @@ import github.saukiya.sxitem.data.item.sub.GeneratorImport;
 import github.saukiya.sxitem.data.random.RandomStringManager;
 import github.saukiya.sxitem.util.Config;
 import github.saukiya.sxitem.util.Message;
-import github.saukiya.sxitem.util.NbtUtil;
+import github.saukiya.sxitem.util.NbtUtilDeprecated;
 import github.saukiya.sxitem.util.Placeholders;
 import lombok.Getter;
 import lombok.Setter;
@@ -53,7 +53,7 @@ public class SXItem extends JavaPlugin {
     private static ItemDataManager itemDataManager;
 
     @Getter
-    private static NbtUtil nbtUtil;
+    private static NbtUtilDeprecated nbtUtil;
 
     @Override
     public void onLoad() {
@@ -71,7 +71,7 @@ public class SXItem extends JavaPlugin {
         new Metrics(this, 11948);
         long oldTimes = System.currentTimeMillis();
         Placeholders.setup();
-        nbtUtil = new NbtUtil();
+        nbtUtil = new NbtUtilDeprecated();
 
         randomStringManager = new RandomStringManager();
         itemDataManager = new ItemDataManager();
