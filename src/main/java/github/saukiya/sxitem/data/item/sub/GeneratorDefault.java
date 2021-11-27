@@ -6,6 +6,7 @@ import github.saukiya.sxitem.data.item.IUpdate;
 import github.saukiya.sxitem.data.random.RandomDocker;
 import github.saukiya.sxitem.util.MessageUtil;
 import lombok.NoArgsConstructor;
+import lombok.experimental.PackagePrivate;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
  * @author Saukiya
  */
 @NoArgsConstructor
+@PackagePrivate
 public class GeneratorDefault implements IGenerator, IUpdate {
 
     String pathName;
