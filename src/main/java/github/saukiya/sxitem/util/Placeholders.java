@@ -1,6 +1,7 @@
 package github.saukiya.sxitem.util;
 
 import github.saukiya.sxitem.SXItem;
+import github.saukiya.sxitem.data.random.RandomDocker;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 
@@ -10,6 +11,7 @@ import org.bukkit.entity.Player;
 
 public class Placeholders extends PlaceholderExpansion {
 
+    public static final RandomDocker RANDOM = new RandomDocker();
 
     public static void setup() {
         new Placeholders().register();
@@ -32,9 +34,6 @@ public class Placeholders extends PlaceholderExpansion {
 
     @Override
     public String onPlaceholderRequest(Player player, String str) {
-        if (str.startsWith("random")) {
-            //TODO 添加随机字符的占位符
-        }
-        return "Error: %si_" + str + "%";
+        return RANDOM.lookup(str);
     }
 }
