@@ -11,7 +11,12 @@ public class TagEnd implements TagBase {
     private static final TagEnd inst = new TagEnd();
 
     @Override
-    public String getValue() {
+    public Object getValue() {
+        return null;
+    }
+
+    @Override
+    public String toString() {
         return "END";
     }
 }
