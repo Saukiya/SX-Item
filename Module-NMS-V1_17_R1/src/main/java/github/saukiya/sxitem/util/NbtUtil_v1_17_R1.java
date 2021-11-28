@@ -1,11 +1,49 @@
 package github.saukiya.sxitem.util;
 
 import github.saukiya.sxitem.nms.*;
+import lombok.SneakyThrows;
 import net.minecraft.nbt.*;
+import org.bukkit.configuration.MemoryConfiguration;
 
 import java.util.stream.Collectors;
 
 public class NbtUtil_v1_17_R1 extends NbtUtil {
+
+
+    @SneakyThrows
+    public TagBase asTagCopyTest(Object nbtBase, NbtDataOut output) {
+        TagBase tagBase = null;
+        if (output == null) {
+            output = new NbtDataOut();
+        }
+        if (nbtBase instanceof NBTBase) {
+            if (nbtBase instanceof NBTTagCompound) {
+                NBTTagCompound nbtTagCompound = (NBTTagCompound) nbtBase;
+                TagCompound map = new TagCompound();
+                for (String key : nbtTagCompound.getKeys()) {
+                    map.put(key, asTagCopyTest(nbtTagCompound.get(key), output));
+                }
+                tagBase = map;
+            } else if (nbtBase instanceof NBTTagList) {
+                NBTTagList nbtTagList = (NBTTagList) nbtBase;
+                TagList tagList = new TagList();
+                for (int i = 0; i < nbtTagList.size(); i++) {
+                    tagList.add(asTagCopyTest(nbtTagList.get(i), output));
+                }
+                tagBase = tagList;
+            } else if (nbtBase instanceof NBTTagByteArray) {
+                tagBase = new TagByteArray(((NBTTagByteArray) nbtBase).getBytes());
+            } else if (nbtBase instanceof NBTTagIntArray) {
+                tagBase = new TagIntArray(((NBTTagIntArray) nbtBase).getInts());
+            } else if (nbtBase instanceof NBTTagLongArray) {
+                tagBase = new TagLongArray(((NBTTagLongArray) nbtBase).getLongs());
+            } else {
+                ((NBTBase) nbtBase).write(output);
+                tagBase = output.read();
+            }
+        }
+        return tagBase;
+    }
 
     @Override
     public TagBase asTagCopy(Object nbtBase) {
@@ -13,18 +51,9 @@ public class NbtUtil_v1_17_R1 extends NbtUtil {
         if (nbtBase instanceof NBTBase) {
             if (nbtBase instanceof NBTTagCompound) {
                 NBTTagCompound nbtTagCompound = (NBTTagCompound) nbtBase;
-                TagCompound tagCompound = new TagCompound();
-                for (String key : nbtTagCompound.getKeys()) {
-                    tagCompound.put(key, asTagCopy(nbtTagCompound.get(key)));
-                }
-                tagBase = tagCompound;
+                tagBase = nbtTagCompound.getKeys().stream().collect(Collectors.toMap(key -> key, key -> asTagCopy(nbtTagCompound.get(key)), (a, b) -> b, TagCompound::new));
             } else if (nbtBase instanceof NBTTagList) {
-                NBTTagList nbtTagList = (NBTTagList) nbtBase;
-                TagList tagList = new TagList();
-                for (NBTBase base : nbtTagList) {
-                    tagList.add(asTagCopy(base));
-                }
-                tagBase = tagList;
+                tagBase = ((NBTTagList) nbtBase).stream().map(this::asTagCopy).collect(Collectors.toCollection(TagList::new));
             } else if (nbtBase instanceof NBTTagByteArray) {
                 tagBase = new TagByteArray(((NBTTagByteArray) nbtBase).getBytes());
             } else if (nbtBase instanceof NBTTagIntArray) {
@@ -50,6 +79,11 @@ public class NbtUtil_v1_17_R1 extends NbtUtil {
             }
         }
         return tagBase;
+    }
+
+    public TagBase asTagCopy(MemoryConfiguration config) {
+
+        return null;
     }
 
     @Override
