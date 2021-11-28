@@ -3,12 +3,15 @@ package github.saukiya.sxitem.nms;
 import com.google.common.collect.Lists;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class TagCompound extends HashMap<String, TagBase> implements TagBase<HashMap<String,TagBase>> {
+public class TagCompound extends HashMap<String, TagBase> implements TagBase<HashMap<String,?>> {
 
     @Override
-    public HashMap<String, TagBase> getValue() {
-        return this;
+    public HashMap<String, ?> getValue() {
+        HashMap<String, Object> map = new HashMap<>();
+        this.forEach((key, value) -> map.put(key, value.getValue()));
+        return map;
     }
 
     @Override
