@@ -7,6 +7,8 @@ import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
 import lombok.SneakyThrows;
 import net.minecraft.server.v1_8_R3.*;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.DataInputStream;
 import java.io.DataOutput;
@@ -16,6 +18,11 @@ import java.util.stream.IntStream;
 public class NbtUtil_v1_8_R3 extends NbtUtil {
 
     private final NBTTagEnd nbtTagEnd = newPrivateInstance(NBTTagEnd.class);
+
+    @Override
+    public TagCompound getItemNBT(ItemStack itemStack) {
+        return asTagCompoundCopy(CraftItemStack.asNMSCopy(itemStack).getTag());
+    }
 
     @SneakyThrows
     @Override
@@ -42,9 +49,7 @@ public class NbtUtil_v1_8_R3 extends NbtUtil {
                 tagBase = nbtTagCompound.c().stream().collect(Collectors.toMap(key -> key, key -> asTagCopy(nbtTagCompound.get(key)), (a, b) -> b, TagCompound::new));
             } else if (nbtBase instanceof NBTTagList) {
                 NBTTagList nbtTagList = (NBTTagList) nbtBase;
-                TagListBase tagListBase = nbtTagList.f() == 4 ? new TagLongArray() : new TagList();
-                IntStream.range(0, nbtTagList.size()).mapToObj(i -> asTagCopy(nbtTagList.g(i))).forEach(tagListBase::add);
-                tagBase = tagListBase;
+                tagBase = IntStream.range(0, nbtTagList.size()).mapToObj(i -> asTagCopy(nbtTagList.g(i))).collect(Collectors.toCollection(TagList::new));
             } else if (nbtBase instanceof NBTTagByteArray) {
                 tagBase = new TagByteArray(((NBTTagByteArray) nbtBase).c());
             } else if (nbtBase instanceof NBTTagIntArray) {
