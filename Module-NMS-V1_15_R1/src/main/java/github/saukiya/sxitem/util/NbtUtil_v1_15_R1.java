@@ -1,11 +1,34 @@
 package github.saukiya.sxitem.util;
 
 import github.saukiya.sxitem.nms.*;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
+import io.netty.buffer.Unpooled;
+import lombok.SneakyThrows;
 import net.minecraft.server.v1_15_R1.*;
 
+import java.io.DataInputStream;
+import java.io.DataOutput;
 import java.util.stream.Collectors;
 
 public class NbtUtil_v1_15_R1 extends NbtUtil {
+
+    @SneakyThrows
+    @Override
+    public TagCompound asTagCompoundCopy(Object nbtTagCompound) {
+        ByteBuf buf = Unpooled.buffer();
+        NBTCompressedStreamTools.a((NBTTagCompound) nbtTagCompound, (DataOutput) new ByteBufOutputStream(buf));
+        return (TagCompound) readTagBase(new ByteBufInputStream(buf));
+    }
+
+    @SneakyThrows
+    @Override
+    public NBTTagCompound asNMSCompoundCopy(TagCompound tagCompound) {
+        ByteBuf buf = Unpooled.buffer();
+        writeTagBase(tagCompound, new ByteBufOutputStream(buf));
+        return NBTCompressedStreamTools.a(new DataInputStream(new ByteBufInputStream(buf)), NBTReadLimiter.a);
+    }
 
     @Override
     public TagBase asTagCopy(Object nbtBase) {

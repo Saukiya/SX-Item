@@ -1,48 +1,33 @@
 package github.saukiya.sxitem.util;
 
 import github.saukiya.sxitem.nms.*;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
+import io.netty.buffer.Unpooled;
 import lombok.SneakyThrows;
 import net.minecraft.nbt.*;
-import org.bukkit.configuration.MemoryConfiguration;
 
+import java.io.DataInputStream;
+import java.io.DataOutput;
 import java.util.stream.Collectors;
 
 public class NbtUtil_v1_17_R1 extends NbtUtil {
 
+    @SneakyThrows
+    @Override
+    public TagCompound asTagCompoundCopy(Object nbtTagCompound) {
+        ByteBuf buf = Unpooled.buffer();
+        NBTCompressedStreamTools.a((NBTTagCompound) nbtTagCompound, (DataOutput) new ByteBufOutputStream(buf));
+        return (TagCompound) readTagBase(new ByteBufInputStream(buf));
+    }
 
     @SneakyThrows
-    public TagBase asTagCopyTest(Object nbtBase, NbtDataOut output) {
-        TagBase tagBase = null;
-        if (output == null) {
-            output = new NbtDataOut();
-        }
-        if (nbtBase instanceof NBTBase) {
-            if (nbtBase instanceof NBTTagCompound) {
-                NBTTagCompound nbtTagCompound = (NBTTagCompound) nbtBase;
-                TagCompound map = new TagCompound();
-                for (String key : nbtTagCompound.getKeys()) {
-                    map.put(key, asTagCopyTest(nbtTagCompound.get(key), output));
-                }
-                tagBase = map;
-            } else if (nbtBase instanceof NBTTagList) {
-                NBTTagList nbtTagList = (NBTTagList) nbtBase;
-                TagList tagList = new TagList();
-                for (int i = 0; i < nbtTagList.size(); i++) {
-                    tagList.add(asTagCopyTest(nbtTagList.get(i), output));
-                }
-                tagBase = tagList;
-            } else if (nbtBase instanceof NBTTagByteArray) {
-                tagBase = new TagByteArray(((NBTTagByteArray) nbtBase).getBytes());
-            } else if (nbtBase instanceof NBTTagIntArray) {
-                tagBase = new TagIntArray(((NBTTagIntArray) nbtBase).getInts());
-            } else if (nbtBase instanceof NBTTagLongArray) {
-                tagBase = new TagLongArray(((NBTTagLongArray) nbtBase).getLongs());
-            } else {
-                ((NBTBase) nbtBase).write(output);
-                tagBase = output.read();
-            }
-        }
-        return tagBase;
+    @Override
+    public NBTTagCompound asNMSCompoundCopy(TagCompound tagCompound) {
+        ByteBuf buf = Unpooled.buffer();
+        writeTagBase(tagCompound, new ByteBufOutputStream(buf));
+        return NBTCompressedStreamTools.a(new DataInputStream(new ByteBufInputStream(buf)), NBTReadLimiter.a);
     }
 
     @Override
@@ -79,11 +64,6 @@ public class NbtUtil_v1_17_R1 extends NbtUtil {
             }
         }
         return tagBase;
-    }
-
-    public TagBase asTagCopy(MemoryConfiguration config) {
-
-        return null;
     }
 
     @Override
