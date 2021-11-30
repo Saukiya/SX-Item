@@ -1,10 +1,8 @@
 package github.saukiya.sxitem.util;
 
-import github.saukiya.sxitem.nms.TagBase;
-import github.saukiya.sxitem.nms.TagCompound;
-import github.saukiya.sxitem.nms.TagEnd;
-import github.saukiya.sxitem.nms.TagType;
+import github.saukiya.sxitem.nms.*;
 import lombok.SneakyThrows;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -46,6 +44,8 @@ public abstract class NbtUtil extends NMS {
             return TagType.getMethods(typeId).readTagBase(dataInput, 0);
         }
     }
+
+    public abstract TagCompound getItemNBT(ItemStack itemStack);
 
     /**
      * nmsNBTCompound转sxNBTCompound
