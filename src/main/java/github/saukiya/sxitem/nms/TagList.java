@@ -1,30 +1,26 @@
 package github.saukiya.sxitem.nms;
 
 
-import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
 public class TagList extends TagListBase<TagBase> {
 
-    protected static final TagType.Method<TagList> typeMethod = new TagType.Method<TagList>() {
-        @Override
-        public TagList readTagBase(DataInput dataInput, int depth) throws IOException {
-            if (depth > 512) {
-                throw new RuntimeException("Tried to read NBT tag with too high complexity, depth > 512");
+    protected static final TagType.Method<TagList> typeMethod = (dataInput, depth) -> {
+        if (depth > 512) {
+            throw new RuntimeException("Tried to read NBT tag with too high complexity, depth > 512");
+        } else {
+            byte typeId = dataInput.readByte();
+            int length = dataInput.readInt();
+            if (typeId == 0 && length > 0) {
+                throw new RuntimeException("Missing type on ListTag");
             } else {
-                byte typeId = dataInput.readByte();
-                int length = dataInput.readInt();
-                if (typeId == 0 && length > 0) {
-                    throw new RuntimeException("Missing type on ListTag");
-                } else {
-                    TagType.Method method = TagType.getMethods(typeId);
-                    TagList tagList = new TagList();
-                    for (int i = 0; i < length; ++i) {
-                        tagList.add(method.readTagBase(dataInput, depth + 1));
-                    }
-                    return tagList;
+                TagType.Method method = TagType.getMethods(typeId);
+                TagList tagList = new TagList();
+                for (int i = 0; i < length; ++i) {
+                    tagList.add(method.readTagBase(dataInput, depth + 1));
                 }
+                return tagList;
             }
         }
     };
