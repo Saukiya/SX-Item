@@ -7,12 +7,19 @@ import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
 import lombok.SneakyThrows;
 import net.minecraft.server.v1_15_R1.*;
+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.util.stream.Collectors;
 
 public class NbtUtil_v1_15_R1 extends NbtUtil {
+
+    @Override
+    public TagCompound getItemNBT(ItemStack itemStack) {
+        return asTagCompoundCopy(CraftItemStack.asNMSCopy(itemStack).getTag());
+    }
 
     @SneakyThrows
     @Override

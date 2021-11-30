@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 public class NbtUtil_v1_17_R1 extends NbtUtil {
 
+    @Override
     public TagCompound getItemNBT(ItemStack itemStack) {
         return asTagCompoundCopy(CraftItemStack.asNMSCopy(itemStack).getTag());
     }
