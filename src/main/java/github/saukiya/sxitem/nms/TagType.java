@@ -37,9 +37,8 @@ public enum TagType {
     public interface Method<T extends TagBase> {
 
         /**
-         *
          * @param dataInput 数据读取
-         * @param depth 深度值 暂时保留
+         * @param depth     深度值 暂时保留
          * @return TagBase
          * @throws IOException 不可能出现的IO报错
          */

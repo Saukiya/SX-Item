@@ -5,6 +5,7 @@ import lombok.Getter;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
+
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.Collections;

@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-public class TagCompound extends HashMap<String, TagBase> implements TagBase<HashMap<String,?>> {
+public class TagCompound extends HashMap<String, TagBase> implements TagBase<HashMap<String, ?>> {
 
     protected static final TagType.Method<TagCompound> typeMethod = new TagType.Method<TagCompound>() {
         @Override
@@ -19,7 +19,7 @@ public class TagCompound extends HashMap<String, TagBase> implements TagBase<Has
                 TagCompound tagCompound = new TagCompound();
 
                 byte typeId;
-                while((typeId = dataInput.readByte()) != 0) {
+                while ((typeId = dataInput.readByte()) != 0) {
                     String key = dataInput.readUTF();
                     TagBase tagBase = TagType.getMethods(typeId).readTagBase(dataInput, depth + 1);
                     tagCompound.put(key, tagBase);

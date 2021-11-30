@@ -3,21 +3,20 @@ package github.saukiya.sxitem.util;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 public abstract class NMS {
 
-    public static String version = "v1_17_R1";
-//    public static String version = Bukkit.getServer().getClass().getPackage().getName().split("^.+\\.")[1];
-
     public static final Map<Class<? extends NMS>, NMS> INST_MAP = new HashMap<>();
-
+//    public static String version = Bukkit.getServer().getClass().getPackage().getName().split("^.+\\.")[1];
     private static final Map<Class<?>, Map<String, Field>> FIELD_CACHE_MAP = new HashMap<>();
-
     private static final Map<Class<?>, Class<?>> CLASS_WRAPS_MAP = new HashMap<>();
+    public static String version = "v1_17_R1";
 
     static {
         CLASS_WRAPS_MAP.put(void.class, Void.class);
@@ -49,7 +48,8 @@ public abstract class NMS {
 
     /**
      * 访问私有字段
-     * @param target 目标
+     *
+     * @param target    目标
      * @param fieldName 字段名
      * @return 返回字段
      */
@@ -62,7 +62,8 @@ public abstract class NMS {
                     try {
                         temp = target.getClass().getDeclaredField(fieldName);
                         temp.setAccessible(true);
-                    } catch (NoSuchFieldException ignored) { }
+                    } catch (NoSuchFieldException ignored) {
+                    }
                     return temp;
                 });
         return (T) privateField.get(target);
@@ -70,8 +71,9 @@ public abstract class NMS {
 
     /**
      * 实例化私有构造器
+     *
      * @param target 目标Class
-     * @param args 构造参数
+     * @param args   构造参数
      * @return 返回实例
      */
     @SneakyThrows
@@ -89,7 +91,7 @@ public abstract class NMS {
         throw new InstantiationException();
     }
 
-    private static boolean checkClass(@NonNull Class<?> c1,@NonNull Class<?> c2) {
+    private static boolean checkClass(@Nonnull Class<?> c1, @NonNull Class<?> c2) {
         if (c1.isPrimitive()) {
             return checkClass(CLASS_WRAPS_MAP.get(c1), c2);
         } else if (c2.isPrimitive()) {

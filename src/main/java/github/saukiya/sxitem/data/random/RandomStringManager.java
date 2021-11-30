@@ -45,7 +45,7 @@ public class RandomStringManager {
     public void loadData() {
         globalMap.clear();
         localMap.clear();
-        if (!file.exists() || Objects.requireNonNull(file.listFiles()).length == 0) {
+        if (!file.exists() || file.listFiles().length == 0) {
             SXItem.getInst().saveResource("RandomString/NewRandom.yml", true);
             SXItem.getInst().saveResource("RandomString/DefaultRandom.yml", true);
             SXItem.getInst().saveResource("RandomString/10Level/Random.yml", true);
@@ -60,7 +60,7 @@ public class RandomStringManager {
      * @param files File
      */
     private void loadRandomFile(File files) {
-        for (File file : Objects.requireNonNull(files.listFiles())) {
+        for (File file : files.listFiles()) {
             if (file.isDirectory()) {
                 loadRandomFile(file);
             } else {
