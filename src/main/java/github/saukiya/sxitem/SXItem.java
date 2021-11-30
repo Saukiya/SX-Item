@@ -29,17 +29,13 @@ public class SXItem extends JavaPlugin {
 
     @Getter
     private static final ThreadLocal<SimpleDateFormat> sdf = ThreadLocal.withInitial(() -> new SimpleDateFormat(Config.getConfig().getString(Config.TIME_FORMAT)));
-
+    @Getter
+    private static final Random random = new Random();
+    @Getter
+    private static final ScriptEngineManager jsManager = new ScriptEngineManager();
     @Getter
     @Setter
     private static DecimalFormat df = new DecimalFormat("#.##");
-
-    @Getter
-    private static final Random random = new Random();
-
-    @Getter
-    private static final ScriptEngineManager jsManager = new ScriptEngineManager();
-
     @Getter
     private static SXItem inst = null;
 

@@ -2,7 +2,9 @@ package github.saukiya.sxitem.util;
 
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.*;
-import net.minecraft.server.v1_8_R3.*;
+import net.minecraft.server.v1_8_R3.NBTTagCompound;
+import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
+import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -23,7 +25,8 @@ public class MessageUtil_v1_8_R3 extends MessageUtil {
         CraftPlayer craftPlayer = (CraftPlayer) player;
 
         PacketPlayOutChat packet = new PacketPlayOutChat(null, (byte) ChatMessageType.ACTION_BAR.ordinal());
-        packet.components =  new BaseComponent[]{ new TextComponent(message)};;
+        packet.components = new BaseComponent[]{new TextComponent(message)};
+        ;
         craftPlayer.getHandle().playerConnection.sendPacket(packet);
     }
 
@@ -53,7 +56,8 @@ public class MessageUtil_v1_8_R3 extends MessageUtil {
     @Override
     public TextComponent getTextComponent(String msg, String command, String showText) {
         TextComponent tc = new TextComponent(msg);
-        if (showText != null) tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[]{ new TextComponent("§7" + showText)}));
+        if (showText != null)
+            tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[]{new TextComponent("§7" + showText)}));
         if (command != null) tc.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
         return tc;
     }
@@ -69,7 +73,7 @@ public class MessageUtil_v1_8_R3 extends MessageUtil {
         ItemMeta meta = item.getItemMeta();
         BaseComponent bc = meta != null && meta.hasDisplayName() ? new TextComponent(meta.getDisplayName()) : showItem(item.getType());
         NBTTagCompound nbt = CraftItemStack.asNMSCopy(item).save(new NBTTagCompound());
-        bc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new BaseComponent[]{ new TextComponent(nbt.toString())}));
+        bc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new BaseComponent[]{new TextComponent(nbt.toString())}));
         return bc;
     }
 }
