@@ -15,7 +15,8 @@ public class MessageUtil_v1_13_R2 extends MessageUtil {
     @Override
     public TextComponent getTextComponent(String msg, String command, String showText) {
         TextComponent tc = new TextComponent(msg);
-        if (showText != null) tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[]{ new TextComponent("§7" + showText)}));
+        if (showText != null)
+            tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[]{new TextComponent("§7" + showText)}));
         if (command != null) tc.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
         return tc;
     }
@@ -31,7 +32,7 @@ public class MessageUtil_v1_13_R2 extends MessageUtil {
         ItemMeta meta = item.getItemMeta();
         BaseComponent bc = meta != null && meta.hasDisplayName() ? new TextComponent(meta.getDisplayName()) : showItem(item.getType());
         NBTTagCompound nbt = CraftItemStack.asNMSCopy(item).save(new NBTTagCompound());
-        bc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new BaseComponent[]{ new TextComponent(nbt.toString())}));
+        bc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new BaseComponent[]{new TextComponent(nbt.toString())}));
         return bc;
     }
 }

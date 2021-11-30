@@ -15,7 +15,7 @@ public class TagLongArray extends TagListBase<TagLong> {
         public TagLongArray readTagBase(DataInput dataInput, int depth) throws IOException {
             int length = dataInput.readInt();
             TagLongArray tagLongArray = new TagLongArray();
-            for(int i = 0; i < length; ++i) {
+            for (int i = 0; i < length; ++i) {
                 tagLongArray.add(new TagLong(dataInput.readLong()));
             }
             return tagLongArray;

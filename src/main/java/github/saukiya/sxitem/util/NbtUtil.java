@@ -17,7 +17,8 @@ public abstract class NbtUtil extends NMS {
 
     /**
      * 向IO流输出sxNBT
-     * @param tagBase 需要输出的sxNBT
+     *
+     * @param tagBase    需要输出的sxNBT
      * @param dataOutput 例如ByteBufOutputStream
      */
     @SneakyThrows

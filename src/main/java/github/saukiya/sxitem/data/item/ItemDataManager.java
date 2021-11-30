@@ -72,7 +72,7 @@ public class ItemDataManager implements Listener {
      */
     public void loadItemData() {
         itemMap.clear();
-        if (!itemFiles.exists() || Objects.requireNonNull(itemFiles.listFiles()).length == 0) {
+        if (!itemFiles.exists() || itemFiles.listFiles().length == 0) {
             SXItem.getInst().saveResource("Item/Default/Default.yml", true);
             SXItem.getInst().saveResource("Item/NoLoad/Default.yml", true);
         }
@@ -95,7 +95,7 @@ public class ItemDataManager implements Listener {
      * @param files File
      */
     private void loadItem(File files) {
-        for (File file : Objects.requireNonNull(files.listFiles())) {
+        for (File file : files.listFiles()) {
             if (file.isDirectory()) {
                 if (!file.getName().startsWith("NoLoad")) {
                     loadItem(file);

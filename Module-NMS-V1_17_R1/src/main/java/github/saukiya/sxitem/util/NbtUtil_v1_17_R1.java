@@ -74,30 +74,30 @@ public class NbtUtil_v1_17_R1 extends NbtUtil {
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
             tagCompound.forEach((key, value) -> nbtTagCompound.set(key, asNMSCopy(value)));
             nbtBase = nbtTagCompound;
-        } else if(tagBase instanceof TagList) {
+        } else if (tagBase instanceof TagList) {
             TagList tagList = (TagList) tagBase;
             nbtBase = tagList.stream().map(this::asNMSCopy).collect(Collectors.toCollection(NBTTagList::new));
-        } else if(tagBase instanceof TagByteArray) {
+        } else if (tagBase instanceof TagByteArray) {
             nbtBase = new NBTTagByteArray(((TagByteArray) tagBase).byteArray());
-        } else if(tagBase instanceof TagIntArray) {
+        } else if (tagBase instanceof TagIntArray) {
             nbtBase = new NBTTagIntArray(((TagIntArray) tagBase).intArray());
-        } else if(tagBase instanceof TagLongArray) {
+        } else if (tagBase instanceof TagLongArray) {
             nbtBase = new NBTTagLongArray(((TagLongArray) tagBase).longArray());
-        } else if(tagBase instanceof TagByte) {
+        } else if (tagBase instanceof TagByte) {
             nbtBase = NBTTagByte.a(((TagNumber) tagBase).byteValue());
-        } else if(tagBase instanceof TagShort) {
+        } else if (tagBase instanceof TagShort) {
             nbtBase = NBTTagShort.a(((TagNumber) tagBase).shortValue());
-        } else if(tagBase instanceof TagInt) {
+        } else if (tagBase instanceof TagInt) {
             nbtBase = NBTTagInt.a(((TagNumber) tagBase).intValue());
-        } else if(tagBase instanceof TagFloat) {
+        } else if (tagBase instanceof TagFloat) {
             nbtBase = NBTTagFloat.a(((TagNumber) tagBase).floatValue());
-        } else if(tagBase instanceof TagDouble) {
+        } else if (tagBase instanceof TagDouble) {
             nbtBase = NBTTagDouble.a(((TagNumber) tagBase).doubleValue());
-        } else if(tagBase instanceof TagLong) {
+        } else if (tagBase instanceof TagLong) {
             nbtBase = NBTTagLong.a(((TagNumber) tagBase).longValue());
-        } else if(tagBase instanceof TagString) {
+        } else if (tagBase instanceof TagString) {
             nbtBase = NBTTagString.a(((TagString) tagBase).getValue());
-        } else if(tagBase instanceof TagEnd) {
+        } else if (tagBase instanceof TagEnd) {
             nbtBase = NBTTagEnd.b;
         }
         return nbtBase;

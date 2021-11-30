@@ -13,9 +13,9 @@ allprojects {
         mavenCentral()
 
         //Github Project
-        maven {url "https://jitpack.io"}
-        //bstats-bukkit
-        maven {url "https://repo.codemc.org/repository/maven-public"}
+        maven { url "https://jitpack.io" }
+        //bStats-bukkit
+        maven { url "https://repo.codemc.org/repository/maven-public" }
     }
 
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -40,6 +40,7 @@ dependencies {
     implementation 'org.bstats:bstats-bukkit:2.2.1'
 
     testImplementation fileTree('lib')
+    testImplementation getSubprojects()
     testImplementation 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
     testImplementation 'org.projectlombok:lombok:1.18.22'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
@@ -48,7 +49,7 @@ dependencies {
 shadowJar {
     // 过滤未使用的依赖
     minimize()
-    // bstats重定向
+    // bStats重定向
     relocate('org.bstats', 'github.saukiya.sxitem.bstats')
     // 获得子模块的classes文件
     getSubprojects().forEach(sub -> {
