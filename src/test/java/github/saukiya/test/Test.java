@@ -1,6 +1,10 @@
 package github.saukiya.test;
 
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.RandomDocker;
 import github.saukiya.sxitem.nms.TagCompound;
@@ -23,10 +27,18 @@ public class Test {
 
     @SneakyThrows
     public static void main(String[] args) {
-//        conversionNBT();
+        NBTTagCompound nbtTagCompound = getNBT();
+        TagCompound tagCompound = NbtUtil.getInst().asTagCompoundCopy(nbtTagCompound);
 
-
+        JsonParser jsonParser = new JsonParser();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        System.out.println(gson.toJson(jsonParser.parse(tagCompound.toString()).getAsJsonObject()));
+        System.out.println("----------");
+        System.out.println(gson.toJson(jsonParser.parse(tagCompound.getValue().toString()).getAsJsonObject()));
+        System.out.println("----------");
+        System.out.println(tagCompound.getValue());
     }
+
 
     public static NBTTagCompound getNBT() {
         NBTTagList subTagList1 = new NBTTagList();
