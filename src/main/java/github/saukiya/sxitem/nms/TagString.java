@@ -1,18 +1,11 @@
 package github.saukiya.sxitem.nms;
 
-import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
 public class TagString implements TagBase<String> {
 
-    protected static final TagType.Method<TagString> typeMethod = new TagType.Method<TagString>() {
-        @Override
-        public TagString readTagBase(DataInput dataInput, int depth) throws IOException {
-            String str = dataInput.readUTF();
-            return new TagString(str);
-        }
-    };
+    protected static final TagType.Method<TagString> typeMethod = (dataInput, depth) -> new TagString(dataInput.readUTF());
 
     private final String value;
 

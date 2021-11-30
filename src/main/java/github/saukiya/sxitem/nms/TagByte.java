@@ -1,17 +1,11 @@
 package github.saukiya.sxitem.nms;
 
-import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
 public class TagByte extends TagNumber<Byte> {
 
-    protected static final TagType.Method<TagByte> typeMethod = new TagType.Method<TagByte>() {
-        @Override
-        public TagByte readTagBase(DataInput dataInput, int depth) throws IOException {
-            return new TagByte(dataInput.readByte());
-        }
-    };
+    protected static final TagType.Method<TagByte> typeMethod = (dataInput, depth) -> new TagByte(dataInput.readByte());
 
     private final byte value;
 
