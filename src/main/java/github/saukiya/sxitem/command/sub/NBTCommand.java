@@ -2,6 +2,7 @@ package github.saukiya.sxitem.command.sub;
 
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.command.SubCommand;
+import github.saukiya.sxitem.util.NbtUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -40,7 +41,7 @@ public class NBTCommand extends SubCommand {
             SXItem.getItemDataManager().sendItemMapToPlayer(sender);
             return;
         }
-        String str = SXItem.getNbtUtil().getAllNBT(item);
+        String str = NbtUtil.getInst().getItemNBT(item).toJson();
         sender.sendMessage("\n\n" + str + "\n");
     }
 
