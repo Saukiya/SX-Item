@@ -15,6 +15,10 @@ import javax.annotation.Nullable;
 
 public abstract class MessageUtil extends NMS {
 
+    public static MessageUtil getInst() {
+        return NMS.getInst(MessageUtil.class);
+    }
+
     /**
      * 发送消息给玩家 - 支持PlaceholderAPI
      *
@@ -59,8 +63,4 @@ public abstract class MessageUtil extends NMS {
     public abstract TranslatableComponent showItem(@Nonnull Material material);
 
     public abstract BaseComponent showItem(@Nullable ItemStack item);
-
-    public static MessageUtil getInst() {
-        return NMS.getInst(MessageUtil.class);
-    }
 }
