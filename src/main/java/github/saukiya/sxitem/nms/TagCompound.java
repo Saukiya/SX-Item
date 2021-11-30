@@ -1,6 +1,5 @@
 package github.saukiya.sxitem.nms;
 
-import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,22 +9,19 @@ import java.util.List;
 
 public class TagCompound extends HashMap<String, TagBase> implements TagBase<HashMap<String, ?>> {
 
-    protected static final TagType.Method<TagCompound> typeMethod = new TagType.Method<TagCompound>() {
-        @Override
-        public TagCompound readTagBase(DataInput dataInput, int depth) throws IOException {
-            if (depth > 512) {
-                throw new RuntimeException("Tried to read NBT tag with too high complexity, depth > 512");
-            } else {
-                TagCompound tagCompound = new TagCompound();
+    protected static final TagType.Method<TagCompound> typeMethod = (dataInput, depth) -> {
+        if (depth > 512) {
+            throw new RuntimeException("Tried to read NBT tag with too high complexity, depth > 512");
+        } else {
+            TagCompound tagCompound = new TagCompound();
 
-                byte typeId;
-                while ((typeId = dataInput.readByte()) != 0) {
-                    String key = dataInput.readUTF();
-                    TagBase tagBase = TagType.getMethods(typeId).readTagBase(dataInput, depth + 1);
-                    tagCompound.put(key, tagBase);
-                }
-                return tagCompound;
+            byte typeId;
+            while ((typeId = dataInput.readByte()) != 0) {
+                String key = dataInput.readUTF();
+                TagBase tagBase = TagType.getMethods(typeId).readTagBase(dataInput, depth + 1);
+                tagCompound.put(key, tagBase);
             }
+            return tagCompound;
         }
     };
 
@@ -67,13 +63,37 @@ public class TagCompound extends HashMap<String, TagBase> implements TagBase<Has
                 sb.append(',');
             }
             key = list.get(i);
-            sb.append(key).append(':').append(get(key).toString());
+            sb.append(key).append(':').append(String.valueOf(get(key)));
         }
         sb.append('}');
         return sb.toString();
     }
 
     public <T extends TagBase> T get(String key) {
-        return (T) super.get(key);
+        TagBase tagBase;
+        if (key.length() == 0) {
+            tagBase = this;
+        } else {
+            char separator = '.';
+            int i1 = -1;
+            Object tagCompound = this;
+
+            int i2;
+            while ((i1 = key.indexOf(separator, i2 = i1 + 1)) != -1) {
+                tagCompound = ((TagCompound) tagCompound).get(key.substring(i2,i1));
+                if (tagCompound == null) {
+                    return (T) TagEnd.getInst();
+                }
+            }
+
+            key = key.substring(i2);
+
+            if (tagCompound == this) {
+                tagBase = super.get(key);
+            } else {
+                tagBase = ((TagCompound) tagCompound).get(key);
+            }
+        }
+        return (T) (tagBase == null ? TagEnd.getInst() : tagBase);
     }
 }
