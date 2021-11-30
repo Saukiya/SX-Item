@@ -3,43 +3,93 @@ package github.saukiya.test;
 
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.RandomDocker;
-import github.saukiya.sxitem.nms.*;
-import github.saukiya.sxitem.util.*;
+import github.saukiya.sxitem.nms.TagBase;
+import github.saukiya.sxitem.nms.TagCompound;
+import github.saukiya.sxitem.util.NbtUtil;
+import github.saukiya.sxitem.util.NbtUtil_v1_17_R1;
+import github.saukiya.sxitem.util.Tuple;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
+import io.netty.buffer.Unpooled;
 import lombok.SneakyThrows;
 import net.minecraft.nbt.*;
 import org.apache.commons.lang.text.StrLookup;
 import org.apache.commons.lang.text.StrMatcher;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.DataOutput;
 import java.io.File;
 import java.util.*;
 import java.util.regex.Pattern;
 
-/**
- * @Author 格洛
- * @Since 2019/12/19 11:34
- */
 public class Test {
 
     static Map<String, List<Tuple<Double, String>>> dataMap = new HashMap();
 
     @SneakyThrows
     public static void main(String[] args) {
-//        for (int i = 0; i < 30; i++) {
-////            System.out.println(replaceInt("2_4", null));
-//            System.out.println(replaceDouble("50_2", null));
-//        }
-//        loadData();
-//        distinguish();
-
-        //MaterialKey ??
-//        System.out.println(Material.DIAMOND_ORE.name().toLowerCase(Locale.ROOT));;
         //原版 ------------------------------------------------------------------
+
         NBTTagList subTagList1 = new NBTTagList();
         subTagList1.add(NBTTagString.a("TagStringTest1"));
         subTagList1.add(NBTTagString.a("TagStringTest2"));
+
+        NBTTagList subTagList2 = new NBTTagList();
+        subTagList2.add(NBTTagString.a("TagStringTest3"));
+        subTagList2.add(NBTTagString.a("TagStringTest4"));
+
+        NBTTagByteArray nbtByteArray = new NBTTagByteArray(new byte[0]);
+        nbtByteArray.add(NBTTagByte.a((byte) 4));
+        nbtByteArray.add(NBTTagByte.a((byte) 3));
+        NBTTagIntArray nbtTagIntArray = new NBTTagIntArray(new int[0]);
+        nbtTagIntArray.add(NBTTagInt.a(4));
+        nbtTagIntArray.add(NBTTagInt.a(3));
+        NBTTagLongArray nbtTagLongArray = new NBTTagLongArray(new long[0]);
+        nbtTagLongArray.add(NBTTagLong.a(4000L));
+        nbtTagLongArray.add(NBTTagLong.a(2000L));
+        NBTTagCompound nbtSubCompound = new NBTTagCompound();
+        nbtSubCompound.set("test1", subTagList1);
+        nbtSubCompound.set("test2", subTagList2);
+
+        NBTTagCompound nbtTagCompound = new NBTTagCompound();
+
+        nbtTagCompound.set("byteArray", nbtByteArray);
+        nbtTagCompound.set("tagIntArray", nbtTagIntArray);
+        nbtTagCompound.set("tagLongArray", nbtTagLongArray);
+        nbtTagCompound.set("sub", nbtSubCompound);
+
+        nbtTagCompound.set("end", NBTTagEnd.b);
+        nbtTagCompound.set("tagFloat", NBTTagFloat.a(2.5f));
+        nbtTagCompound.set("tagShort", NBTTagShort.a((short) 4));
+        nbtTagCompound.set("tagDouble", NBTTagDouble.a(6.6));
+
+        //nmsNBT 转 stream
+        ByteBuf buf = Unpooled.buffer();
+        NBTCompressedStreamTools.a(nbtTagCompound, (DataOutput) new ByteBufOutputStream(buf));
+
+        //stream 转 sxNBT
+        TagBase tagBase = NbtUtil.getInst().readTagBase(new ByteBufInputStream(buf));
+        System.out.println("stream 转 sxNBT\n" + tagBase);
+
+        //sxNBT 转 stream
+        buf = Unpooled.buffer();
+        NbtUtil.getInst().writeTagBase(tagBase, new ByteBufOutputStream(buf));
+
+        //stream 转 nmsNBT
+        NBTTagCompound streamNMS = NBTCompressedStreamTools.a((DataInput) new DataInputStream(new ByteBufInputStream(buf)));
+        System.out.println("stream 转 nmsNBT\n" + streamNMS);
+    }
+
+    @SneakyThrows
+    public static void conversionNBT() {
+        NBTTagList subTagList1 = new NBTTagList();
+        subTagList1.add(NBTTagString.a("TagStringTest1"));
+        subTagList1.add(NBTTagString.a("TagStringTest2"));
+
         NBTTagList subTagList2 = new NBTTagList();
         subTagList2.add(NBTTagString.a("TagStringTest3"));
         subTagList2.add(NBTTagString.a("TagStringTest4"));
@@ -84,7 +134,6 @@ public class Test {
         //String转NBT方法
         NBTTagCompound parseTagCompound = MojangsonParser.parse(nbtTagCompound.toString());
         System.out.println("[MP->NMS] " + parseTagCompound);
-
     }
 
     public static String replaceInt(String key, RandomDocker docker) {
