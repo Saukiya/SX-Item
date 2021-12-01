@@ -5,9 +5,9 @@ import github.saukiya.sxitem.data.item.IGenerator;
 import github.saukiya.sxitem.data.item.IUpdate;
 import github.saukiya.sxitem.data.random.RandomDocker;
 import github.saukiya.sxitem.util.MessageUtil;
+import github.saukiya.sxitem.util.PlaceholderUtil;
 import lombok.NoArgsConstructor;
 import lombok.experimental.PackagePrivate;
-import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -135,8 +135,7 @@ public class GeneratorDefault implements IGenerator, IUpdate {
 
         String id = docker.setRandom(ids.get(SXItem.getRandom().nextInt(ids.size())));
 
-        String itemName = docker.setRandom(this.displayName);
-        if (itemName != null) itemName = PlaceholderAPI.setPlaceholders(player, itemName);
+        String itemName = PlaceholderUtil.setPlaceholders(player, docker.setRandom(this.displayName));
 
         List<String> loreList = new ArrayList<>();
         for (String lore : this.loreList) {
@@ -145,7 +144,7 @@ public class GeneratorDefault implements IGenerator, IUpdate {
                 loreList.addAll(Arrays.asList(lore.split("/n|\n")));
             }
         }
-        loreList = PlaceholderAPI.setPlaceholders(player, loreList);
+        loreList = PlaceholderUtil.setPlaceholders(player, loreList);
 
 
         List<String> enchantList = new ArrayList<>();
@@ -156,7 +155,7 @@ public class GeneratorDefault implements IGenerator, IUpdate {
             }
         }
 
-        String skullName = this.skullName != null ? PlaceholderAPI.setPlaceholders(player, this.skullName) : this.skullName;
+        String skullName = PlaceholderUtil.setPlaceholders(player, this.skullName);
         ItemStack item = getItemStack(itemName, id, amount, loreList, enchantList, itemFlagList, unbreakable, color, skullName);
 
         //Deprecated
