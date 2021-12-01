@@ -34,6 +34,7 @@ public class ItemDataManager implements Listener {
 
     private final Map<String, IGenerator> itemMap = new HashMap<>();
 
+    //? 抱有疑问的线程安全
     private final List<Player> checkPlayers = new ArrayList<>();
 
     public ItemDataManager() {
@@ -59,12 +60,16 @@ public class ItemDataManager implements Listener {
      * @param generator ItemGenerator
      */
     public static void registerGenerator(IGenerator generator) {
-        if (generator.getType() == null || generators.stream().anyMatch((ig) -> ig.getType().equals(generator.getType()))) {
+        if (generator.getType() == null || getGenerator(generator.getType()) != null) {
             SXItem.getInst().getLogger().warning("ItemGenerator >>  [" + generator.getClass().getSimpleName() + "] Type Error!");
             return;
         }
         generators.add(generator);
         SXItem.getInst().getLogger().info("ItemGenerator >> Register [" + generator.getClass().getSimpleName() + "] To Type " + generator.getType() + " !");
+    }
+
+    public static IGenerator getGenerator(String type) {
+        return generators.stream().filter(g -> g.getType().equals(type)).findFirst().orElse(null);
     }
 
     /**
@@ -96,27 +101,25 @@ public class ItemDataManager implements Listener {
      */
     private void loadItem(File files) {
         for (File file : files.listFiles()) {
+            if (file.getName().startsWith("NoLoad")) continue;
             if (file.isDirectory()) {
-                if (!file.getName().startsWith("NoLoad")) {
-                    loadItem(file);
-                }
+                loadItem(file);
             } else {
                 YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
-                do_1:
                 for (String key : yaml.getKeys(false)) {
+                    if (key.startsWith("NoLoad")) continue;
                     if (itemMap.containsKey(key)) {
                         SXItem.getInst().getLogger().warning("Don't Repeat Item Name: " + file.getName() + File.separator + key + " !");
                         continue;
                     }
                     String pathName = getPathName(files);
                     String type = yaml.getString(key + ".Type", "Default");
-                    for (IGenerator generator : generators) {
-                        if (generator.getType().equals(type)) {
-                            itemMap.put(key, generator.newGenerator(pathName, key, yaml.getConfigurationSection(key)));
-                            continue do_1;
-                        }
+                    IGenerator generator = getGenerator(type);
+                    if (generator != null) {
+                        itemMap.put(key, generator.newGenerator(pathName, key, yaml.getConfigurationSection(key)));
+                    } else {
+                        SXItem.getInst().getLogger().warning("Don't Item Type: " + file.getName() + File.separator + key + " - " + type + " !");
                     }
-                    SXItem.getInst().getLogger().warning("Don't Item Type: " + file.getName() + File.separator + key + " - " + type + " !");
                 }
             }
         }
@@ -176,6 +179,7 @@ public class ItemDataManager implements Listener {
     public void updateItem(Player player, ItemStack... oldItems) {
         for (ItemStack oldItem : oldItems) {
             String dataName;
+            //? 需要兼容SX-Attribute旧版标签
             if (oldItem != null && (dataName = SXItem.getNbtUtil().getNBT(oldItem, SXItem.getInst().getName() + "-Name")) != null) {
                 IGenerator ig = itemMap.get(dataName);
                 if (ig instanceof IUpdate && ((IUpdate) ig).isUpdate() && SXItem.getNbtUtil().hasNBT(oldItem, SXItem.getInst().getName() + "-HashCode")) {
@@ -202,22 +206,18 @@ public class ItemDataManager implements Listener {
      * @throws IOException IOException
      */
     public boolean saveItem(String key, ItemStack item, String type) throws IOException {
-        for (IGenerator ig : generators) {
-            if (ig.getType().equals(type)) {
-                ConfigurationSection config = new MemoryConfiguration();
-                config.set("Type", ig.getType());
-                config = ig.saveItem(item, config);
-                if (config != null) {
-                    File file = new File(itemFiles, "Type-" + ig.getType() + File.separator + "Item.yml");
-                    YamlConfiguration yaml = file.exists() ? YamlConfiguration.loadConfiguration(file) : new YamlConfiguration();
-                    yaml.set(key, config);
-                    yaml.save(file);
-                    itemMap.put(key, ig.newGenerator(getPathName(file.getParentFile()), key, config));
-                    return true;
-                }
-            }
-        }
-        return false;
+        IGenerator generator = getGenerator(type);
+        if (generator == null) return false;
+        ConfigurationSection config = new MemoryConfiguration();
+        config.set("Type", generator.getType());
+        config = generator.saveItem(item, config);
+        if (config == null) return false;
+        File file = new File(itemFiles, "Type-" + generator.getType() + File.separator + "Item.yml");
+        YamlConfiguration yaml = file.exists() ? YamlConfiguration.loadConfiguration(file) : new YamlConfiguration();
+        yaml.set(key, config);
+        yaml.save(file);
+        itemMap.put(key, generator.newGenerator(getPathName(file.getParentFile()), key, config));
+        return true;
     }
 
     /**
@@ -286,21 +286,17 @@ public class ItemDataManager implements Listener {
         updateItem(event.getPlayer(), oldItem, newItem);
     }
 
-
     @EventHandler
-    void onInventoryCloseEvent(InventoryCloseEvent event) {
+    void on(InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();
         Inventory inv = event.getInventory();
-        if (player.equals(inv.getHolder()) && !checkPlayers.contains(player)) {
+        if (player.equals(inv.getHolder())) {
             checkPlayers.add(player);
         }
     }
 
-
     @EventHandler
-    void onPlayerJoinEvent(PlayerJoinEvent event) {
-        if (!checkPlayers.contains(event.getPlayer())) {
-            checkPlayers.add(event.getPlayer());
-        }
+    void on(PlayerJoinEvent event) {
+        checkPlayers.add(event.getPlayer());
     }
 }
