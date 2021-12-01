@@ -38,7 +38,7 @@ public abstract class MessageUtil extends NMS {
                 return;
             } else if (msg.startsWith("[TITLE]")) {
                 String[] split = msg.substring(7).split(":");
-                sendTitle(player, split[0], split.length > 1 ? split[1] : null, 5, 20, 5);
+                sendTitle(player, split[0], split.length > 1 ? split[1] : null, 5, 30, 5);
                 return;
             }
         }
