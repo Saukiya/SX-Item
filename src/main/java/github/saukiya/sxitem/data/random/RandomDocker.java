@@ -49,13 +49,19 @@ public class RandomDocker extends StrLookup {
     /**
      * 替换文本内的随机占位符
      *
-     * @param string 文本
-     * @return 替换后文本
+     * @param string Text
+     * @return RandomText
      */
     public String setRandom(String string) {
         return ss.replace(string);
     }
 
+    /**
+     * 获取局部以及全局随机数据
+     *
+     * @param key Key
+     * @return RandomString
+     */
     public String get(String key) {
         if (localMap != null) {
             String str = random(localMap.get(key));
