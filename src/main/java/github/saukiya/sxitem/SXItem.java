@@ -8,7 +8,7 @@ import github.saukiya.sxitem.data.random.RandomStringManager;
 import github.saukiya.sxitem.util.Config;
 import github.saukiya.sxitem.util.Message;
 import github.saukiya.sxitem.util.NbtUtilDeprecated;
-import github.saukiya.sxitem.util.Placeholders;
+import github.saukiya.sxitem.util.PlaceholderUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.bstats.bukkit.Metrics;
@@ -66,7 +66,7 @@ public class SXItem extends JavaPlugin {
     public void onEnable() {
         new Metrics(this, 11948);
         long oldTimes = System.currentTimeMillis();
-        Placeholders.setup();
+        PlaceholderUtil.setup();
         nbtUtil = new NbtUtilDeprecated();
 
         randomStringManager = new RandomStringManager();
