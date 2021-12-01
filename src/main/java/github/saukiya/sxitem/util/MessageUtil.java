@@ -1,6 +1,5 @@
 package github.saukiya.sxitem.util;
 
-import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -33,7 +32,7 @@ public abstract class MessageUtil extends NMS {
     public final void send(CommandSender sender, String msg) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            msg = PlaceholderAPI.setPlaceholders(player, msg);
+            msg = PlaceholderUtil.setPlaceholders(player, msg);
             if (msg.startsWith("[ACTIONBAR]")) {
                 sendActionBar(player, msg.substring(11));
                 return;
