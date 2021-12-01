@@ -1,53 +1,95 @@
 package github.saukiya.sxitem.util;
 
 import github.saukiya.sxitem.SXItem;
-import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Saukiya
  */
 
 public class CommandUtil {
+
+    private static final Pattern PATTERN = Pattern.compile("^\\[(.*?)] *(.+)");
+
     /**
      * 快速执行指令列表
      *
      * @param player      Player
      * @param commandList List
      */
-    public static void onPlayCommand(Player player, List<String> commandList) {
+    public static void run(Player player, List<String> commandList) {
         int delay = 0;
-        commandList = PlaceholderAPI.setPlaceholders(player, commandList);
-        for (String cmd : commandList) {
-            String command = cmd.replace("%player%", player.getName());
-            if (command.startsWith("[DELAY] ")) {
-                delay += Integer.parseInt(command.substring(8));
+        Runnable runnable;
+        for (String cmd : PlaceholderUtil.setPlaceholders(player, commandList)) {
+            String command = cmd.replace("%player%", player.getName()).replace('&', '§');
+            Matcher matcher = PATTERN.matcher(command);
+            if (matcher.find()) {
+                if (matcher.group(1).equals("DELAY")) {
+                    delay += Integer.parseInt(matcher.group(2));
+                    continue;
+                }
+                runnable = () -> run(player, matcher.group(1), matcher.group(2));
             } else {
-                Bukkit.getScheduler().runTaskLater(SXItem.getInst(), () -> onPlayerCommand(player, command.replace('&', '§')), delay);
+                runnable = () -> Bukkit.dispatchCommand(player, command);
             }
+            Bukkit.getScheduler().runTaskLater(SXItem.getInst(), runnable, delay);
         }
     }
 
-    public static void onPlayerCommand(Player player, String command) {
-        if (command.startsWith("[CONSOLE] "))
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.substring(10));
-        else if (command.startsWith("[MESSAGE] "))
-            player.sendMessage(command.substring(10));
-        else if (command.startsWith("[CHAT] "))
-            player.chat(command.substring(6));
-        else if (command.startsWith("[BC] "))
-            Bukkit.broadcastMessage(command.substring(5));
-        else if (command.startsWith("[SOUND] ")) {
-            String[] split = command.substring(8).split(":");
-            player.playSound(player.getLocation(), Sound.valueOf(split[0]), Float.valueOf(split[1]), Float.valueOf(split[2]));
-        } else if (command.startsWith("[TITLE] ")) {
-            String[] split = command.substring(8).split(":");
-            player.sendTitle(split[0], split.length > 1 ? split[1] : null, split.length > 2 ? Integer.parseInt(split[2]) : 5, split.length > 3 ? Integer.parseInt(split[3]) : 30, split.length > 4 ? Integer.parseInt(split[4]) : 5);
-        } else
+    /**
+     * 快速执行指令
+     *
+     * @param player    Player
+     * @param command   Command
+     */
+    public static void run(Player player, String command) {
+        command = PlaceholderUtil.setPlaceholders(player, command).replace("%player%", player.getName()).replace('&', '§');
+        Matcher matcher = PATTERN.matcher(command);
+        if (matcher.find()) {
+            run(player, matcher.group(1), matcher.group(2));
+        } else {
             Bukkit.dispatchCommand(player, command);
+        }
+    }
+
+    private static void run(Player player, String type, String command) {
+        switch (type) {
+            case "CONSOLE":
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                break;
+            case "MESSAGE":
+                player.sendMessage(command);
+                break;
+            case "CHAT":
+                player.chat(command);
+                break;
+            case "BC":
+                Bukkit.broadcastMessage(command);
+                break;
+            case "SOUND":
+                String[] split = command.split(":");
+                player.playSound(player.getLocation(), Sound.valueOf(split[0]), Float.parseFloat(split[1]), Float.parseFloat(split[2]));
+                break;
+            case "ACTIONBAR":
+                MessageUtil.getInst().sendActionBar(player, command);
+                break;
+            case "TITLE":
+                String[] args = command.split(":");
+                MessageUtil.getInst().sendTitle(player, args[0],
+                        args.length > 1 ? args[1] : null,
+                        args.length > 2 ? Integer.parseInt(args[2]) : 5,
+                        args.length > 3 ? Integer.parseInt(args[3]) : 20,
+                        args.length > 4 ? Integer.parseInt(args[4]) : 5);
+                break;
+            default:
+                SXItem.getInst().getLogger().warning("No Command To Type: " + type + " -> " + command);
+                break;
+        }
     }
 }
