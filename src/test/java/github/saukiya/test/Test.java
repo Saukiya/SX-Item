@@ -19,6 +19,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Test {
@@ -37,6 +38,31 @@ public class Test {
         System.out.println(gson.toJson(jsonParser.parse(tagCompound.getValue().toString()).getAsJsonObject()));
         System.out.println("----------");
         System.out.println(tagCompound.getValue());
+
+        List<String> list = Arrays.asList(
+                "[DELAY]",
+                "[DELAY] 1",
+                "[CONSOLE] /sxi nbt",
+                "[CHAT]233l233"
+        );
+        Pattern pattern = Pattern.compile("^\\[(.*?)] *(.+)");
+
+        for (String str : list) {
+            System.out.println();
+            System.out.println("-----> " + str);
+            Matcher matcher = pattern.matcher(str);
+            StringBuilder print = new StringBuilder("  ");
+            if (matcher.find()) {
+                print.append("find-").append(matcher.groupCount()).append(": ");
+                for (int i = 1; i <= matcher.groupCount(); i++) {
+                    if (i != 1) print.append(" + ");
+                    print.append('"').append(matcher.group(i)).append('"');
+                }
+            } else {
+                print.append("no-find: ").append(str);
+            }
+            System.out.println(print);
+        }
     }
 
 
