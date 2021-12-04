@@ -4,6 +4,9 @@ import lombok.NoArgsConstructor;
 
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @NoArgsConstructor
@@ -17,6 +20,10 @@ public class TagLongArray extends TagListBase<TagLong> {
         }
         return tagLongArray;
     };
+
+    public TagLongArray(Collection<TagLong> tagBases) {
+        super(tagBases);
+    }
 
     public TagLongArray(long[] bytes) {
         for (long v : bytes) {

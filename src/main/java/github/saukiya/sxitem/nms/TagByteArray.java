@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.stream.IntStream;
 
 @NoArgsConstructor
@@ -17,6 +18,10 @@ public class TagByteArray extends TagListBase<TagByte> {
         dataInput.readFully(bytes);
         return new TagByteArray(bytes);
     };
+
+    public TagByteArray(Collection<TagByte> tagBases) {
+        super(tagBases);
+    }
 
     public TagByteArray(byte[] bytes) {
         for (byte v : bytes) {
