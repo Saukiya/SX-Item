@@ -81,11 +81,11 @@ public class CommandUtil {
                 break;
             case "TITLE":
                 String[] args = command.split(":");
-                MessageUtil.getInst().sendTitle(player, args[0],
-                        args.length > 1 ? args[1] : null,
-                        args.length > 2 ? Integer.parseInt(args[2]) : 5,
-                        args.length > 3 ? Integer.parseInt(args[3]) : 20,
-                        args.length > 4 ? Integer.parseInt(args[4]) : 5);
+                if (args.length > 4) {
+                    MessageUtil.getInst().sendTitle(player, args[0], args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]));
+                } else {
+                    MessageUtil.getInst().sendTitle(player, args[0], args.length > 1 ? args[1] : null, 5, 20, 5);
+                }
                 break;
             default:
                 SXItem.getInst().getLogger().warning("No Command To Type: " + type + " -> " + command);
