@@ -31,6 +31,11 @@ public class NbtUtil_v1_14_R1 extends NbtUtil {
         return (TagCompound) readTagBase(new ByteBufInputStream(buf));
     }
 
+    @Override
+    public NBTTagCompound parseNMSCompound(String json) throws Exception {
+        return MojangsonParser.parse(json);
+    }
+
     @SneakyThrows
     @Override
     public NBTTagCompound asNMSCompoundCopy(TagCompound tagCompound) {
