@@ -45,6 +45,12 @@ public abstract class NbtUtil implements NMS {
         }
     }
 
+    /**
+     * 获取物品的全部NBT
+     *
+     * @param itemStack 物品
+     * @return TagCompound
+     */
     public abstract TagCompound getItemNBT(ItemStack itemStack);
 
     /**
@@ -62,6 +68,14 @@ public abstract class NbtUtil implements NMS {
      * @return nmsNBTCompound
      */
     public abstract <V> V asNMSCompoundCopy(TagCompound tagCompound);
+
+    /**
+     * json字符串转nmsNBTCompound
+     *
+     * @param json NBTJson
+     * @return nmsNBTCompound
+     */
+    public abstract <V> V parseNMSCompound(String json) throws Exception;
 
     /**
      * nmsNBT转sxNBT
