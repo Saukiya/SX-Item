@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public abstract class MessageUtil extends NMS {
+public abstract class MessageUtil implements NMS {
 
     public static MessageUtil getInst() {
         return NMS.getInst(MessageUtil.class);
