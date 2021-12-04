@@ -1,5 +1,6 @@
 package github.saukiya.sxitem.util;
 
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import github.saukiya.sxitem.nms.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
@@ -27,6 +28,11 @@ public class NbtUtil_v1_17_R1 extends NbtUtil {
         ByteBuf buf = Unpooled.buffer();
         NBTCompressedStreamTools.a((NBTTagCompound) nbtTagCompound, (DataOutput) new ByteBufOutputStream(buf));
         return (TagCompound) readTagBase(new ByteBufInputStream(buf));
+    }
+
+    @Override
+    public NBTTagCompound parseNMSCompound(String json) throws Exception {
+        return MojangsonParser.parse(json);
     }
 
     @SneakyThrows
