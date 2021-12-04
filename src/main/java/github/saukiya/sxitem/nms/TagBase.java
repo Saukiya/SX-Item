@@ -19,7 +19,17 @@ public interface TagBase<T> {
 
     TagType getTypeId();
 
+    /**
+     * 将NBT以带制符表的方式显示出来
+     * 无法显示带转义(\)的Json
+     *
+     * @return String
+     */
     default String toJson() {
         return GSON.toJson(JSON_PARSER.parse(String.valueOf(getValue())));
+    }
+
+    static TagBase toTag(Object object) {
+        return TagType.toNBT(object);
     }
 }
