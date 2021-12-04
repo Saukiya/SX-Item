@@ -5,6 +5,9 @@ import lombok.NoArgsConstructor;
 
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.IntStream;
 
 @NoArgsConstructor
@@ -20,10 +23,16 @@ public class TagIntArray extends TagListBase<TagInt> {
         return tagIntArray;
     };
 
+    public TagIntArray(Collection<TagInt> tagBases) {
+        super(tagBases);
+    }
+
     public TagIntArray(int[] bytes) {
-        for (int v : bytes) {
-            add(new TagInt(v));
-        }
+        Arrays.stream(bytes).mapToObj(TagInt::new).forEach(this::add);
+    }
+
+    public TagIntArray(List<Integer> bytes) {
+        bytes.stream().map(TagInt::new).forEach(this::add);
     }
 
     @Override

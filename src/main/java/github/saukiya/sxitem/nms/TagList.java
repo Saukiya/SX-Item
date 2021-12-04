@@ -3,7 +3,10 @@ package github.saukiya.sxitem.nms;
 
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
+@NoArgsConstructor
 public class TagList extends TagListBase<TagBase> {
 
     protected static final TagType.Method<TagList> typeMethod = (dataInput, depth) -> {
@@ -24,6 +27,10 @@ public class TagList extends TagListBase<TagBase> {
             }
         }
     };
+
+    public TagList(Collection<TagBase> tagBases) {
+        super(tagBases);
+    }
 
     @Override
     public void write(DataOutput dataOutput) throws IOException {

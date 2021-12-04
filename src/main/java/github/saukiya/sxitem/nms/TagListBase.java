@@ -1,10 +1,18 @@
 package github.saukiya.sxitem.nms;
 
+import lombok.NoArgsConstructor;
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@NoArgsConstructor
 public abstract class TagListBase<T extends TagBase> extends ArrayList<T> implements TagBase<List<?>> {
+
+    public TagListBase(Collection<T> tagBases) {
+        super(tagBases);
+    }
 
     public String getToStringPrefix() {
         return "";
