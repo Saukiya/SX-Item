@@ -17,7 +17,7 @@ import java.util.stream.IntStream;
 
 public class NbtUtil_v1_12_R1 extends NbtUtil {
 
-    private final NBTTagEnd nbtTagEnd = newPrivateInstance(NBTTagEnd.class);
+    private final NBTTagEnd nbtTagEnd = NMS.newPrivateInstance(NBTTagEnd.class);
 
     @Override
     public TagCompound getItemNBT(ItemStack itemStack) {
@@ -30,6 +30,11 @@ public class NbtUtil_v1_12_R1 extends NbtUtil {
         ByteBuf buf = Unpooled.buffer();
         NBTCompressedStreamTools.a((NBTTagCompound) nbtTagCompound, (DataOutput) new ByteBufOutputStream(buf));
         return (TagCompound) readTagBase(new ByteBufInputStream(buf));
+    }
+
+    @Override
+    public NBTTagCompound parseNMSCompound(String json) throws Exception {
+        return MojangsonParser.parse(json);
     }
 
     @SneakyThrows
@@ -55,7 +60,7 @@ public class NbtUtil_v1_12_R1 extends NbtUtil {
             } else if (nbtBase instanceof NBTTagIntArray) {
                 tagBase = new TagIntArray(((NBTTagIntArray) nbtBase).d());
             } else if (nbtBase instanceof NBTTagLongArray) {
-                tagBase = new TagLongArray(getPrivateField(nbtBase, "b"));
+                tagBase = new TagLongArray((long[]) NMS.getPrivateField(nbtBase, "b"));
             } else if (nbtBase instanceof NBTTagByte) {
                 tagBase = new TagByte(((NBTTagByte) nbtBase).g());
             } else if (nbtBase instanceof NBTTagShort) {
