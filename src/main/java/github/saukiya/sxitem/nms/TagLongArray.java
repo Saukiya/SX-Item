@@ -1,7 +1,9 @@
 package github.saukiya.sxitem.nms;
 
+import github.saukiya.sxitem.util.NMS;
 import lombok.NoArgsConstructor;
 
+import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.Arrays;
@@ -12,13 +14,26 @@ import java.util.stream.IntStream;
 @NoArgsConstructor
 public class TagLongArray extends TagListBase<TagLong> {
 
-    protected static final TagType.Method<TagLongArray> typeMethod = (dataInput, depth) -> {
-        int length = dataInput.readInt();
-        TagLongArray tagLongArray = new TagLongArray();
-        for (int i = 0; i < length; ++i) {
-            tagLongArray.add(new TagLong(dataInput.readLong()));
+    protected static final TagType.Method typeMethod = new TagType.Method() {
+        @Override
+        public TagLongArray readTagBase(DataInput dataInput, int depth) throws IOException {
+            int length = dataInput.readInt();
+            TagLongArray tagLongArray = new TagLongArray();
+            for (int i = 0; i < length; ++i) {
+                tagLongArray.add(new TagLong(dataInput.readLong()));
+            }
+            return tagLongArray;
         }
-        return tagLongArray;
+
+        @Override
+        public TagListBase toTag(Object object) {
+            if (object instanceof long[]) {
+                long[] longs = (long[]) object;
+                if (NMS.compareTo("v1_12_R1") > -1) return new TagLongArray(longs);
+                return Arrays.stream(longs).mapToObj(TagLong::new).collect(Collectors.toCollection(TagList::new));
+            }
+            return null;
+        }
     };
 
     public TagLongArray(Collection<TagLong> tagBases) {
@@ -26,9 +41,7 @@ public class TagLongArray extends TagListBase<TagLong> {
     }
 
     public TagLongArray(long[] bytes) {
-        for (long v : bytes) {
-            add(new TagLong(v));
-        }
+        Arrays.stream(bytes).mapToObj(TagLong::new).forEach(this::add);
     }
 
     @Override

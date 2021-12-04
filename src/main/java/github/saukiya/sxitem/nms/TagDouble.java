@@ -1,11 +1,22 @@
 package github.saukiya.sxitem.nms;
 
+import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
 public class TagDouble extends TagNumber<Double> {
 
-    protected static final TagType.Method<TagDouble> typeMethod = (dataInput, depth) -> new TagDouble(dataInput.readDouble());
+    protected static final TagType.Method typeMethod = new TagType.Method() {
+        @Override
+        public TagDouble readTagBase(DataInput dataInput, int depth) throws IOException {
+            return new TagDouble(dataInput.readDouble());
+        }
+
+        @Override
+        public TagDouble toTag(Object object) {
+            return object instanceof Double ? new TagDouble((Double) object) : null;
+        }
+    };
 
     private final double value;
 
