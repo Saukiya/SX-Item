@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack;
 import java.io.DataInput;
 import java.io.DataOutput;
 
-public abstract class NbtUtil extends NMS {
+public abstract class NbtUtil implements NMS {
 
     public static NbtUtil getInst() {
         return NMS.getInst(NbtUtil.class);
