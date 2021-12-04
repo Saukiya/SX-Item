@@ -3,11 +3,10 @@ package github.saukiya.test;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.RandomDocker;
-import github.saukiya.sxitem.nms.TagCompound;
+import github.saukiya.sxitem.nms.*;
 import github.saukiya.sxitem.util.NbtUtil;
 import github.saukiya.sxitem.util.Tuple;
 import lombok.SneakyThrows;
@@ -21,13 +20,131 @@ import java.io.File;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 
 public class Test {
 
     static Map<String, List<Tuple<Double, String>>> dataMap = new HashMap();
+    static Pattern pattern = Pattern.compile("v(\\d+)_(\\d+)_R(\\d+)");
 
     @SneakyThrows
     public static void main(String[] args) {
+        yamlToTagTest();
+    }
+
+    public static void yamlToTagTest() throws Exception {
+        // 如何解决：数组被yaml强制转换List
+        // 1.int[]被强转成List<Integer>
+        // 1.long[]被强转成List<Long>
+        //
+        // 已解决: yaml读到List内元素为Integer、Byte、Long(Long版本检测)后，转为相应数组
+        YamlConfiguration yaml = new YamlConfiguration();
+        long[] nums = new long[]{1,5,7,8,2,6};
+        List<Long> longList = Arrays.asList(1L,5L,7L,8L,2L,Long.MAX_VALUE);
+        Map<String, Object> subMap = new HashMap<>();
+        subMap.put("string", "23333");
+        Map<String, Object> objectMap = new HashMap<>();
+        objectMap.put("int", Integer.MAX_VALUE);
+        objectMap.put("long", Long.MAX_VALUE);
+        objectMap.put("byte", Byte.MAX_VALUE);
+        objectMap.put("float", Float.MAX_VALUE);
+        objectMap.put("map", subMap);
+        yaml.set("boolean", true);
+        yaml.set("map", objectMap);
+        yaml.set("nums", nums);
+        yaml.set("long.List", longList);//为 num -> List
+        System.out.println("yaml-json: \n" + yaml.saveToString());
+        System.out.println("boolean: \t" + yaml.get("boolean").getClass().getSimpleName());
+        System.out.println("nums: \t\t" + yaml.get("nums").getClass().getSimpleName());
+        System.out.println("long.List: \t" + yaml.get("long.List").getClass().getSimpleName());
+        System.out.println("map: \t\t" + yaml.get("map").getClass().getSimpleName());
+        System.out.println("===================");
+
+        YamlConfiguration loadYaml = new YamlConfiguration();
+        loadYaml.loadFromString(yaml.saveToString());
+        System.out.println("boolean:  \t" + loadYaml.get("boolean").getClass().getSimpleName());
+        System.out.println("nums:  \t\t" + loadYaml.get("nums").getClass().getSimpleName());
+        System.out.println("long.List: \t" + loadYaml.get("long.List").getClass().getSimpleName());
+        System.out.println("map:  \t\t" + loadYaml.get("map").getClass().getSimpleName());
+
+        TagBase tagBase = TagType.toNBT(loadYaml);
+        System.out.println("sxNBT: \t\t" + tagBase);
+        System.out.println("nmsNBT: \t" + NbtUtil.getInst().parseNMSCompound(tagBase.toString()));
+        System.out.println("sxNBT-json: \n" + tagBase.toJson());
+
+        NBTTagList tagList = new NBTTagList();
+        tagList.add(NBTTagByte.a(true));
+        tagList.add(NBTTagByte.a(true));
+        tagList.add(NBTTagByte.a(false));
+        tagList.add(NBTTagByte.a(true));
+        NBTTagByteArray bytes = new NBTTagByteArray(new byte[] {1,3,5,6});
+        NBTTagCompound nbtTagCompound = new NBTTagCompound();
+        nbtTagCompound.set("tagList", tagList);
+        nbtTagCompound.set("bytes", bytes);
+        nbtTagCompound.set("byte", NBTTagByte.a(false));
+        System.out.println(nbtTagCompound);
+        //TODO
+        // 如何解决:nbtTag无法像yaml那么灵活可以get("sub1.sub2.sub3")
+        // 方案一:
+        // 允许在当前节点中存在"sub1.sub2.sub3"
+        // get(path) 时会优先匹配sub1.sub2.sub3 再匹配 sub1.sub2 以此类推 (set? setPath?)
+        // 同时存在 sub1.sub2.sub3 和 sub1.sub2 请出门左转
+        // set(path) 可以分为set() 和setPath()
+        // 方案二: 取消灵活性，只允许匹配当前子节点
+//        NBTTagCompound compound = new NBTTagCompound();
+//        compound.set("tag.sub", NBTTagString.a("Test"));
+//        System.out.println("compound: " + compound);
+//        System.out.println("compound-tag.sub: " + compound.get("tag.sub"));
+//
+//        TagCompound tagCompound = new TagCompound();
+//        tagCompound.put("tag.List", new TagList(Arrays.asList(
+//                new TagLong(1),
+//                new TagLong(1),
+//                new TagLong(1),
+//                new TagLong(1)
+//        )));
+//
+//        System.out.println("sxToString: " + tagCompound);
+//        System.out.println("sxStr -> nms: " + NbtUtil.getInst().parseNMSCompound(tagCompound.toString()).toString());
+//        System.out.println("sx -> nms: " + NbtUtil.getInst().asNMSCompoundCopy(tagCompound).toString());
+    }
+
+    public static void testVersion(String version) {
+        for (String thisVersion : Arrays.asList(
+                "v1_8_R3",
+                "v1_11_R1",
+                "v1_12_R1",
+                "v1_13_R2",
+                "v1_14_R1",
+                "v1_15_R1",
+                "v1_16_R3",
+                "v1_17_R1"
+        )) {
+            System.out.println(thisVersion + " -> " + compareTo(thisVersion, version));
+        }
+    }
+
+    /**
+     *
+     * @param thisVersion 所需版本
+     * @param version2 当前版本
+     * @return 1 和 0 代表兼容 -1 不兼容
+     */
+    public static int compareTo(String thisVersion, String version2) {
+        Matcher VERSION_MATCHER = pattern.matcher(thisVersion);
+        VERSION_MATCHER.matches();
+        int[] thisVersionSplit = IntStream.range(0, VERSION_MATCHER.groupCount()).map(i -> Integer.parseInt(VERSION_MATCHER.group(i+1))).toArray();
+        System.out.println(Arrays.toString(thisVersionSplit));
+        Matcher matcher = pattern.matcher(version2);
+        if (!matcher.matches()) return 0;
+        return IntStream.range(0, 3).map(i -> Integer.compare(thisVersionSplit[i], Integer.parseInt(matcher.group(i+1)))).filter(ct -> ct != 0).findFirst().orElse(0);
+    }
+
+    public static void instanceofClass(Object object, Class target) {
+        System.out.println(object.getClass() + "\t instanceof:" + target.isAssignableFrom(object.getClass()));
+    }
+
+    public static void gsonTest() {
         NBTTagCompound nbtTagCompound = getNBT();
         TagCompound tagCompound = NbtUtil.getInst().asTagCompoundCopy(nbtTagCompound);
 
@@ -38,13 +155,16 @@ public class Test {
         System.out.println(gson.toJson(jsonParser.parse(tagCompound.getValue().toString()).getAsJsonObject()));
         System.out.println("----------");
         System.out.println(tagCompound.getValue());
+    }
 
+    public static void regexTest() {
         List<String> list = Arrays.asList(
                 "[DELAY]",
                 "[DELAY] 1",
                 "[CONSOLE] /sxi nbt",
                 "[CHAT]233l233"
         );
+
         Pattern pattern = Pattern.compile("^\\[(.*?)] *(.+)");
 
         for (String str : list) {
