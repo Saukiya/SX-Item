@@ -45,6 +45,6 @@ public class TagByte extends TagNumber<Byte> {
 
     @Override
     public String toString() {
-        return getValue() + "B";
+        return getValue() + "b";
     }
 }

@@ -26,10 +26,10 @@ public interface TagBase<T> {
      * @return String
      */
     default String toJson() {
-        return GSON.toJson(JSON_PARSER.parse(String.valueOf(getValue())));
+        return GSON.toJson(JSON_PARSER.parse(String.valueOf(this)));
     }
 
     static TagBase toTag(Object object) {
-        return TagType.toNBT(object);
+        return TagType.toTag(object);
     }
 }

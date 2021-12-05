@@ -4,28 +4,20 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @NoArgsConstructor
-public abstract class TagListBase<T extends TagBase> extends ArrayList<T> implements TagBase<List<?>> {
+public abstract class TagListBase<T, V> extends ArrayList<T> implements TagBase<V> {
 
-    public TagListBase(Collection<T> tagBases) {
-        super(tagBases);
+    public TagListBase(Collection<T> collection) {
+        super(collection);
     }
 
     public String getToStringPrefix() {
         return "";
     }
 
-    @Override
-    public List<?> getValue() {
-        return this.stream().map(TagBase::getValue).collect(Collectors.toList());
-    }
-
-    @Override
-    public Object[] toArray() {
-        return this.stream().map(TagBase::getValue).toArray();
+    public String getToStringSuffix() {
+        return "";
     }
 
     @Override
@@ -36,7 +28,7 @@ public abstract class TagListBase<T extends TagBase> extends ArrayList<T> implem
             if (i != 0) {
                 sb.append(',');
             }
-            sb.append(this.get(i));
+            sb.append(this.get(i)).append(getToStringSuffix());
         }
         sb.append(']');
         return sb.toString();

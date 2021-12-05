@@ -45,15 +45,15 @@ public class NbtUtil_v1_14_R1 extends NbtUtil {
     }
 
     @Override
-    public TagBase asTagCopy(Object nbtBase) {
+    public TagBase toTag(Object nbtBase) {
         TagBase tagBase = null;
         if (nbtBase instanceof NBTBase) {
             if (nbtBase instanceof NBTTagCompound) {
                 NBTTagCompound nbtTagCompound = (NBTTagCompound) nbtBase;
-                tagBase = nbtTagCompound.getKeys().stream().collect(Collectors.toMap(key -> key, key -> asTagCopy(nbtTagCompound.get(key)), (a, b) -> b, TagCompound::new));
+                tagBase = nbtTagCompound.getKeys().stream().collect(Collectors.toMap(key -> key, key -> toTag(nbtTagCompound.get(key)), (a, b) -> b, TagCompound::new));
             } else if (nbtBase instanceof NBTTagList) {
                 NBTTagList nbtTagList = (NBTTagList) nbtBase;
-                tagBase = nbtTagList.stream().map(this::asTagCopy).collect(Collectors.toCollection(TagList::new));
+                tagBase = nbtTagList.stream().map(this::toTag).collect(Collectors.toCollection(TagList::new));
             } else if (nbtBase instanceof NBTTagByteArray) {
                 tagBase = new TagByteArray(((NBTTagByteArray) nbtBase).getBytes());
             } else if (nbtBase instanceof NBTTagIntArray) {
@@ -93,11 +93,11 @@ public class NbtUtil_v1_14_R1 extends NbtUtil {
             TagList tagList = (TagList) tagBase;
             nbtBase = tagList.stream().map(this::asNMSCopy).collect(Collectors.toCollection(NBTTagList::new));
         } else if (tagBase instanceof TagByteArray) {
-            nbtBase = new NBTTagByteArray(((TagByteArray) tagBase).byteArray());
+            nbtBase = new NBTTagByteArray((byte[]) tagBase.getValue());
         } else if (tagBase instanceof TagIntArray) {
-            nbtBase = new NBTTagIntArray(((TagIntArray) tagBase).intArray());
+            nbtBase = new NBTTagIntArray((int[]) tagBase.getValue());
         } else if (tagBase instanceof TagLongArray) {
-            nbtBase = new NBTTagLongArray(((TagLongArray) tagBase).longArray());
+            nbtBase = new NBTTagLongArray((long[]) tagBase.getValue());
         } else if (tagBase instanceof TagByte) {
             nbtBase = new NBTTagByte(((TagNumber) tagBase).byteValue());
         } else if (tagBase instanceof TagShort) {
