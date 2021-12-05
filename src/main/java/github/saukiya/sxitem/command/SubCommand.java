@@ -3,14 +3,12 @@ package github.saukiya.sxitem.command;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.util.Message;
 import github.saukiya.sxitem.util.MessageUtil;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.IntStream;
 
 /**
  * @author Saukiya
@@ -47,7 +45,7 @@ public abstract class SubCommand {
     }
 
     public boolean isUse(CommandSender sender, SenderType type) {
-        return sender.hasPermission(permission()) && IntStream.range(0, this.types.length).anyMatch(i -> this.types[i].equals(SenderType.ALL) || this.types[i].equals(type));
+        return sender.hasPermission(permission()) && Arrays.stream(types).anyMatch(senderType -> senderType.equals(type) || senderType.equals(SenderType.ALL));
     }
 
     protected void setArg(String arg) {
@@ -63,17 +61,15 @@ public abstract class SubCommand {
     }
 
     public String getIntroduction() {
-        return Arrays.stream(Message.values()).anyMatch(loc -> loc.name().equals("COMMAND__" + cmd.toUpperCase())) ? Message.getMsg(Message.valueOf("COMMAND__" + cmd.toUpperCase())) : "§7No Introduction";
+        return Arrays.stream(Message.values()).filter(loc -> loc.name().equals("COMMAND__" + cmd.toUpperCase())).findFirst().map(Message::getMsg).orElse("§7No Introduction");
     }
 
     public void sendIntroduction(CommandSender sender, String color, String label) {
         String clickCommand = MessageFormat.format("/{0} {1}", label, cmd);
-        TextComponent tc = MessageUtil.getInst().getTextComponent(color + MessageFormat.format("/{0} {1}{2}§7 - §c" + getIntroduction(), label, cmd, arg), clickCommand, sender.isOp() ? "§8§oPermission: " + permission() : null);
-        MessageUtil.getInst().send(sender, tc);
+        MessageUtil.getInst().send(sender, MessageUtil.getInst().getTextComponent(color + MessageFormat.format("/{0} {1}{2}§7 - §c" + getIntroduction(), label, cmd, arg), clickCommand, sender.isOp() ? "§8§oPermission: " + permission() : null));
     }
 
     public void onEnable() {
-
     }
 
     public void onReload() {
