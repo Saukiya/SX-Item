@@ -27,10 +27,10 @@ public enum TagType {
     }
 
     /**
-     * 获取{@link Method#readTagBase(DataInput, int)} 和 {@link Method#toNBT(Object)} 方法
+     * 获取{@link Method#readTagBase(DataInput, int)} 和 {@link Method#toTag(Object)} 方法
      *
      * @param index nmsNBT的id
-     * @return  Method
+     * @return Method
      */
     public static TagType.Method getMethods(int index) {
         return index >= 0 && index < TagType.values().length ? TagType.values()[index].methods : null;
@@ -48,7 +48,8 @@ public enum TagType {
      * @param object 基础数据
      * @return TagBase
      */
-    public static TagBase toNBT(Object object) {
+    protected static TagBase toTag(Object object) {
+        if (object instanceof TagBase) return (TagBase) object;
         TagBase tagBase;
         for (TagType type : TagType.values()) {
             if ((tagBase = type.methods.toTag(object)) != null) {
@@ -56,7 +57,7 @@ public enum TagType {
             }
         }
         //Log 不支持的转化类型
-        System.out.println("[ERROR] TagType.toNBT: " + object.getClass().getSimpleName());
+        System.out.println("[ERROR] TagType.toNBT: " + object);
         return TagEnd.getInst();
     }
 
@@ -78,7 +79,7 @@ public enum TagType {
         TagBase readTagBase(DataInput dataInput, int depth) throws IOException;
 
         /**
-         * {@link TagType#toNBT(Object)}
+         * {@link TagType#toTag(Object)}
          *
          * @param object    基础数据
          * @return TagBase
