@@ -36,14 +36,14 @@ public class TagCompound extends HashMap<String, TagBase> implements TagBase<Has
                 tagCompound = new TagCompound();
                 Map<String, ?> map = (Map<String, ?>) object;
                 for (Entry<String, ?> entry : map.entrySet()) {
-                    tagCompound.put(entry.getKey(), TagType.toNBT(entry.getValue()));
+                    tagCompound.put(entry.getKey(), TagType.toTag(entry.getValue()));
                 }
             }
             if (object instanceof MemorySection) {
                 tagCompound = new TagCompound();
                 MemorySection memorySection = (MemorySection) object;
                 for (String key : memorySection.getKeys(false)) {
-                    tagCompound.put(key, TagType.toNBT(memorySection.get(key)));
+                    tagCompound.put(key, TagType.toTag(memorySection.get(key)));
                 }
             }
             return tagCompound;

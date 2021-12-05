@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
-public class TagList extends TagListBase<TagBase> {
+public class TagList extends TagListBase<TagBase, List<?>> {
 
     protected static final TagType.Method typeMethod = new TagType.Method() {
         @Override
@@ -40,21 +40,35 @@ public class TagList extends TagListBase<TagBase> {
                 if (!objectList.isEmpty()) {
                     Set<Class> classSet = objectList.stream().map(Object::getClass).collect(Collectors.toSet());
                     if (classSet.contains(Long.class) && NMS.compareTo("v1_12_R1") > -1) {
-                        return objectList.stream().map(o -> new TagLong(((Number) o).longValue())).collect(Collectors.toCollection(TagLongArray::new));
+                        return objectList.stream().map(o -> ((Number) o).longValue()).collect(Collectors.toCollection(TagLongArray::new));
                     } else if (classSet.contains(Integer.class)) {
-                        return objectList.stream().map(o -> new TagInt(((Number) o).intValue())).collect(Collectors.toCollection(TagIntArray::new));
+                        return objectList.stream().map(o -> ((Number) o).intValue()).collect(Collectors.toCollection(TagIntArray::new));
                     } else if (classSet.contains(Byte.class)) {
-                        return objectList.stream().map(o -> new TagByte(((Number) o).byteValue())).collect(Collectors.toCollection(TagByteArray::new));
+                        return objectList.stream().map(o -> ((Number) o).byteValue()).collect(Collectors.toCollection(TagByteArray::new));
                     }
-                    return objectList.stream().map(TagType::toNBT).collect(Collectors.toCollection(TagList::new));
+                    return objectList.stream().map(TagType::toTag).collect(Collectors.toCollection(TagList::new));
                 }
             }
             return null;
         }
     };
 
-    public TagList(Collection<TagBase> tagBases) {
-        super(tagBases);
+    public TagType elementType = null;
+
+    //TODO 类型检查未完全实现: addAll、Constructor等变更元素的方法
+    @Override
+    public boolean add(TagBase tagBase) {
+//        // 错误的实现方式
+//        if (isEmpty()) {
+//            elementType = tagBase.getTypeId();
+//        } else if (elementType != tagBase.getTypeId()) {
+//            return false;
+//        }
+        return super.add(tagBase);
+    }
+
+    public TagList(Collection<TagBase> collection) {
+        super(collection);
     }
 
     @Override
@@ -68,7 +82,17 @@ public class TagList extends TagListBase<TagBase> {
     }
 
     @Override
+    public List<?> getValue() {
+        return this.stream().map(TagBase::getValue).collect(Collectors.toList());
+    }
+
+    @Override
     public TagType getTypeId() {
         return TagType.LIST;
+    }
+
+    @Override
+    public Object[] toArray() {
+        return this.stream().map(TagBase::getValue).toArray();
     }
 }

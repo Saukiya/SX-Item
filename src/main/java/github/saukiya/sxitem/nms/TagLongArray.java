@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @NoArgsConstructor
-public class TagLongArray extends TagListBase<TagLong> {
+public class TagLongArray extends TagListBase<Long, long[]> {
 
     protected static final TagType.Method typeMethod = new TagType.Method() {
         @Override
@@ -20,7 +20,7 @@ public class TagLongArray extends TagListBase<TagLong> {
             int length = dataInput.readInt();
             TagLongArray tagLongArray = new TagLongArray();
             for (int i = 0; i < length; ++i) {
-                tagLongArray.add(new TagLong(dataInput.readLong()));
+                tagLongArray.add(dataInput.readLong());
             }
             return tagLongArray;
         }
@@ -36,12 +36,12 @@ public class TagLongArray extends TagListBase<TagLong> {
         }
     };
 
-    public TagLongArray(Collection<TagLong> tagBases) {
-        super(tagBases);
+    public TagLongArray(Collection<Long> collection) {
+        super(collection);
     }
 
     public TagLongArray(long[] bytes) {
-        Arrays.stream(bytes).mapToObj(TagLong::new).forEach(this::add);
+        Arrays.stream(bytes).forEach(this::add);
     }
 
     @Override
@@ -50,21 +50,27 @@ public class TagLongArray extends TagListBase<TagLong> {
     }
 
     @Override
+    public String getToStringSuffix() {
+        return "L";
+    }
+
+    @Override
     public void write(DataOutput dataOutput) throws IOException {
         dataOutput.writeInt(size());
-        for (TagLong tagLong : this) {
-            dataOutput.writeLong(tagLong.getValue());
+        for (Long value : this) {
+            dataOutput.writeLong(value);
         }
+    }
+
+    @Override
+    public long[] getValue() {
+        long[] arrays = new long[size()];
+        IntStream.range(0, size()).forEach(i -> arrays[i] = get(i));
+        return arrays;
     }
 
     @Override
     public TagType getTypeId() {
         return TagType.LONG_ARRAY;
-    }
-
-    public long[] longArray() {
-        long[] arrays = new long[size()];
-        IntStream.range(0, size()).forEach(i -> arrays[i] = get(i).getValue());
-        return arrays;
     }
 }

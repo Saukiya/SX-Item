@@ -46,15 +46,15 @@ public class NbtUtil_v1_8_R3 extends NbtUtil {
     }
 
     @Override
-    public TagBase asTagCopy(Object nbtBase) {
+    public TagBase toTag(Object nbtBase) {
         TagBase tagBase = null;
         if (nbtBase instanceof NBTBase) {
             if (nbtBase instanceof NBTTagCompound) {
                 NBTTagCompound nbtTagCompound = (NBTTagCompound) nbtBase;
-                tagBase = nbtTagCompound.c().stream().collect(Collectors.toMap(key -> key, key -> asTagCopy(nbtTagCompound.get(key)), (a, b) -> b, TagCompound::new));
+                tagBase = nbtTagCompound.c().stream().collect(Collectors.toMap(key -> key, key -> toTag(nbtTagCompound.get(key)), (a, b) -> b, TagCompound::new));
             } else if (nbtBase instanceof NBTTagList) {
                 NBTTagList nbtTagList = (NBTTagList) nbtBase;
-                tagBase = IntStream.range(0, nbtTagList.size()).mapToObj(i -> asTagCopy(nbtTagList.g(i))).collect(Collectors.toCollection(TagList::new));
+                tagBase = IntStream.range(0, nbtTagList.size()).mapToObj(i -> toTag(nbtTagList.g(i))).collect(Collectors.toCollection(TagList::new));
             } else if (nbtBase instanceof NBTTagByteArray) {
                 tagBase = new TagByteArray(((NBTTagByteArray) nbtBase).c());
             } else if (nbtBase instanceof NBTTagIntArray) {
@@ -94,9 +94,9 @@ public class NbtUtil_v1_8_R3 extends NbtUtil {
             tagList.stream().map(this::asNMSCopy).forEach(nbtTagList::add);
             nbtBase = nbtTagList;
         } else if (tagBase instanceof TagByteArray) {
-            nbtBase = new NBTTagByteArray(((TagByteArray) tagBase).byteArray());
+            nbtBase = new NBTTagByteArray((byte[]) tagBase.getValue());
         } else if (tagBase instanceof TagIntArray) {
-            nbtBase = new NBTTagIntArray(((TagIntArray) tagBase).intArray());
+            nbtBase = new NBTTagIntArray((int[]) tagBase.getValue());
         } else if (tagBase instanceof TagByte) {
             nbtBase = new NBTTagByte(((TagNumber) tagBase).byteValue());
         } else if (tagBase instanceof TagShort) {
