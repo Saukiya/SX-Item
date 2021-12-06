@@ -107,9 +107,9 @@ public class Test {
     public static void main(String[] args) {
 //        基准测试
         getAndSetPathToCompound();
-        yamlToTagTest();
-        gsonTest();
-        conversionNBT();
+//        yamlToTagTest();
+//        gsonTest();
+//        conversionNBT();
     }
 
     public static void getAndSetPathToCompound() throws Exception {
@@ -264,7 +264,8 @@ public class Test {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         System.out.println(gson.toJson(jsonParser.parse(tagCompound.toString()).getAsJsonObject()));
         System.out.println("----------");
-        System.out.println(tagCompound.getValue());
+        System.out.println("[SX_VALUE] " + tagCompound.getValue());
+        System.out.println("[SX_STRING] " + tagCompound);
     }
 
     public static void regexTest() {
@@ -324,7 +325,6 @@ public class Test {
         nbtTagCompound.set("tagLongArray", nbtTagLongArray);
         nbtTagCompound.set("sub", nbtSubCompound);
 
-        nbtTagCompound.set("end", NBTTagEnd.b);
         nbtTagCompound.set("tagByte", NBTTagByte.a((byte) 6));
         nbtTagCompound.set("tagInt", NBTTagInt.a(23));
         nbtTagCompound.set("tagLong", NBTTagLong.a(40));
@@ -348,23 +348,23 @@ public class Test {
         System.out.println("[NMS->SX] " + tagBase);
 
         //sxNBT转nmsNBT
-        nbtBase = NbtUtil.getInst().asNMSCopy(tagBase);
+        nbtBase = NbtUtil.getInst().toNMS(tagBase);
         System.out.println("[SX->NMS] " + nbtBase);
-
-        //nmsNBT 转 stream 转 sxNBT
-        tagBase = NbtUtil.getInst().asTagCompoundCopy(nbtTagCompound);
-        System.out.println("[STREAM->SX] " + tagBase);
 
         //sxNBT 转 stream 转 nmsNBT
         nbtBase = NbtUtil.getInst().asNMSCompoundCopy(tagBase);
         System.out.println("[STREAM->NMS] " + nbtBase);
+
+        //nmsNBT 转 stream 转 sxNBT
+        tagBase = NbtUtil.getInst().asTagCompoundCopy(nbtTagCompound);
+        System.out.println("[STREAM->SX] " + tagBase);
 
         //nmsStr转nmsNBT
         NBTTagCompound parseTagCompound = MojangsonParser.parse(nbtTagCompound.toString());
         System.out.println("[NMS_STR->NMS] " + parseTagCompound);
 
         //sxStr转nmsNBT
-        parseTagCompound = MojangsonParser.parse(nbtBase.toString());
+        parseTagCompound = MojangsonParser.parse(tagBase.toString());
         System.out.println("[SX_STR->NMS] " + parseTagCompound);
     }
 
