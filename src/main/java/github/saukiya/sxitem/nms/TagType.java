@@ -49,6 +49,7 @@ public enum TagType {
      * @return TagBase
      */
     protected static TagBase toTag(Object object) {
+        if (object == null) return TagEnd.getInst();
         if (object instanceof TagBase) return (TagBase) object;
         TagBase tagBase;
         for (TagType type : TagType.values()) {
