@@ -57,12 +57,12 @@ public class NbtUtil_v1_17_R1 extends NbtUtil {
         return NBTCompressedStreamTools.a(new DataInputStream(new ByteBufInputStream(buf)), NBTReadLimiter.a);
     }
 
-    /**
-     * 将 NBTBase 转为 Map、List、Arrays 等基础类型
-     *
-     * @param nbtBase NBTBase
-     * @return Map、List、Arrays 等基础类型
-     */
+    @Override
+    public TagBase toTag(Object obj) {
+        return TagBase.toTag(obj instanceof NBTBase ? getNMSValue(obj) : obj);
+    }
+
+    @Override
     public Object getNMSValue(Object nbtBase) {
         if (nbtBase instanceof NBTBase) {
             if (nbtBase instanceof NBTTagCompound) {
@@ -80,73 +80,37 @@ public class NbtUtil_v1_17_R1 extends NbtUtil {
                 return ((NBTTagIntArray) nbtBase).getInts();
             } else if (nbtBase instanceof NBTTagLongArray) {
                 return ((NBTTagLongArray) nbtBase).getLongs();
+            } else if (nbtBase instanceof NBTTagString) {
+                return ((NBTTagString) nbtBase).asString();
             } else if (nbtBase instanceof NBTTagByte) {
                 return ((NBTTagByte) nbtBase).asByte();
             } else if (nbtBase instanceof NBTTagShort) {
                 return ((NBTTagShort) nbtBase).asShort();
             } else if (nbtBase instanceof NBTTagInt) {
                 return ((NBTTagInt) nbtBase).asInt();
+            } else if (nbtBase instanceof NBTTagLong) {
+                return ((NBTTagLong) nbtBase).asLong();
             } else if (nbtBase instanceof NBTTagFloat) {
                 return ((NBTTagFloat) nbtBase).asFloat();
             } else if (nbtBase instanceof NBTTagDouble) {
                 return ((NBTTagDouble) nbtBase).asDouble();
-            } else if (nbtBase instanceof NBTTagLong) {
-                return ((NBTTagLong) nbtBase).asLong();
-            } else if (nbtBase instanceof NBTTagString) {
-                return ((NBTTagString) nbtBase).asString();
             }
         }
         return null;
     }
 
-    /**
-     * 讲 TagBase 转为 Map、List、Arrays 等基础类型
-     * <s>防止眼瞎的人看不到方法</s>
-     *
-     * @param tagBase TagBase
-     * @return Map、List、Arrays 等基础类型
-     */
-    public Object getTagValue(TagBase tagBase) {
-        return tagBase.getValue();
-    }
-
-    /**
-     * 将 obj 转为TagBase
-     *
-     * @param obj NBTBase / Object
-     * @return TagBase
-     */
     @Override
-    public TagBase toTag(Object obj) {
-        return TagBase.toTag(obj instanceof NBTBase ? getNMSValue(obj) : obj);
-    }
-
-
-    /**
-     * 将 obj 转为 NMSBase
-     *
-     * @param obj TagBase / Object
-     * @return
-     */
     public NBTBase toNMS(Object obj) {
         if (obj instanceof TagBase) {
             return toNMS(((TagBase) obj).getValue());
+        } else if (obj instanceof NBTBase) {
+            return (NBTBase) obj;
         } else if (obj instanceof Map) {
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
-            Map<String, ?> map = (Map<String, ?>) obj;
-            for (Map.Entry<String, ?> entry : map.entrySet()) {
-                String key = entry.getKey();
-                Object value = entry.getValue();
-                nbtTagCompound.set(key, toNMS(value));
-            }
+            ((Map<String, ?>) obj).forEach((key, value) -> nbtTagCompound.set(key, toNMS(value)));
             return nbtTagCompound;
         } else if (obj instanceof List) {
-            List list = (List) obj;
-            NBTTagList nbtTagList = new NBTTagList();
-            for (Object o : list) {
-                nbtTagList.add(toNMS(o));
-            }
-            return nbtTagList;
+            return ((List<?>) obj).stream().map(this::toNMS).collect(Collectors.toCollection(NBTTagList::new));
         } else if (obj instanceof byte[]) {
             return new NBTTagByteArray((byte[]) obj);
         } else if (obj instanceof int[]) {
@@ -161,20 +125,14 @@ public class NbtUtil_v1_17_R1 extends NbtUtil {
             return NBTTagShort.a(((Number) obj).shortValue());
         } else if (obj instanceof Integer) {
             return NBTTagInt.a(((Number) obj).intValue());
+        } else if (obj instanceof Long) {
+            return NBTTagLong.a(((Number) obj).longValue());
         } else if (obj instanceof Float) {
             return NBTTagFloat.a(((Number) obj).floatValue());
         } else if (obj instanceof Double) {
             return NBTTagDouble.a(((Number) obj).doubleValue());
-        } else if (obj instanceof Long) {
-            return NBTTagLong.a(((Number) obj).longValue());
         }
         return NBTTagEnd.b;
-    }
-
-    // 待删除
-    @Override
-    public NBTBase asNMSCopy(TagBase tagBase) {
-        return toNMS(tagBase);
     }
 
     public static class NBTTagWrapper_v1_17_R1 implements NBTTagWrapper {
