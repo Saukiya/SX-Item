@@ -12,6 +12,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.DataInputStream;
 import java.io.DataOutput;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class NbtUtil_v1_13_R2 extends NbtUtil {
@@ -45,76 +47,79 @@ public class NbtUtil_v1_13_R2 extends NbtUtil {
     }
 
     @Override
-    public TagBase toTag(Object nbtBase) {
-        TagBase tagBase = null;
-        if (nbtBase instanceof NBTBase) {
-            if (nbtBase instanceof NBTTagCompound) {
-                NBTTagCompound nbtTagCompound = (NBTTagCompound) nbtBase;
-                tagBase = nbtTagCompound.getKeys().stream().collect(Collectors.toMap(key -> key, key -> toTag(nbtTagCompound.get(key)), (a, b) -> b, TagCompound::new));
-            } else if (nbtBase instanceof NBTTagList) {
-                NBTTagList nbtTagList = (NBTTagList) nbtBase;
-                tagBase = nbtTagList.stream().map(this::toTag).collect(Collectors.toCollection(TagList::new));
-            } else if (nbtBase instanceof NBTTagByteArray) {
-                tagBase = new TagByteArray(((NBTTagByteArray) nbtBase).c());
-            } else if (nbtBase instanceof NBTTagIntArray) {
-                tagBase = new TagIntArray(((NBTTagIntArray) nbtBase).d());
-            } else if (nbtBase instanceof NBTTagLongArray) {
-                tagBase = new TagLongArray(((NBTTagLongArray) nbtBase).d());
-            } else if (nbtBase instanceof NBTTagByte) {
-                tagBase = new TagByte(((NBTTagByte) nbtBase).asByte());
-            } else if (nbtBase instanceof NBTTagShort) {
-                tagBase = new TagShort(((NBTTagShort) nbtBase).asShort());
-            } else if (nbtBase instanceof NBTTagInt) {
-                tagBase = new TagInt(((NBTTagInt) nbtBase).asInt());
-            } else if (nbtBase instanceof NBTTagFloat) {
-                tagBase = new TagFloat(((NBTTagFloat) nbtBase).asFloat());
-            } else if (nbtBase instanceof NBTTagDouble) {
-                tagBase = new TagDouble(((NBTTagDouble) nbtBase).asDouble());
-            } else if (nbtBase instanceof NBTTagLong) {
-                tagBase = new TagLong(((NBTTagLong) nbtBase).asLong());
-            } else if (nbtBase instanceof NBTTagString) {
-                tagBase = new TagString(((NBTTagString) nbtBase).asString());
-            } else if (nbtBase instanceof NBTTagEnd) {
-                tagBase = TagEnd.getInst();
-            }
-        }
-        return tagBase;
+    public TagBase toTag(Object obj) {
+        return TagBase.toTag(obj instanceof NBTBase ? getNMSValue(obj) : obj);
     }
 
     @Override
-    public NBTBase asNMSCopy(TagBase tagBase) {
-        NBTBase nbtBase = null;
-        if (tagBase instanceof TagCompound) {
-            TagCompound tagCompound = (TagCompound) tagBase;
-            NBTTagCompound nbtTagCompound = new NBTTagCompound();
-            tagCompound.forEach((key, value) -> nbtTagCompound.set(key, asNMSCopy(value)));
-            nbtBase = nbtTagCompound;
-        } else if (tagBase instanceof TagList) {
-            TagList tagList = (TagList) tagBase;
-            nbtBase = tagList.stream().map(this::asNMSCopy).collect(Collectors.toCollection(NBTTagList::new));
-        } else if (tagBase instanceof TagByteArray) {
-            nbtBase = new NBTTagByteArray((byte[]) tagBase.getValue());
-        } else if (tagBase instanceof TagIntArray) {
-            nbtBase = new NBTTagIntArray((int[]) tagBase.getValue());
-        } else if (tagBase instanceof TagLongArray) {
-            nbtBase = new NBTTagLongArray((long[]) tagBase.getValue());
-        } else if (tagBase instanceof TagByte) {
-            nbtBase = new NBTTagByte(((TagNumber) tagBase).byteValue());
-        } else if (tagBase instanceof TagShort) {
-            nbtBase = new NBTTagShort(((TagNumber) tagBase).shortValue());
-        } else if (tagBase instanceof TagInt) {
-            nbtBase = new NBTTagInt(((TagNumber) tagBase).intValue());
-        } else if (tagBase instanceof TagFloat) {
-            nbtBase = new NBTTagFloat(((TagNumber) tagBase).floatValue());
-        } else if (tagBase instanceof TagDouble) {
-            nbtBase = new NBTTagDouble(((TagNumber) tagBase).doubleValue());
-        } else if (tagBase instanceof TagLong) {
-            nbtBase = new NBTTagLong(((TagNumber) tagBase).longValue());
-        } else if (tagBase instanceof TagString) {
-            nbtBase = new NBTTagString(((TagString) tagBase).getValue());
-        } else if (tagBase instanceof TagEnd) {
-            nbtBase = nbtTagEnd;
+    public Object getNMSValue(Object nbtBase) {
+        if (nbtBase instanceof NBTBase) {
+            if (nbtBase instanceof NBTTagCompound) {
+                NBTTagCompound nbtTagCompound = (NBTTagCompound) nbtBase;
+                return nbtTagCompound.getKeys().stream().collect(Collectors.toMap(key -> key, key -> getNMSValue(nbtTagCompound.get(key)), (a, b) -> b));
+            } else if (nbtBase instanceof NBTTagList) {
+                return ((NBTTagList) nbtBase).stream().map(this::getNMSValue).collect(Collectors.toList());
+            } else if (nbtBase instanceof NBTTagByteArray) {
+                return ((NBTTagByteArray) nbtBase).c();
+            } else if (nbtBase instanceof NBTTagIntArray) {
+                return ((NBTTagIntArray) nbtBase).d();
+            } else if (nbtBase instanceof NBTTagLongArray) {
+                return ((NBTTagLongArray) nbtBase).d();
+            } else if (nbtBase instanceof NBTTagString) {
+                return ((NBTTagString) nbtBase).asString();
+            } else if (nbtBase instanceof NBTTagByte) {
+                return ((NBTTagByte) nbtBase).asByte();
+            } else if (nbtBase instanceof NBTTagShort) {
+                return ((NBTTagShort) nbtBase).asShort();
+            } else if (nbtBase instanceof NBTTagInt) {
+                return ((NBTTagInt) nbtBase).asInt();
+            } else if (nbtBase instanceof NBTTagLong) {
+                return ((NBTTagLong) nbtBase).asLong();
+            } else if (nbtBase instanceof NBTTagFloat) {
+                return ((NBTTagFloat) nbtBase).asFloat();
+            } else if (nbtBase instanceof NBTTagDouble) {
+                return ((NBTTagDouble) nbtBase).asDouble();
+            }
         }
-        return nbtBase;
+        return null;
+    }
+
+    @Override
+    public NBTBase toNMS(Object obj) {
+        if (obj instanceof TagBase) {
+            return toNMS(((TagBase) obj).getValue());
+        } else if (obj instanceof NBTBase) {
+            return (NBTBase) obj;
+        } else if (obj instanceof Map) {
+            NBTTagCompound nbtTagCompound = new NBTTagCompound();
+            ((Map<String, ?>) obj).forEach((key, value) -> nbtTagCompound.set(key, toNMS(value)));
+            return nbtTagCompound;
+        } else if (obj instanceof List) {
+            List list = (List) obj;
+            NBTTagList nbtTagList = new NBTTagList();
+            for (Object o : list) nbtTagList.add(toNMS(o));
+            return nbtTagList;
+        } else if (obj instanceof byte[]) {
+            return new NBTTagByteArray((byte[]) obj);
+        } else if (obj instanceof int[]) {
+            return new NBTTagIntArray((int[]) obj);
+        } else if (obj instanceof long[]) {
+            return new NBTTagLongArray((long[]) obj);
+        } else if (obj instanceof String) {
+            return new NBTTagString(obj.toString());
+        } else if (obj instanceof Byte) {
+            return new NBTTagByte(((Number) obj).byteValue());
+        } else if (obj instanceof Short) {
+            return new NBTTagShort(((Number) obj).shortValue());
+        } else if (obj instanceof Integer) {
+            return new NBTTagInt(((Number) obj).intValue());
+        } else if (obj instanceof Long) {
+            return new NBTTagLong(((Number) obj).longValue());
+        } else if (obj instanceof Float) {
+            return new NBTTagFloat(((Number) obj).floatValue());
+        } else if (obj instanceof Double) {
+            return new NBTTagDouble(((Number) obj).doubleValue());
+        }
+        return nbtTagEnd;
     }
 }

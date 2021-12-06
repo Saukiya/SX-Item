@@ -76,6 +76,7 @@ public abstract class NbtUtil implements NMS {
 
     /**
      * json字符串转nmsNBTCompound
+     * 用法: {@link NbtUtil#parseNMSCompound(String nbtBase.toString)}
      *
      * @param json NBTJson
      * @return nmsNBTCompound
@@ -83,20 +84,38 @@ public abstract class NbtUtil implements NMS {
     public abstract <V> V parseNMSCompound(String json) throws Exception;
 
     /**
-     * nmsNBT转sxNBT
+     * 讲 TagBase 转为 Map、List、Arrays 等基础类型
+     * <s>防止视力不好的人看不到</s>
      *
-     * @param nbtBase nmsNBT
-     * @return sxNBT
+     * @param tagBase TagBase
+     * @return Map、List、Arrays 等基础类型
      */
-    @Deprecated
-    public abstract <V extends TagBase> V toTag(Object nbtBase);
+    public <V> V getTagValue(TagBase tagBase) {
+        return (V) tagBase.getValue();
+    }
 
     /**
-     * sxNBT转nmsNBT
+     * 将 obj 转为TagBase
      *
-     * @param tagBase sxNBT
-     * @return nmsNBT
+     * @param obj NBTBase、Map、List、Arrays 等基础类型
+     * @return TagBase
+     */
+    public abstract <V extends TagBase> V toTag(Object obj);
+
+    /**
+     * 将 NBTBase 转为 Map、List、Arrays 等基础类型
+     *
+     * @param nbtBase NBTBase
+     * @return Map、List、Arrays 等基础类型
+     */
+    public abstract <V> V getNMSValue(Object nbtBase);
+
+    /**
+     * 将 obj 转为 NBTBase
+     *
+     * @param obj TagBase、Map、List、Arrays 等基础类型
+     * @return NBTBase
      */
     @Deprecated
-    public abstract <V> V asNMSCopy(TagBase tagBase);
+    public abstract <V> V toNMS(Object obj);
 }
