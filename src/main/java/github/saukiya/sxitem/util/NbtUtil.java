@@ -116,6 +116,5 @@ public abstract class NbtUtil implements NMS {
      * @param obj TagBase、Map、List、Arrays 等基础类型
      * @return NBTBase
      */
-    @Deprecated
     public abstract <V> V toNMS(Object obj);
 }
