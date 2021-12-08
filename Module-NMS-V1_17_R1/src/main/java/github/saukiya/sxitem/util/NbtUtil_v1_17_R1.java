@@ -135,42 +135,48 @@ public class NbtUtil_v1_17_R1 extends NbtUtil {
         return NBTTagEnd.b;
     }
 
-    public static class NBTTagWrapper_v1_17_R1 implements NBTTagWrapper {
+    public class NBTTagWrapper_v1_17_R1 implements NBTTagWrapper {
 
-        public NBTTagCompound nbtTagCompound;
+        public final NBTTagCompound nbtTagCompound;
 
         public NBTTagWrapper_v1_17_R1(NBTTagCompound tagCompound) {
             this.nbtTagCompound = tagCompound;
         }
 
-        public NBTTagCompound getCompound(NBTTagCompound compound, String path) {
-            if (compound == null) return null;
+        protected NBTTagCompound get(NBTTagCompound compound, String path) {
             int index = path.indexOf('.');
-            if (index != -1)
-                return getCompound(getCompound(compound, path.substring(0, index)), path.substring(index + 1));
-            NBTBase nbtBase = compound.get(path);
-            if (nbtBase instanceof NBTTagCompound) return (NBTTagCompound) nbtBase;
+            NBTBase nbtBase = compound.get(index == -1 ? path : path.substring(0, index));
+            if (nbtBase instanceof NBTTagCompound) {
+                return get((NBTTagCompound) nbtBase, path.substring(index + 1));
+            }
             return null;
         }
 
         @Override
-        public void setNBT(String path, Object def) {
-
+        public Object get(String path) {
+            int index = path.lastIndexOf('.');
+            if (index == -1) return getNMSValue(nbtTagCompound.get(path));
+            NBTTagCompound tagCompound = get(nbtTagCompound, path.substring(0, index));
+            return tagCompound != null ? getNMSValue(tagCompound.get(path.substring(index + 1))) : null;
         }
 
         @Override
-        public void removeNBT(String path) {
+        public Object set(String path, Object def) {
+            //TODO 无法使用get方法
+            return null;
+        }
 
+        @Override
+        public boolean remove(String path) {
+
+            return false;
         }
 
         @Override
         public Set<String> getKeys(String path) {
-            return null;
-        }
-
-        @Override
-        public <V> V getNBT(String path, V def) {
-            return null;
+            if (path == null) return nbtTagCompound.getKeys();
+            NBTTagCompound tagCompound = get(nbtTagCompound, path);
+            return tagCompound != null ? tagCompound.getKeys() : null;
         }
     }
 }
