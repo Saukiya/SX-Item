@@ -8,6 +8,7 @@ import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.RandomDocker;
 import github.saukiya.sxitem.nms.*;
 import github.saukiya.sxitem.util.NbtUtil;
+import github.saukiya.sxitem.util.NbtUtil_v1_17_R1;
 import github.saukiya.sxitem.util.Tuple;
 import lombok.SneakyThrows;
 import net.minecraft.nbt.*;
@@ -53,8 +54,7 @@ public class Test {
     public static Object set(NBTTagCompound compound, String path, Object object) throws Exception {
         int index = path.indexOf('.');
         if (index == -1) {//不存在子节点时
-            NBTBase setBase = NBTTagString.a("TODO"); //TODO object -> nbt
-            return getValue(compound.set(path, setBase));
+            return getValue(compound.set(path, NbtUtil.getInst().toNMS(object)));
         } else {//存在子节点时
             String subPath = path.substring(0, index);
             NBTBase nbtBase = compound.get(subPath);
@@ -106,7 +106,14 @@ public class Test {
     @SneakyThrows
     public static void main(String[] args) {
 //        基准测试
-        getAndSetPathToCompound();
+        NbtUtil_v1_17_R1 nbtUtil = new NbtUtil_v1_17_R1();
+        NBTTagWrapper nbtTagWrapper = nbtUtil.newItemTagWrapper((TagCompound) nbtUtil.toTag(getNBT()));
+        for (String key : nbtTagWrapper.getKeys()) {
+            System.out.println("key: " + key);
+            System.out.println(nbtTagWrapper.get(key).getClass().getSimpleName());
+            System.out.println(nbtTagWrapper.get(key));
+        }
+//        getAndSetPathToCompound();
 //        yamlToTagTest();
 //        gsonTest();
 //        conversionNBT();
