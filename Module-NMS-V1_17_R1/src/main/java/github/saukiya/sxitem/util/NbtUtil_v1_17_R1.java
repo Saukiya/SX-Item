@@ -1,12 +1,15 @@
 package github.saukiya.sxitem.util;
 
-import github.saukiya.sxitem.nms.*;
+import github.saukiya.sxitem.nms.NBTTagWrapper;
+import github.saukiya.sxitem.nms.TagBase;
+import github.saukiya.sxitem.nms.TagCompound;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
 import lombok.SneakyThrows;
 import net.minecraft.nbt.*;
+import org.apache.commons.lang.Validate;
 import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
@@ -20,8 +23,7 @@ import java.util.stream.Collectors;
 
 public class NbtUtil_v1_17_R1 extends NbtUtil {
 
-    //TODO  为什么要转？
-    //      为什么不直接同源?
+    @Deprecated
     public NBTTagWrapper newItemTagWrapper(TagCompound tagCompound) {
         return new NBTTagWrapper_v1_17_R1(asNMSCompoundCopy(tagCompound));
     }
@@ -137,46 +139,96 @@ public class NbtUtil_v1_17_R1 extends NbtUtil {
 
     public class NBTTagWrapper_v1_17_R1 implements NBTTagWrapper {
 
-        public final NBTTagCompound nbtTagCompound;
+        protected final NBTTagCompound handle;
 
-        public NBTTagWrapper_v1_17_R1(NBTTagCompound tagCompound) {
-            this.nbtTagCompound = tagCompound;
+        protected NBTTagWrapper_v1_17_R1(NBTTagCompound tagCompound) {
+            if (tagCompound == null) throw new NullPointerException();
+            this.handle = tagCompound;
         }
 
-        protected NBTTagCompound get(NBTTagCompound compound, String path) {
+        protected NBTBase get(NBTTagCompound compound, String path) {
             int index = path.indexOf('.');
-            NBTBase nbtBase = compound.get(index == -1 ? path : path.substring(0, index));
-            if (nbtBase instanceof NBTTagCompound) {
-                return get((NBTTagCompound) nbtBase, path.substring(index + 1));
+            if (index == -1) return compound.get(path);
+            NBTBase base = compound.get(path.substring(0, index));
+            if (base instanceof NBTTagCompound) {
+                return get((NBTTagCompound) base, path.substring(index + 1));
             }
             return null;
         }
 
         @Override
         public Object get(String path) {
-            int index = path.lastIndexOf('.');
-            if (index == -1) return getNMSValue(nbtTagCompound.get(path));
-            NBTTagCompound tagCompound = get(nbtTagCompound, path.substring(0, index));
-            return tagCompound != null ? getNMSValue(tagCompound.get(path.substring(index + 1))) : null;
+            Validate.notEmpty(path, "Cannot get to an empty path");
+            return getNMSValue(get(handle, path));
         }
 
         @Override
-        public Object set(String path, Object def) {
-            //TODO 无法使用get方法
-            return null;
+        public Object set(String path, Object value) {
+            Validate.notEmpty(path, "Cannot set to an empty path");
+            int right;
+            NBTTagCompound current = handle;
+            NBTBase base;
+            while ((right = path.indexOf('.')) != -1) {
+                base = current.get(path.substring(0, right));
+                if (!(base instanceof NBTTagCompound)) {
+                    base = new NBTTagCompound();
+                    current.set(path.substring(0, right), base);
+                }
+                current = (NBTTagCompound) base;
+                path = path.substring(right + 1);
+            }
+            Validate.notEmpty(path, "Cannot set to an empty path");//这段代码直接从MemorySection那边CV过来的!
+            if (value != null) {
+                return current.set(path, toNMS(value));
+            } else {
+                Object ret = current.get(path);
+                current.remove(path);
+                return ret;
+            }
         }
 
         @Override
-        public boolean remove(String path) {
-
-            return false;
+        public Object remove(String path) {
+            Validate.notEmpty(path, "Cannot remove to an empty path");
+            int lastIndex = path.lastIndexOf('.');
+            NBTTagCompound tagCompound = handle;
+            if (lastIndex != -1) {
+                NBTBase base = get(handle, path.substring(0, lastIndex));
+                if (base instanceof NBTTagCompound) {
+                    tagCompound = (NBTTagCompound) base;
+                    path = path.substring(lastIndex + 1);
+                } else {
+                    return null;
+                }
+            }
+            Object ret = tagCompound.get(path);
+            tagCompound.remove(path);
+            return ret;
         }
 
         @Override
         public Set<String> getKeys(String path) {
-            if (path == null) return nbtTagCompound.getKeys();
-            NBTTagCompound tagCompound = get(nbtTagCompound, path);
-            return tagCompound != null ? tagCompound.getKeys() : null;
+            if (path == null) return handle.getKeys();
+            NBTBase base = get(handle, path);
+            if (base instanceof NBTTagCompound) {
+                return ((NBTTagCompound) base).getKeys();
+            }
+            return null;
+        }
+
+        @Override
+        public NBTTagWrapper getWrapper(String path) {
+            Validate.notEmpty(path, "Cannot getWrapper to an empty path");
+            NBTBase base = get(handle, path);
+            if (base instanceof NBTTagCompound) {
+                return new NBTTagWrapper_v1_17_R1((NBTTagCompound) base);
+            }
+            return null;
+        }
+
+        @Override
+        public Object getHandle() {
+            return handle;
         }
     }
 }
