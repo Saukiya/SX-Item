@@ -8,6 +8,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.util.*;
 
+//TODO 需要与NBTTagWrapper作出相同的功能
 @NoArgsConstructor
 public class TagCompound extends HashMap<String, TagBase> implements TagBase<HashMap<String, ?>> {
 
