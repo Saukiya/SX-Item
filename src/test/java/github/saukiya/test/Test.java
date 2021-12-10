@@ -1,6 +1,7 @@
 package github.saukiya.test;
 
 
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
@@ -18,6 +19,7 @@ import org.apache.commons.lang.text.StrSubstitutor;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -108,11 +110,15 @@ public class Test {
 //        基准测试
         NbtUtil_v1_17_R1 nbtUtil = new NbtUtil_v1_17_R1();
         NBTTagWrapper nbtTagWrapper = nbtUtil.newItemTagWrapper((TagCompound) nbtUtil.toTag(getNBT()));
-        for (String key : nbtTagWrapper.getKeys()) {
-            System.out.println("key: " + key);
-            System.out.println(nbtTagWrapper.get(key).getClass().getSimpleName());
-            System.out.println(nbtTagWrapper.get(key));
-        }
+
+        System.out.println(nbtTagWrapper.set("nbtTagWrapper.set", "测试"));
+        System.out.println(nbtTagWrapper.set("nbtTagWrapper.set.test", Arrays.asList("测试测试", "测试")));
+        System.out.println(nbtTagWrapper.set("nbtTagWrapper.233", "啦啦啦啦"));
+        System.out.println(nbtTagWrapper.remove("sub.test1"));
+        System.out.println(nbtTagWrapper.getKeys());
+        System.out.println(nbtTagWrapper.getWrapper("nbtTagWrapper").remove("233"));
+        System.out.println(nbtTagWrapper.getHandle());
+
 //        getAndSetPathToCompound();
 //        yamlToTagTest();
 //        gsonTest();
