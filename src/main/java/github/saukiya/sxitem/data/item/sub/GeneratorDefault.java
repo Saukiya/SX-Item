@@ -4,7 +4,9 @@ import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.item.IGenerator;
 import github.saukiya.sxitem.data.item.IUpdate;
 import github.saukiya.sxitem.data.random.RandomDocker;
+import github.saukiya.sxitem.nms.NBTItemWrapper;
 import github.saukiya.sxitem.util.MessageUtil;
+import github.saukiya.sxitem.util.NbtUtil;
 import github.saukiya.sxitem.util.PlaceholderUtil;
 import lombok.NoArgsConstructor;
 import lombok.experimental.PackagePrivate;
@@ -164,7 +166,9 @@ public class GeneratorDefault implements IGenerator, IUpdate {
             for (Map.Entry<String, String> entry : docker.getLockMap().entrySet()) {
                 list.add(entry.getKey() + "§e§k|§e§r" + entry.getValue());
             }
-            SXItem.getNbtUtil().setNBTList(item, SXItem.getInst().getName() + "-Lock", list);
+            NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item);
+            wrapper.set(SXItem.getInst().getName() + "-Lock", list);
+            wrapper.save();
         }
         return item;
     }

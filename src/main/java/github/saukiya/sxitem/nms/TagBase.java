@@ -26,7 +26,7 @@ public interface TagBase<T> {
      * @return String
      */
     default String toJson() {
-        return GSON.toJson(JSON_PARSER.parse(String.valueOf(this)));
+        return GSON.toJson(JSON_PARSER.parse(toString()));
     }
 
     static TagBase toTag(Object object) {

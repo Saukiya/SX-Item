@@ -1,5 +1,5 @@
 #格式1-每个能单独调,但是很丑
-DefaultLore:
+TestLore:
   - rate: 0.3
     string: "<s:Test> 233"
   - rate: 0.5

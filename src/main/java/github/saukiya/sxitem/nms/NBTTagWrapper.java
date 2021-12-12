@@ -1,7 +1,11 @@
 package github.saukiya.sxitem.nms;
 
+import org.bukkit.inventory.ItemStack;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -55,8 +59,12 @@ public interface NBTTagWrapper {
      * @param path 要获取TagCompound的路径
      * @return 如果未找到路径，则返回null
      */
-    @Nonnull
+    @Nullable
     NBTTagWrapper getWrapper(@Nonnull String path);
+
+    default void save(@Nonnull ItemStack itemStack) {
+
+    }
 
     /**
      * 获取所处理的NBTTagCompound
@@ -85,5 +93,75 @@ public interface NBTTagWrapper {
      */
     default boolean contains(String path) {
         return get(path) != null;
+    }
+
+    default boolean isArray(String path) {
+        return get(path).getClass().isArray();
+    }
+
+    default <V> V get(String path, Class<V> t) {
+        Object obj = get(path);
+        if (obj != null && t.isAssignableFrom(obj.getClass())) {
+            return (V) obj;
+        }
+        return null;
+    }
+
+    default String getString(String path) {
+        return get(path, String.class);
+    }
+
+    default Byte getByte(String path) {
+        Number number = get(path, Number.class);
+        return number == null ? null : number.byteValue();
+    }
+
+    default Short getShort(String path) {
+        Number number = get(path, Number.class);
+        return number == null ? null : number.shortValue();
+    }
+
+    default Integer getInt(String path) {
+        Number number = get(path, Number.class);
+        return number == null ? null : number.intValue();
+    }
+
+    default Long getLong(String path) {
+        Number number = get(path, Number.class);
+        return number == null ? null : number.longValue();
+    }
+
+    default Float getFloat(String path) {
+        Number number = get(path, Number.class);
+        return number == null ? null : number.floatValue();
+    }
+
+    default Double getDouble(String path) {
+        Number number = get(path, Number.class);
+        return number == null ? null : number.doubleValue();
+    }
+
+    default List<?> getList(String path) {
+        return get(path, List.class);
+    }
+
+    default List<String> getStringList(String path) {
+        return get(path, List.class);
+    }
+
+    default int[] getIntArray(String path) {
+        return get(path, int[].class);
+    }
+
+    default byte[] getByteArray(String path) {
+        return get(path, byte[].class);
+    }
+
+    default long[] getLongArray(String path) {
+        return get(path, long[].class);
+    }
+
+    default Map<String, ?> getMap(String path) {
+        return get(path, Map.class);
     }
 }

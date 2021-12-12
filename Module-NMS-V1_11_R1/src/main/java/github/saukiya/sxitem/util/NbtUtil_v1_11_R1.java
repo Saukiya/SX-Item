@@ -29,11 +29,6 @@ public class NbtUtil_v1_11_R1 extends NbtUtil {
         return asTagCompoundCopy(CraftItemStack.asNMSCopy(itemStack).getTag());
     }
 
-    @Override
-    public NBTTagWrapper getItemTagWrapper(ItemStack itemStack) {
-        return new NBTTagWrapperImpl(CraftItemStack.asNMSCopy(itemStack).getTag());
-    }
-
     @SneakyThrows
     @Override
     public TagCompound asTagCompoundCopy(Object nbtTagCompound) {
