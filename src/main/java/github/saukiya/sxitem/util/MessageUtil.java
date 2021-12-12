@@ -57,7 +57,7 @@ public abstract class MessageUtil implements NMS {
         sender.spigot().sendMessage(tc);
     }
 
-    public abstract TextComponent getTextComponent(String msg, String command, String showText);
+    public abstract TextComponent getTextComponent(String msg, String showText, String command);
 
     public abstract TranslatableComponent showItem(@Nonnull Material material);
 

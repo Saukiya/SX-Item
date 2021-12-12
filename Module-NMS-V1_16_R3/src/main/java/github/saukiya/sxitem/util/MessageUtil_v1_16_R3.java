@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 public class MessageUtil_v1_16_R3 extends MessageUtil {
 
     @Override
-    public TextComponent getTextComponent(String msg, String command, String showText) {
+    public TextComponent getTextComponent(String msg, String showText, String command) {
         TextComponent tc = new TextComponent(msg);
         if (showText != null) tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§7" + showText)));
         if (command != null) tc.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
