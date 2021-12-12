@@ -73,12 +73,8 @@ public class RandomDocker extends StrLookup {
     protected String random(List<Tuple<Double, String>> data) {
         if (data != null) {
             if (data.size() == 1) return data.get(0).b();
-            double r = SXItem.getRandom().nextDouble();
-            for (Tuple<Double, String> tuple : data) {
-                if (r < tuple.a()) {
-                    return tuple.b();
-                }
-            }
+            double value = SXItem.getRandom().nextDouble();
+            return data.stream().filter(tuple -> value < tuple.a()).findFirst().map(Tuple::b).orElse(null);
         }
         return null;
     }
@@ -93,6 +89,6 @@ public class RandomDocker extends StrLookup {
                 SXItem.getInst().getLogger().warning("No Random Type: " + s.charAt(0));
             }
         }
-        return null;
+        return "%DeleteLore%";
     }
 }
