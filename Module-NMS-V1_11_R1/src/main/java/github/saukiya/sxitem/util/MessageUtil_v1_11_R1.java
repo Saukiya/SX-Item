@@ -26,7 +26,7 @@ public class MessageUtil_v1_11_R1 extends MessageUtil {
     }
 
     @Override
-    public TextComponent getTextComponent(String msg, String command, String showText) {
+    public TextComponent getTextComponent(String msg, String showText, String command) {
         TextComponent tc = new TextComponent(msg);
         if (showText != null)
             tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[]{new TextComponent("§7" + showText)}));
