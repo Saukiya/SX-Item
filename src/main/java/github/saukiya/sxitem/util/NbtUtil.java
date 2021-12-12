@@ -45,10 +45,7 @@ public abstract class NbtUtil implements NMS {
         }
     }
 
-    public NBTTagWrapper getItemTagWrapper(ItemStack itemStack) {
-
-        return null;
-    }
+    public abstract NBTTagWrapper getItemTagWrapper(ItemStack itemStack);
 
     /**
      * 获取物品的全部NBT
