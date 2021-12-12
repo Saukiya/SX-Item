@@ -25,7 +25,7 @@ Default-1:
   Unbreakable: false
 Default-2:
   Name: '&c机械轻羽之靴'
-  ID: 301
+  ID: LEATHER_BOOTS
   Lore:
     - '&6物品类型: 靴子'
     - '&c生命上限: +2000'
@@ -48,7 +48,7 @@ Default-2:
   ClearAttribute: false
 Default-3:
   Name: '&b雷霆领主项链'
-  ID: 287
+  ID: STRING
   Lore:
     - '&6物品类型: 项链'
     - '&c生命上限: +200'
@@ -56,7 +56,7 @@ Default-3:
     - '&e&l全局和局部混合: <s:DefaultLore>'
     - '&r'
     - '&e可以覆盖全局->DefaultPrefix'
-    - '也可以间接调用全局->DefaultLore, ‘~’代表向下引用'
+    - '也可以间接调用全局->DefaultLore, ‘~’代表向下引用(然鹅好像还没实现)'
   EnchantList:
     - DURABILITY:1
   Random:
@@ -87,7 +87,7 @@ Default-4:
         - §c它不支持自动更新§7
 Default-5:
   Name: '&b慢剑'
-  ID: 267
+  ID: GOLDEN_SWORD
   Lore:
     - '&7设置物品默认攻速，与玩家自身属性分离'
     - '&7物品攻速最低为0-最高为4'
@@ -100,7 +100,7 @@ Default-5:
   AttackSpeed: 0.8
 Default-6:
   Name: '&c&l鸽子肉'
-  ID: '351:7'
+  ID: 'GREEN_DYE:7'
   Lore:
     - ''
     - '&6物品类型: 宝藏'

@@ -2,6 +2,9 @@ package github.saukiya.sxitem.command.sub;
 
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.command.SubCommand;
+import github.saukiya.sxitem.nms.TagBase;
+import github.saukiya.sxitem.nms.TagCompound;
+import github.saukiya.sxitem.util.MessageUtil;
 import github.saukiya.sxitem.util.NbtUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -10,6 +13,7 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -41,8 +45,19 @@ public class NBTCommand extends SubCommand {
             SXItem.getItemDataManager().sendItemMapToPlayer(sender);
             return;
         }
-        String str = NbtUtil.getInst().getItemNBT(item).toJson();
-        sender.sendMessage("\n\n" + str + "\n");
+        sender.sendMessage("§c物品拥有以下NBT:");
+        sendNBT("§7", NbtUtil.getInst().getItemNBT(item), sender);
+    }
+
+    public void sendNBT(String prefix, TagCompound tagCompound, CommandSender sender) {
+        for (Map.Entry<String, TagBase> entry : tagCompound.entrySet()) {
+            TagBase tagBase = entry.getValue();
+            if (tagBase instanceof TagCompound) {
+                sendNBT(prefix + entry.getKey() + '.', (TagCompound) tagBase, sender);
+            } else {
+                MessageUtil.getInst().send(sender, MessageUtil.getInst().getTextComponent(prefix + entry.getKey(), entry.getValue().toString(), null));
+            }
+        }
     }
 
     @Override

@@ -5,10 +5,7 @@ import github.saukiya.sxitem.data.item.ItemDataManager;
 import github.saukiya.sxitem.data.item.sub.GeneratorDefault;
 import github.saukiya.sxitem.data.item.sub.GeneratorImport;
 import github.saukiya.sxitem.data.random.RandomStringManager;
-import github.saukiya.sxitem.util.Config;
-import github.saukiya.sxitem.util.Message;
-import github.saukiya.sxitem.util.NbtUtilDeprecated;
-import github.saukiya.sxitem.util.PlaceholderUtil;
+import github.saukiya.sxitem.util.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.bstats.bukkit.Metrics;
@@ -48,9 +45,6 @@ public class SXItem extends JavaPlugin {
     @Getter
     private static ItemDataManager itemDataManager;
 
-    @Getter
-    private static NbtUtilDeprecated nbtUtil;
-
     @Override
     public void onLoad() {
         inst = this;
@@ -67,7 +61,7 @@ public class SXItem extends JavaPlugin {
         new Metrics(this, 11948);
         long oldTimes = System.currentTimeMillis();
         PlaceholderUtil.setup();
-        nbtUtil = new NbtUtilDeprecated();
+        NbtUtil.getInst();
 
         randomStringManager = new RandomStringManager();
         itemDataManager = new ItemDataManager();

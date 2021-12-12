@@ -79,15 +79,15 @@ DefaultSuffix:
     - KNOCKBACK:<r:0_1>
   - - DAMAGE_ALL:<r:0_2>
     - LOOT_BONUS_MOBS:<r:0_1>
-射手ID: '261'
+射手ID: 'BOW'
 战士ID: <s:战士<l:品质>ID>
 剑士ID: <s:剑士<l:品质>ID>
-战士普通ID: '258'
-战士优秀ID: '286'
-战士史诗ID: '279'
-剑士普通ID: '267'
-剑士优秀ID: '283'
-剑士史诗ID: '276'
+战士普通ID: 'STONE_PICKAXE'
+战士优秀ID: 'IRON_PICKAXE'
+战士史诗ID: 'DIAMOND_PICKAXE'
+剑士普通ID: 'STONE_SWORD'
+剑士优秀ID: 'IRON_SWORD'
+剑士史诗ID: 'DIAMOND_SWORD'
 材质:
   - '&01'
   - '&01'
@@ -137,17 +137,3 @@ DefaultSuffix:
   - 雷霆几率
   - 破甲几率
   - 撕裂几率
-防随一_模板未使用:
-  - 反射比例
-  - 格挡比例
-  - 韧性
-  - 移动速度
-防随二_模板未使用:
-  - 反射比例
-  - 格挡比例
-  - 闪避几率
-防随三_模板未使用:
-  - 生命恢复
-  - 生命上限
-  - PVP防御力
-  - PVE防御力

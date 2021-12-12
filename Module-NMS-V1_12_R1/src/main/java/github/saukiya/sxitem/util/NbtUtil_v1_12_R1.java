@@ -24,11 +24,6 @@ public class NbtUtil_v1_12_R1 extends NbtUtil {
     private final NBTTagEnd nbtTagEnd = NMS.newPrivateInstance(NBTTagEnd.class);
 
     @Override
-    public NBTTagWrapper getItemTagWrapper(ItemStack itemStack) {
-        return new NBTTagWrapperImpl(CraftItemStack.asNMSCopy(itemStack).getTag());
-    }
-
-    @Override
     public TagCompound getItemNBT(ItemStack itemStack) {
         return asTagCompoundCopy(CraftItemStack.asNMSCopy(itemStack).getTag());
     }
