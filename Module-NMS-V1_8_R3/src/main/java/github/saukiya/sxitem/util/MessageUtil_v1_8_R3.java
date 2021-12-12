@@ -26,7 +26,6 @@ public class MessageUtil_v1_8_R3 extends MessageUtil {
 
         PacketPlayOutChat packet = new PacketPlayOutChat(null, (byte) ChatMessageType.ACTION_BAR.ordinal());
         packet.components = new BaseComponent[]{new TextComponent(message)};
-        ;
         craftPlayer.getHandle().playerConnection.sendPacket(packet);
     }
 
@@ -54,7 +53,7 @@ public class MessageUtil_v1_8_R3 extends MessageUtil {
     }
 
     @Override
-    public TextComponent getTextComponent(String msg, String command, String showText) {
+    public TextComponent getTextComponent(String msg, String showText, String command) {
         TextComponent tc = new TextComponent(msg);
         if (showText != null)
             tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[]{new TextComponent("§7" + showText)}));
