@@ -25,12 +25,12 @@ public class NbtUtil_v1_17_R1 extends NbtUtil {
 
     @Deprecated
     public NBTTagWrapper newItemTagWrapper(TagCompound tagCompound) {
-        return new NBTTagWrapper_v1_17_R1(asNMSCompoundCopy(tagCompound));
+        return new NBTTagWrapperImpl(asNMSCompoundCopy(tagCompound));
     }
 
     @Override
     public NBTTagWrapper getItemTagWrapper(ItemStack itemStack) {
-        return new NBTTagWrapper_v1_17_R1(CraftItemStack.asNMSCopy(itemStack).getTag());
+        return new NBTTagWrapperImpl(CraftItemStack.asNMSCopy(itemStack).getTag());
     }
 
     @Override
@@ -137,11 +137,11 @@ public class NbtUtil_v1_17_R1 extends NbtUtil {
         return NBTTagEnd.b;
     }
 
-    public class NBTTagWrapper_v1_17_R1 implements NBTTagWrapper {
+    public class NBTTagWrapperImpl implements NBTTagWrapper {
 
         protected final NBTTagCompound handle;
 
-        protected NBTTagWrapper_v1_17_R1(NBTTagCompound tagCompound) {
+        protected NBTTagWrapperImpl(NBTTagCompound tagCompound) {
             if (tagCompound == null) throw new NullPointerException();
             this.handle = tagCompound;
         }
@@ -178,13 +178,14 @@ public class NbtUtil_v1_17_R1 extends NbtUtil {
                 path = path.substring(right + 1);
             }
             Validate.notEmpty(path, "Cannot set to an empty path");//这段代码直接从MemorySection那边CV过来的!
+            Object ret;
             if (value != null) {
-                return current.set(path, toNMS(value));
+                ret = current.set(path, toNMS(value));
             } else {
-                Object ret = current.get(path);
+                ret = current.get(path);
                 current.remove(path);
-                return ret;
             }
+            return getNMSValue(ret);
         }
 
         @Override
@@ -203,7 +204,7 @@ public class NbtUtil_v1_17_R1 extends NbtUtil {
             }
             Object ret = tagCompound.get(path);
             tagCompound.remove(path);
-            return ret;
+            return getNMSValue(ret);
         }
 
         @Override
@@ -221,7 +222,7 @@ public class NbtUtil_v1_17_R1 extends NbtUtil {
             Validate.notEmpty(path, "Cannot getWrapper to an empty path");
             NBTBase base = get(handle, path);
             if (base instanceof NBTTagCompound) {
-                return new NBTTagWrapper_v1_17_R1((NBTTagCompound) base);
+                return new NBTTagWrapperImpl((NBTTagCompound) base);
             }
             return null;
         }

@@ -7,6 +7,7 @@ import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
 import lombok.SneakyThrows;
 import net.minecraft.server.v1_8_R3.*;
+import org.apache.commons.lang.Validate;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
@@ -15,6 +16,7 @@ import java.io.DataOutput;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -25,6 +27,11 @@ public class NbtUtil_v1_8_R3 extends NbtUtil {
     @Override
     public TagCompound getItemNBT(ItemStack itemStack) {
         return asTagCompoundCopy(CraftItemStack.asNMSCopy(itemStack).getTag());
+    }
+
+    @Override
+    public NBTTagWrapper getItemTagWrapper(ItemStack itemStack) {
+        return new NBTTagWrapperImpl(CraftItemStack.asNMSCopy(itemStack).getTag());
     }
 
     @SneakyThrows
@@ -124,5 +131,100 @@ public class NbtUtil_v1_8_R3 extends NbtUtil {
             return new NBTTagDouble(((Number) obj).doubleValue());
         }
         return nbtTagEnd;
+    }
+
+    public class NBTTagWrapperImpl implements NBTTagWrapper {
+
+        protected final NBTTagCompound handle;
+
+        protected NBTTagWrapperImpl(NBTTagCompound tagCompound) {
+            if (tagCompound == null) throw new NullPointerException();
+            this.handle = tagCompound;
+        }
+
+        protected NBTBase get(NBTTagCompound compound, String path) {
+            int index = path.indexOf('.');
+            if (index == -1) return compound.get(path);
+            NBTBase base = compound.get(path.substring(0, index));
+            if (base instanceof NBTTagCompound) {
+                return get((NBTTagCompound) base, path.substring(index + 1));
+            }
+            return null;
+        }
+
+        @Override
+        public Object get(String path) {
+            Validate.notEmpty(path, "Cannot get to an empty path");
+            return getNMSValue(get(handle, path));
+        }
+
+        @Override
+        public Object set(String path, Object value) {
+            Validate.notEmpty(path, "Cannot set to an empty path");
+            int right;
+            NBTTagCompound current = handle;
+            NBTBase base;
+            while ((right = path.indexOf('.')) != -1) {
+                base = current.get(path.substring(0, right));
+                if (!(base instanceof NBTTagCompound)) {
+                    base = new NBTTagCompound();
+                    current.set(path.substring(0, right), base);
+                }
+                current = (NBTTagCompound) base;
+                path = path.substring(right + 1);
+            }
+            Validate.notEmpty(path, "Cannot set to an empty path");//这段代码直接从MemorySection那边CV过来的!
+            Object ret = current.get(path);
+            if (value != null) {
+                current.set(path, toNMS(value));
+            } else {
+                current.remove(path);
+            }
+            return getNMSValue(ret);
+        }
+
+        @Override
+        public Object remove(String path) {
+            Validate.notEmpty(path, "Cannot remove to an empty path");
+            int lastIndex = path.lastIndexOf('.');
+            NBTTagCompound tagCompound = handle;
+            if (lastIndex != -1) {
+                NBTBase base = get(handle, path.substring(0, lastIndex));
+                if (base instanceof NBTTagCompound) {
+                    tagCompound = (NBTTagCompound) base;
+                    path = path.substring(lastIndex + 1);
+                } else {
+                    return null;
+                }
+            }
+            Object ret = tagCompound.get(path);
+            tagCompound.remove(path);
+            return getNMSValue(ret);
+        }
+
+        @Override
+        public Set<String> getKeys(String path) {
+            if (path == null) return handle.c();
+            NBTBase base = get(handle, path);
+            if (base instanceof NBTTagCompound) {
+                return ((NBTTagCompound) base).c();
+            }
+            return null;
+        }
+
+        @Override
+        public NBTTagWrapper getWrapper(String path) {
+            Validate.notEmpty(path, "Cannot getWrapper to an empty path");
+            NBTBase base = get(handle, path);
+            if (base instanceof NBTTagCompound) {
+                return new NBTTagWrapperImpl((NBTTagCompound) base);
+            }
+            return null;
+        }
+
+        @Override
+        public Object getHandle() {
+            return handle;
+        }
     }
 }
