@@ -1,7 +1,10 @@
 package github.saukiya.sxitem.data.item;
 
 import github.saukiya.sxitem.SXItem;
+import github.saukiya.sxitem.nms.NBTItemWrapper;
+import github.saukiya.sxitem.nms.NBTTagWrapper;
 import github.saukiya.sxitem.util.MessageUtil;
+import github.saukiya.sxitem.util.NbtUtil;
 import lombok.Getter;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -145,12 +148,7 @@ public class ItemDataManager implements Listener {
     public ItemStack getItem(String itemName, Player player) {
         IGenerator ig = itemMap.get(itemName);
         if (ig != null) {
-            ItemStack item = ig.getItem(player);
-            if (ig instanceof IUpdate) {
-                SXItem.getNbtUtil().setNBT(item, SXItem.getInst().getName() + "-Name", ig.getKey());
-                SXItem.getNbtUtil().setNBT(item, SXItem.getInst().getName() + "-HashCode", ((IUpdate) ig).updateCode());
-            }
-            return item;
+            return getItem(ig, player);
         } else {
             Material material = Material.getMaterial(itemName.replace(' ', '_').toUpperCase());
             if (material != null) {
@@ -158,6 +156,24 @@ public class ItemDataManager implements Listener {
             }
         }
         return null;
+    }
+
+    /**
+     * 获取物品
+     *
+     * @param ig     IGenerator
+     * @param player Player
+     * @return ItemStack / null
+     */
+    public ItemStack getItem(IGenerator ig, Player player) {
+        ItemStack item = ig.getItem(player);
+        if (ig instanceof IUpdate) {
+            NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item);
+            wrapper.set(SXItem.getInst().getName() + ".ItemKey", ig.getKey());
+            wrapper.set(SXItem.getInst().getName() + ".HashCode", ((IUpdate) ig).updateCode());
+            wrapper.save();
+        }
+        return item;
     }
 
     /**
@@ -173,24 +189,29 @@ public class ItemDataManager implements Listener {
     /**
      * 更新物品
      *
-     * @param player   Player
-     * @param oldItems ItemStack...
+     * @param player     Player
+     * @param itemStacks ItemStack...
      */
-    public void updateItem(Player player, ItemStack... oldItems) {
-        for (ItemStack oldItem : oldItems) {
-            String dataName;
-            //? 需要兼容SX-Attribute旧版标签
-            if (oldItem != null && (dataName = SXItem.getNbtUtil().getNBT(oldItem, SXItem.getInst().getName() + "-Name")) != null) {
-                IGenerator ig = itemMap.get(dataName);
-                if (ig instanceof IUpdate && ((IUpdate) ig).isUpdate() && SXItem.getNbtUtil().hasNBT(oldItem, SXItem.getInst().getName() + "-HashCode")) {
-                    int hashCode = Integer.parseInt(SXItem.getNbtUtil().getNBT(oldItem, SXItem.getInst().getName() + "-HashCode"));
-                    if (((IUpdate) ig).updateCode() != hashCode) {
-                        ItemStack item = ig.getItem(player);
-                        SXItem.getNbtUtil().setNBT(item, SXItem.getInst().getName() + "-Name", ig.getKey());
-                        SXItem.getNbtUtil().setNBT(item, SXItem.getInst().getName() + "-HashCode", ((IUpdate) ig).updateCode());
-                        oldItem.setType(item.getType());
-                        oldItem.setItemMeta(item.getItemMeta());
-                    }
+    public void updateItem(Player player, ItemStack... itemStacks) {
+        for (ItemStack item : itemStacks) {
+            NBTTagWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item);
+            updateItemInPlugin(player, item, SXItem.getInst().getName() + ".ItemKey", SXItem.getInst().getName() + ".HashCode", wrapper);
+            //TODO 设置中添加兼容SX-Attribute旧版标签
+        }
+    }
+
+    //TODO 兼容 LockRandom 在更新的同时保持Lock的属性
+    private void updateItemInPlugin(Player player, ItemStack item, String keyName, String hashCodeName, NBTTagWrapper wrapper) {
+        if (wrapper == null) wrapper = NbtUtil.getInst().getItemTagWrapper(item);
+        if (item != null) {
+            IGenerator ig = itemMap.get(wrapper.getString(keyName));
+            if (ig instanceof IUpdate) {
+                IUpdate updateIg = (IUpdate) ig;
+                Integer hashCode = wrapper.getInt(hashCodeName);
+                if (updateIg.isUpdate() && hashCode == null || updateIg.updateCode() != hashCode) {
+                    ItemStack updateItem = getItem(ig, player);
+                    item.setType(updateItem.getType());
+                    item.setItemMeta(updateItem.getItemMeta());
                 }
             }
         }
@@ -231,7 +252,7 @@ public class ItemDataManager implements Listener {
         int filterSize = 0, size = 0;
         // 文件
         if (search.length > 0 && search[0].equals("")) {
-            MessageUtil.getInst().send(sender, MessageUtil.getInst().getTextComponent("§eDirectoryList§8 - §7ClickOpen", "/sxitem give |", "§8§o§lTo ItemList"));
+            MessageUtil.getInst().send(sender, MessageUtil.getInst().getTextComponent("§eDirectoryList§8 - §7ClickOpen", "§8§o§lTo ItemList", "/sxitem give |"));
 
             Map<String, String> map = new HashMap<>();
             for (IGenerator ig : itemMap.values()) {
@@ -240,14 +261,14 @@ public class ItemDataManager implements Listener {
             }
             for (Map.Entry<String, String> entry : map.entrySet()) {
                 String key = entry.getKey(), value = entry.getValue(), command = "/sxitem give |" + key + "<";
-                TextComponent tc = MessageUtil.getInst().getTextComponent(" §8[§c" + key.replace(">", "§b>§c") + "§8]", command, null);
-                tc.addExtra(MessageUtil.getInst().getTextComponent("§7 - Has §c" + value.split("\n").length + "§7 Item", command, value.substring(0, value.length() - 1)));
+                TextComponent tc = MessageUtil.getInst().getTextComponent(" §8[§c" + key.replace(">", "§b>§c") + "§8]", null, command);
+                tc.addExtra(MessageUtil.getInst().getTextComponent("§7 - Has §c" + value.split("\n").length + "§7 Item", value.substring(0, value.length() - 1), command));
                 MessageUtil.getInst().send(sender, tc);
             }
         } else
         // 物品
         {
-            MessageUtil.getInst().send(sender, MessageUtil.getInst().getTextComponent("§eItemList§8 - §7ClickGet " + (search.length > 0 ? "§8[§c" + search[0].replaceAll("^\\|", "").replaceAll("<$", "") + "§8]" : ""), "/sxitem give", "§8§o§lTo DirectoryList"));
+            MessageUtil.getInst().send(sender, MessageUtil.getInst().getTextComponent("§eItemList§8 - §7ClickGet " + (search.length > 0 ? "§8[§c" + search[0].replaceAll("^\\|", "").replaceAll("<$", "") + "§8]" : ""), "§8§o§lTo DirectoryList", "/sxitem give"));
 
             String right = "§8]§7 - ";
             for (IGenerator ig : itemMap.values()) {
@@ -260,12 +281,12 @@ public class ItemDataManager implements Listener {
                 String end = "§8[§cType:" + ig.getType() + "§8]";
                 size++;
                 if (sender instanceof Player) {
-                    TextComponent tc = MessageUtil.getInst().getTextComponent(left, "/sxitem give " + ig.getKey(), null);
+                    TextComponent tc = MessageUtil.getInst().getTextComponent(left, null, "/sxitem give " + ig.getKey());
                     tc.addExtra(ig.getNameComponent());
                     tc.addExtra(right);
                     YamlConfiguration yaml = new YamlConfiguration();
                     ig.getConfig().getValues(false).forEach(yaml::set);
-                    tc.addExtra(MessageUtil.getInst().getTextComponent(end, "/sxitem give " + ig.getKey(), "§7" + yaml.saveToString() + "§8§o§lPath: " + ig.getPathName()));
+                    tc.addExtra(MessageUtil.getInst().getTextComponent(end, "§7" + yaml.saveToString() + "§8§o§lPath: " + ig.getPathName(), "/sxitem give " + ig.getKey()));
                     MessageUtil.getInst().send(sender, tc);
                 } else {
                     sender.sendMessage(left + ig.getName() + right + end);

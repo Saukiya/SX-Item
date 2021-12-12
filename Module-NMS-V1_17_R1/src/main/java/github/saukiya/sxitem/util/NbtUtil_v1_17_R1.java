@@ -1,5 +1,6 @@
 package github.saukiya.sxitem.util;
 
+import github.saukiya.sxitem.nms.NBTItemWrapper;
 import github.saukiya.sxitem.nms.NBTTagWrapper;
 import github.saukiya.sxitem.nms.TagBase;
 import github.saukiya.sxitem.nms.TagCompound;
@@ -15,7 +16,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.DataInputStream;
 import java.io.DataOutput;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,13 +24,13 @@ import java.util.stream.Collectors;
 public class NbtUtil_v1_17_R1 extends NbtUtil {
 
     @Deprecated
-    public NBTTagWrapper newItemTagWrapper(TagCompound tagCompound) {
+    public NBTTagWrapper newNBTTagWrapper(TagCompound tagCompound) {
         return new NBTTagWrapperImpl(asNMSCompoundCopy(tagCompound));
     }
 
     @Override
-    public NBTTagWrapper getItemTagWrapper(ItemStack itemStack) {
-        return new NBTTagWrapperImpl(CraftItemStack.asNMSCopy(itemStack).getTag());
+    public NBTItemWrapper getItemTagWrapper(ItemStack itemStack) {
+        return new NBTItemWrapperImpl(itemStack);
     }
 
     @Override
@@ -69,11 +69,7 @@ public class NbtUtil_v1_17_R1 extends NbtUtil {
         if (nbtBase instanceof NBTBase) {
             if (nbtBase instanceof NBTTagCompound) {
                 NBTTagCompound nbtTagCompound = (NBTTagCompound) nbtBase;
-                Map<String, Object> map = new HashMap<>();
-                for (String key : nbtTagCompound.getKeys()) {
-                    map.put(key, getNMSValue(nbtTagCompound.get(key)));
-                }
-                return map;
+                return nbtTagCompound.getKeys().stream().collect(Collectors.toMap(key -> key, key -> getNMSValue(nbtTagCompound.get(key)), (a, b) -> b));
             } else if (nbtBase instanceof NBTTagList) {
                 return ((NBTTagList) nbtBase).stream().map(this::getNMSValue).collect(Collectors.toList());
             } else if (nbtBase instanceof NBTTagByteArray) {
@@ -137,13 +133,33 @@ public class NbtUtil_v1_17_R1 extends NbtUtil {
         return NBTTagEnd.b;
     }
 
+    public final class NBTItemWrapperImpl extends NBTTagWrapperImpl implements NBTItemWrapper {
+        net.minecraft.world.item.ItemStack nmsItem;
+        ItemStack itemStack;
+
+        protected NBTItemWrapperImpl(ItemStack itemStack) {
+            this(itemStack, CraftItemStack.asNMSCopy(itemStack));
+        }
+
+        NBTItemWrapperImpl(ItemStack itemStack, net.minecraft.world.item.ItemStack nmsItem) {
+            super(nmsItem.getTag());
+            this.itemStack = itemStack;
+            this.nmsItem = nmsItem;
+            if (nmsItem == null && nmsItem.isEmpty()) throw new NullPointerException();
+        }
+
+        @Override
+        public void save() {
+            itemStack.setItemMeta(CraftItemStack.getItemMeta(nmsItem));
+        }
+    }
+
     public class NBTTagWrapperImpl implements NBTTagWrapper {
 
-        protected final NBTTagCompound handle;
+        private final NBTTagCompound handle;
 
-        protected NBTTagWrapperImpl(NBTTagCompound tagCompound) {
-            if (tagCompound == null) throw new NullPointerException();
-            this.handle = tagCompound;
+        private NBTTagWrapperImpl(NBTTagCompound tagCompound) {
+            handle = tagCompound != null ? tagCompound : new NBTTagCompound();
         }
 
         protected NBTBase get(NBTTagCompound compound, String path) {
@@ -228,7 +244,16 @@ public class NbtUtil_v1_17_R1 extends NbtUtil {
         }
 
         @Override
-        public Object getHandle() {
+        public void save(ItemStack itemStack) {
+            net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(itemStack);
+            if (nmsItem != null) {
+                nmsItem.setTag(handle);
+                itemStack.setItemMeta(CraftItemStack.getItemMeta(nmsItem));
+            }
+        }
+
+        @Override
+        public NBTTagCompound getHandle() {
             return handle;
         }
     }

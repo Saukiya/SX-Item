@@ -4,7 +4,12 @@ test01:
     - 'STONE_SHOVEL'
     - 'STONE_PICKAXE'
     - 'STONE_AXE'
+  Lore:
+    - "<s:Test>"
+    - "<s:Test>"
   Random:
     Test:
       - rate: 0.3
         string: "233"
+      - rate: 0.6
+        string: "喵喵喵"

@@ -59,6 +59,8 @@ shadowJar {
     archiveFileName.set("${project.name}.jar")
     // 设置导出路径
     destinationDirectory.set(file("$rootDir/plugins/$project.version"))
+    // 打开导出的文件夹
+    Runtime.getRuntime().exec("explorer.exe ${file("$rootDir/plugins/$project.version").path}")
 }
 
 //执行该task前必须执行子模块的task
