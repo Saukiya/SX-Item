@@ -13,6 +13,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
+/**
+ * NMS
+ */
 public interface NMS {
 
     @SneakyThrows
@@ -57,8 +60,8 @@ public interface NMS {
     /**
      * 实例化私有构造器(暂时没将构造器缓存到map中，只适合单例使用)
      *
-     * @param target    目标Class
-     * @param args      构造参数
+     * @param target 目标Class
+     * @param args   构造参数
      * @return 返回实例
      */
     @SneakyThrows
@@ -79,19 +82,16 @@ public interface NMS {
     /**
      * 比较版本
      *
-     * @param version   所需版本(v?_?_R?)
+     * @param version 所需版本(v?_?_R?)
      * @return 1/0/-1   当前版本(1大于/0等于/-1小于)所需版本
      */
     static int compareTo(String version) {
         Matcher matcher = Data.VERSION_PATTERN.matcher(version);
         if (!matcher.matches()) return 0;
-        return IntStream.range(0, 3).map(i -> Integer.compare(Data.thisVersionSplit[i], Integer.parseInt(matcher.group(i+1)))).filter(ct -> ct != 0).findFirst().orElse(0);
+        return IntStream.range(0, 3).map(i -> Integer.compare(Data.thisVersionSplit[i], Integer.parseInt(matcher.group(i + 1)))).filter(ct -> ct != 0).findFirst().orElse(0);
     }
 }
 
-/**
- * NMS
- */
 class Data {
     protected static final Map<Class<? extends NMS>, NMS> INST_MAP = new HashMap<>();
     protected static final Map<Class<?>, Map<String, Field>> FIELD_CACHE_MAP = new HashMap<>();
@@ -112,7 +112,7 @@ class Data {
         CLASS_WRAPS_MAP.put(long.class, Long.class);
         Matcher matcher = VERSION_PATTERN.matcher(VERSION);
         matcher.matches();
-        thisVersionSplit = IntStream.range(0, matcher.groupCount()).map(i -> Integer.parseInt(matcher.group(i+1))).toArray();
+        thisVersionSplit = IntStream.range(0, matcher.groupCount()).map(i -> Integer.parseInt(matcher.group(i + 1))).toArray();
     }
 
     protected static boolean checkClass(@Nonnull Class<?> c1, @NonNull Class<?> c2) {

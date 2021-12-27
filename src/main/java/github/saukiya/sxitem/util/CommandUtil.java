@@ -45,8 +45,8 @@ public class CommandUtil {
     /**
      * 快速执行指令
      *
-     * @param player    Player
-     * @param command   Command
+     * @param player  Player
+     * @param command Command
      */
     public static void run(Player player, String command) {
         command = PlaceholderUtil.setPlaceholders(player, command).replace("%player%", player.getName()).replace('&', '§');
