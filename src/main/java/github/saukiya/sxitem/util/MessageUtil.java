@@ -7,10 +7,6 @@ import org.bukkit.entity.Player;
 
 public abstract class MessageUtil implements NMS {
 
-    public static MessageUtil getInst() {
-        return NMS.getInst(MessageUtil.class);
-    }
-
     /**
      * 发送消息给玩家 - 支持PlaceholderAPI
      *
@@ -48,4 +44,7 @@ public abstract class MessageUtil implements NMS {
 
     public abstract ComponentBuilder componentBuilder();
 
+    public static MessageUtil getInst() {
+        return NMS.getInst(MessageUtil.class);
+    }
 }

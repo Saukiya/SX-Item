@@ -9,10 +9,6 @@ import java.io.DataOutput;
 
 public abstract class NbtUtil implements NMS {
 
-    public static NbtUtil getInst() {
-        return NMS.getInst(NbtUtil.class);
-    }
-
     /**
      * 向IO流输出sxNBT
      *
@@ -132,4 +128,8 @@ public abstract class NbtUtil implements NMS {
      * @return NBTBase
      */
     public abstract <V> V toNMS(Object obj);
+
+    public static NbtUtil getInst() {
+        return NMS.getInst(NbtUtil.class);
+    }
 }

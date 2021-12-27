@@ -28,6 +28,10 @@ public enum TagType {
         this.methods = function;
     }
 
+    public byte getId() {
+        return id;
+    }
+
     /**
      * 获取{@link Method#readTagBase(DataInput, int)} 和 {@link Method#toTag(Object)} 方法
      *
@@ -63,11 +67,6 @@ public enum TagType {
         //Log 不支持的转化类型
         System.out.println("[ERROR] TagType.toNBT: " + object);
         return TagEnd.getInst();
-    }
-
-
-    public byte getId() {
-        return id;
     }
 
     public interface Method {
