@@ -3,15 +3,12 @@ package github.saukiya.sxitem.util;
 import github.saukiya.sxitem.SXItem;
 import lombok.Getter;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.IntStream;
 
 /**
@@ -51,7 +48,6 @@ public enum Message {
     COMMAND__PLUGINS,
     COMMAND__RELOAD;
 
-    private static final Map<Material, String> itemRam = new HashMap<>();
     @Getter
     private static YamlConfiguration messages;
 

@@ -1,16 +1,9 @@
 package github.saukiya.sxitem.util;
 
 import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.TranslatableComponent;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public abstract class MessageUtil implements NMS {
 
@@ -53,13 +46,6 @@ public abstract class MessageUtil implements NMS {
         player.sendTitle(title, subtitle, fadeIn, stay, fadeOut);
     }
 
-    public void send(CommandSender sender, TextComponent tc) {
-        sender.spigot().sendMessage(tc);
-    }
+    public abstract ComponentBuilder componentBuilder();
 
-    public abstract TextComponent getTextComponent(String msg, String showText, String command);
-
-    public abstract TranslatableComponent showItem(@Nonnull Material material);
-
-    public abstract BaseComponent showItem(@Nullable ItemStack item);
 }
