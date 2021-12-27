@@ -20,10 +20,11 @@ public class ReloadCommand extends SubCommand {
     public void onCommand(CommandSender sender, String[] args) {
         Config.loadConfig();
         Message.loadMessage();
-        SXItem.getRandomStringManager().loadData();
-        SXItem.getItemDataManager().loadItemData();
+        SXItem.getRandomManager().loadData();
+        SXItem.getItemManager().loadMaterialData();
+        SXItem.getItemManager().loadItemData();
         SXItem.getMainCommand().reload();
-        Bukkit.getOnlinePlayers().forEach(player -> SXItem.getItemDataManager().updateItem(player, player.getInventory().getContents()));
+        Bukkit.getOnlinePlayers().forEach(player -> SXItem.getItemManager().updateItem(player, player.getInventory().getContents()));
         sender.sendMessage(Message.getMsg(Message.ADMIN__PLUGIN_RELOAD));
     }
 }
