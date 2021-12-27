@@ -1,3 +1,6 @@
+#参数参考链接:
+# ItemFlag: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemFlag.html
+# Enchantment: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/enchantments/Enchantment.html
 Default-1:
   Name: <s:DefaultPrefix>&c炎之洗礼<s:DefaultSuffix> <s:<l:品质>Color><l:品质>
   ID:
@@ -7,25 +10,39 @@ Default-1:
     - '<s:<l:品质>职判>&6限制职业: <l:职业>'
     - '&6物品类型: 主武器'
     - '&6限制等级: <c:int 10 * <s:<l:品质>基数>>级'
-    - '&c攻击力: +<c:20 * <s:<l:品质>基数>>'
-    - <s:攻一-10>
-    - <s:攻二-10>
-    - <s:攻三-10>
-    - <l:材质>
-    - <s:<l:品质>宝石孔>
-    - '&7耐久度: <c:int <r:300_350> * <s:<l:品质>基数>>/<c:int 400 * <s:<l:品质>基数>>'
-    - <s:<l:品质>绑判>&c已绑定
-    - '&a到期时间: <t:600>'
+    - '&c攻击力: +<l:攻击力>'
+    - '<l:攻一-10>'
+    - '<l:攻二-10>'
+    - '<l:攻三-10>'
+    - '<l:材质>'
+    - '<s:<l:品质>宝石孔>'
+    #    - '&7耐久度: <c:int <r:300_350> * <s:<l:品质>基数>>/<c:int 400 * <s:<l:品质>基数>>'
+    - '&7耐久度: <c:int <d:0.6_0.9> * <l:耐久度>>/<l:耐久度>'
+    - '<s:<l:品质>绑判>&c已绑定'
+    - '&a到期时间: <t:10m>'
+    #    - '&a到期时间: <t:600>'
     - '<s:<l:品质>介判>                                    '
-    - <s:<l:品质>介判><s:DefaultLore>
+    - '<s:<l:品质>介判><s:DefaultLore>'
   EnchantList:
     - <s:<l:职业>附魔>
   ItemFlagList:
     - HIDE_ATTRIBUTES
   Unbreakable: false
+  Random:
+    攻击力: <c:20 * <s:<l:品质>基数>>
+    耐久度: <c:int <r:350_400> * <s:<l:品质>基数>>
+  NBT:
+    arg1.arg2: 测试NBT
+    sx:
+      attribute:
+        - '词条一'
+        - '词条二'
+        - '词条三'
+        - '如需使用随机则需学习高等随机'
+
 Default-2:
   Name: '&c机械轻羽之靴'
-  ID: LEATHER_BOOTS
+  ID: 301
   Lore:
     - '&6物品类型: 靴子'
     - '&c生命上限: +2000'
@@ -46,9 +63,10 @@ Default-2:
   Color: ffffff
   Update: true
   ClearAttribute: false
+
 Default-3:
   Name: '&b雷霆领主项链'
-  ID: STRING
+  ID: 287
   Lore:
     - '&6物品类型: 项链'
     - '&c生命上限: +200'
@@ -56,19 +74,15 @@ Default-3:
     - '&e&l全局和局部混合: <s:DefaultLore>'
     - '&r'
     - '&e可以覆盖全局->DefaultPrefix'
-    - '也可以间接调用全局->DefaultLore, ‘~’代表向下引用(然鹅好像还没实现)'
+    - '也可以间接调用全局->DefaultLore, ‘~’代表向下引用'
   EnchantList:
     - DURABILITY:1
   Random:
     DefaultPrefix: "Prefix"
     DefaultLore:
-      - rate: 60
-        string: "Lore"
-      - rate: 30
-        string: ~
-#    DefaultLore:
-#      - "Lore"
-#      - ~
+      - 60: "Lore"
+      - 30: ~
+
 Default-4:
   Type: Import
   Item:
@@ -85,9 +99,10 @@ Default-4:
         - §7/sx save 编号 Import
         - ''
         - §c它不支持自动更新§7
+
 Default-5:
   Name: '&b慢剑'
-  ID: GOLDEN_SWORD
+  ID: 267
   Lore:
     - '&7设置物品默认攻速，与玩家自身属性分离'
     - '&7物品攻速最低为0-最高为4'
@@ -96,14 +111,14 @@ Default-5:
     - ''
     - '&c若玩家攻速+物品攻速小于等于4'
     - '&c工具将无法抬起'
-  Type: SX
-  AttackSpeed: 0.8
+  Type: Default
+#  AttackSpeed: 0.8
+
 Default-6:
   Name: '&c&l鸽子肉'
-  ID: 'GREEN_DYE:7'
+  ID: '351'
   Lore:
     - ''
-    - '&6物品类型: 宝藏'
     - ''
     - '&b连肉都散发出了耀眼光芒'
     - ''
@@ -112,3 +127,63 @@ Default-6:
     - DURABILITY:1
   ItemFlagList:
     - HIDE_ENCHANTS
+
+#Default-7: Default-1
+Default-7:
+  Name: '&c可被替换的物品'
+  ID: '350'
+  Lore:
+    - ''
+    - '&7将此节点替换为'
+    - '&7Default-7: Default-1'
+    - '&7可以将此物品换为Default-1'
+    - '&3必须打开目标的update才可替换'
+    - '&3替换后是不可回溯的'
+
+Default-8:
+  Name: "&d修脚剑"
+  ID: 267
+  Update: true
+  #Attribute说明:
+  # 格式: 属性名:数字/增量:生效位置(低版本无视)
+  #
+  # 属性名:
+  #   GENERIC_MAX_HEALTH               最大生命值
+  #   GENERIC_FOLLOW_RANGE             生物追踪范围
+  #   GENERIC_KNOCKBACK_RESISTANCE     抗擊退效果
+  #   GENERIC_MOVEMENT_SPEED           移动速度
+  #   GENERIC_FLYING_SPEED             飞行速度
+  #   GENERIC_ATTACK_DAMAGE            攻击伤害
+  #   GENERIC_ATTACK_KNOCKBACK         击退力度
+  #   GENERIC_ATTACK_SPEED             攻击速度
+  #   GENERIC_ARMOR                    盔甲防御点数
+  #   GENERIC_ARMOR_TOUGHNESS          盔甲韧性
+  #   GENERIC_LUCK                     幸运度（例如原版的当打开箱子、运输矿车，钓鱼和杀怪）
+  #   HORSE_JUMP_STRENGTH              马的弹跳力(只对马铠生效)
+  #   ZOMBIE_SPAWN_REINFORCEMENTS      僵尸召唤系数(未测试)
+  #
+  # 生效位置: 不填写生效位置则生效在所有部位上
+  #   HAND      主
+  #   OFF_HAND  副
+  #   HEAD      头
+  #   CHEST     身
+  #   LEGS      腿
+  #   FEET      脚
+  Attributes:
+    - "GENERIC_ATTACK_DAMAGE:-0.99x:HAND"
+
+#属性只对马铠生效，不对马鞍生效
+#绑定诅咒不对马生效
+Default-9:
+  ID: 419
+  Lore:
+    - ''
+    - '&7一个牛逼的马铠'
+  EnchantList:
+    - BINDING_CURSE:1
+  ItemFlagList:
+    - HIDE_ATTRIBUTES
+  Attributes:
+    - "HORSE_JUMP_STRENGTH:1x:CHEST"
+    - "GENERIC_MOVEMENT_SPEED:0.5x:CHEST"
+  Update: true
