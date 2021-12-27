@@ -20,6 +20,17 @@ public class CalculatorRandom implements IRandom {
      */
     static Pattern p = Pattern.compile("(?<!\\d)-?\\d+(\\.\\d+)?|[+\\-*/%()]");// 这个正则为匹配表达式中的数字或运算符
 
+    @Override
+    public String replace(String key, RandomDocker docker) {
+        try {
+            return SXItem.getDf().format(getResult(key));
+        } catch (Exception e) {
+            e.printStackTrace();
+            SXItem.getInst().getLogger().warning("Calculator error: " + key);
+            return null;
+        }
+    }
+
     private static double doubleCal(double a1, double a2, char operator) throws Exception {
         switch (operator) {
             case '+':
@@ -105,16 +116,5 @@ public class CalculatorRandom implements IRandom {
             number.push(doubleCal(a2, a1, b.charAt(0)));
         }
         return intTransform ? Math.round(number.pop()) : number.pop();
-    }
-
-    @Override
-    public String replace(String key, RandomDocker docker) {
-        try {
-            return SXItem.getDf().format(getResult(key));
-        } catch (Exception e) {
-            e.printStackTrace();
-            SXItem.getInst().getLogger().warning("Calculator error: " + key);
-            return null;
-        }
     }
 }

@@ -14,11 +14,6 @@ public interface TagBase<T> extends Cloneable {
 
     Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    @Deprecated
-    static TagBase toTag(Object object) {
-        return TagType.toTag(object);
-    }
-
     void write(DataOutput dataOutput) throws IOException;
 
     /**
@@ -39,5 +34,10 @@ public interface TagBase<T> extends Cloneable {
      */
     default String toJson() {
         return GSON.toJson(JSON_PARSER.parse(toString()));
+    }
+
+    @Deprecated
+    static TagBase toTag(Object object) {
+        return TagType.toTag(object);
     }
 }

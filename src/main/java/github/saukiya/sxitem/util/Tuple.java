@@ -1,5 +1,8 @@
 package github.saukiya.sxitem.util;
 
+import lombok.ToString;
+
+@ToString
 public class Tuple<A, B> {
     private A a;
     private B b;

@@ -1,6 +1,5 @@
 package github.saukiya.sxitem.nms;
 
-import github.saukiya.sxitem.util.NMS;
 import lombok.Getter;
 import org.apache.commons.lang.Validate;
 import org.bukkit.NamespacedKey;
@@ -42,11 +41,12 @@ public class CustomTagWrapper implements CompoundBase {
             ItemTagType.BYTE_ARRAY,
             ItemTagType.INTEGER_ARRAY,
             ItemTagType.LONG_ARRAY,
-            ItemTagType.TAG_CONTAINER));
+            ItemTagType.TAG_CONTAINER)
+    );
 
+    final NamespacedKey tagKeys;
     Plugin plugin;
     CustomItemTagContainer handle;
-    final NamespacedKey tagKeys;
 
     public CustomTagWrapper(Plugin plugin, CustomItemTagContainer handle) {
         this.plugin = plugin;
@@ -147,10 +147,6 @@ public class CustomTagWrapper implements CompoundBase {
         return null;
     }
 
-    public static ItemTagType getType(Class typeClass) {
-        return types.stream().filter(tagType -> tagType.getComplexType().equals(typeClass)).findFirst().orElse(null);
-    }
-
     @Override
     public Byte getByte(String path) {
         return get(path, Byte.class);
@@ -179,5 +175,9 @@ public class CustomTagWrapper implements CompoundBase {
     @Override
     public Double getDouble(String path) {
         return get(path, Double.class);
+    }
+
+    public static ItemTagType getType(Class typeClass) {
+        return types.stream().filter(tagType -> tagType.getComplexType().equals(typeClass)).findFirst().orElse(null);
     }
 }

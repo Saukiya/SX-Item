@@ -2,7 +2,6 @@ package github.saukiya.sxitem.nms;
 
 import lombok.NoArgsConstructor;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.MemorySection;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

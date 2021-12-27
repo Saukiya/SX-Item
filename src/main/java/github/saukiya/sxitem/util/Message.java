@@ -51,6 +51,11 @@ public enum Message {
     @Getter
     private static YamlConfiguration messages;
 
+    @Override
+    public String toString() {
+        return name().replace("__", ".");
+    }
+
     /**
      * 加载Message类
      */
@@ -86,10 +91,5 @@ public enum Message {
         if (list.size() == 0) return Collections.singletonList("Null Message: " + loc);
         IntStream.range(0, list.size()).forEach(i -> list.set(i, MessageFormat.format(list.get(i), args).replace("&", "§")));
         return list;
-    }
-
-    @Override
-    public String toString() {
-        return name().replace("__", ".");
     }
 }

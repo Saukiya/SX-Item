@@ -66,24 +66,6 @@ public class ItemManager implements Listener {
     }
 
     /**
-     * 注册物品生成器
-     *
-     * @param generator ItemGenerator
-     */
-    public static void registerGenerator(IGenerator generator) {
-        if (generator.getType() == null || getGenerator(generator.getType()) != null) {
-            SXItem.getInst().getLogger().warning("ItemGenerator >>  [" + generator.getClass().getSimpleName() + "] Type Error!");
-            return;
-        }
-        generators.add(generator);
-        SXItem.getInst().getLogger().info("ItemGenerator >> Register [" + generator.getClass().getSimpleName() + "] To Type " + generator.getType() + " !");
-    }
-
-    public static IGenerator getGenerator(String type) {
-        return generators.stream().filter(g -> g.getType().equals(type)).findFirst().orElse(null);
-    }
-
-    /**
      * 读取Material数据
      */
     @SneakyThrows
@@ -419,5 +401,23 @@ public class ItemManager implements Listener {
     @EventHandler
     void on(PlayerJoinEvent event) {
         checkPlayers.add(event.getPlayer());
+    }
+
+    /**
+     * 注册物品生成器
+     *
+     * @param generator ItemGenerator
+     */
+    public static void registerGenerator(IGenerator generator) {
+        if (generator.getType() == null || getGenerator(generator.getType()) != null) {
+            SXItem.getInst().getLogger().warning("ItemGenerator >>  [" + generator.getClass().getSimpleName() + "] Type Error!");
+            return;
+        }
+        generators.add(generator);
+        SXItem.getInst().getLogger().info("ItemGenerator >> Register [" + generator.getClass().getSimpleName() + "] To Type " + generator.getType() + " !");
+    }
+
+    public static IGenerator getGenerator(String type) {
+        return generators.stream().filter(g -> g.getType().equals(type)).findFirst().orElse(null);
     }
 }
