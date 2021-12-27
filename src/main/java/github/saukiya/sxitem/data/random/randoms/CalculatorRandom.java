@@ -1,4 +1,4 @@
-package github.saukiya.sxitem.data.random.sub;
+package github.saukiya.sxitem.data.random.randoms;
 
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.IRandom;
