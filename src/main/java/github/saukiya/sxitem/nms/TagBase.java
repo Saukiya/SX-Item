@@ -7,14 +7,26 @@ import com.google.gson.JsonParser;
 import java.io.DataOutput;
 import java.io.IOException;
 
-public interface TagBase<T> {
+
+public interface TagBase<T> extends Cloneable {
 
     JsonParser JSON_PARSER = new JsonParser();
 
     Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
+    @Deprecated
+    static TagBase toTag(Object object) {
+        return TagType.toTag(object);
+    }
+
     void write(DataOutput dataOutput) throws IOException;
 
+    /**
+     * 获取基础数据
+     * 例如 List、Map、Array、byte、int 等
+     *
+     * @return
+     */
     T getValue();
 
     TagType getTypeId();
@@ -27,9 +39,5 @@ public interface TagBase<T> {
      */
     default String toJson() {
         return GSON.toJson(JSON_PARSER.parse(toString()));
-    }
-
-    static TagBase toTag(Object object) {
-        return TagType.toTag(object);
     }
 }

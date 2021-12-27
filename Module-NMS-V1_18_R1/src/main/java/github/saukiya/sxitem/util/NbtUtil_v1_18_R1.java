@@ -6,9 +6,9 @@ import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
 import lombok.SneakyThrows;
-import net.minecraft.server.v1_11_R1.*;
+import net.minecraft.nbt.*;
 import org.apache.commons.lang.Validate;
-import org.bukkit.craftbukkit.v1_11_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.DataInputStream;
@@ -20,13 +20,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class NbtUtil_v1_11_R1 extends NbtUtil {
-
-    private final NBTTagEnd nbtTagEnd = NMS.newPrivateInstance(NBTTagEnd.class);
+public class NbtUtil_v1_18_R1 extends NbtUtil {
 
     @Override
     public NBTTagCompound getItemNBT(ItemStack itemStack) {
-        return CraftItemStack.asNMSCopy(itemStack).getTag();
+        return CraftItemStack.asNMSCopy(itemStack).s();
     }
 
     @Override
@@ -44,7 +42,7 @@ public class NbtUtil_v1_11_R1 extends NbtUtil {
 
     @Override
     public NBTTagCompound parseNMSCompound(String json) throws Exception {
-        return MojangsonParser.parse(json);
+        return MojangsonParser.a(json);
     }
 
     @SneakyThrows
@@ -65,28 +63,29 @@ public class NbtUtil_v1_11_R1 extends NbtUtil {
         if (nbtBase instanceof NBTBase) {
             if (nbtBase instanceof NBTTagCompound) {
                 NBTTagCompound nbtTagCompound = (NBTTagCompound) nbtBase;
-                return nbtTagCompound.c().stream().collect(Collectors.toMap(key -> key, key -> getNMSValue(nbtTagCompound.get(key)), (a, b) -> b));
+                return nbtTagCompound.d().stream().collect(Collectors.toMap(key -> key, key -> getNMSValue(nbtTagCompound.c(key)), (a, b) -> b));
             } else if (nbtBase instanceof NBTTagList) {
-                NBTTagList nbtTagList = (NBTTagList) nbtBase;
-                return IntStream.range(0, nbtTagList.size()).mapToObj(i -> toTag(nbtTagList.h(i))).collect(Collectors.toCollection(TagList::new));
+                return ((NBTTagList) nbtBase).stream().map(this::getNMSValue).collect(Collectors.toList());
             } else if (nbtBase instanceof NBTTagByteArray) {
-                return ((NBTTagByteArray) nbtBase).c();
+                return ((NBTTagByteArray) nbtBase).d();
             } else if (nbtBase instanceof NBTTagIntArray) {
-                return ((NBTTagIntArray) nbtBase).d();
+                return ((NBTTagIntArray) nbtBase).f();
+            } else if (nbtBase instanceof NBTTagLongArray) {
+                return ((NBTTagLongArray) nbtBase).f();
             } else if (nbtBase instanceof NBTTagString) {
-                return ((NBTTagString) nbtBase).c_();
+                return ((NBTTagString) nbtBase).e_();
             } else if (nbtBase instanceof NBTTagByte) {
-                return ((NBTTagByte) nbtBase).g();
+                return ((NBTTagByte) nbtBase).h();
             } else if (nbtBase instanceof NBTTagShort) {
-                return ((NBTTagShort) nbtBase).f();
+                return ((NBTTagShort) nbtBase).g();
             } else if (nbtBase instanceof NBTTagInt) {
-                return ((NBTTagInt) nbtBase).e();
+                return ((NBTTagInt) nbtBase).f();
             } else if (nbtBase instanceof NBTTagLong) {
-                return ((NBTTagLong) nbtBase).d();
+                return ((NBTTagLong) nbtBase).e();
             } else if (nbtBase instanceof NBTTagFloat) {
-                return ((NBTTagFloat) nbtBase).i();
+                return ((NBTTagFloat) nbtBase).j();
             } else if (nbtBase instanceof NBTTagDouble) {
-                return ((NBTTagDouble) nbtBase).asDouble();
+                return ((NBTTagDouble) nbtBase).i();
             }
         }
         return null;
@@ -101,55 +100,52 @@ public class NbtUtil_v1_11_R1 extends NbtUtil {
                 return (NBTBase) obj;
             } else if (obj instanceof Map) {
                 NBTTagCompound nbtTagCompound = new NBTTagCompound();
-                ((Map<String, ?>) obj).forEach((key, value) -> nbtTagCompound.set(key, toNMS(value)));
+                ((Map<String, ?>) obj).forEach((key, value) -> nbtTagCompound.a(key, toNMS(value)));
                 return nbtTagCompound;
             } else if (obj instanceof List) {
-                List list = (List) obj;
-                NBTTagList nbtTagList = new NBTTagList();
-                for (Object o : list) nbtTagList.add(toNMS(o));
-                return nbtTagList;
+                return ((List<?>) obj).stream().map(this::toNMS).collect(Collectors.toCollection(NBTTagList::new));
             } else if (obj instanceof byte[]) {
                 return new NBTTagByteArray((byte[]) obj);
             } else if (obj instanceof int[]) {
                 return new NBTTagIntArray((int[]) obj);
+            } else if (obj instanceof long[]) {
+                return new NBTTagLongArray((long[]) obj);
             } else if (obj.getClass().isArray()) {
-                NBTTagList nbtTagList = new NBTTagList();
-                IntStream.range(0, Array.getLength(obj)).mapToObj(i -> toNMS(Array.get(obj, i))).forEach(nbtTagList::add);
-                return nbtTagList;
+                return IntStream.range(0, Array.getLength(obj)).mapToObj(i -> toNMS(Array.get(obj, i))).collect(Collectors.toCollection(NBTTagList::new));
             } else if (obj instanceof String) {
-                return new NBTTagString(obj.toString());
+                return NBTTagString.a(obj.toString());
             } else if (obj instanceof Boolean) {
-                return new NBTTagByte((byte) ((Boolean) obj ? 1 : 0));
+                return NBTTagByte.a((Boolean) obj);
             } else if (obj instanceof Byte) {
-                return new NBTTagByte(((Number) obj).byteValue());
+                return NBTTagByte.a(((Number) obj).byteValue());
             } else if (obj instanceof Short) {
-                return new NBTTagShort(((Number) obj).shortValue());
+                return NBTTagShort.a(((Number) obj).shortValue());
             } else if (obj instanceof Integer) {
-                return new NBTTagInt(((Number) obj).intValue());
+                return NBTTagInt.a(((Number) obj).intValue());
             } else if (obj instanceof Long) {
-                return new NBTTagLong(((Number) obj).longValue());
+                return NBTTagLong.a(((Number) obj).longValue());
             } else if (obj instanceof Float) {
-                return new NBTTagFloat(((Number) obj).floatValue());
+                return NBTTagFloat.a(((Number) obj).floatValue());
             } else if (obj instanceof Double) {
-                return new NBTTagDouble(((Number) obj).doubleValue());
+                return NBTTagDouble.a(((Number) obj).doubleValue());
             }
         }
-        return nbtTagEnd;
+        return NBTTagEnd.b;
     }
 
     public final class NBTItemWrapperImpl extends NBTTagWrapperImpl implements NBTItemWrapper {
-        net.minecraft.server.v1_11_R1.ItemStack nmsItem;
+        net.minecraft.world.item.ItemStack nmsItem;
         ItemStack itemStack;
 
         protected NBTItemWrapperImpl(ItemStack itemStack) {
             this(itemStack, CraftItemStack.asNMSCopy(itemStack));
         }
 
-        NBTItemWrapperImpl(ItemStack itemStack, net.minecraft.server.v1_11_R1.ItemStack nmsItem) {
-            super(nmsItem.getTag());
+        NBTItemWrapperImpl(ItemStack itemStack, net.minecraft.world.item.ItemStack nmsItem) {
+            super(nmsItem.s());
             this.itemStack = itemStack;
             this.nmsItem = nmsItem;
-            if (nmsItem.isEmpty()) throw new NullPointerException();
+            if (nmsItem.b()) throw new NullPointerException();
         }
 
         @Override
@@ -169,8 +165,8 @@ public class NbtUtil_v1_11_R1 extends NbtUtil {
         protected NBTBase get(NBTTagCompound compound, String path) {
             Validate.notEmpty(path, "Cannot get to an empty path");
             int index = path.indexOf('.');
-            if (index == -1) return compound.get(path);
-            NBTBase base = compound.get(path.substring(0, index));
+            if (index == -1) return compound.c(path);
+            NBTBase base = compound.c(path.substring(0, index));
             if (base instanceof NBTTagCompound) {
                 return get((NBTTagCompound) base, path.substring(index + 1));
             }
@@ -192,31 +188,32 @@ public class NbtUtil_v1_11_R1 extends NbtUtil {
             while ((right = path.indexOf('.')) != -1) {
                 key = path.substring(0, right);
                 Validate.notEmpty(key, "Cannot set to an empty path");
-                base = current.get(key);
+                base = current.c(key);
                 if (!(base instanceof NBTTagCompound)) {
                     if (value == null) return null;
                     base = new NBTTagCompound();
-                    current.set(key, base);
+                    current.a(key, base);
                 }
                 current = (NBTTagCompound) base;
                 path = path.substring(right + 1);
             }
             Validate.notEmpty(path, "Cannot set to an empty path");//这段代码直接从MemorySection那边CV过来的!
-            Object ret = current.get(path);
+            Object ret;
             if (value != null) {
-                current.set(path, toNMS(value));
+                ret = current.a(path, toNMS(value));
             } else {
-                current.remove(path);
+                ret = current.c(path);
+                current.r(path);
             }
             return getNMSValue(ret);
         }
 
         @Override
         public Set<String> keySet(String path) {
-            if (path == null) return handle.c();
+            if (path == null) return handle.d();
             NBTBase base = get(handle, path);
             if (base instanceof NBTTagCompound) {
-                return ((NBTTagCompound) base).c();
+                return ((NBTTagCompound) base).d();
             }
             return null;
         }
@@ -233,9 +230,9 @@ public class NbtUtil_v1_11_R1 extends NbtUtil {
 
         @Override
         public void save(ItemStack itemStack) {
-            net.minecraft.server.v1_11_R1.ItemStack nmsItem = CraftItemStack.asNMSCopy(itemStack);
+            net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(itemStack);
             if (nmsItem != null) {
-                nmsItem.setTag(handle);
+                nmsItem.c(handle);
                 itemStack.setItemMeta(CraftItemStack.getItemMeta(nmsItem));
             }
         }

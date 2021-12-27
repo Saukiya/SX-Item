@@ -1,5 +1,7 @@
 package github.saukiya.sxitem.nms;
 
+import github.saukiya.sxitem.util.NbtUtil;
+
 import java.io.DataInput;
 import java.io.IOException;
 
@@ -48,9 +50,10 @@ public enum TagType {
      * @param object 基础数据
      * @return TagBase
      */
-    protected static TagBase toTag(Object object) {
+    public static TagBase toTag(Object object) {
         if (object == null) return TagEnd.getInst();
         if (object instanceof TagBase) return (TagBase) object;
+        if (object instanceof NBTTagWrapper) return NbtUtil.getInst().toTag(((NBTTagWrapper) object).getHandle());
         TagBase tagBase;
         for (TagType type : TagType.values()) {
             if ((tagBase = type.methods.toTag(object)) != null) {
@@ -82,7 +85,7 @@ public enum TagType {
         /**
          * {@link TagType#toTag(Object)}
          *
-         * @param object    基础数据
+         * @param object 基础数据
          * @return TagBase
          */
         TagBase toTag(Object object);
