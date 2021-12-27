@@ -5,6 +5,7 @@ import github.saukiya.sxitem.util.MessageUtil;
 import lombok.NoArgsConstructor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -24,11 +25,16 @@ public class GeneratorImport implements IGenerator {
 
     ItemStack item;
 
+    String configString;
+
     private GeneratorImport(String pathName, String key, ConfigurationSection config) {
         this.pathName = pathName;
         this.key = key;
         this.config = config;
         this.item = config.getItemStack("Item");
+        YamlConfiguration yaml = new YamlConfiguration();
+        config.getValues(false).forEach(yaml::set);
+        this.configString = yaml.saveToString();
     }
 
     @Override
@@ -53,7 +59,7 @@ public class GeneratorImport implements IGenerator {
 
     @Override
     public BaseComponent getNameComponent() {
-        return MessageUtil.getInst().showItem(item);
+        return MessageUtil.getInst().componentBuilder().add(item).getHandle();
     }
 
     @Override
@@ -64,6 +70,11 @@ public class GeneratorImport implements IGenerator {
     @Override
     public ConfigurationSection getConfig() {
         return config;
+    }
+
+    @Override
+    public String getConfigString() {
+        return configString;
     }
 
     @Override

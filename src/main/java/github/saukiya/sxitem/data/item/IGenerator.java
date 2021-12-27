@@ -63,6 +63,13 @@ public interface IGenerator {
     ConfigurationSection getConfig();
 
     /**
+     * 返回带转义符的配置文本信息
+     *
+     * @return Config
+     */
+    String getConfigString();
+
+    /**
      * 获取物品
      *
      * @param player Player
