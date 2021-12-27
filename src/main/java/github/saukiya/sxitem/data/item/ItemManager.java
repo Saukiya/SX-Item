@@ -4,9 +4,10 @@ import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.nms.NBTItemWrapper;
 import github.saukiya.sxitem.nms.NBTTagWrapper;
 import github.saukiya.sxitem.util.MessageUtil;
+import github.saukiya.sxitem.util.NMS;
 import github.saukiya.sxitem.util.NbtUtil;
 import lombok.Getter;
-import net.md_5.bungee.api.chat.TextComponent;
+import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -25,11 +26,12 @@ import org.bukkit.inventory.ItemStack;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Saukiya
  */
-public class ItemDataManager implements Listener {
+public class ItemManager implements Listener {
     @Getter
     private static final List<IGenerator> generators = new ArrayList<>();
 
@@ -37,11 +39,17 @@ public class ItemDataManager implements Listener {
 
     private final Map<String, IGenerator> itemMap = new HashMap<>();
 
+    private final Map<String, String> linkMap = new HashMap<>();
+
+    @Getter
+    private final Map<String, Material> materialMap = new HashMap<>();
+
     //? 抱有疑问的线程安全
     private final List<Player> checkPlayers = new ArrayList<>();
 
-    public ItemDataManager() {
+    public ItemManager() {
         SXItem.getInst().getLogger().info("Loaded " + generators.size() + " ItemGenerators");
+        loadMaterialData();
         loadItemData();
         Bukkit.getPluginManager().registerEvents(this, SXItem.getInst());
         Bukkit.getScheduler().runTaskTimer(SXItem.getInst(), () -> {
@@ -76,16 +84,93 @@ public class ItemDataManager implements Listener {
     }
 
     /**
+     * 读取Material数据
+     */
+    @SneakyThrows
+    public void loadMaterialData() {
+        materialMap.clear();
+        File file = new File(SXItem.getInst().getDataFolder(), "Material.yml");
+        if (!file.exists()) {
+            SXItem.getInst().saveResource("Material.yml", true);
+        }
+        boolean change = false;
+        YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
+        for (Map.Entry<String, Object> entry : yaml.getValues(false).entrySet()) {
+            Material material = Material.getMaterial(entry.getKey());
+            try {
+                if (material == null) {
+                    if (NMS.compareTo("v1_13_R1") >= 0)
+                        material = Material.getMaterial(entry.getKey(), true);
+                    if (material == null) {
+                        SXItem.getInst().getLogger().warning("Material.yml No Material - " + entry.getKey());
+                        continue;
+                    }
+                    change = true;
+                    SXItem.getInst().getLogger().info("Material.yml Change MaterialName - " + entry.getKey() + " To " + material.name());
+                    if (yaml.contains(material.name())) {
+                        yaml.set(material.name(), yaml.getString(material.name()) + "," + entry.getValue());
+                    } else {
+                        yaml.set(material.name(), entry.getValue());
+                    }
+                    yaml.set(entry.getKey(), null);
+                }
+            } catch (Exception ignored) {
+                SXItem.getInst().getLogger().warning("Material.yml No Material - " + entry.getKey());
+                continue;
+            }
+            for (String key : entry.getValue().toString().split(",")) {
+                if (!key.isEmpty()) {
+                    Object ret = materialMap.put(key, material);
+                    if (ret != null) {
+                        SXItem.getInst().getLogger().warning("Material.yml Repeat Key - " + key + " (" + ret + "/" + material + ")");
+                        materialMap.remove(key);
+                    }
+                }
+            }
+        }
+        if (change) {
+            yaml.save(file);
+        }
+        SXItem.getInst().getLogger().info("Loaded " + materialMap.size() + " Materials");
+    }
+
+    /**
+     * 获取物品材质
+     *
+     * @param key 索引
+     * @return
+     */
+    public Material getMaterial(String key) {
+        Material material = materialMap.get(key);
+        return material != null ? material : Material.getMaterial(key.replace(' ', '_').toUpperCase(Locale.ROOT));
+    }
+
+    public Set<String> getMaterialString(Material value) {
+        return materialMap.entrySet().stream().filter(e -> e.getValue().equals(value)).map(Map.Entry::getKey).collect(Collectors.toSet());
+    }
+
+    /**
      * 读取物品数据
      */
     public void loadItemData() {
         itemMap.clear();
+        linkMap.clear();
         if (!itemFiles.exists() || itemFiles.listFiles().length == 0) {
             SXItem.getInst().saveResource("Item/Default/Default.yml", true);
             SXItem.getInst().saveResource("Item/NoLoad/Default.yml", true);
         }
         loadItem(itemFiles);
         SXItem.getInst().getLogger().info("Loaded " + itemMap.size() + " Items");
+        linkMap.forEach((k, v) -> {
+            IGenerator ig = itemMap.get(v);
+            if (ig != null) {
+                itemMap.put(k, ig);
+            } else {
+                linkMap.remove(k);
+                SXItem.getInst().getLogger().info("Linked Error: " + k + "->" + v);
+            }
+        });
+        SXItem.getInst().getLogger().info("Linked " + linkMap.size() + " Items");
     }
 
     /**
@@ -113,6 +198,10 @@ public class ItemDataManager implements Listener {
                     if (key.startsWith("NoLoad")) continue;
                     if (itemMap.containsKey(key)) {
                         SXItem.getInst().getLogger().warning("Don't Repeat Item Name: " + file.getName() + File.separator + key + " !");
+                        continue;
+                    }
+                    if (yaml.isString(key)) {
+                        linkMap.put(key, yaml.getString(key));
                         continue;
                     }
                     String pathName = getPathName(files);
@@ -150,7 +239,7 @@ public class ItemDataManager implements Listener {
         if (ig != null) {
             return getItem(ig, player);
         } else {
-            Material material = Material.getMaterial(itemName.replace(' ', '_').toUpperCase());
+            Material material = getMaterial(itemName);
             if (material != null) {
                 return new ItemStack(material);
             }
@@ -189,32 +278,39 @@ public class ItemDataManager implements Listener {
     /**
      * 更新物品
      *
-     * @param player     Player
+     * @param player     PlayerC
      * @param itemStacks ItemStack...
      */
     public void updateItem(Player player, ItemStack... itemStacks) {
         for (ItemStack item : itemStacks) {
+            if (item == null) continue;
             NBTTagWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item);
-            updateItemInPlugin(player, item, SXItem.getInst().getName() + ".ItemKey", SXItem.getInst().getName() + ".HashCode", wrapper);
-            //TODO 设置中添加兼容SX-Attribute旧版标签
+            // TODO 添加兼容设置->需测试
+            if (!updateItemInPlugin(player, item, SXItem.getInst().getName() + ".ItemKey", SXItem.getInst().getName() + ".HashCode", wrapper)) {
+                updateItemInPlugin(player, item, "SX-Attribute-Name", "SX-Attribute-HashCode", wrapper);
+            }
         }
     }
 
-    //TODO 兼容 LockRandom 在更新的同时保持Lock的属性
-    private void updateItemInPlugin(Player player, ItemStack item, String keyName, String hashCodeName, NBTTagWrapper wrapper) {
-        if (wrapper == null) wrapper = NbtUtil.getInst().getItemTagWrapper(item);
-        if (item != null) {
-            IGenerator ig = itemMap.get(wrapper.getString(keyName));
-            if (ig instanceof IUpdate) {
-                IUpdate updateIg = (IUpdate) ig;
-                Integer hashCode = wrapper.getInt(hashCodeName);
-                if (updateIg.isUpdate() && hashCode == null || updateIg.updateCode() != hashCode) {
-                    ItemStack updateItem = getItem(ig, player);
-                    item.setType(updateItem.getType());
-                    item.setItemMeta(updateItem.getItemMeta());
-                }
+    private boolean updateItemInPlugin(Player player, ItemStack item, String keyName, String hashCodeName, NBTTagWrapper oldWrapper) {
+        if (item == null) return false;
+        if (oldWrapper == null) oldWrapper = NbtUtil.getInst().getItemTagWrapper(item);
+        IGenerator ig = itemMap.get(oldWrapper.getString(keyName));
+        if (ig == null) return false;
+        if (ig instanceof IUpdate) {
+            IUpdate updateIg = (IUpdate) ig;
+            Integer hashCode = oldWrapper.getInt(hashCodeName);
+            if (updateIg.isUpdate() && (hashCode == null || updateIg.updateCode() != hashCode)) {
+                ItemStack newItem = updateIg.update(item, oldWrapper, player);
+                item.setType(newItem.getType());
+                item.setItemMeta(newItem.getItemMeta());
+                NBTItemWrapper itemWrapper = NbtUtil.getInst().getItemTagWrapper(item);
+                itemWrapper.set(SXItem.getInst().getName() + ".ItemKey", ig.getKey());
+                itemWrapper.set(SXItem.getInst().getName() + ".HashCode", ((IUpdate) ig).updateCode());
+                itemWrapper.save();
             }
         }
+        return true;
     }
 
     /**
@@ -249,48 +345,52 @@ public class ItemDataManager implements Listener {
      */
     public void sendItemMapToPlayer(CommandSender sender, String... search) {
         sender.sendMessage("");
-        int filterSize = 0, size = 0;
         // 文件
         if (search.length > 0 && search[0].equals("")) {
-            MessageUtil.getInst().send(sender, MessageUtil.getInst().getTextComponent("§eDirectoryList§8 - §7ClickOpen", "§8§o§lTo ItemList", "/sxitem give |"));
+            MessageUtil.getInst().componentBuilder().add("§eDirectoryList§8 - §7ClickOpen").show("§8§o§lTo ItemList").runCommand("/sxitem give |").send(sender);
 
-            Map<String, String> map = new HashMap<>();
-            for (IGenerator ig : itemMap.values()) {
-                String str = map.computeIfAbsent(ig.getPathName(), k -> "");
-                map.put(ig.getPathName(), str + "§b" + (str.replaceAll("[^\n]", "").length() + 1) + " - §a" + ig.getKey() + " §8[§7" + ig.getName() + "§8]§7 - §8[§cType:" + ig.getType() + "§8]\n");
+//            Map<String, String> map = new HashMap<>();
+//            for (Map.Entry<String, IGenerator> entry : itemMap.entrySet()) {
+//                IGenerator ig = entry.getValue();
+//                String str = map.computeIfAbsent(ig.getPathName(), k -> "");
+//                map.put(ig.getPathName(), str + "§b" + (str.replaceAll("[^\n]", "").length() + 1) + " - §a" + entry.getKey() + " §8[§7" + ig.getName() + "§8]§7 - §8[§cType:" + ig.getType() + "§8]\n");
+//            }
+            Map<String, List<String>> map = new HashMap<>();
+            for (Map.Entry<String, IGenerator> entry : itemMap.entrySet()) {
+                IGenerator ig = entry.getValue();
+                List<String> list = map.computeIfAbsent(ig.getPathName(), k -> new ArrayList<>());
+                list.add("§b" + list.size() + 1 + " - §a" + entry.getKey() + " §8[§7" + ig.getName() + "§8]§7 - §8[§cType:" + ig.getType() + "§8]");
             }
-            for (Map.Entry<String, String> entry : map.entrySet()) {
-                String key = entry.getKey(), value = entry.getValue(), command = "/sxitem give |" + key + "<";
-                TextComponent tc = MessageUtil.getInst().getTextComponent(" §8[§c" + key.replace(">", "§b>§c") + "§8]", null, command);
-                tc.addExtra(MessageUtil.getInst().getTextComponent("§7 - Has §c" + value.split("\n").length + "§7 Item", value.substring(0, value.length() - 1), command));
-                MessageUtil.getInst().send(sender, tc);
+            for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+                MessageUtil.getInst().componentBuilder().runCommand("/sxitem give |" + entry.getKey() + "<")
+                        .add(" §8[§c" + entry.getKey().replace(">", "§b>§c") + "§8]")
+                        .add("§7 - Has §c" + entry.getValue().size() + "§7 Item")
+                        .show(String.join("\n", entry.getValue()))
+                        .send(sender);
             }
         } else
         // 物品
         {
-            MessageUtil.getInst().send(sender, MessageUtil.getInst().getTextComponent("§eItemList§8 - §7ClickGet " + (search.length > 0 ? "§8[§c" + search[0].replaceAll("^\\|", "").replaceAll("<$", "") + "§8]" : ""), "§8§o§lTo DirectoryList", "/sxitem give"));
-
-            String right = "§8]§7 - ";
-            for (IGenerator ig : itemMap.values()) {
-                String left = " §b" + size + " - §a" + ig.getKey() + " §8[§7";
-                if (search.length > 0 && !(left + ig.getName() + "|" + ig.getPathName() + "<").contains(search[0])) {
+            int filterSize = 0, size = 0;
+            MessageUtil.getInst().componentBuilder()
+                    .add("§eItemList§8 - §7ClickGet " + (search.length > 0 ? "§8[§c" + search[0].replaceAll("^\\|", "").replaceAll("<$", "") + "§8]" : ""))
+                    .show("§8§o§lTo DirectoryList")
+                    .runCommand("/sxitem give")
+                    .send(sender);
+            for (Map.Entry<String, IGenerator> entry : itemMap.entrySet()) {
+                IGenerator ig = entry.getValue();
+                if (search.length > 0 && !(entry.getKey() + ig.getName() + "|" + ig.getPathName() + "<").contains(search[0])) {
                     filterSize++;
                     continue;
                 }
-
-                String end = "§8[§cType:" + ig.getType() + "§8]";
-                size++;
-                if (sender instanceof Player) {
-                    TextComponent tc = MessageUtil.getInst().getTextComponent(left, null, "/sxitem give " + ig.getKey());
-                    tc.addExtra(ig.getNameComponent());
-                    tc.addExtra(right);
-                    YamlConfiguration yaml = new YamlConfiguration();
-                    ig.getConfig().getValues(false).forEach(yaml::set);
-                    tc.addExtra(MessageUtil.getInst().getTextComponent(end, "§7" + yaml.saveToString() + "§8§o§lPath: " + ig.getPathName(), "/sxitem give " + ig.getKey()));
-                    MessageUtil.getInst().send(sender, tc);
-                } else {
-                    sender.sendMessage(left + ig.getName() + right + end);
-                }
+                MessageUtil.getInst().componentBuilder()
+                        .runCommand("/sxitem give " + entry.getKey())
+                        .add(" §b" + ++size + " - §a" + entry.getKey() + " §8[§7")
+                        .add(ig.getNameComponent())
+                        .add("§8]§7 - ")
+                        .add("§8[§cType:" + ig.getType() + "§8]")
+                        .show("§7" + ig.getConfigString() + "§8§o§lPath: " + ig.getPathName())
+                        .send(sender);
             }
             if (search.length > 0 && filterSize != 0) {
                 sender.sendMessage("§7> Filter§c " + filterSize + " §7Items, Find §c" + size + "§7 Items.");
