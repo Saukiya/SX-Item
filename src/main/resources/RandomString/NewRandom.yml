@@ -1,22 +1,20 @@
-#格式1-每个能单独调,但是很丑
-TestLore:
-  - rate: 0.3
-    string: "<s:Test> 233"
-  - rate: 0.5
-    string: &replace
-      - "第一行"
-      - "第二行"
-  - rate: 50
-    string: ~
-  - rate: 20
-    string: |-
-      第一行
-      第二行
-      第三行
-  - rate: 30
-    string: *replace
-  - rate: 20
-    string: "?"
+#格式1-每个能单独调-弃用
+#TestLore:
+#  - rate: 0.3
+#    string: "<s:Test> 233"
+#  - rate: 0.5
+#    string: &replace
+#      - "第一行"
+#      - "第二行"
+#  - rate: 50
+#    string: ~
+#  - rate: 20
+#    string: |-
+#      第一行
+#      第二行
+#      第三行
+#  - rate: 20
+#    string: "?"
 #旧版
 Test:
   - '233'
@@ -30,7 +28,19 @@ Test:
   - '1551'
   - '1551'
 Test2:
+  #  - *replace
   - - '1551'
   - - '233'
     - '???'
+  - - '233'
+    - '???'
 Test3: '23333'
+Test4: '111111111111\n2222222222222'
+test5:
+  - 20: "第一个233"
+  - 20: "第二个233"
+  - 0.4: '第一行\n第二行'
+  - 0.4: "第三个233"
+  - 0.5:
+      - "第一行"
+      - "第二行"

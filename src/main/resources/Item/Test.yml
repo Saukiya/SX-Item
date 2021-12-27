@@ -1,4 +1,4 @@
-test01:
+Test-1:
   ID:
     - 'STONE_SWORD'
     - 'STONE_SHOVEL'
@@ -6,10 +6,11 @@ test01:
     - 'STONE_AXE'
   Lore:
     - "<s:Test>"
-    - "<s:Test>"
+    - "<s:Test4>"
+    - |-
+      33333333333
+      4444444444
   Random:
     Test:
-      - rate: 0.3
-        string: "233"
-      - rate: 0.6
-        string: "喵喵喵"
+      - 0.3: "233"
+      - 0.6: "喵喵喵"
