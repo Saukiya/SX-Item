@@ -22,7 +22,6 @@ allprojects {
     targetCompatibility = JavaVersion.VERSION_1_8
 
     dependencies {
-        compileOnly fileTree('lib')
         compileOnly 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
         compileOnly 'org.projectlombok:lombok:1.18.22'
         annotationProcessor 'org.projectlombok:lombok:1.18.22'
@@ -32,14 +31,16 @@ allprojects {
 // 子项目设置
 subprojects {
     dependencies {
+        compileOnly fileTree('lib')
         compileOnly getRootProject()
     }
 }
 
 dependencies {
+    compileOnly fileTree('libs/spigot-1.18')
     implementation 'org.bstats:bstats-bukkit:2.2.1'
 
-    testImplementation fileTree('lib')
+    testImplementation fileTree('libs/spigot-1.17')
     testImplementation getSubprojects()
     testImplementation 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
     testImplementation 'org.projectlombok:lombok:1.18.22'
@@ -59,8 +60,17 @@ shadowJar {
     archiveFileName.set("${project.name}.jar")
     // 设置导出路径
     destinationDirectory.set(file("$rootDir/plugins/$project.version"))
-    // 打开导出的文件夹
-    Runtime.getRuntime().exec("explorer.exe ${file("$rootDir/plugins/$project.version").path}")
+    // 复制到剪切板 <ps:GG了 不是什么时候都能用>
+//    Transferable contents = new Transferable() {
+//        Object getTransferData(DataFlavor flavor) {
+//            return Arrays.asList(file("$rootDir/plugins/$project.version/${project.name}.jar"))
+//        }
+//
+//        DataFlavor[] getTransferDataFlavors() { return DataFlavor.javaFileListFlavor }
+//
+//        boolean isDataFlavorSupported(DataFlavor flavor) { return DataFlavor.javaFileListFlavor == flavor }
+//    }
+//    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(contents, null)
 }
 
 //执行该task前必须执行子模块的task
