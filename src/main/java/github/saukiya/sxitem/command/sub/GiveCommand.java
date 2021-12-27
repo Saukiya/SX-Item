@@ -24,16 +24,19 @@ public class GiveCommand extends SubCommand {
         setArg(" <ItemName> <Player> <Amount>");
     }
 
+    /**
+     * TODO 需重制: 无法重复检测map+无法直接give简化id
+     */
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         if (args.length < 2) {
-            SXItem.getItemDataManager().sendItemMapToPlayer(sender, sender instanceof Player ? new String[]{""} : new String[0]);
+            SXItem.getItemManager().sendItemMapToPlayer(sender, sender instanceof Player ? new String[]{""} : new String[0]);
             return;
         }
         Player player = null;
 
-        if (!SXItem.getItemDataManager().hasItem(args[1])) {
-            SXItem.getItemDataManager().sendItemMapToPlayer(sender, args[1]);
+        if (!SXItem.getItemManager().hasItem(args[1])) {
+            SXItem.getItemManager().sendItemMapToPlayer(sender, args[1]);
             return;
         }
         if (args.length > 2) {
@@ -51,7 +54,7 @@ public class GiveCommand extends SubCommand {
         if (player != null) {
             Inventory inv = player.getInventory();
             for (int i = 0; i < amount; i++) {
-                ItemStack itemStack = SXItem.getItemDataManager().getItem(args[1], player);
+                ItemStack itemStack = SXItem.getItemManager().getItem(args[1], player);
                 if (inv.firstEmpty() != -1) {
                     inv.addItem(itemStack);
                 } else {
@@ -68,7 +71,7 @@ public class GiveCommand extends SubCommand {
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
         if (args.length == 2) {
-            return SXItem.getItemDataManager().getItemList().stream().filter(itemName -> itemName.contains(args[1])).collect(Collectors.toList());
+            return SXItem.getItemManager().getItemList().stream().filter(itemName -> itemName.contains(args[1])).collect(Collectors.toList());
         }
         if (args.length == 4) {
             return Collections.singletonList("1");

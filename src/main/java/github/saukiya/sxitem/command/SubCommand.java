@@ -66,7 +66,11 @@ public abstract class SubCommand {
 
     public void sendIntroduction(CommandSender sender, String color, String label) {
         String clickCommand = MessageFormat.format("/{0} {1}", label, cmd);
-        MessageUtil.getInst().send(sender, MessageUtil.getInst().getTextComponent(color + MessageFormat.format("/{0} {1}{2}§7 - §c" + getIntroduction(), label, cmd, arg), sender.isOp() ? "§8§oPermission: " + permission() : null, clickCommand));
+        MessageUtil.getInst().componentBuilder()
+                .add(color + MessageFormat.format("/{0} {1}{2}§7 - §c" + getIntroduction(), label, cmd, arg))
+                .show(sender.isOp() ? "§8§oPermission: " + permission() : null)
+                .runCommand(clickCommand)
+                .send(sender);
     }
 
     public void onEnable() {
