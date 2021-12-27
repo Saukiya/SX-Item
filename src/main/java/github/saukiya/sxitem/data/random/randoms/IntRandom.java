@@ -1,4 +1,4 @@
-package github.saukiya.sxitem.data.random.sub;
+package github.saukiya.sxitem.data.random.randoms;
 
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.IRandom;
@@ -14,8 +14,9 @@ public class IntRandom implements IRandom {
         if (strSplit.length > 1) {
             int[] ints = {Integer.parseInt(strSplit[0]), Integer.parseInt(strSplit[1])};
             Arrays.sort(ints);
-            return String.valueOf(ints[0] != ints[1] ? SXItem.getRandom().nextInt(1 + ints[1] - ints[0]) + ints[0] : ints[0]);
+            return String.valueOf(SXItem.getRandom().nextInt(1 + ints[1] - ints[0]) + ints[0]);
         }
+        SXItem.getInst().getLogger().warning("IntRandom Error: " + key);
         return null;
     }
 }
