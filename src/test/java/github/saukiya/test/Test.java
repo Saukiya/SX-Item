@@ -6,117 +6,105 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.RandomDocker;
-import github.saukiya.sxitem.nms.*;
+import github.saukiya.sxitem.nms.TagBase;
+import github.saukiya.sxitem.nms.TagCompound;
+import github.saukiya.sxitem.nms.TagType;
 import github.saukiya.sxitem.util.NbtUtil;
-import github.saukiya.sxitem.util.NbtUtil_v1_17_R1;
+import github.saukiya.sxitem.util.NbtUtil_v1_18_R1;
 import github.saukiya.sxitem.util.Tuple;
 import lombok.SneakyThrows;
 import net.minecraft.nbt.*;
 import org.apache.commons.lang.text.StrLookup;
 import org.apache.commons.lang.text.StrMatcher;
 import org.apache.commons.lang.text.StrSubstitutor;
-import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Test {
-
+    static SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");
     static Map<String, List<Tuple<Double, String>>> dataMap = new HashMap();
     static Pattern pattern = Pattern.compile("v(\\d+)_(\\d+)_R(\\d+)");
+    static Pattern time_pattern = Pattern.compile("\\d+");
 
-    /**
-     * 属于NBTTagWrapper的private方法
-     * get需求: ssss.sss.ss
-     * ssss 和 sss 为 NBTTagCompound 不存在直接返回 null
-     * ss 为 NBTBase 不存在则直接返回null
-     */
-    public static NBTBase get(NBTTagCompound compound, String path) {
-        int index = path.indexOf('.');
-        if (index == -1) return compound.get(path);
-        NBTBase nbtBase = compound.get(path.substring(0, index));
-        if (nbtBase instanceof NBTTagCompound) {
-            return get((NBTTagCompound) nbtBase, path.substring(index + 1));
-        }
-        return null;
-    }
+    static JsonParser JSON_PARSER = new JsonParser();
+    static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    /**
-     * set需求: ssss.sss.ss
-     * ssss 和 sss 为NBTTagCompound 不存在则创建
-     * 不为 NBTTagCompound 则返回throw Ex
-     * ss 直接设置并返回原参数
-     */
-    public static Object set(NBTTagCompound compound, String path, Object object) throws Exception {
-        int index = path.indexOf('.');
-        if (index == -1) {//不存在子节点时
-            return getValue(compound.set(path, NbtUtil.getInst().toNMS(object)));
-        } else {//存在子节点时
-            String subPath = path.substring(0, index);
-            NBTBase nbtBase = compound.get(subPath);
-            if (nbtBase == null) {
-                nbtBase = new NBTTagCompound();
-                compound.set(subPath, nbtBase);
-            }
-            if (nbtBase instanceof NBTTagCompound) {
-                return set((NBTTagCompound) nbtBase, path.substring(index + 1), object);
-            }
-            throw new Exception("SX-Item: 当前路径并不是NBTTagCompound -> " + subPath);
-        }
-    }
-
-    public static Object getValue(Object nbtBase) {
-        if (nbtBase instanceof NBTBase) {
-            if (nbtBase instanceof NBTTagCompound) {
-                NBTTagCompound nbtTagCompound = (NBTTagCompound) nbtBase;
-                return nbtTagCompound.getKeys().stream().collect(Collectors.toMap(key -> key, key -> getValue(nbtTagCompound.get(key)), (a, b) -> b));
-            } else if (nbtBase instanceof NBTTagList) {
-                return ((NBTTagList) nbtBase).stream().map(Test::getValue).collect(Collectors.toList());
-            } else if (nbtBase instanceof NBTTagByteArray) {
-                return ((NBTTagByteArray) nbtBase).getBytes();
-            } else if (nbtBase instanceof NBTTagIntArray) {
-                return ((NBTTagIntArray) nbtBase).getInts();
-            } else if (nbtBase instanceof NBTTagLongArray) {
-                return ((NBTTagLongArray) nbtBase).getLongs();
-            } else if (nbtBase instanceof NBTTagByte) {
-                return ((NBTTagByte) nbtBase).asByte();
-            } else if (nbtBase instanceof NBTTagShort) {
-                return ((NBTTagShort) nbtBase).asShort();
-            } else if (nbtBase instanceof NBTTagInt) {
-                return ((NBTTagInt) nbtBase).asInt();
-            } else if (nbtBase instanceof NBTTagFloat) {
-                return ((NBTTagFloat) nbtBase).asFloat();
-            } else if (nbtBase instanceof NBTTagDouble) {
-                return ((NBTTagDouble) nbtBase).asDouble();
-            } else if (nbtBase instanceof NBTTagLong) {
-                return ((NBTTagLong) nbtBase).asLong();
-            } else if (nbtBase instanceof NBTTagString) {
-                return ((NBTTagString) nbtBase).asString();
-            } else if (nbtBase instanceof NBTTagEnd) {
-                return null;
-            }
-        }
-        return null;
-    }
-
-    @SneakyThrows
     public static void main(String[] args) {
-        NbtUtil_v1_17_R1 nbtUtil = new NbtUtil_v1_17_R1();
-        TagCompound tagCompound = nbtUtil.asTagCompoundCopy(getNBT());
-        NBTTagWrapper nbtTagWrapper = nbtUtil.newNBTTagWrapper(tagCompound);
-        System.out.println(tagCompound);
-        Integer integer = nbtTagWrapper.getInt("asgfag");
-//        YamlConfiguration yamlConfiguration = null;
-//        yamlConfiguration.getString("");
+//        TagCompound tagCompound = new TagCompound();
+//        tagCompound.set("233.233", 2333L);
+//        tagCompound.set("base", "qwq");
+//        tagCompound.set("array1", new int[]{1, 2, 3, 4, 5});
+//        tagCompound.set("array2", Arrays.asList(1, 2, 3, 4));
+//        tagCompound.set("array3", Arrays.asList(1L, 24L, 523L, 634L));
+//        tagCompound.set("boolean", true);
+//        System.out.println(tagCompound);
+//        System.out.println(tagCompound.getBoolean("boolean"));
+
 //        getAndSetPathToCompound();
 //        yamlToTagTest();
 //        gsonTest();
 //        conversionNBT();
+
+    }
+
+    public static String replace2(String key) {
+        if (time_pattern.matcher(key).matches()) {
+            return sdf.format(System.currentTimeMillis() + Long.parseLong(key) * 1000);
+        } else {
+            Calendar calendar = Calendar.getInstance();
+            int num = 0;
+            for (int i = 0, length = key.length(); i < length; i++) {
+                switch (key.charAt(i)) {
+                    case '0':
+                    case '1':
+                    case '2':
+                    case '3':
+                    case '4':
+                    case '5':
+                    case '6':
+                    case '7':
+                    case '8':
+                    case '9':
+                        num = num * 10 + key.charAt(i) - 48;
+                        break;
+                    case 'Y':
+                    case 'y':
+                        calendar.add(Calendar.YEAR, num);
+                        num = 0;
+                        break;
+                    case 'M':
+                        calendar.add(Calendar.MONTH, num);
+                        num = 0;
+                        break;
+                    case 'D':
+                    case 'd':
+                        calendar.add(Calendar.DATE, num);
+                        num = 0;
+                        break;
+                    case 'H':
+                    case 'h':
+                        calendar.add(Calendar.HOUR_OF_DAY, num);
+                        num = 0;
+                        break;
+                    case 'm':
+                        calendar.add(Calendar.MINUTE, num);
+                        num = 0;
+                        break;
+                    case 'S':
+                    case 's':
+                        calendar.add(Calendar.SECOND, num);
+                        num = 0;
+                        break;
+                }
+            }
+            return sdf.format(calendar.getTimeInMillis());
+        }
     }
 
     public static void getAndSetPathToCompound() throws Exception {
@@ -131,24 +119,25 @@ public class Test {
         qwqTagCompound.set("string", NBTTagString.a("测试文本"));
         testTagCompound.set("ints", new NBTTagIntArray(new int[]{5, 23, 7, 873, 4, 46, 3, 7, 34}));
 
+        NbtUtil_v1_18_R1 nbtUtil = new NbtUtil_v1_18_R1();
+        TagCompound compound = nbtUtil.asTagCompoundCopy(nbtTagCompound);
         System.out.println(nbtTagCompound);
-        System.out.println("getCompound: \t" + get(nbtTagCompound, "sub")); //正确
-        System.out.println("getCompound: \t" + get(nbtTagCompound, ".sub")); //null
-        System.out.println("getCompound: \t" + get(nbtTagCompound, "sub.qwq")); //正确
-        System.out.println("getCompound: \t" + get(nbtTagCompound, "sub.qwq1")); //null
-        System.out.println("getCompound: \t" + get(nbtTagCompound, "sub.qwq1.test")); //null
-        System.out.println("getCompound: \t" + get(nbtTagCompound, "sub.qwq.test")); //正确
-        System.out.println("getCompound: \t" + get(nbtTagCompound, "sub.qwq.test1")); //null
-        System.out.println("getCompound: \t" + get(nbtTagCompound, "sub.qwq.test.ints")); //正确
-        System.out.println(set(nbtTagCompound, "sub.qwq.lala.test", nbtTagCompound));//正确
-        System.out.println(nbtTagCompound);//正确
-        System.out.println(set(nbtTagCompound, "sub.qwq.lala.test", nbtTagCompound).getClass().getSimpleName());//正确 - 返回了原来的值
-        try {
-            System.out.println(set(nbtTagCompound, "sub.qwq.lala.test.error", nbtTagCompound));//error
-        } catch (Exception ignored) {
-            System.out.println("error -> set(nbtTagCompound, \"sub.qwq.lala.test.error\", nbtTagCompound)");
-        }
-        System.out.println(set(nbtTagCompound, "sub.qwq", nbtTagCompound));//正确
+        System.out.println("getCompound: \t" + compound.get("sub")); //正确
+        System.out.println("getCompound: \t" + compound.get(".sub")); //null
+        System.out.println("getCompound: \t" + compound.get("sub.qwq")); //正确
+        System.out.println("getCompound: \t" + compound.get("sub.qwq1")); //null
+        System.out.println("getCompound: \t" + compound.get("sub.qwq1.test")); //null
+        System.out.println("getCompound: \t" + compound.get("sub.qwq.test")); //正确
+        System.out.println("getCompound: \t" + compound.get("sub.qwq.test1")); //null
+        System.out.println("getCompound: \t" + compound.get("sub.qwq.test.ints")); //正确
+        System.out.println(compound.getValue());
+        System.out.println(compound.set("sub.qwq.lala.test", nbtTagCompound));//正确
+        System.out.println(compound.get("sub.qwq"));
+        System.out.println(compound.set("sub.qwq.b", true));
+        System.out.println(compound.getBoolean("sub.qwq.b"));
+        System.out.println(compound.getByte("sub.qwq.b"));
+        System.out.println(compound.remove("sub.qwq.b"));
+        System.out.println(compound.get("sub.qwq.b"));
     }
 
     public static void yamlToTagTest() throws Exception {
@@ -186,7 +175,7 @@ public class Test {
         System.out.println("long.List: \t" + loadYaml.get("long.List").getClass().getSimpleName());
         System.out.println("map:  \t\t" + loadYaml.get("map").getClass().getSimpleName());
 
-        TagBase tagBase = TagBase.toTag(loadYaml);
+        TagBase tagBase = TagType.toTag(loadYaml);
         System.out.println("sxNBT: \t\t" + tagBase);
         System.out.println("nmsNBT: \t" + NbtUtil.getInst().parseNMSCompound(tagBase.toString()));
         System.out.println("sxNBT-json: \n" + tagBase.toJson());
@@ -196,7 +185,7 @@ public class Test {
         tagList.add(NBTTagByte.a(true));
         tagList.add(NBTTagByte.a(false));
         tagList.add(NBTTagByte.a(true));
-        NBTTagByteArray bytes = new NBTTagByteArray(new byte[] {1,3,5,6});
+        NBTTagByteArray bytes = new NBTTagByteArray(new byte[]{1, 3, 5, 6});
         NBTTagCompound nbtTagCompound = new NBTTagCompound();
         nbtTagCompound.set("tagList", tagList);
         nbtTagCompound.set("bytes", bytes);
@@ -244,19 +233,18 @@ public class Test {
     }
 
     /**
-     *
      * @param thisVersion 所需版本
-     * @param version2 当前版本
+     * @param version2    当前版本
      * @return 1 和 0 代表兼容 -1 不兼容
      */
     public static int compareTo(String thisVersion, String version2) {
         Matcher VERSION_MATCHER = pattern.matcher(thisVersion);
         VERSION_MATCHER.matches();
-        int[] thisVersionSplit = IntStream.range(0, VERSION_MATCHER.groupCount()).map(i -> Integer.parseInt(VERSION_MATCHER.group(i+1))).toArray();
+        int[] thisVersionSplit = IntStream.range(0, VERSION_MATCHER.groupCount()).map(i -> Integer.parseInt(VERSION_MATCHER.group(i + 1))).toArray();
         System.out.println(Arrays.toString(thisVersionSplit));
         Matcher matcher = pattern.matcher(version2);
         if (!matcher.matches()) return 0;
-        return IntStream.range(0, 3).map(i -> Integer.compare(thisVersionSplit[i], Integer.parseInt(matcher.group(i+1)))).filter(ct -> ct != 0).findFirst().orElse(0);
+        return IntStream.range(0, 3).map(i -> Integer.compare(thisVersionSplit[i], Integer.parseInt(matcher.group(i + 1)))).filter(ct -> ct != 0).findFirst().orElse(0);
     }
 
     public static void instanceofClass(Object object, Class target) {
@@ -471,14 +459,9 @@ public class Test {
     }
 
     public static String loadDataString(Object obj) {
-//        if (obj == null) return "";
-        if (obj instanceof String) {
-            return obj.toString().replace("\n", "/n");
-        }
-        if (obj instanceof List) {
-            return String.join("/n", (List) obj);
-        }
-        return "无法识别";
+        if (obj == null) return "";
+        if (obj instanceof List) obj = String.join("\n", (List) obj);
+        return obj.toString().replace("/n", "\n").replace("\\n", "\n");
     }
 
 
