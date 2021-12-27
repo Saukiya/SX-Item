@@ -8,5 +8,8 @@ package github.saukiya.sxitem.nms;
  */
 public interface NBTItemWrapper extends NBTTagWrapper {
 
+    /**
+     * 保存到当前的ItemStack中
+     */
     void save();
 }

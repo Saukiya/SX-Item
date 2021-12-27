@@ -6,6 +6,8 @@ import java.io.IOException;
 
 public class TagByte extends TagNumber<Byte> {
 
+    protected static final TagByte TRUE = new TagByte((byte) 1);
+    protected static final TagByte FALSE = new TagByte((byte) 0);
     protected static final TagType.Method typeMethod = new TagType.Method() {
         @Override
         public TagByte readTagBase(DataInput dataInput, int depth) throws IOException {
@@ -18,10 +20,6 @@ public class TagByte extends TagNumber<Byte> {
             return object instanceof Byte ? new TagByte((Byte) object) : null;
         }
     };
-
-    protected static final TagByte TRUE = new TagByte((byte) 1);
-    protected static final TagByte FALSE = new TagByte((byte) 0);
-
     private final byte value;
 
     public TagByte(byte value) {
