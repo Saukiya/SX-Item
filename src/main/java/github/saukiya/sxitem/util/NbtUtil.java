@@ -1,6 +1,6 @@
 package github.saukiya.sxitem.util;
 
-import github.saukiya.sxitem.nms.*;
+import github.saukiya.sxitem.nbt.*;
 import lombok.SneakyThrows;
 import org.bukkit.inventory.ItemStack;
 

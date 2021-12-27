@@ -1,6 +1,6 @@
 package github.saukiya.sxitem.util;
 
-import github.saukiya.sxitem.nms.*;
+import github.saukiya.sxitem.nbt.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;

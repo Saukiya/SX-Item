@@ -1,4 +1,4 @@
-package github.saukiya.sxitem.nms;
+package github.saukiya.sxitem.nbt;
 
 import com.google.common.base.Preconditions;
 import lombok.NoArgsConstructor;

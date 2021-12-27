@@ -1,8 +1,8 @@
 package github.saukiya.sxitem.data.item;
 
 import github.saukiya.sxitem.SXItem;
-import github.saukiya.sxitem.nms.NBTItemWrapper;
-import github.saukiya.sxitem.nms.NBTTagWrapper;
+import github.saukiya.sxitem.nbt.NBTItemWrapper;
+import github.saukiya.sxitem.nbt.NBTTagWrapper;
 import github.saukiya.sxitem.util.MessageUtil;
 import github.saukiya.sxitem.util.NMS;
 import github.saukiya.sxitem.util.NbtUtil;
