@@ -45,17 +45,33 @@ public abstract class NbtUtil implements NMS {
         }
     }
 
-    public NBTItemWrapper getItemTagWrapper(ItemStack itemStack) {
-        return null;
-    }
-
     /**
-     * 获取物品的全部NBT
+     * 获取物品的TagCompound
      *
      * @param itemStack 物品
      * @return TagCompound
      */
-    public abstract TagCompound getItemNBT(ItemStack itemStack);
+    public TagCompound getItemTag(ItemStack itemStack) {
+        Object nbt = getItemNBT(itemStack);
+        if (nbt == null) return null;
+        return asTagCompoundCopy(nbt);
+    }
+
+    /**
+     * 获取物品的NBTTagCompound
+     *
+     * @param itemStack 物品
+     * @return NBTTagCompound
+     */
+    public abstract Object getItemNBT(ItemStack itemStack);
+
+    /**
+     * 获取NBT封装器
+     *
+     * @param itemStack 物品
+     * @return NBTItemWrapper
+     */
+    public abstract NBTItemWrapper getItemTagWrapper(ItemStack itemStack);
 
     /**
      * nmsNBTCompound转sxNBTCompound

@@ -6,7 +6,9 @@ import lombok.NoArgsConstructor;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
@@ -39,7 +41,7 @@ public class TagList extends TagListBase<TagBase, List<?>> {
                 List<?> objectList = (List<?>) object;
                 if (!objectList.isEmpty()) {
                     Set<Class> classSet = objectList.stream().map(Object::getClass).collect(Collectors.toSet());
-                    if (classSet.contains(Long.class) && NMS.compareTo("v1_12_R1") > -1) {
+                    if (classSet.contains(Long.class) && NMS.compareTo("v1_12_R1") >= 0) {
                         return objectList.stream().map(o -> ((Number) o).longValue()).collect(Collectors.toCollection(TagLongArray::new));
                     } else if (classSet.contains(Integer.class)) {
                         return objectList.stream().map(o -> ((Number) o).intValue()).collect(Collectors.toCollection(TagIntArray::new));
@@ -55,6 +57,14 @@ public class TagList extends TagListBase<TagBase, List<?>> {
 
     public TagType elementType = null;
 
+//    public TagList(Collection<TagBase> collection) {
+//        super(collection);
+//    }
+
+    public TagList(Collection<?> collection) {
+        super(collection.stream().map(TagType::toTag).collect(Collectors.toList()));
+    }
+
     //TODO 类型检查未完全实现: addAll、Constructor等变更元素的方法
     @Override
     public boolean add(TagBase tagBase) {
@@ -65,10 +75,6 @@ public class TagList extends TagListBase<TagBase, List<?>> {
 //            return false;
 //        }
         return super.add(tagBase);
-    }
-
-    public TagList(Collection<TagBase> collection) {
-        super(collection);
     }
 
     @Override

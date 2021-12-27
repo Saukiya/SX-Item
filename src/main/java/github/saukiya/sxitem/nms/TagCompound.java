@@ -1,16 +1,18 @@
 package github.saukiya.sxitem.nms;
 
 import lombok.NoArgsConstructor;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.*;
 
-//TODO 需要与NBTTagWrapper作出相同的功能
 @NoArgsConstructor
-public class TagCompound extends HashMap<String, TagBase> implements TagBase<HashMap<String, ?>> {
+public class TagCompound implements TagBase<HashMap<String, ?>>, CompoundBase {
 
     protected static final TagType.Method typeMethod = new TagType.Method() {
         @Override
@@ -24,7 +26,7 @@ public class TagCompound extends HashMap<String, TagBase> implements TagBase<Has
                 while ((typeId = dataInput.readByte()) != 0) {
                     String key = dataInput.readUTF();
                     TagBase tagBase = TagType.getMethods(typeId).readTagBase(dataInput, depth + 1);
-                    tagCompound.put(key, tagBase);
+                    tagCompound.handle.put(key, tagBase);
                 }
                 return tagCompound;
             }
@@ -36,28 +38,30 @@ public class TagCompound extends HashMap<String, TagBase> implements TagBase<Has
             if (object instanceof Map) {
                 tagCompound = new TagCompound();
                 Map<String, ?> map = (Map<String, ?>) object;
-                for (Entry<String, ?> entry : map.entrySet()) {
-                    tagCompound.put(entry.getKey(), TagType.toTag(entry.getValue()));
+                for (Map.Entry<String, ?> entry : map.entrySet()) {
+                    tagCompound.handle.put(entry.getKey(), TagType.toTag(entry.getValue()));
                 }
             }
-            if (object instanceof MemorySection) {
+            if (object instanceof ConfigurationSection) {
                 tagCompound = new TagCompound();
-                MemorySection memorySection = (MemorySection) object;
-                for (String key : memorySection.getKeys(false)) {
-                    tagCompound.put(key, TagType.toTag(memorySection.get(key)));
+                ConfigurationSection section = (ConfigurationSection) object;
+                for (String key : section.getKeys(false)) {
+                    tagCompound.handle.put(key, TagType.toTag(section.get(key)));
                 }
             }
             return tagCompound;
         }
     };
 
+    private final Map<String, TagBase> handle = new HashMap<>();
+
     public TagCompound(Map<String, TagBase> tagBaseMap) {
-        super(tagBaseMap);
+        handle.putAll(tagBaseMap);
     }
 
     @Override
     public void write(DataOutput dataOutput) throws IOException {
-        for (Entry<String, TagBase> entry : this.entrySet()) {
+        for (Map.Entry<String, TagBase> entry : entrySet()) {
             TagBase tagBase = entry.getValue();
             dataOutput.writeByte(tagBase.getTypeId().getId());
             if (tagBase.getTypeId().getId() != 0) {
@@ -71,13 +75,55 @@ public class TagCompound extends HashMap<String, TagBase> implements TagBase<Has
     @Override
     public HashMap<String, ?> getValue() {
         HashMap<String, Object> map = new HashMap<>();
-        this.forEach((key, value) -> map.put(key, value.getValue()));
+        handle.forEach((key, value) -> map.put(key, value.getValue()));
         return map;
     }
 
     @Override
     public TagType getTypeId() {
         return TagType.COMPOUND;
+    }
+
+    @Override
+    public TagBase get(String path) {
+        int index = path.indexOf('.');
+        if (index == -1) return handle.get(path);
+        TagBase tagBase = handle.get(path.substring(0, index));
+        if (tagBase instanceof TagCompound) {
+            return ((TagCompound) tagBase).get(path.substring(index + 1));
+        }
+        return null;
+    }
+
+    @Override
+    public TagBase set(String path, Object value) {
+        int index = path.indexOf('.');
+        if (index == -1) {
+            if (value == null) return handle.remove(path);
+            return handle.put(path, TagType.toTag(value));
+        }
+        String key = path.substring(0, index);
+        TagBase tagBase = handle.get(key);
+        if (!(tagBase instanceof TagCompound)) {
+            if (value == null) return null;
+            tagBase = new TagCompound();
+            handle.put(key, tagBase);
+        }
+        return ((TagCompound) tagBase).set(path.substring(index + 1), value);
+    }
+
+    @Override
+    public Set<String> keySet(@Nullable String path) {
+        return handle.keySet();
+    }
+
+    @Override
+    public <V> V get(String path, Class<V> t) {
+        TagBase obj = get(path);
+        if (obj != null && t.isAssignableFrom(obj.getValue().getClass())) {
+            return (V) obj.getValue();
+        }
+        return null;
     }
 
     @Override
@@ -89,41 +135,16 @@ public class TagCompound extends HashMap<String, TagBase> implements TagBase<Has
 
         String key;
         for (int i = 0; i < list.size(); i++) {
-            if (i != 0) {
-                sb.append(',');
-            }
+            if (i != 0) sb.append(',');
             key = list.get(i);
-            sb.append(key).append(':').append(super.get(key));
+            sb.append(key).append(':').append(handle.get(key));
         }
         sb.append('}');
         return sb.toString();
     }
 
-    public <T extends TagBase> T get(String path) {
-        TagBase tagBase;
-        if (path.length() == 0) {
-            tagBase = this;
-        } else {
-            char separator = '.';
-            int i1 = -1;
-            Object tagCompound = this;
-
-            int i2;
-            while ((i1 = path.indexOf(separator, i2 = i1 + 1)) != -1) {
-                tagCompound = ((TagCompound) tagCompound).get(path.substring(i2,i1));
-                if (tagCompound == null) {
-                    return (T) TagEnd.getInst();
-                }
-            }
-
-            path = path.substring(i2);
-
-            if (tagCompound == this) {
-                tagBase = super.get(path);
-            } else {
-                tagBase = ((TagCompound) tagCompound).get(path);
-            }
-        }
-        return (T) (tagBase == null ? TagEnd.getInst() : tagBase);
+    @Nonnull
+    public Set<Map.Entry<String, TagBase>> entrySet() {
+        return handle.entrySet();
     }
 }
