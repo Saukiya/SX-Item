@@ -1,6 +1,6 @@
 package github.saukiya.sxitem.data.item;
 
-import github.saukiya.sxitem.nms.NBTTagWrapper;
+import github.saukiya.sxitem.nbt.NBTTagWrapper;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

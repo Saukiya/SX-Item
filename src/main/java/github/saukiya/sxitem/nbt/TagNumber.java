@@ -1,4 +1,4 @@
-package github.saukiya.sxitem.nms;
+package github.saukiya.sxitem.nbt;
 
 public abstract class TagNumber<T extends Number> extends Number implements TagBase<T> {
 

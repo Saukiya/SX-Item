@@ -1,4 +1,4 @@
-package github.saukiya.sxitem.nms;
+package github.saukiya.sxitem.nbt;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
