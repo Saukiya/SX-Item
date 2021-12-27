@@ -1,10 +1,10 @@
 package github.saukiya.sxitem.data.random;
 
 import github.saukiya.sxitem.SXItem;
-import github.saukiya.sxitem.nms.TagBase;
-import github.saukiya.sxitem.nms.TagCompound;
-import github.saukiya.sxitem.nms.TagList;
-import github.saukiya.sxitem.nms.TagString;
+import github.saukiya.sxitem.nbt.TagBase;
+import github.saukiya.sxitem.nbt.TagCompound;
+import github.saukiya.sxitem.nbt.TagList;
+import github.saukiya.sxitem.nbt.TagString;
 import lombok.Getter;
 import org.apache.commons.lang.text.StrLookup;
 import org.apache.commons.lang.text.StrMatcher;

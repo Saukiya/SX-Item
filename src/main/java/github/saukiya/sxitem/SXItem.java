@@ -66,7 +66,6 @@ public class SXItem extends JavaPlugin {
         mainCommand.setup("sxitem");
         getLogger().info("Loading Time: " + (System.currentTimeMillis() - oldTimes) + " ms");
         getLogger().info("Author: Saukiya");
-        getLogger().info("File: " + getDataFolder());
     }
 
     @Override

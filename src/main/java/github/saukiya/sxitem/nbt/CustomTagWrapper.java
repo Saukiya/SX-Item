@@ -1,4 +1,4 @@
-package github.saukiya.sxitem.nms;
+package github.saukiya.sxitem.nbt;
 
 import lombok.Getter;
 import org.apache.commons.lang.Validate;

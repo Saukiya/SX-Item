@@ -1,4 +1,4 @@
-package github.saukiya.sxitem.nms;
+package github.saukiya.sxitem.nbt;
 
 /**
  * 只对单一ItemStack进行操作的封装类

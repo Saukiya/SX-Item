@@ -1,4 +1,4 @@
-package github.saukiya.sxitem.nms;
+package github.saukiya.sxitem.nbt;
 
 import java.io.DataInput;
 import java.io.DataOutput;

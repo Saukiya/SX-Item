@@ -5,7 +5,7 @@ import github.saukiya.sxitem.data.item.IGenerator;
 import github.saukiya.sxitem.data.item.IUpdate;
 import github.saukiya.sxitem.data.random.INode;
 import github.saukiya.sxitem.data.random.RandomDocker;
-import github.saukiya.sxitem.nms.*;
+import github.saukiya.sxitem.nbt.*;
 import github.saukiya.sxitem.util.ComponentBuilder;
 import github.saukiya.sxitem.util.MessageUtil;
 import github.saukiya.sxitem.util.NbtUtil;
