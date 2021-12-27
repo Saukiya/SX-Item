@@ -1,11 +1,14 @@
 package github.saukiya.sxitem;
 
 import github.saukiya.sxitem.command.MainCommand;
-import github.saukiya.sxitem.data.item.ItemDataManager;
+import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.data.item.sub.GeneratorDefault;
 import github.saukiya.sxitem.data.item.sub.GeneratorImport;
-import github.saukiya.sxitem.data.random.RandomStringManager;
-import github.saukiya.sxitem.util.*;
+import github.saukiya.sxitem.data.random.RandomManager;
+import github.saukiya.sxitem.util.Config;
+import github.saukiya.sxitem.util.Message;
+import github.saukiya.sxitem.util.NbtUtil;
+import github.saukiya.sxitem.util.PlaceholderUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.bstats.bukkit.Metrics;
@@ -13,7 +16,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import javax.script.ScriptEngineManager;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Random;
@@ -29,21 +31,16 @@ public class SXItem extends JavaPlugin {
     @Getter
     private static final Random random = new Random();
     @Getter
-    private static final ScriptEngineManager jsManager = new ScriptEngineManager();
-    @Getter
     @Setter
     private static DecimalFormat df = new DecimalFormat("#.##");
     @Getter
     private static SXItem inst = null;
-
     @Getter
     private static MainCommand mainCommand;
-
     @Getter
-    private static RandomStringManager randomStringManager;
-
+    private static RandomManager randomManager;
     @Getter
-    private static ItemDataManager itemDataManager;
+    private static ItemManager itemManager;
 
     @Override
     public void onLoad() {
@@ -52,8 +49,8 @@ public class SXItem extends JavaPlugin {
         Message.loadMessage();
         mainCommand = new MainCommand();
 
-        ItemDataManager.registerGenerator(new GeneratorDefault());
-        ItemDataManager.registerGenerator(new GeneratorImport());
+        ItemManager.registerGenerator(new GeneratorDefault());
+        ItemManager.registerGenerator(new GeneratorImport());
     }
 
     @Override
@@ -63,8 +60,8 @@ public class SXItem extends JavaPlugin {
         PlaceholderUtil.setup();
         NbtUtil.getInst();
 
-        randomStringManager = new RandomStringManager();
-        itemDataManager = new ItemDataManager();
+        randomManager = new RandomManager();
+        itemManager = new ItemManager();
 
         mainCommand.setup("sxitem");
         getLogger().info("Loading Time: " + (System.currentTimeMillis() - oldTimes) + " ms");
