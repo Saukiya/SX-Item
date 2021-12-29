@@ -25,7 +25,7 @@ import java.util.Set;
  * 1.getList\getStringList\getMap (需要实现接口ItemTagType[CustomItemTagContainer,List/Map], 可自行往types内添加)
  * 2.isArray(需要手动判断byte[]\int[]\long[])
  * <p>
- * TODO 需要改成伪map结构以减少多余的NamespacedKey生成
+ * 就这样吧 看啥时候删掉好了x
  */
 @Getter
 public class CustomTagWrapper implements CompoundBase {
