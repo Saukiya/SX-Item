@@ -55,26 +55,8 @@ public class TagList extends TagListBase<TagBase, List<?>> {
         }
     };
 
-    public TagType elementType = null;
-
-//    public TagList(Collection<TagBase> collection) {
-//        super(collection);
-//    }
-
     public TagList(Collection<?> collection) {
         super(collection.stream().map(TagType::toTag).collect(Collectors.toList()));
-    }
-
-    //TODO 类型检查未完全实现: addAll、Constructor等变更元素的方法
-    @Override
-    public boolean add(TagBase tagBase) {
-//        // 错误的实现方式
-//        if (isEmpty()) {
-//            elementType = tagBase.getTypeId();
-//        } else if (elementType != tagBase.getTypeId()) {
-//            return false;
-//        }
-        return super.add(tagBase);
     }
 
     @Override
