@@ -165,16 +165,23 @@ public class GeneratorDefault implements IGenerator, IUpdate {
         if (itemMeta.hasLore())
             config.set("Lore", itemMeta.getLore().stream().map(s -> s.replace("§", "&")).collect(Collectors.toList()));
         if (itemMeta.hasEnchants())
-            config.set("Enchants", itemMeta.getEnchants().entrySet().stream().map(entry -> entry.getKey().getName() + ":" + entry.getValue()).collect(Collectors.toList()));
+            config.set("EnchantList", itemMeta.getEnchants().entrySet().stream().map(entry -> entry.getKey().getName() + ":" + entry.getValue()).collect(Collectors.toList()));
         if (itemMeta.getItemFlags().size() > 0)
-            config.set("Flags", itemMeta.getItemFlags().stream().map(Enum::name).collect(Collectors.toList()));
+            config.set("ItemFlagList", itemMeta.getItemFlags().stream().map(Enum::name).collect(Collectors.toList()));
         if (itemMeta.isUnbreakable())
             config.set("Unbreakable", true);
+        if (itemMeta.getAttributeModifiers() != null) {
+            List<String> list = new ArrayList<>();
+            itemMeta.getAttributeModifiers().forEach((att, mod) -> list.add(att.name() + ":" + mod.getAmount()
+                    + (mod.getOperation().equals(AttributeModifier.Operation.ADD_SCALAR) ? "x" : "")
+                    + (mod.getSlot() != null ? ":" + mod.getSlot().name() : "")));
+            config.set("Attributes", list);
+        }
         if (itemMeta instanceof LeatherArmorMeta)
             config.set("Color", Integer.toHexString(((LeatherArmorMeta) itemMeta).getColor().asRGB()));
-        if (itemMeta instanceof SkullMeta && ((SkullMeta) itemMeta).hasOwner()) {
+        if (itemMeta instanceof SkullMeta && ((SkullMeta) itemMeta).hasOwner())
             config.set("SkullName", ((SkullMeta) itemMeta).getOwningPlayer().getUniqueId().toString());
-        }
+
         return config;
     }
 
