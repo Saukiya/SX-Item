@@ -106,13 +106,12 @@ Default-5:
   Lore:
     - '&7设置物品默认攻速，与玩家自身属性分离'
     - '&7物品攻速最低为0-最高为4'
-    - '&7AttackSpeed.yml文件内可设置玩家默认攻速'
-    - '&7以及各工具默认攻速'
     - ''
     - '&c若玩家攻速+物品攻速小于等于4'
     - '&c工具将无法抬起'
   Type: Default
-#  AttackSpeed: 0.8
+  Attributes:
+    - "GENERIC_ATTACK_SPEED:-0.7x:HAND"
 
 Default-6:
   Name: '&c&l鸽子肉'
