@@ -1,8 +1,11 @@
 package github.saukiya.sxitem.data.item;
 
 import github.saukiya.sxitem.SXItem;
+import github.saukiya.sxitem.event.SXItemSpawnEvent;
+import github.saukiya.sxitem.event.SXItemUpdateEvent;
 import github.saukiya.sxitem.nbt.NBTItemWrapper;
 import github.saukiya.sxitem.nbt.NBTTagWrapper;
+import github.saukiya.sxitem.util.ComponentBuilder;
 import github.saukiya.sxitem.util.MessageUtil;
 import github.saukiya.sxitem.util.NMS;
 import github.saukiya.sxitem.util.NbtUtil;
@@ -222,9 +225,7 @@ public class ItemManager implements Listener {
             return getItem(ig, player);
         } else {
             Material material = getMaterial(itemName);
-            if (material != null) {
-                return new ItemStack(material);
-            }
+            if (material != null) return new ItemStack(material);
         }
         return null;
     }
@@ -244,7 +245,9 @@ public class ItemManager implements Listener {
             wrapper.set(SXItem.getInst().getName() + ".HashCode", ((IUpdate) ig).updateCode());
             wrapper.save();
         }
-        return item;
+        SXItemSpawnEvent event = new SXItemSpawnEvent(player, ig, item);
+        Bukkit.getPluginManager().callEvent(event);
+        return event.getItem();
     }
 
     /**
@@ -254,7 +257,7 @@ public class ItemManager implements Listener {
      * @return boolean
      */
     public boolean hasItem(String itemName) {
-        return itemMap.containsKey(itemName) || Material.getMaterial(itemName.replace(' ', '_').toUpperCase()) != null;
+        return itemMap.containsKey(itemName) || getMaterial(itemName) != null;
     }
 
     /**
@@ -284,12 +287,17 @@ public class ItemManager implements Listener {
             Integer hashCode = oldWrapper.getInt(hashCodeName);
             if (updateIg.isUpdate() && (hashCode == null || updateIg.updateCode() != hashCode)) {
                 ItemStack newItem = updateIg.update(item, oldWrapper, player);
-                item.setType(newItem.getType());
-                item.setItemMeta(newItem.getItemMeta());
-                NBTItemWrapper itemWrapper = NbtUtil.getInst().getItemTagWrapper(item);
-                itemWrapper.set(SXItem.getInst().getName() + ".ItemKey", ig.getKey());
-                itemWrapper.set(SXItem.getInst().getName() + ".HashCode", ((IUpdate) ig).updateCode());
-                itemWrapper.save();
+                NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(newItem);
+                wrapper.set(SXItem.getInst().getName() + ".ItemKey", ig.getKey());
+                wrapper.set(SXItem.getInst().getName() + ".HashCode", ((IUpdate) ig).updateCode());
+                wrapper.save();
+
+                SXItemUpdateEvent event = new SXItemUpdateEvent(player, ig, newItem, item);
+                Bukkit.getPluginManager().callEvent(event);
+                if (!event.isCancelled()) {
+                    item.setType(event.getItem().getType());
+                    item.setItemMeta(event.getItem().getItemMeta());
+                }
             }
         }
         return true;
@@ -325,18 +333,16 @@ public class ItemManager implements Listener {
      * @param sender CommandSender
      * @param search String
      */
-    public void sendItemMapToPlayer(CommandSender sender, String... search) {
+    public void sendItemMapToPlayer(CommandSender sender, String search) {
         sender.sendMessage("");
-        // 文件
-        if (search.length > 0 && search[0].equals("")) {
-            MessageUtil.getInst().componentBuilder().add("§eDirectoryList§8 - §7ClickOpen").show("§8§o§lTo ItemList").runCommand("/sxitem give |").send(sender);
+        // 文件夹
+        if (search != null && search.equals("")) {
+            MessageUtil.getInst().componentBuilder()
+                    .add("§eDirectoryList§8 - §7ClickOpen")
+                    .show("§8§o§lTo ItemList")
+                    .runCommand("/sxitem give |")
+                    .send(sender);
 
-//            Map<String, String> map = new HashMap<>();
-//            for (Map.Entry<String, IGenerator> entry : itemMap.entrySet()) {
-//                IGenerator ig = entry.getValue();
-//                String str = map.computeIfAbsent(ig.getPathName(), k -> "");
-//                map.put(ig.getPathName(), str + "§b" + (str.replaceAll("[^\n]", "").length() + 1) + " - §a" + entry.getKey() + " §8[§7" + ig.getName() + "§8]§7 - §8[§cType:" + ig.getType() + "§8]\n");
-//            }
             Map<String, List<String>> map = new HashMap<>();
             for (Map.Entry<String, IGenerator> entry : itemMap.entrySet()) {
                 IGenerator ig = entry.getValue();
@@ -355,13 +361,13 @@ public class ItemManager implements Listener {
         {
             int filterSize = 0, size = 0;
             MessageUtil.getInst().componentBuilder()
-                    .add("§eItemList§8 - §7ClickGet " + (search.length > 0 ? "§8[§c" + search[0].replaceAll("^\\|", "").replaceAll("<$", "") + "§8]" : ""))
+                    .add("§eItemList§8 - §7ClickGet " + (search != null ? "§8[§c" + search.replaceAll("(^\\||<$)", "") + "§8]" : ""))
                     .show("§8§o§lTo DirectoryList")
                     .runCommand("/sxitem give")
                     .send(sender);
             for (Map.Entry<String, IGenerator> entry : itemMap.entrySet()) {
                 IGenerator ig = entry.getValue();
-                if (search.length > 0 && !(entry.getKey() + ig.getName() + "|" + ig.getPathName() + "<").contains(search[0])) {
+                if (search != null && !(entry.getKey() + ig.getName() + "|" + ig.getPathName() + "<").contains(search)) {
                     filterSize++;
                     continue;
                 }
@@ -369,16 +375,14 @@ public class ItemManager implements Listener {
                         .runCommand("/sxitem give " + entry.getKey())
                         .add(" §b" + ++size + " - §a" + entry.getKey() + " §8[§7")
                         .add(ig.getNameComponent())
-                        .add("§8]§7 - ")
-                        .add("§8[§cType:" + ig.getType() + "§8]")
+                        .add("§8]§7 - §8[§cType:" + ig.getType() + "§8]")
                         .show("§7" + ig.getConfigString() + "§8§o§lPath: " + ig.getPathName())
                         .send(sender);
             }
-            if (search.length > 0 && filterSize != 0) {
+            if (search != null && filterSize != 0) {
                 sender.sendMessage("§7> Filter§c " + filterSize + " §7Items, Find §c" + size + "§7 Items.");
             }
         }
-        sender.sendMessage("");
     }
 
     @EventHandler
