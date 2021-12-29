@@ -5,14 +5,13 @@ import github.saukiya.sxitem.data.random.nodes.MultipleNode;
 import github.saukiya.sxitem.data.random.nodes.SingletonNode;
 import github.saukiya.sxitem.data.random.randoms.*;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import javax.annotation.Nonnull;
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Saukiya
@@ -45,7 +44,6 @@ public class RandomManager {
     public void loadData() {
         map.clear();
         if (!file.exists() || file.listFiles().length == 0) {
-            SXItem.getInst().saveResource("RandomString/NewRandom.yml", true);
             SXItem.getInst().saveResource("RandomString/DefaultRandom.yml", true);
             SXItem.getInst().saveResource("RandomString/10Level/Random.yml", true);
         }
@@ -58,6 +56,7 @@ public class RandomManager {
      *
      * @param files File
      */
+    @SneakyThrows
     private void loadRandomFile(File files) {
         for (File file : files.listFiles()) {
             if (file.getName().startsWith("NoLoad")) continue;
@@ -65,17 +64,12 @@ public class RandomManager {
                 loadRandomFile(file);
             } else {
                 YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
-                loadRandom(map, yml);
-                /**
-                 * TODO 旧版转化
-                 *
-                 * 流程:
-                 * 1.将原来的file复制到 file.path/NoLoad_file.name 做备份
-                 * 2.修改yml并且save
-                 */
-//                if (loadRandom(map, yml)) {
-//                    void...
-//                }
+                if (loadRandom(map, yml)) {
+                    if (file.renameTo(new File(file.getParentFile(), "NoLoad_" + file.getName()))) {
+                        yml.save(file);
+                        SXItem.getInst().getLogger().info("Random Convert: " + file.getName());
+                    }
+                }
             }
         }
     }
@@ -88,7 +82,7 @@ public class RandomManager {
      * @return boolean 当返回true代表有过时的写法
      */
     public boolean loadRandom(@Nonnull Map<String, INode> inputMap, @Nonnull ConfigurationSection config) {
-        boolean deprecated = false;
+        boolean convertParent = false;
         for (Map.Entry<String, Object> entry : config.getValues(false).entrySet()) {
             if (entry.getKey().startsWith("NoLoad")) continue;
             Object obj = entry.getValue();
@@ -101,17 +95,23 @@ public class RandomManager {
                         value.forEach((k, v) -> singletonNode.add(Double.valueOf(k.toString()), loadDataString(v)));
                     }
                 } else {
-                    if (config instanceof YamlConfiguration) deprecated = true;
                     Map<Object, Integer> tempMap = new HashMap<>();
+                    boolean convert = false;
                     for (Object value : (List) obj) {
-                        tempMap.put(value, tempMap.getOrDefault(value, 0) + 1);
+                        if (tempMap.put(value, tempMap.getOrDefault(value, 0) + 1) != null)
+                            convertParent = convert = true;
                     }
-                    tempMap.forEach((key1, value) -> singletonNode.add(value.doubleValue(), loadDataString(key1)));
+                    tempMap.forEach((o, size) -> singletonNode.add(size.doubleValue(), loadDataString(o)));
+                    if (convert) {
+                        List<Map<Integer, Object>> list = new ArrayList<>();
+                        tempMap.forEach((o, size) -> list.add(Collections.singletonMap(size, o)));
+                        config.set(entry.getKey(), list);
+                    }
                 }
                 if (!singletonNode.isEmpty()) inputMap.put(entry.getKey(), singletonNode);
             }
         }
-        return deprecated;
+        return convertParent;
     }
 
     public String random(String key) {
