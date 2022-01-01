@@ -1,5 +1,6 @@
 package github.saukiya.sxitem.util;
 
+import github.saukiya.sxitem.SXItem;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
@@ -7,6 +8,7 @@ import org.bukkit.Bukkit;
 import javax.annotation.Nonnull;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -18,17 +20,19 @@ import java.util.stream.IntStream;
  */
 public interface NMS {
 
-    @SneakyThrows
-    static <T extends NMS> T getInst(Class<T> target) {
+    static <T extends NMS> T getInst(Class<T> target, String... versions) {
         NMS t = Data.INST_MAP.get(target);
         if (t == null) {
             synchronized (target) {
-                if (!Data.INST_MAP.containsKey(target)) {
-                    t = (NMS) Class.forName(target.getPackage().getName() + "." + target.getSimpleName() + "_" + Data.VERSION).getDeclaredConstructor().newInstance();
-                    Data.INST_MAP.put(target, t);
-                } else {
-                    t = Data.INST_MAP.get(target);
-                }
+                t = Data.INST_MAP.computeIfAbsent(target, k -> {
+                    try {
+                        return (NMS) Class.forName(target.getName() + "_" + Arrays.stream(versions).filter(ver -> compareTo(ver) >= 0).findFirst().orElse(Data.VERSION)).getDeclaredConstructor().newInstance();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        SXItem.getInst().getLogger().warning(target.getSimpleName() + " No Version : " + Data.VERSION);
+                    }
+                    return null;
+                });
             }
         }
         return (T) t;
