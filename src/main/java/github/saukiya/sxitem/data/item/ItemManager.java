@@ -5,7 +5,6 @@ import github.saukiya.sxitem.event.SXItemSpawnEvent;
 import github.saukiya.sxitem.event.SXItemUpdateEvent;
 import github.saukiya.sxitem.nbt.NBTItemWrapper;
 import github.saukiya.sxitem.nbt.NBTTagWrapper;
-import github.saukiya.sxitem.util.ComponentBuilder;
 import github.saukiya.sxitem.util.MessageUtil;
 import github.saukiya.sxitem.util.NMS;
 import github.saukiya.sxitem.util.NbtUtil;
@@ -347,7 +346,7 @@ public class ItemManager implements Listener {
             for (Map.Entry<String, IGenerator> entry : itemMap.entrySet()) {
                 IGenerator ig = entry.getValue();
                 List<String> list = map.computeIfAbsent(ig.getPathName(), k -> new ArrayList<>());
-                list.add("§b" + list.size() + 1 + " - §a" + entry.getKey() + " §8[§7" + ig.getName() + "§8]§7 - §8[§cType:" + ig.getType() + "§8]");
+                list.add("§b" + (list.size() + 1) + " - §a" + entry.getKey() + " §8[§7" + ig.getName() + "§8]§7 - §8[§cType:" + ig.getType() + "§8]");
             }
             for (Map.Entry<String, List<String>> entry : map.entrySet()) {
                 MessageUtil.getInst().componentBuilder().runCommand("/sxitem give |" + entry.getKey() + "<")
