@@ -6,29 +6,20 @@ import github.saukiya.sxitem.data.item.IUpdate;
 import github.saukiya.sxitem.data.random.INode;
 import github.saukiya.sxitem.data.random.RandomDocker;
 import github.saukiya.sxitem.nbt.*;
-import github.saukiya.sxitem.util.ComponentBuilder;
-import github.saukiya.sxitem.util.MessageUtil;
-import github.saukiya.sxitem.util.NbtUtil;
-import github.saukiya.sxitem.util.PlaceholderUtil;
+import github.saukiya.sxitem.util.*;
 import lombok.NoArgsConstructor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -168,20 +159,17 @@ public class GeneratorDefault implements IGenerator, IUpdate {
             config.set("EnchantList", itemMeta.getEnchants().entrySet().stream().map(entry -> entry.getKey().getName() + ":" + entry.getValue()).collect(Collectors.toList()));
         if (itemMeta.getItemFlags().size() > 0)
             config.set("ItemFlagList", itemMeta.getItemFlags().stream().map(Enum::name).collect(Collectors.toList()));
-        if (itemMeta.isUnbreakable())
+        if (ItemUtil.getInst().isUnbreakable(itemMeta))
             config.set("Unbreakable", true);
-        if (itemMeta.getAttributeModifiers() != null) {
+        List<ItemUtil.AttributeData> attributeList = ItemUtil.getInst().getAttributes(saveItem);
+        if (attributeList != null) {
             List<String> list = new ArrayList<>();
-            itemMeta.getAttributeModifiers().forEach((att, mod) -> list.add(att.name() + ":" + mod.getAmount()
-                    + (mod.getOperation().equals(AttributeModifier.Operation.ADD_SCALAR) ? "x" : "")
-                    + (mod.getSlot() != null ? ":" + mod.getSlot().name() : "")));
+            attributeList.forEach(data -> list.add(data.getAttrName() + ":" + data.getAmount() + ":" + data.getOperation() + (data.getSlot() != null ? ":" + data.getSlot() : "")));
             config.set("Attributes", list);
         }
         if (itemMeta instanceof LeatherArmorMeta)
             config.set("Color", Integer.toHexString(((LeatherArmorMeta) itemMeta).getColor().asRGB()));
-        if (itemMeta instanceof SkullMeta && ((SkullMeta) itemMeta).hasOwner())
-            config.set("SkullName", ((SkullMeta) itemMeta).getOwningPlayer().getUniqueId().toString());
-
+        config.set("SkullName", ItemUtil.getInst().getSkull(itemMeta));
         return config;
     }
 
@@ -250,41 +238,29 @@ public class GeneratorDefault implements IGenerator, IUpdate {
 
         Arrays.stream(ItemFlag.values()).filter(itemFlag -> itemFlagList.contains(itemFlag.name())).forEach(meta::addItemFlags);
 
-        meta.setUnbreakable(unbreakable);
-        for (String attributeData : config.getStringList("Attributes")) {
-            String[] split = attributeData.split(":");
-            if (split.length < 2) continue;
-            Attribute attribute = Arrays.stream(Attribute.values()).filter(att -> att.name().equals(split[0])).findFirst().orElse(null);
-            if (attribute == null) continue;
-            double value;
-            AttributeModifier.Operation operation;
-            if (Character.isDigit(split[1].charAt(split[1].length() - 1))) {
-                value = Double.parseDouble(split[1]);
-                operation = AttributeModifier.Operation.ADD_NUMBER;
-            } else {
-                value = Double.parseDouble(split[1].substring(0, split[1].length() - 1));
-                operation = AttributeModifier.Operation.ADD_SCALAR;
-            }
+        ItemUtil.getInst().setUnbreakable(meta, unbreakable);
 
-            EquipmentSlot slot = split.length > 2 ? Arrays.stream(EquipmentSlot.values()).filter(s -> s.name().equals(split[2])).findFirst().orElse(null) : null;
-            meta.addAttributeModifier(attribute, new AttributeModifier(UUID.randomUUID(), SXItem.getInst().getName(), value, operation, slot));
-        }
+        if (color != null && meta instanceof LeatherArmorMeta) ((LeatherArmorMeta) meta).setColor(color);
 
-        if (color != null && meta instanceof LeatherArmorMeta) {
-            ((LeatherArmorMeta) meta).setColor(color);
-        }
-
-        if (skullName != null && meta instanceof SkullMeta) {
-            try {
-                UUID skullUUID = UUID.fromString(skullName);
-                OfflinePlayer player = Bukkit.getOfflinePlayer(skullUUID);
-                ((SkullMeta) meta).setOwningPlayer(player);
-            } catch (Exception e) {
-                ((SkullMeta) meta).setOwner(skullName);
-            }
-        }
+        ItemUtil.getInst().setSkull(meta, skullName);
 
         item.setItemMeta(meta);
+
+        //TODO 改到getItem那边去
+        if (config.isList("Attributes")) {
+            List<ItemUtil.AttributeData> attributeList = new ArrayList<>();
+            for (String attributeData : config.getStringList("Attributes")) {
+                String[] split = attributeData.split(":");
+                if (split.length < 3) continue;
+                int operation = Integer.parseInt(split[2]);
+                attributeList.add(new ItemUtil.AttributeData()
+                        .setAttrName(split[0])
+                        .setAmount(Double.parseDouble(split[1]))
+                        .setOperation(operation)
+                        .setSlot(split.length > 3 ? split[3] : null));
+            }
+            ItemUtil.getInst().addAttributes(item, attributeList);
+        }
         return item;
     }
 }
