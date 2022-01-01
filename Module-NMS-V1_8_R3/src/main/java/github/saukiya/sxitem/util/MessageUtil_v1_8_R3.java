@@ -23,7 +23,6 @@ public class MessageUtil_v1_8_R3 extends MessageUtil {
     @Override
     public void sendActionBar(Player player, String message) {
         CraftPlayer craftPlayer = (CraftPlayer) player;
-
         PacketPlayOutChat packet = new PacketPlayOutChat(null, (byte) ChatMessageType.ACTION_BAR.ordinal());
         packet.components = new BaseComponent[]{new TextComponent(message)};
         craftPlayer.getHandle().playerConnection.sendPacket(packet);
