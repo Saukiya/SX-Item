@@ -1,6 +1,44 @@
-#参数参考链接:
-# ItemFlag: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemFlag.html
-# Enchantment: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/enchantments/Enchantment.html
+###参数参考链接
+#
+#EnchantList
+# 格式:
+# - "附魔名称:等级"
+# 参考链接: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/enchantments/Enchantment.html
+#
+#ItemFlagList
+# 格式:
+# - "Flag名"
+# 参考链接: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemFlag.html
+#
+#Attributes:
+# 格式:
+# - "属性名:数字:模式:生效位置(低版本无视)"
+# 属性名:
+#   GENERIC_MAX_HEALTH               最大生命值
+#   GENERIC_FOLLOW_RANGE             生物追踪范围
+#   GENERIC_KNOCKBACK_RESISTANCE     抗擊退效果
+#   GENERIC_MOVEMENT_SPEED           移动速度
+#   GENERIC_FLYING_SPEED             飞行速度
+#   GENERIC_ATTACK_DAMAGE            攻击伤害
+#   GENERIC_ATTACK_KNOCKBACK         击退力度
+#   GENERIC_ATTACK_SPEED             攻击速度
+#   GENERIC_ARMOR                    盔甲防御点数
+#   GENERIC_ARMOR_TOUGHNESS          盔甲韧性
+#   GENERIC_LUCK                     幸运度（例如原版的当打开箱子、运输矿车，钓鱼和杀怪）
+#   HORSE_JUMP_STRENGTH              马的弹跳力(只对马铠生效)
+#   ZOMBIE_SPAWN_REINFORCEMENTS      僵尸召唤系数(未测试)
+# 模式:
+#   0   ADD_NUMBER          属性增量    该模式直接在基值上进行加减法操作
+#   1   ADD_SCALAR          倍率增量    该模式将在Operation 0之后执行，并直接在属性值的作用倍率上进行加减法操作，也就是将当前的属性值进行倍率上的修改，而基础倍率为×1倍（即不做改动）
+#   2   MULTIPLY_SCALAR_1   最终倍乘    该模式将会在其他所有修饰（包括其他的Operation 2修饰）完成后，在最终倍率上执行加减法操作，并执行最终的倍乘。基础倍率同样为×1倍
+# 生效位置: 不填写生效位置则生效在所有部位上
+#   HAND      主
+#   OFF_HAND  副
+#   HEAD      头
+#   CHEST     身
+#   LEGS      腿
+#   FEET      脚
+
 Default-1:
   Name: <s:DefaultPrefix>&c炎之洗礼<s:DefaultSuffix> <s:<l:品质>Color><l:品质>
   ID:
@@ -16,11 +54,11 @@ Default-1:
     - '<l:攻三-10>'
     - '<l:材质>'
     - '<s:<l:品质>宝石孔>'
-    #    - '&7耐久度: <c:int <r:300_350> * <s:<l:品质>基数>>/<c:int 400 * <s:<l:品质>基数>>'
+    #   - '&7耐久度: <c:int <r:300_350> * <s:<l:品质>基数>>/<c:int 400 * <s:<l:品质>基数>>'
     - '&7耐久度: <c:int <d:0.6_0.9> * <l:耐久度>>/<l:耐久度>'
     - '<s:<l:品质>绑判>&c已绑定'
     - '&a到期时间: <t:10m>'
-    #    - '&a到期时间: <t:600>'
+    #   - '&a到期时间: <t:600>'
     - '<s:<l:品质>介判>                                    '
     - '<s:<l:品质>介判><s:DefaultLore>'
   EnchantList:
@@ -111,7 +149,7 @@ Default-5:
     - '&c工具将无法抬起'
   Type: Default
   Attributes:
-    - "GENERIC_ATTACK_SPEED:-0.7x:HAND"
+    - "GENERIC_ATTACK_SPEED:-0.7:1:HAND"
 
 Default-6:
   Name: '&c&l鸽子肉'
@@ -143,46 +181,16 @@ Default-8:
   Name: "&d修脚剑"
   ID: 267
   Update: true
-  #Attribute说明:
-  # 格式: 属性名:数字/增量:生效位置(低版本无视)
-  #
-  # 属性名:
-  #   GENERIC_MAX_HEALTH               最大生命值
-  #   GENERIC_FOLLOW_RANGE             生物追踪范围
-  #   GENERIC_KNOCKBACK_RESISTANCE     抗擊退效果
-  #   GENERIC_MOVEMENT_SPEED           移动速度
-  #   GENERIC_FLYING_SPEED             飞行速度
-  #   GENERIC_ATTACK_DAMAGE            攻击伤害
-  #   GENERIC_ATTACK_KNOCKBACK         击退力度
-  #   GENERIC_ATTACK_SPEED             攻击速度
-  #   GENERIC_ARMOR                    盔甲防御点数
-  #   GENERIC_ARMOR_TOUGHNESS          盔甲韧性
-  #   GENERIC_LUCK                     幸运度（例如原版的当打开箱子、运输矿车，钓鱼和杀怪）
-  #   HORSE_JUMP_STRENGTH              马的弹跳力(只对马铠生效)
-  #   ZOMBIE_SPAWN_REINFORCEMENTS      僵尸召唤系数(未测试)
-  #
-  # 生效位置: 不填写生效位置则生效在所有部位上
-  #   HAND      主
-  #   OFF_HAND  副
-  #   HEAD      头
-  #   CHEST     身
-  #   LEGS      腿
-  #   FEET      脚
   Attributes:
-    - "GENERIC_ATTACK_DAMAGE:-0.99x:HAND"
+    - "GENERIC_ATTACK_DAMAGE:-0.99:1:HAND"
 
-#属性只对马铠生效，不对马鞍生效
-#绑定诅咒不对马生效
 Default-9:
   ID: 419
-  Lore:
-    - ''
-    - '&7一个牛逼的马铠'
   EnchantList:
+    #绑定诅咒不对马生效
     - BINDING_CURSE:1
-  ItemFlagList:
-    - HIDE_ATTRIBUTES
   Attributes:
-    - "HORSE_JUMP_STRENGTH:1x:CHEST"
-    - "GENERIC_MOVEMENT_SPEED:0.5x:CHEST"
+    #属性只对马铠生效，不对马鞍生效
+    - "HORSE_JUMP_STRENGTH:2:0:CHEST"
+    - "GENERIC_MOVEMENT_SPEED:0.5:1:CHEST"
   Update: true

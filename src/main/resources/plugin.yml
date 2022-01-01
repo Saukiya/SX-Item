@@ -4,7 +4,7 @@ version: $version
 author: Saukiya
 api-version: 1.17
 website: https://github.com/Saukiya/SX-Item
-depend:
+softdepend:
   - PlaceholderAPI
 
 commands:
