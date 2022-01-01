@@ -78,73 +78,133 @@ public interface CompoundBase {
     }
 
     default <V> V get(String path, Class<V> t) {
+        return getOrDefault(path, t, null);
+    }
+
+    default <V> V getOrDefault(String path, Class<V> t, V def) {
         Object obj = get(path);
         if (obj != null && t.isAssignableFrom(obj.getClass())) {
             return (V) obj;
         }
-        return null;
+        return def;
     }
 
     default String getString(String path) {
-        return get(path, String.class);
+        return getString(path, null);
+    }
+
+    default String getString(String path, String def) {
+        return getOrDefault(path, String.class, def);
     }
 
     default Boolean getBoolean(String path) {
-        Byte b = get(path, Byte.class);
+        return getBoolean(path, null);
+    }
+
+    default Boolean getBoolean(String path, Boolean def) {
+        Byte b = getByte(path, (byte) (def ? 1 : 0));
         return b != null && b == 1;
     }
 
     default Byte getByte(String path) {
+        return getByte(path, null);
+    }
+
+    default Byte getByte(String path, Byte def) {
         Number number = get(path, Number.class);
-        return number == null ? null : number.byteValue();
+        return number == null ? def : number.byteValue();
     }
 
     default Short getShort(String path) {
+        return getShort(path, null);
+    }
+
+    default Short getShort(String path, Short def) {
         Number number = get(path, Number.class);
-        return number == null ? null : number.shortValue();
+        return number == null ? def : number.shortValue();
     }
 
     default Integer getInt(String path) {
+        return getInt(path, null);
+    }
+
+    default Integer getInt(String path, Integer def) {
         Number number = get(path, Number.class);
-        return number == null ? null : number.intValue();
+        return number == null ? def : number.intValue();
     }
 
     default Long getLong(String path) {
+        return getLong(path, null);
+    }
+
+    default Long getLong(String path, Long def) {
         Number number = get(path, Number.class);
-        return number == null ? null : number.longValue();
+        return number == null ? def : number.longValue();
     }
 
     default Float getFloat(String path) {
+        return getFloat(path, null);
+    }
+
+    default Float getFloat(String path, Float def) {
         Number number = get(path, Number.class);
-        return number == null ? null : number.floatValue();
+        return number == null ? def : number.floatValue();
     }
 
     default Double getDouble(String path) {
+        return getDouble(path, null);
+    }
+
+    default Double getDouble(String path, Double def) {
         Number number = get(path, Number.class);
-        return number == null ? null : number.doubleValue();
+        return number == null ? def : number.doubleValue();
     }
 
     default List<?> getList(String path) {
-        return get(path, List.class);
+        return getList(path, null);
+    }
+
+    default List<?> getList(String path, List<?> def) {
+        return getOrDefault(path, List.class, def);
     }
 
     default List<String> getStringList(String path) {
-        return get(path, List.class);
+        return getStringList(path, null);
+    }
+
+    default List<String> getStringList(String path, List<String> def) {
+        return getOrDefault(path, List.class, def);
     }
 
     default int[] getIntArray(String path) {
-        return get(path, int[].class);
+        return getIntArray(path, null);
+    }
+
+    default int[] getIntArray(String path, int[] def) {
+        return getOrDefault(path, int[].class, def);
     }
 
     default byte[] getByteArray(String path) {
-        return get(path, byte[].class);
+        return getByteArray(path, null);
+    }
+
+    default byte[] getByteArray(String path, byte[] def) {
+        return getOrDefault(path, byte[].class, def);
     }
 
     default long[] getLongArray(String path) {
-        return get(path, long[].class);
+        return getLongArray(path, null);
+    }
+
+    default long[] getLongArray(String path, long[] def) {
+        return getOrDefault(path, long[].class, def);
     }
 
     default Map<String, ?> getMap(String path) {
-        return get(path, Map.class);
+        return getMap(path, null);
+    }
+
+    default Map<String, ?> getMap(String path, Map<String, ?> def) {
+        return getOrDefault(path, Map.class, def);
     }
 }
