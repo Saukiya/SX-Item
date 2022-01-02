@@ -3,10 +3,7 @@ package github.saukiya.sxitem.command.sub;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.command.SenderType;
 import github.saukiya.sxitem.command.SubCommand;
-import github.saukiya.sxitem.nbt.NBTItemWrapper;
-import github.saukiya.sxitem.nbt.TagBase;
-import github.saukiya.sxitem.nbt.TagCompound;
-import github.saukiya.sxitem.nbt.TagList;
+import github.saukiya.sxitem.nbt.*;
 import github.saukiya.sxitem.util.ComponentBuilder;
 import github.saukiya.sxitem.util.MessageUtil;
 import github.saukiya.sxitem.util.NbtUtil;
@@ -72,19 +69,19 @@ public class NBTCommand extends SubCommand {
 
     public static void sendNBT(String prefix, TagCompound tagCompound, CommandSender sender) {
         if (tagCompound == null) return;
-        String path;
-        String typeShow;
-        String nbtShow;
+        String path, typeShow, nbtShow;
         for (Map.Entry<String, TagBase> entry : tagCompound.entrySet()) {
             TagBase tagBase = entry.getValue();
             path = prefix + entry.getKey();
-            if (tagBase instanceof TagCompound) {
+            typeShow = tagBase.getTypeId().name();
+            if (tagBase.getTypeId() == TagType.COMPOUND) {
                 sendNBT(path + '.', (TagCompound) tagBase, sender);
                 continue;
             }
-            typeShow = tagBase.getTypeId().name();
-            if (tagBase instanceof TagList) {
-                typeShow += "-" + ((TagList) tagBase).get(0).getTypeId();
+            if (tagBase.getTypeId() == TagType.LIST) {
+                TagList tagList = (TagList) tagBase;
+                if (tagList.size() != 0)
+                    typeShow += "-" + tagList.get(0).getTypeId();
                 nbtShow = ((TagList) tagBase).stream().flatMap(tag -> Arrays.stream(tag.getValue().toString().split("\n"))).collect(Collectors.joining("\n"));
             } else {
                 nbtShow = entry.getValue().getValue().toString();

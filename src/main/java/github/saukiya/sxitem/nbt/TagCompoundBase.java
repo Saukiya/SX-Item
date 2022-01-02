@@ -2,6 +2,7 @@ package github.saukiya.sxitem.nbt;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -10,7 +11,7 @@ import java.util.Set;
  * 归并Compound类的使用方法
  * path特性如同{@link org.bukkit.configuration.file.YamlConfiguration}
  */
-public interface CompoundBase {
+public interface TagCompoundBase {
 
     /**
      * 按路径获取对象
@@ -39,6 +40,15 @@ public interface CompoundBase {
      */
     @Nullable
     Set<String> keySet(@Nullable String path);
+
+    /**
+     * 用一个TagCompoundBase添加/覆盖到此处
+     *
+     * @param value TagCompound、NBTTagWrapper、NBTItemWrapper
+     */
+    default void setAll(TagCompoundBase value) {
+        if (value != null) value.keySet().forEach(key -> set(key, value.get(key)));
+    }
 
     /**
      * 按路径删除对象
@@ -98,10 +108,10 @@ public interface CompoundBase {
     }
 
     default Boolean getBoolean(String path) {
-        return getBoolean(path, null);
+        return getBoolean(path, false);
     }
 
-    default Boolean getBoolean(String path, Boolean def) {
+    default Boolean getBoolean(String path, boolean def) {
         Byte b = getByte(path, (byte) (def ? 1 : 0));
         return b != null && b == 1;
     }
@@ -201,7 +211,7 @@ public interface CompoundBase {
     }
 
     default Map<String, ?> getMap(String path) {
-        return getMap(path, null);
+        return getMap(path, Collections.EMPTY_MAP);
     }
 
     default Map<String, ?> getMap(String path, Map<String, ?> def) {

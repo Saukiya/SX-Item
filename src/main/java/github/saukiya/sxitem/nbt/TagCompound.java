@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.*;
 
 @NoArgsConstructor
-public class TagCompound implements TagBase<HashMap<String, ?>>, CompoundBase {
+public class TagCompound implements TagBase<HashMap<String, ?>>, TagCompoundBase {
 
     protected static final TagType.Method typeMethod = new TagType.Method() {
         @Override
@@ -33,29 +33,26 @@ public class TagCompound implements TagBase<HashMap<String, ?>>, CompoundBase {
 
         @Override
         public TagCompound toTag(Object object) {
-            TagCompound tagCompound = null;
             if (object instanceof Map) {
-                tagCompound = new TagCompound();
-                Map<String, ?> map = (Map<String, ?>) object;
-                for (Map.Entry<String, ?> entry : map.entrySet()) {
-                    tagCompound.handle.put(entry.getKey(), TagType.toTag(entry.getValue()));
-                }
+                return new TagCompound((Map) object);
             }
             if (object instanceof ConfigurationSection) {
-                tagCompound = new TagCompound();
-                ConfigurationSection section = (ConfigurationSection) object;
-                for (String key : section.getKeys(false)) {
-                    tagCompound.handle.put(key, TagType.toTag(section.get(key)));
-                }
+                return new TagCompound(((ConfigurationSection) object).getValues(false));
             }
-            return tagCompound;
+            return null;
         }
     };
 
     private final Map<String, TagBase> handle = new HashMap<>();
 
-    public TagCompound(Map<String, TagBase> tagBaseMap) {
-        handle.putAll(tagBaseMap);
+    public TagCompound(Map<?, ?> tagBaseMap) {
+        tagBaseMap.forEach((key, value) -> {
+            if (key != null) set(key.toString(), value);
+        });
+    }
+
+    public TagCompound(TagCompoundBase compoundBase) {
+        compoundBase.keySet().forEach(key -> set(key, compoundBase.get(key)));
     }
 
     @Override

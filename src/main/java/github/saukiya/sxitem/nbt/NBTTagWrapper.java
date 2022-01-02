@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
  * NBTTagCompound的包装类
  * 用来封装每个版本的数据交互
  */
-public interface NBTTagWrapper extends CompoundBase {
+public interface NBTTagWrapper extends TagCompoundBase {
 
     /**
      * 获取包装好的NBTTagCompound
