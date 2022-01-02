@@ -63,32 +63,33 @@ public class NbtUtil_v1_12_R1 extends NbtUtil {
     @Override
     public Object getNMSValue(Object nbtBase) {
         if (nbtBase instanceof NBTBase) {
-            if (nbtBase instanceof NBTTagCompound) {
-                NBTTagCompound nbtTagCompound = (NBTTagCompound) nbtBase;
-                return nbtTagCompound.c().stream().collect(Collectors.toMap(key -> key, key -> getNMSValue(nbtTagCompound.get(key)), (a, b) -> b));
-            } else if (nbtBase instanceof NBTTagList) {
-                NBTTagList nbtTagList = (NBTTagList) nbtBase;
-                return IntStream.range(0, nbtTagList.size()).mapToObj(i -> toTag(nbtTagList.i(i))).collect(Collectors.toCollection(TagList::new));
-            } else if (nbtBase instanceof NBTTagByteArray) {
-                return ((NBTTagByteArray) nbtBase).c();
-            } else if (nbtBase instanceof NBTTagIntArray) {
-                return ((NBTTagIntArray) nbtBase).d();
-            } else if (nbtBase instanceof NBTTagLongArray) {
-                return NMS.getPrivateField(nbtBase, "b");
-            } else if (nbtBase instanceof NBTTagString) {
-                return ((NBTTagString) nbtBase).c_();
-            } else if (nbtBase instanceof NBTTagByte) {
-                return ((NBTTagByte) nbtBase).g();
-            } else if (nbtBase instanceof NBTTagShort) {
-                return ((NBTTagShort) nbtBase).f();
-            } else if (nbtBase instanceof NBTTagInt) {
-                return ((NBTTagInt) nbtBase).e();
-            } else if (nbtBase instanceof NBTTagLong) {
-                return ((NBTTagLong) nbtBase).d();
-            } else if (nbtBase instanceof NBTTagFloat) {
-                return ((NBTTagFloat) nbtBase).i();
-            } else if (nbtBase instanceof NBTTagDouble) {
-                return ((NBTTagDouble) nbtBase).asDouble();
+            switch (((NBTBase) nbtBase).getTypeId()) {
+                case 10:
+                    NBTTagCompound nbtTagCompound = (NBTTagCompound) nbtBase;
+                    return nbtTagCompound.c().stream().collect(Collectors.toMap(key -> key, key -> getNMSValue(nbtTagCompound.get(key)), (a, b) -> b));
+                case 9:
+                    NBTTagList nbtTagList = (NBTTagList) nbtBase;
+                    return IntStream.range(0, nbtTagList.size()).mapToObj(i -> toTag(nbtTagList.i(i))).collect(Collectors.toCollection(TagList::new));
+                case 7:
+                    return ((NBTTagByteArray) nbtBase).c();
+                case 11:
+                    return ((NBTTagIntArray) nbtBase).d();
+                case 12:
+                    return NMS.getPrivateField(nbtBase, "b");
+                case 8:
+                    return ((NBTTagString) nbtBase).c_();
+                case 1:
+                    return ((NBTTagByte) nbtBase).g();
+                case 2:
+                    return ((NBTTagShort) nbtBase).f();
+                case 3:
+                    return ((NBTTagInt) nbtBase).e();
+                case 4:
+                    return ((NBTTagLong) nbtBase).d();
+                case 5:
+                    return ((NBTTagFloat) nbtBase).i();
+                case 6:
+                    return ((NBTTagDouble) nbtBase).asDouble();
             }
         }
         return null;
