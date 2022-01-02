@@ -1,5 +1,6 @@
 package github.saukiya.sxitem.nbt;
 
+import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.util.NbtUtil;
 
 import java.io.DataInput;
@@ -65,7 +66,7 @@ public enum TagType {
             }
         }
         //Log 不支持的转化类型
-        System.out.println("[ERROR] TagType.toNBT: " + object);
+        SXItem.getInst().getLogger().warning("TagType.toTag error : " + object);
         return TagEnd.getInst();
     }
 
