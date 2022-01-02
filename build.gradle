@@ -60,17 +60,6 @@ shadowJar {
     archiveFileName.set("${project.name}.jar")
     // 设置导出路径
     destinationDirectory.set(file("$rootDir/plugins/$project.version"))
-    // 复制到剪切板 <ps:GG了 不是什么时候都能用>
-//    Transferable contents = new Transferable() {
-//        Object getTransferData(DataFlavor flavor) {
-//            return Arrays.asList(file("$rootDir/plugins/$project.version/${project.name}.jar"))
-//        }
-//
-//        DataFlavor[] getTransferDataFlavors() { return DataFlavor.javaFileListFlavor }
-//
-//        boolean isDataFlavorSupported(DataFlavor flavor) { return DataFlavor.javaFileListFlavor == flavor }
-//    }
-//    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(contents, null)
 }
 
 //执行该task前必须执行子模块的task
@@ -79,6 +68,7 @@ shadowJar.dependsOn() {
     getSubprojects().stream().map(sub -> sub.getPath() + ':classes').toList()
 }
 
+//gradle 需要对文件中含有的'$'进行转义: $ -> \$
 processResources {
     expand(version: version)
 }
