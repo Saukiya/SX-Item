@@ -115,10 +115,10 @@ public class RandomManager {
     }
 
     public String random(String key) {
-        return random(map, key);
+        return random(key, map);
     }
 
-    public static String random(Map<String, INode> map, String key) {
+    public static String random(String key, Map<String, INode> map) {
         if (map == null) return null;
         INode node = map.get(key);
         if (node != null) return node.get();
