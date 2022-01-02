@@ -77,24 +77,27 @@ public class RandomDocker extends StrLookup {
     }
 
     /**
-     * 替换NBT内的随机占位符
+     * 替换NBT内的随机占位符，深拷贝TagCompound、TagList、TagString
      *
      * @param tagBase TagBase
      * @return RandomTag
      */
     public TagBase replace(TagBase tagBase) {
-        if (tagBase instanceof TagCompound) {
-            TagCompound tagCompound = new TagCompound();
-            ((TagCompound) tagBase).entrySet().forEach((v) -> tagCompound.set(v.getKey(), replace(v.getValue())));
-            tagBase = tagCompound;
-        } else if (tagBase instanceof TagList) {
-            TagList tagList = new TagList();
-            ((TagList) tagBase).forEach((v) -> tagList.add(replace(v)));
-            tagBase = tagList;
-        } else if (tagBase instanceof TagString) {
-            tagBase = new TagString(replace(((TagString) tagBase).getValue()));
+        if (tagBase == null) return tagBase;
+        switch (tagBase.getTypeId()) {
+            case COMPOUND:
+                TagCompound tagCompound = new TagCompound();
+                ((TagCompound) tagBase).entrySet().forEach(entry -> tagCompound.set(entry.getKey(), replace(entry.getValue())));
+                return tagCompound;
+            case LIST:
+                TagList tagList = new TagList();
+                ((TagList) tagBase).forEach((v) -> tagList.add(replace(v)));
+                return tagList;
+            case STRING:
+                return new TagString(replace(((TagString) tagBase).getValue()));
+            default:
+                return tagBase;
         }
-        return tagBase;
     }
 
     /**
@@ -104,7 +107,7 @@ public class RandomDocker extends StrLookup {
      * @return RandomString
      */
     public String random(String key) {
-        String str = RandomManager.random(localMap, key);
+        String str = RandomManager.random(key, localMap);
         if (str != null) return str;
         return SXItem.getRandomManager().random(key);
     }
