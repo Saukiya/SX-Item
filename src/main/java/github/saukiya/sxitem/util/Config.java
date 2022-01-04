@@ -33,6 +33,9 @@ public class Config {
             SXItem.getInst().saveResource("Config.yml", true);
         }
         config = YamlConfiguration.loadConfiguration(file);
+    }
+
+    public static void setup() {
         SXItem.getInst().getLogger().setLevel(Level.parse(config.getString(LOGGER_LEVEL, "ALL")));
         SXItem.getItemManager().setItemMapSort(config.getBoolean(ITEM_MAP_SORT));
         SXItem.setDf(new DecimalFormat(config.getString(DECIMAL_FORMAT)));
