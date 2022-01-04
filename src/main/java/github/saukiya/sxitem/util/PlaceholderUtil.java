@@ -64,7 +64,7 @@ public class PlaceholderUtil {
 
         @Override
         public String onPlaceholderRequest(Player player, String str) {
-            return RandomDocker.getINST().replace(str);
+            return RandomDocker.getInst().replace(str);
         }
     }
 }
