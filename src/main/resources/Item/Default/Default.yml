@@ -1,19 +1,56 @@
-###参数参考链接
 #
-#EnchantList (支持随机)
+##################################################################
+##                        Default类型参数                        ##
+##################################################################
+#
+#物品名称 Name [Type:String] (支持随机)
+#
+#物品材质 ID [Type:String] (支持随机)
+# 格式:   或: 267
+# - 276
+#
+#物品数量 Amount [Type:String] (支持随机)
+#
+#物品描述 Lore [Type:List] (支持随机)
+# 格式:
+# - "..."
+#
+#附魔列表 EnchantList [Type:List] (支持随机)
 # 格式:
 # - "附魔名称:等级"
 # 参考WIKI: https://minecraft.fandom.com/zh/wiki/%E9%99%84%E9%AD%94
 # 参考API:  https://hub.spigotmc.org/javadocs/spigot/org/bukkit/enchantments/Enchantment.html
 #
-#ItemFlagList
+#隐藏选项 ItemFlagList [Type:List]
+# 描述: 用于隐藏属性、附魔、无限耐久、药水效果、染色等信息
 # 格式:
-# - "Flag名"
+# - "HIDE_ENCHANTS"
+# - "HIDE_ATTRIBUTES"
+# - "HIDE_UNBREAKABLE"
+# - "HIDE_POTION_EFFECTS"
 # 参考API: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemFlag.html
 #
-#Attributes (支持随机)
+#物品染色 Color [Type:String] (支持随机)
+# 描述: 可以对该物品染色 (仅限皮革防具) ，需要用十六进制颜色码 (不需要带#)
+# 格式: "000000"
+#
+#自动更新 Update [Type:Boolean]
+# 描述: 会自动更新该物品 (注意，随机文本除了<l:>以外也会重新生成)
+#
+#物品标签 NBT [Type:Map-?]
+# 描述: 自由的将NBT节点下的配置信息设置到物品NBT中
+#
+#局部随机 Random [Type:Map-?]
+# 描述: 设置物品的局部随机变量
+# 格式: 与RandomString文件夹下的格式一样
+#
+#清除属性 ClearAttribute [Type:Boolean]
+# 描述: 让物品失去原有的默认属性 (代码实现为: ItemFlag.HIDE_ATTRIBUTE + Attributes.GENERIC_ATTACK_DAMAGE:0:0)
+#
+#物品属性 Attributes [Type:List] (支持随机)
 # 格式:
-# - "属性名:数字:模式:生效位置(低版本无视)"
+# - "属性名:数字:模式:生效位置"    # 生效当前位置, 高版本推荐使用
+# - "属性名:数字:模式"           # 生效所有位置
 # 属性名:
 #   GENERIC_MAX_HEALTH               最大生命值
 #   GENERIC_FOLLOW_RANGE             生物追踪范围
@@ -25,13 +62,13 @@
 #   GENERIC_ATTACK_SPEED             攻击速度
 #   GENERIC_ARMOR                    盔甲防御点数
 #   GENERIC_ARMOR_TOUGHNESS          盔甲韧性
-#   GENERIC_LUCK                     幸运度（例如原版的当打开箱子、运输矿车，钓鱼和杀怪）
+#   GENERIC_LUCK                     幸运度 (例如原版的当打开箱子、运输矿车，钓鱼和杀怪) 
 #   HORSE_JUMP_STRENGTH              马的弹跳力(只对马铠生效)
 #   ZOMBIE_SPAWN_REINFORCEMENTS      僵尸召唤系数(未测试)
 # 模式:
 #   0   ADD_NUMBER          属性增量    该模式直接在基值上进行加减法操作
-#   1   ADD_SCALAR          倍率增量    该模式将在Operation 0之后执行，并直接在属性值的作用倍率上进行加减法操作，也就是将当前的属性值进行倍率上的修改，而基础倍率为×1倍（即不做改动）
-#   2   MULTIPLY_SCALAR_1   最终倍乘    该模式将会在其他所有修饰（包括其他的Operation 2修饰）完成后，在最终倍率上执行加减法操作，并执行最终的倍乘。基础倍率同样为×1倍
+#   1   ADD_SCALAR          倍率增量    该模式将在Operation 0之后执行，并直接在属性值的作用倍率上进行加减法操作，也就是将当前的属性值进行倍率上的修改，而基础倍率为×1倍 (即不做改动) 
+#   2   MULTIPLY_SCALAR_1   最终倍乘    该模式将会在其他所有修饰 (包括其他的Operation 2修饰) 完成后，在最终倍率上执行加减法操作，并执行最终的倍乘。基础倍率同样为×1倍
 # 生效位置: 不填写生效位置则生效在所有部位上
 #   HAND      主
 #   OFF_HAND  副
@@ -194,7 +231,7 @@ Default-8:
     #绑定诅咒不对马生效
     - BINDING_CURSE:1
   Attributes:
-    #属性只对马铠生效，不对马鞍生效
+    # 已知1.17版本马可以从马铠中获得属性，1.12.2及以下版本无法使用，其他版本未测试
     - "HORSE_JUMP_STRENGTH:2:0:CHEST"
     - "GENERIC_MOVEMENT_SPEED:0.5:1:CHEST"
 
@@ -203,6 +240,7 @@ Default-9:
   Lore: [ '不存在的ID会使物品无法give出来, 但是不会报错' ]
 
 Default-10:
+  Amount: "<i:1_5>"
   Lore: [ '&7没有填ID他就是个苹果' ]
 
 #是个普通的SX物品，yml简写
@@ -211,3 +249,10 @@ Default-11.ID: *def6-ID
 Default-12:
   ID: [ ]
   Lore: [ 'give了它铁定报错, 因为ID是个空列表' ]
+
+#苹果
+Default-13:
+
+NoLoad_Item:
+  ID: 1
+  Name: "不会被加载到的物品"
