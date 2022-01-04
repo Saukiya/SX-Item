@@ -1,6 +1,7 @@
 package github.saukiya.sxitem.util;
 
 import github.saukiya.sxitem.nbt.*;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.inventory.ItemStack;
 
@@ -8,6 +9,9 @@ import java.io.DataInput;
 import java.io.DataOutput;
 
 public abstract class NbtUtil implements NMS {
+
+    @Getter
+    private final static NbtUtil inst = NMS.getInst(NbtUtil.class);
 
     /**
      * 向IO流输出sxNBT
@@ -42,6 +46,11 @@ public abstract class NbtUtil implements NMS {
     }
 
     /**
+     * TODO 场景需求:
+     * 1.获取NMSItem、以及获取ItemNBT，减少重复asCopy
+     */
+
+    /**
      * 获取物品的TagCompound
      *
      * @param itemStack 物品
@@ -62,12 +71,19 @@ public abstract class NbtUtil implements NMS {
     public abstract Object getItemNBT(ItemStack itemStack);
 
     /**
-     * 获取NBT封装器
+     * 获取ITEM-NBT封装器
      *
      * @param itemStack 物品
      * @return NBTItemWrapper
      */
     public abstract NBTItemWrapper getItemTagWrapper(ItemStack itemStack);
+
+    /**
+     * 创建一个NBT封装器
+     *
+     * @return NBTTagWrapper
+     */
+    public abstract NBTTagWrapper createTagWrapper();
 
     /**
      * nmsNBTCompound转sxNBTCompound
@@ -128,8 +144,4 @@ public abstract class NbtUtil implements NMS {
      * @return NBTBase
      */
     public abstract <V> V toNMS(Object obj);
-
-    public static NbtUtil getInst() {
-        return NMS.getInst(NbtUtil.class);
-    }
 }
