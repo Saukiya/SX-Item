@@ -5,10 +5,7 @@ import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.data.item.sub.GeneratorDefault;
 import github.saukiya.sxitem.data.item.sub.GeneratorImport;
 import github.saukiya.sxitem.data.random.RandomManager;
-import github.saukiya.sxitem.util.Config;
-import github.saukiya.sxitem.util.Message;
-import github.saukiya.sxitem.util.NbtUtil;
-import github.saukiya.sxitem.util.PlaceholderUtil;
+import github.saukiya.sxitem.util.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.bstats.bukkit.Metrics;
@@ -57,12 +54,15 @@ public class SXItem extends JavaPlugin {
     public void onEnable() {
         new Metrics(this, 11948);
         long oldTimes = System.currentTimeMillis();
-        PlaceholderUtil.setup();
         NbtUtil.getInst();
+        ItemUtil.getInst();
+        MessageUtil.getInst();
 
         randomManager = new RandomManager();
         itemManager = new ItemManager();
 
+        Config.setup();
+        PlaceholderUtil.setup();
         mainCommand.setup("sxitem");
         getLogger().info("Loading Time: " + (System.currentTimeMillis() - oldTimes) + " ms");
         getLogger().info("Author: Saukiya");
