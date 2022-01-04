@@ -31,4 +31,9 @@ public interface NBTTagWrapper extends TagCompoundBase {
      */
     @Nonnull
     Object getHandle();
+
+    @Nonnull
+    default String nbtToString() {
+        return getHandle().toString();
+    }
 }

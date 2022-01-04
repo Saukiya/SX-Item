@@ -22,8 +22,6 @@ import java.util.stream.IntStream;
 
 public class NbtUtil_v1_11_R1 extends NbtUtil {
 
-    private final NBTTagEnd nbtTagEnd = NMS.newPrivateInstance(NBTTagEnd.class);
-
     @Override
     public NBTTagCompound getItemNBT(ItemStack itemStack) {
         return CraftItemStack.asNMSCopy(itemStack).getTag();
@@ -32,6 +30,11 @@ public class NbtUtil_v1_11_R1 extends NbtUtil {
     @Override
     public NBTItemWrapper getItemTagWrapper(ItemStack itemStack) {
         return new NBTItemWrapperImpl(itemStack);
+    }
+
+    @Override
+    public NBTTagWrapper createTagWrapper() {
+        return new NBTTagWrapperImpl(null);
     }
 
     @SneakyThrows
@@ -102,7 +105,12 @@ public class NbtUtil_v1_11_R1 extends NbtUtil {
                 return (NBTBase) obj;
             } else if (obj instanceof Map) {
                 NBTTagCompound nbtTagCompound = new NBTTagCompound();
-                ((Map<String, ?>) obj).forEach((key, value) -> nbtTagCompound.set(key, toNMS(value)));
+                ((Map<?, ?>) obj).forEach((key, value) -> {
+                    NBTBase base = toNMS(value);
+                    if (key != null && base != null) {
+                        nbtTagCompound.set(key.toString(), base);
+                    }
+                });
                 return nbtTagCompound;
             } else if (obj instanceof List) {
                 List list = (List) obj;
@@ -135,7 +143,7 @@ public class NbtUtil_v1_11_R1 extends NbtUtil {
                 return new NBTTagDouble(((Number) obj).doubleValue());
             }
         }
-        return nbtTagEnd;
+        return null;
     }
 
     public final class NBTItemWrapperImpl extends NBTTagWrapperImpl implements NBTItemWrapper {
@@ -178,6 +186,26 @@ public class NbtUtil_v1_11_R1 extends NbtUtil {
             return null;
         }
 
+        protected NBTBase set(NBTTagCompound compound, String path, NBTBase value) {
+            Validate.notEmpty(path, "Cannot get to an empty path");
+            int index = path.indexOf('.');
+            if (index == -1) {
+                NBTBase ret = compound.get(path);
+                if (value != null) {
+                    compound.set(path, value);
+                } else {
+                    compound.remove(path);
+                }
+                return ret;
+            }
+            NBTBase base = compound.get(path.substring(0, index));
+            if (!(base instanceof NBTTagCompound)) {
+                if (value == null) return null;
+                compound.set(path.substring(0, index), base = new NBTTagCompound());
+            }
+            return set((NBTTagCompound) base, path.substring(index + 1), value);
+        }
+
         @Override
         public Object get(String path) {
             return getNMSValue(get(handle, path));
@@ -185,31 +213,7 @@ public class NbtUtil_v1_11_R1 extends NbtUtil {
 
         @Override
         public Object set(String path, Object value) {
-            Validate.notEmpty(path, "Cannot set to an empty path");
-            int right;
-            NBTTagCompound current = handle;
-            NBTBase base;
-            String key;
-            while ((right = path.indexOf('.')) != -1) {
-                key = path.substring(0, right);
-                Validate.notEmpty(key, "Cannot set to an empty path");
-                base = current.get(key);
-                if (!(base instanceof NBTTagCompound)) {
-                    if (value == null) return null;
-                    base = new NBTTagCompound();
-                    current.set(key, base);
-                }
-                current = (NBTTagCompound) base;
-                path = path.substring(right + 1);
-            }
-            Validate.notEmpty(path, "Cannot set to an empty path");//这段代码直接从MemorySection那边CV过来的!
-            Object ret = current.get(path);
-            if (value != null) {
-                current.set(path, toNMS(value));
-            } else {
-                current.remove(path);
-            }
-            return getNMSValue(ret);
+            return getNMSValue(set(handle, path, toNMS(value)));
         }
 
         @Override
