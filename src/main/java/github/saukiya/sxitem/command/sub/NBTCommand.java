@@ -33,7 +33,7 @@ public class NBTCommand extends SubCommand {
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         Player player = (Player) sender;
-        ItemStack item = player.getEquipment().getItemInMainHand();
+        ItemStack item = player.getEquipment().getItemInHand();
         if (item.getType() != Material.AIR) {
             if (args.length < 2 || args[1].equals("all")) {
                 ComponentBuilder cb = MessageUtil.getInst().componentBuilder()

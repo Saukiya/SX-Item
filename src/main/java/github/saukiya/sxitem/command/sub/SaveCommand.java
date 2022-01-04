@@ -34,7 +34,7 @@ public class SaveCommand extends SubCommand {
         }
         String itemName = args[1];
         Player player = (Player) sender;
-        ItemStack itemStack = player.getEquipment().getItemInMainHand();
+        ItemStack itemStack = player.getEquipment().getItemInHand();
         if (itemStack.getType() == Material.AIR) {
             player.sendMessage(Message.getMsg(Message.ADMIN__NO_ITEM));
             return;
