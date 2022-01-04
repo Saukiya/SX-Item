@@ -32,10 +32,10 @@ public class RandomDocker extends StrLookup {
     static final Pattern REGEX = Pattern.compile("^.:.+?");
 
     @Getter
-    static final RandomDocker INST = new RandomDocker();
+    static final RandomDocker inst = new RandomDocker();
 
     static {
-        INST.lockMap = null;
+        inst.lockMap = null;
     }
 
     final StrSubstitutor ss = new StrSubstitutor(this, PRE_MATCHER, SUF_MATCHER, StrSubstitutor.DEFAULT_ESCAPE);
@@ -87,7 +87,7 @@ public class RandomDocker extends StrLookup {
         switch (tagBase.getTypeId()) {
             case COMPOUND:
                 TagCompound tagCompound = new TagCompound();
-                ((TagCompound) tagBase).entrySet().forEach(entry -> tagCompound.set(entry.getKey(), replace(entry.getValue())));
+                ((TagCompound) tagBase).entrySet().forEach(entry -> tagCompound.setTagBase(entry.getKey(), replace(entry.getValue())));
                 return tagCompound;
             case LIST:
                 TagList tagList = new TagList();
