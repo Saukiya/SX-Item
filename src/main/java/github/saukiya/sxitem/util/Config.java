@@ -6,6 +6,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.text.DecimalFormat;
+import java.util.logging.Level;
 
 /**
  * @author Saukiya
@@ -14,8 +15,11 @@ import java.text.DecimalFormat;
 @Getter
 public class Config {
 
+    public static final String LOGGER_LEVEL = "LoggerLevel";
+    public static final String ITEM_MAP_SORT = "ItemMapSort";
     public static final String DECIMAL_FORMAT = "DecimalFormat";
     public static final String TIME_FORMAT = "TimeFormat";
+
     @Getter
     private static YamlConfiguration config;
 
@@ -29,6 +33,8 @@ public class Config {
             SXItem.getInst().saveResource("Config.yml", true);
         }
         config = YamlConfiguration.loadConfiguration(file);
+        SXItem.getInst().getLogger().setLevel(Level.parse(config.getString(LOGGER_LEVEL, "ALL")));
+        SXItem.getItemManager().setItemMapSort(config.getBoolean(ITEM_MAP_SORT));
         SXItem.setDf(new DecimalFormat(config.getString(DECIMAL_FORMAT)));
     }
 }
