@@ -98,7 +98,7 @@ public class GeneratorDefault implements IGenerator, IUpdate {
         ComponentBuilder cb = MessageUtil.getInst().componentBuilder();
         for (String id : ids) {
             if (cb.getHandle().getExtra() != null) cb.add("§8|");
-            Material material = SXItem.getItemManager().getMaterial(id);
+            Material material = ItemManager.getMaterial(id);
             if (material != null) cb.add(material);
             else cb.add(id);
         }
@@ -173,7 +173,7 @@ public class GeneratorDefault implements IGenerator, IUpdate {
 
     public ItemStack getItem(@Nonnull Player player, RandomDocker docker) {
         String materialName = docker.replace(ids.get(SXItem.getRandom().nextInt(ids.size())));
-        Material material = SXItem.getItemManager().getMaterial(materialName);
+        Material material = ItemManager.getMaterial(materialName);
         if (material == null) {
             SXItem.getInst().getLogger().warning("Item-" + getKey() + " ID ERROR: " + materialName);
             return ItemManager.getEmptyItem();

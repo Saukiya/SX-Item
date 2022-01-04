@@ -3,6 +3,7 @@ package github.saukiya.sxitem.command.sub;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.command.SenderType;
 import github.saukiya.sxitem.command.SubCommand;
+import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.nbt.*;
 import github.saukiya.sxitem.util.ComponentBuilder;
 import github.saukiya.sxitem.util.MessageUtil;
@@ -41,7 +42,7 @@ public class NBTCommand extends SubCommand {
                         .add(item.getType().name())
                         .show("点击复制")
                         .suggestCommand(item.getType().name());
-                String keys = String.join("/", SXItem.getItemManager().getMaterialString(item.getType()));
+                String keys = String.join("/", ItemManager.getMaterialString(item.getType()));
                 if (keys.length() != 0) cb.add("-").add(keys).show("点击复制").suggestCommand(keys);
                 cb.add("] §c物品拥有以下NBT:");
                 cb.send(sender);
