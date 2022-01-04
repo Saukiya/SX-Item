@@ -32,6 +32,11 @@ public class NbtUtil_v1_18_R1 extends NbtUtil {
         return new NBTItemWrapperImpl(itemStack);
     }
 
+    @Override
+    public NBTTagWrapper createTagWrapper() {
+        return new NBTTagWrapperImpl(null);
+    }
+
     @SneakyThrows
     @Override
     public TagCompound asTagCompoundCopy(Object nbtTagCompound) {
@@ -101,7 +106,12 @@ public class NbtUtil_v1_18_R1 extends NbtUtil {
                 return (NBTBase) obj;
             } else if (obj instanceof Map) {
                 NBTTagCompound nbtTagCompound = new NBTTagCompound();
-                ((Map<String, ?>) obj).forEach((key, value) -> nbtTagCompound.a(key, toNMS(value)));
+                ((Map<?, ?>) obj).forEach((key, value) -> {
+                    NBTBase base = toNMS(value);
+                    if (key != null && base != null) {
+                        nbtTagCompound.a(key.toString(), base);
+                    }
+                });
                 return nbtTagCompound;
             } else if (obj instanceof List) {
                 return ((List<?>) obj).stream().map(this::toNMS).collect(Collectors.toCollection(NBTTagList::new));
@@ -131,7 +141,7 @@ public class NbtUtil_v1_18_R1 extends NbtUtil {
                 return NBTTagDouble.a(((Number) obj).doubleValue());
             }
         }
-        return NBTTagEnd.b;
+        return null;
     }
 
     public final class NBTItemWrapperImpl extends NBTTagWrapperImpl implements NBTItemWrapper {
@@ -174,6 +184,26 @@ public class NbtUtil_v1_18_R1 extends NbtUtil {
             return null;
         }
 
+        protected NBTBase set(NBTTagCompound compound, String path, NBTBase value) {
+            Validate.notEmpty(path, "Cannot get to an empty path");
+            int index = path.indexOf('.');
+            if (index == -1) {
+                NBTBase ret = compound.c(path);
+                if (value != null) {
+                    compound.a(path, value);
+                } else {
+                    compound.r(path);
+                }
+                return ret;
+            }
+            NBTBase base = compound.c(path.substring(0, index));
+            if (!(base instanceof NBTTagCompound)) {
+                if (value == null) return null;
+                compound.a(path.substring(0, index), base = new NBTTagCompound());
+            }
+            return set((NBTTagCompound) base, path.substring(index + 1), value);
+        }
+
         @Override
         public Object get(String path) {
             return getNMSValue(get(handle, path));
@@ -181,32 +211,7 @@ public class NbtUtil_v1_18_R1 extends NbtUtil {
 
         @Override
         public Object set(String path, Object value) {
-            Validate.notEmpty(path, "Cannot set to an empty path");
-            int right;
-            NBTTagCompound current = handle;
-            NBTBase base;
-            String key;
-            while ((right = path.indexOf('.')) != -1) {
-                key = path.substring(0, right);
-                Validate.notEmpty(key, "Cannot set to an empty path");
-                base = current.c(key);
-                if (!(base instanceof NBTTagCompound)) {
-                    if (value == null) return null;
-                    base = new NBTTagCompound();
-                    current.a(key, base);
-                }
-                current = (NBTTagCompound) base;
-                path = path.substring(right + 1);
-            }
-            Validate.notEmpty(path, "Cannot set to an empty path");//这段代码直接从MemorySection那边CV过来的!
-            Object ret;
-            if (value != null) {
-                ret = current.a(path, toNMS(value));
-            } else {
-                ret = current.c(path);
-                current.r(path);
-            }
-            return getNMSValue(ret);
+            return getNMSValue(set(handle, path, toNMS(value)));
         }
 
         @Override

@@ -55,6 +55,37 @@ public class TagCompound implements TagBase<HashMap<String, ?>>, TagCompoundBase
         compoundBase.keySet().forEach(key -> set(key, compoundBase.get(key)));
     }
 
+    public TagBase getTagBase(String path) {
+        int index = path.indexOf('.');
+        if (index == -1) return handle.get(path);
+        TagBase tagBase = handle.get(path.substring(0, index));
+        if (tagBase instanceof TagCompound) {
+            return ((TagCompound) tagBase).getTagBase(path.substring(index + 1));
+        }
+        return null;
+    }
+
+    public TagBase setTagBase(String path, TagBase value) {
+        int index = path.indexOf('.');
+        if (index == -1) {
+            if (value == null) return handle.remove(path);
+            return handle.put(path, value);
+        }
+        String key = path.substring(0, index);
+        TagBase tagBase = handle.get(key);
+        if (!(tagBase instanceof TagCompound)) {
+            if (value == null) return null;
+            tagBase = new TagCompound();
+            handle.put(key, tagBase);
+        }
+        return ((TagCompound) tagBase).setTagBase(path.substring(index + 1), value);
+    }
+
+    @Nonnull
+    public Set<Map.Entry<String, TagBase>> entrySet() {
+        return handle.entrySet();
+    }
+
     @Override
     public void write(DataOutput dataOutput) throws IOException {
         for (Map.Entry<String, TagBase> entry : entrySet()) {
@@ -81,45 +112,20 @@ public class TagCompound implements TagBase<HashMap<String, ?>>, TagCompoundBase
     }
 
     @Override
-    public TagBase get(String path) {
-        int index = path.indexOf('.');
-        if (index == -1) return handle.get(path);
-        TagBase tagBase = handle.get(path.substring(0, index));
-        if (tagBase instanceof TagCompound) {
-            return ((TagCompound) tagBase).get(path.substring(index + 1));
-        }
-        return null;
+    public Object get(String path) {
+        TagBase tagBase = getTagBase(path);
+        return tagBase != null ? tagBase.getValue() : null;
     }
 
     @Override
-    public TagBase set(String path, Object value) {
-        int index = path.indexOf('.');
-        if (index == -1) {
-            if (value == null) return handle.remove(path);
-            return handle.put(path, TagType.toTag(value));
-        }
-        String key = path.substring(0, index);
-        TagBase tagBase = handle.get(key);
-        if (!(tagBase instanceof TagCompound)) {
-            if (value == null) return null;
-            tagBase = new TagCompound();
-            handle.put(key, tagBase);
-        }
-        return ((TagCompound) tagBase).set(path.substring(index + 1), value);
+    public Object set(String path, Object value) {
+        TagBase tagBase = setTagBase(path, TagType.toTag(value));
+        return tagBase != null ? tagBase.getValue() : null;
     }
 
     @Override
     public Set<String> keySet(@Nullable String path) {
         return handle.keySet();
-    }
-
-    @Override
-    public <V> V get(String path, Class<V> t) {
-        TagBase obj = get(path);
-        if (obj != null && t.isAssignableFrom(obj.getValue().getClass())) {
-            return (V) obj.getValue();
-        }
-        return null;
     }
 
     @Override
@@ -137,10 +143,5 @@ public class TagCompound implements TagBase<HashMap<String, ?>>, TagCompoundBase
         }
         sb.append('}');
         return sb.toString();
-    }
-
-    @Nonnull
-    public Set<Map.Entry<String, TagBase>> entrySet() {
-        return handle.entrySet();
     }
 }

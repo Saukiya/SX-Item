@@ -88,10 +88,10 @@ public interface TagCompoundBase {
     }
 
     default <V> V get(String path, Class<V> t) {
-        return getOrDefault(path, t, null);
+        return get(path, t, null);
     }
 
-    default <V> V getOrDefault(String path, Class<V> t, V def) {
+    default <V> V get(String path, Class<V> t, V def) {
         Object obj = get(path);
         if (obj != null && t.isAssignableFrom(obj.getClass())) {
             return (V) obj;
@@ -104,7 +104,7 @@ public interface TagCompoundBase {
     }
 
     default String getString(String path, String def) {
-        return getOrDefault(path, String.class, def);
+        return get(path, String.class, def);
     }
 
     default Boolean getBoolean(String path) {
@@ -113,7 +113,7 @@ public interface TagCompoundBase {
 
     default Boolean getBoolean(String path, boolean def) {
         Byte b = getByte(path, (byte) (def ? 1 : 0));
-        return b != null && b == 1;
+        return b != null && b != 0;
     }
 
     default Byte getByte(String path) {
@@ -122,7 +122,7 @@ public interface TagCompoundBase {
 
     default Byte getByte(String path, Byte def) {
         Number number = get(path, Number.class);
-        return number == null ? def : number.byteValue();
+        return number != null ? (Byte) number.byteValue() : def;
     }
 
     default Short getShort(String path) {
@@ -131,7 +131,7 @@ public interface TagCompoundBase {
 
     default Short getShort(String path, Short def) {
         Number number = get(path, Number.class);
-        return number == null ? def : number.shortValue();
+        return number != null ? (Short) number.shortValue() : def;
     }
 
     default Integer getInt(String path) {
@@ -140,7 +140,7 @@ public interface TagCompoundBase {
 
     default Integer getInt(String path, Integer def) {
         Number number = get(path, Number.class);
-        return number == null ? def : number.intValue();
+        return number != null ? (Integer) number.intValue() : def;
     }
 
     default Long getLong(String path) {
@@ -149,7 +149,7 @@ public interface TagCompoundBase {
 
     default Long getLong(String path, Long def) {
         Number number = get(path, Number.class);
-        return number == null ? def : number.longValue();
+        return number != null ? (Long) number.longValue() : def;
     }
 
     default Float getFloat(String path) {
@@ -158,7 +158,7 @@ public interface TagCompoundBase {
 
     default Float getFloat(String path, Float def) {
         Number number = get(path, Number.class);
-        return number == null ? def : number.floatValue();
+        return number != null ? (Float) number.floatValue() : def;
     }
 
     default Double getDouble(String path) {
@@ -167,7 +167,7 @@ public interface TagCompoundBase {
 
     default Double getDouble(String path, Double def) {
         Number number = get(path, Number.class);
-        return number == null ? def : number.doubleValue();
+        return number != null ? (Double) number.doubleValue() : def;
     }
 
     default List<?> getList(String path) {
@@ -175,7 +175,7 @@ public interface TagCompoundBase {
     }
 
     default List<?> getList(String path, List<?> def) {
-        return getOrDefault(path, List.class, def);
+        return get(path, List.class, def);
     }
 
     default List<String> getStringList(String path) {
@@ -183,7 +183,7 @@ public interface TagCompoundBase {
     }
 
     default List<String> getStringList(String path, List<String> def) {
-        return getOrDefault(path, List.class, def);
+        return get(path, List.class, def);
     }
 
     default int[] getIntArray(String path) {
@@ -191,7 +191,7 @@ public interface TagCompoundBase {
     }
 
     default int[] getIntArray(String path, int[] def) {
-        return getOrDefault(path, int[].class, def);
+        return get(path, int[].class, def);
     }
 
     default byte[] getByteArray(String path) {
@@ -199,7 +199,7 @@ public interface TagCompoundBase {
     }
 
     default byte[] getByteArray(String path, byte[] def) {
-        return getOrDefault(path, byte[].class, def);
+        return get(path, byte[].class, def);
     }
 
     default long[] getLongArray(String path) {
@@ -207,7 +207,7 @@ public interface TagCompoundBase {
     }
 
     default long[] getLongArray(String path, long[] def) {
-        return getOrDefault(path, long[].class, def);
+        return get(path, long[].class, def);
     }
 
     default Map<String, ?> getMap(String path) {
@@ -215,6 +215,6 @@ public interface TagCompoundBase {
     }
 
     default Map<String, ?> getMap(String path, Map<String, ?> def) {
-        return getOrDefault(path, Map.class, def);
+        return get(path, Map.class, def);
     }
 }
