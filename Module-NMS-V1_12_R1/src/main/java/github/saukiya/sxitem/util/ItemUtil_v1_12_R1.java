@@ -53,14 +53,16 @@ public class ItemUtil_v1_12_R1 extends ItemUtil {
         NBTTagWrapper nbtTagWrapper = NbtUtil.getInst().getItemTagWrapper(item);
         List<Map<String, Object>> modifiers = (List<Map<String, Object>>) nbtTagWrapper.getList("AttributeModifiers");
         if (modifiers == null) return null;
-        return modifiers.stream().map(map -> new AttributeData(
-                (String) map.get("AttributeName"),
-                new UUID((long) map.get("UUIDMost"), (long) map.get("UUIDLeast")),
-                (String) map.get("Name"),
-                (double) map.get("Amount"),
-                (int) map.get("Operation"),
-                (String) map.get("Slot")
-        )).collect(Collectors.toList());
+        return modifiers.stream().map(
+                map -> new AttributeData(
+                        (String) map.get("AttributeName"),
+                        new UUID((long) map.get("UUIDMost"), (long) map.get("UUIDLeast")),
+                        (String) map.get("Name"),
+                        (double) map.get("Amount"),
+                        (int) map.get("Operation"),
+                        (String) map.get("Slot")
+                )
+        ).collect(Collectors.toList());
     }
 
     @Override
@@ -82,6 +84,7 @@ public class ItemUtil_v1_12_R1 extends ItemUtil {
     }
 
     public void addAttribute(List<Object> list, AttributeData data) {
+        if (data.getAttrNameNBT() == null) return;
         Map<String, Object> map = new HashMap<>();
         map.put("AttributeName", data.getAttrNameNBT());
         map.put("UUIDMost", data.getUniqueId().getMostSignificantBits());
