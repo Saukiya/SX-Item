@@ -9,6 +9,7 @@ import github.saukiya.sxitem.data.random.RandomDocker;
 import github.saukiya.sxitem.nbt.TagBase;
 import github.saukiya.sxitem.nbt.TagCompound;
 import github.saukiya.sxitem.nbt.TagType;
+import github.saukiya.sxitem.util.NMS;
 import github.saukiya.sxitem.util.NbtUtil;
 import github.saukiya.sxitem.util.NbtUtil_v1_18_R1;
 import github.saukiya.sxitem.util.Tuple;
@@ -35,7 +36,13 @@ public class Test {
     static JsonParser JSON_PARSER = new JsonParser();
     static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    public static void main(String[] args) {
+    static String keyString =
+            "test.test\n" +
+                    "test.double\n" +
+                    "test.sub.add\n" +
+                    "test.sub.remove";
+
+    public static void main(String[] args) throws Exception {
 //        TagCompound tagCompound = new TagCompound();
 //        tagCompound.set("233.233", 2333L);
 //        tagCompound.set("base", "qwq");
@@ -46,11 +53,39 @@ public class Test {
 //        System.out.println(tagCompound);
 //        System.out.println(tagCompound.getBoolean("boolean"));
 
+//        YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(new File("Z:\\Dev\\Java\\Minecraft\\服务端\\Minecraft - 1.12\\plugins\\SX-Item\\Item\\Default\\Default.yml"));
+//        TagCompound tagCompound = (TagCompound) TagType.toTag(yamlConfiguration);
+
 //        getAndSetPathToCompound();
 //        yamlToTagTest();
 //        gsonTest();
 //        conversionNBT();
+    }
 
+    public static String c(String... versions) {
+        return Arrays.stream(versions).filter(version -> NMS.compareTo(version) >= 0).findFirst().orElse(null);
+    }
+
+    public static void print(Class target) {
+        System.out.println(target.getPackage().getName() + "." + target.getSimpleName() + "_");
+        System.out.println(target.getName() + "_");
+    }
+
+    public static Set<String> keySet(String path) {
+        if (path == null) path = "";
+        Set<String> keys = new HashSet<>();
+        if (keyString == null) return keys;
+        int length = path.length();
+        int temp;
+        int first;
+        for (String key : keyString.split("\n")) {
+            if (key.startsWith(path)) {
+                first = length + (key.charAt(length) == '.' ? 1 : 0);
+                temp = key.indexOf('.', first);
+                keys.add(key.substring(first, temp != -1 ? temp : key.length()));
+            } else if (keys.size() != 0) break;
+        }
+        return keys;
     }
 
     public static String replace2(String key) {
@@ -191,14 +226,6 @@ public class Test {
         nbtTagCompound.set("bytes", bytes);
         nbtTagCompound.set("byte", NBTTagByte.a(false));
         System.out.println(nbtTagCompound);
-        //TODO
-        // 如何解决:nbtTag无法像yaml那么灵活可以get("sub1.sub2.sub3")
-        // 方案一:
-        // 允许在当前节点中存在"sub1.sub2.sub3"
-        // get(path) 时会优先匹配sub1.sub2.sub3 再匹配 sub1.sub2 以此类推 (set? setPath?)
-        // 同时存在 sub1.sub2.sub3 和 sub1.sub2 请出门左转
-        // set(path) 可以分为set() 和setPath()
-        // 方案二: 取消灵活性，只允许匹配当前子节点
 //        NBTTagCompound compound = new NBTTagCompound();
 //        compound.set("tag.sub", NBTTagString.a("Test"));
 //        System.out.println("compound: " + compound);
@@ -402,7 +429,7 @@ public class Test {
     public static void loadData() {
 
         // 配置读取的方式
-//        File file = new File("./src/main/resources/RandomString/NewRandom.yml");
+//        File file = new File("./src/main/resources/RandomString/Test.yml");
         File file = new File("./src/main/resources/RandomString/DefaultRandom.yml");
 
         YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
