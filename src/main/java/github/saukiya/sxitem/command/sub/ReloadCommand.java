@@ -2,6 +2,7 @@ package github.saukiya.sxitem.command.sub;
 
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.command.SubCommand;
+import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.util.Config;
 import github.saukiya.sxitem.util.Message;
 import org.bukkit.Bukkit;
@@ -21,7 +22,7 @@ public class ReloadCommand extends SubCommand {
         Config.loadConfig();
         Message.loadMessage();
         SXItem.getRandomManager().loadData();
-        SXItem.getItemManager().loadMaterialData();
+        ItemManager.loadMaterialData();
         SXItem.getItemManager().loadItemData();
         SXItem.getMainCommand().reload();
         Bukkit.getOnlinePlayers().forEach(player -> SXItem.getItemManager().updateItem(player, player.getInventory().getContents()));
