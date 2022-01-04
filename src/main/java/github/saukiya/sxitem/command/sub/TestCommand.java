@@ -7,6 +7,7 @@ import github.saukiya.sxitem.nbt.NBTItemWrapper;
 import github.saukiya.sxitem.nbt.TagCompound;
 import github.saukiya.sxitem.util.MessageUtil;
 import github.saukiya.sxitem.util.NbtUtil;
+import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -20,17 +21,34 @@ public class TestCommand extends SubCommand {
     public TestCommand() {
         super("test");
         setType(SenderType.PLAYER);
+        setHide();
     }
 
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         Player player = (Player) sender;
+        System.out.println(Arrays.toString(args));
+        if (args.length > 1) {
+            switch (args[1]) {
+                case "show":
+                    MessageUtil.getInst().componentBuilder().add(player.getEquipment().getItemInHand()).send(player);
+                    return;
+                case "tran":
+                    MessageUtil.getInst().componentBuilder().add(new TranslatableComponent(args.length > 2 ? args[2] : "null")).send(player);
+                    return;
+            }
+        }
+
         player.sendMessage("调用此指令前，请保证手中持有任意物品，这个物品在测试结束后会删除");
-        ItemStack itemStack = player.getEquipment().getItemInMainHand();
+        ItemStack itemStack = player.getEquipment().getItemInHand();
         player.sendMessage("手持物品通过");
 
         for (String key : SXItem.getItemManager().getItemList()) {
-            SXItem.getItemManager().getItem(key, player);
+            try {
+                SXItem.getItemManager().getItem(key, player);
+            } catch (Exception e) {
+                player.sendMessage("物品: " + key + " 有问题");
+            }
         }
         player.sendMessage("获取SX物品通过");
 
@@ -50,7 +68,7 @@ public class TestCommand extends SubCommand {
         TagCompound compound = new TagCompound();
         compound.set("string-1", "描述1");
         compound.set("string-2", "描述2");
-        itemWrapper.set("test.NbtList", Arrays.asList(NbtUtil.getInst().toNMS(compound), NbtUtil.getInst().toNMS(compound)));
+        itemWrapper.set("test.NbtList", Arrays.asList(compound, compound));
         itemWrapper.save();
         player.sendMessage("设置NBT物品通过");
 
