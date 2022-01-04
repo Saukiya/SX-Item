@@ -1,2 +1,8 @@
+#日志等级: [OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL]
+LoggerLevel: "ALL"
+#物品数据排序，开启后会对/sx-item give 的列表进行排序，会少许下降性能。做端时期建议打开，运营时期建议关闭
+ItemMapSort: false
+#浮点数格式化
 DecimalFormat: '#.##'
+#日期格式化
 TimeFormat: yyyy/MM/dd HH:mm
