@@ -26,7 +26,9 @@ public interface NMS {
             synchronized (target) {
                 t = Data.INST_MAP.computeIfAbsent(target, k -> {
                     try {
-                        return (NMS) Class.forName(target.getName() + "_" + Arrays.stream(versions).filter(ver -> compareTo(ver) >= 0).findFirst().orElse(Data.VERSION)).getDeclaredConstructor().newInstance();
+                        String version = Arrays.stream(versions).filter(ver -> compareTo(ver) >= 0).findFirst().orElse(Data.VERSION);
+                        SXItem.getInst().getLogger().info(target.getSimpleName() + " use Version: " + version);
+                        return (NMS) Class.forName(target.getName() + "_" + version).getDeclaredConstructor().newInstance();
                     } catch (Exception e) {
                         e.printStackTrace();
                         SXItem.getInst().getLogger().warning(target.getSimpleName() + " No Version : " + Data.VERSION);
