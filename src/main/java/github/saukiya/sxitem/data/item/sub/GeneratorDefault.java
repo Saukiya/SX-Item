@@ -3,6 +3,7 @@ package github.saukiya.sxitem.data.item.sub;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.item.IGenerator;
 import github.saukiya.sxitem.data.item.IUpdate;
+import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.data.random.INode;
 import github.saukiya.sxitem.data.random.RandomDocker;
 import github.saukiya.sxitem.nbt.*;
@@ -41,20 +42,6 @@ public class GeneratorDefault implements IGenerator, IUpdate {
 
     List<String> ids;
 
-    int amount;
-
-    List<String> loreList;
-
-    List<String> enchantList;
-
-    List<String> itemFlagList;
-
-    boolean unbreakable;
-
-    Color color;
-
-    String skullName;
-
     Map<String, INode> randomMap;
 
     TagCompound nbt;
@@ -70,14 +57,7 @@ public class GeneratorDefault implements IGenerator, IUpdate {
         this.key = key;
         this.config = config;
         this.displayName = config.getString("Name");
-        this.ids = config.isList("ID") ? config.getStringList("ID") : Collections.singletonList(config.getString(".ID"));
-        this.amount = config.getInt("Amount", 1);
-        this.loreList = config.getStringList("Lore");
-        this.enchantList = config.getStringList("EnchantList");
-        this.itemFlagList = config.getStringList("ItemFlagList");
-        this.unbreakable = config.getBoolean("Unbreakable");
-        this.color = config.isString("Color") ? Color.fromRGB(Integer.parseInt(config.getString("Color"), 16)) : null;
-        this.skullName = config.getString("SkullName");
+        this.ids = config.isList("ID") ? config.getStringList("ID") : Collections.singletonList(config.getString(".ID", "APPLE"));
         if (config.contains("Random")) {
             SXItem.getRandomManager().loadRandom(this.randomMap = new HashMap<>(), config.getConfigurationSection("Random"));
         }
@@ -114,7 +94,7 @@ public class GeneratorDefault implements IGenerator, IUpdate {
     @Override
     public BaseComponent getNameComponent() {
         if (displayName != null)
-            return new TextComponent(RandomDocker.getINST().replace(displayName).replace("&", "§"));
+            return new TextComponent(RandomDocker.getInst().replace(displayName).replace("&", "§"));
         ComponentBuilder cb = MessageUtil.getInst().componentBuilder();
         for (String id : ids) {
             if (cb.getHandle().getExtra() != null) cb.add("§8|");
@@ -127,7 +107,7 @@ public class GeneratorDefault implements IGenerator, IUpdate {
 
     @Override
     public String getName() {
-        if (displayName != null) return RandomDocker.getINST().replace(displayName).replace("&", "§");
+        if (displayName != null) return RandomDocker.getInst().replace(displayName).replace("&", "§");
         return "§7" + String.join("§8|§7", ids);
     }
 
@@ -192,42 +172,26 @@ public class GeneratorDefault implements IGenerator, IUpdate {
     }
 
     public ItemStack getItem(@Nonnull Player player, RandomDocker docker) {
-        String id = docker.replace(ids.get(SXItem.getRandom().nextInt(ids.size())));
-
-        String itemName = docker.replace(PlaceholderUtil.setPlaceholders(player, this.displayName));
-
-        List<String> loreList = docker.replace(PlaceholderUtil.setPlaceholders(player, this.loreList));
-
-        List<String> enchantList = docker.replace(this.enchantList);
-
-        String skullName = docker.replace(PlaceholderUtil.setPlaceholders(player, this.skullName));
-        ItemStack item = getItemStack(itemName, id, amount, loreList, enchantList, itemFlagList, unbreakable, color, skullName);
-
-        NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item);
-        if (this.nbt != null) {
-            TagCompound nbt = (TagCompound) docker.replace(this.nbt);
-            for (Map.Entry<String, TagBase> entry : nbt.entrySet()) {
-                wrapper.set(entry.getKey(), entry.getValue());
-            }
+        String materialName = docker.replace(ids.get(SXItem.getRandom().nextInt(ids.size())));
+        Material material = SXItem.getItemManager().getMaterial(materialName);
+        if (material == null) {
+            SXItem.getInst().getLogger().warning("Item-" + getKey() + " ID ERROR: " + materialName);
+            return ItemManager.getEmptyItem();
         }
-
-        docker.getLockLog().forEach(key -> wrapper.set(SXItem.getInst().getName() + ".Lock." + key, docker.getLockMap().get(key)));
-        wrapper.save();
-        return item;
-    }
-
-    public ItemStack getItemStack(String itemName, String id, int amount, List<String> loreList, List<String> enchantList, List<String> itemFlagList, boolean unbreakable, Color color, String skullName) {
-        Material material = SXItem.getItemManager().getMaterial(id);
-        ItemStack item = new ItemStack(material, amount);
+        ItemStack item = new ItemStack(material, Integer.parseInt(docker.replace(config.getString("Amount", "1"))));
         ItemMeta meta = item.getItemMeta();
 
+        String itemName = docker.replace(PlaceholderUtil.setPlaceholders(player, this.displayName));
         if (itemName != null) {
             meta.setDisplayName(itemName.replace("&", "§"));
         }
+
+        List<String> loreList = docker.replace(PlaceholderUtil.setPlaceholders(player, config.getStringList("Lore")));
         loreList.replaceAll(lore -> lore.replace("&", "§"));
         meta.setLore(loreList);
 
-        for (String enchant : enchantList) {
+
+        for (String enchant : docker.replace(config.getStringList("EnchantList"))) {
             String[] enchantSplit = enchant.split(":");
             Enchantment enchantment = Enchantment.getByName(enchantSplit[0]);
             int level = Integer.parseInt(enchantSplit[1]);
@@ -236,31 +200,48 @@ public class GeneratorDefault implements IGenerator, IUpdate {
             }
         }
 
-        Arrays.stream(ItemFlag.values()).filter(itemFlag -> itemFlagList.contains(itemFlag.name())).forEach(meta::addItemFlags);
-
-        ItemUtil.getInst().setUnbreakable(meta, unbreakable);
-
-        if (color != null && meta instanceof LeatherArmorMeta) ((LeatherArmorMeta) meta).setColor(color);
-
-        ItemUtil.getInst().setSkull(meta, skullName);
-
-        item.setItemMeta(meta);
-
-        //TODO 改到getItem那边去
-        if (config.isList("Attributes")) {
-            List<ItemUtil.AttributeData> attributeList = new ArrayList<>();
-            for (String attributeData : config.getStringList("Attributes")) {
-                String[] split = attributeData.split(":");
-                if (split.length < 3) continue;
-                int operation = Integer.parseInt(split[2]);
-                attributeList.add(new ItemUtil.AttributeData()
-                        .setAttrName(split[0])
-                        .setAmount(Double.parseDouble(split[1]))
-                        .setOperation(operation)
-                        .setSlot(split.length > 3 ? split[3] : null));
+        for (String flagName : config.getStringList("ItemFlagList")) {
+            for (ItemFlag itemFlag : ItemFlag.values()) {
+                if (itemFlag.name().equals(flagName)) {
+                    meta.addItemFlags(itemFlag);
+                    break;
+                }
             }
-            ItemUtil.getInst().addAttributes(item, attributeList);
         }
+
+        ItemUtil.getInst().setUnbreakable(meta, config.getBoolean("Unbreakable"));
+
+        ItemUtil.getInst().setSkull(meta, docker.replace(PlaceholderUtil.setPlaceholders(player, config.getString("SkullName"))));
+
+        if (meta instanceof LeatherArmorMeta && config.isString("Color")) {
+            ((LeatherArmorMeta) meta).setColor(Color.fromRGB(Integer.parseInt(docker.replace(config.getString("Color")), 16)));
+        }
+
+        if (config.getBoolean("ClearAttribute")) {
+            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+            item.setItemMeta(meta);
+            ItemUtil.getInst().addAttribute(item, new ItemUtil.AttributeData().setAttrName("GENERIC_ATTACK_DAMAGE").setAmount(0));
+        } else {
+            item.setItemMeta(meta);
+            if (config.isList("Attributes")) {
+                ItemUtil.getInst().addAttributes(item, docker.replace(config.getStringList("Attributes")).stream()
+                        .map(data -> data.split(":")).filter(split -> split.length >= 3)
+                        .map(split -> new ItemUtil.AttributeData()
+                                .setAttrName(split[0])
+                                .setAmount(Double.parseDouble(split[1]))
+                                .setOperation(Integer.parseInt(split[2]))
+                                .setSlot(split.length > 3 ? split[3] : null))
+                        .collect(Collectors.toList())
+                );
+            }
+        }
+
+        NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item);
+        wrapper.setAll((TagCompoundBase) docker.replace(nbt));
+
+        docker.getLockLog().forEach(key -> wrapper.set(SXItem.getInst().getName() + ".Lock." + key, docker.getLockMap().get(key)));
+
+        wrapper.save();
         return item;
     }
 }
