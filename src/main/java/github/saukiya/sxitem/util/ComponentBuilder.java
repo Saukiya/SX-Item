@@ -18,7 +18,7 @@ public abstract class ComponentBuilder {
     protected BaseComponent current;
 
     ComponentBuilder() {
-        handle = setCurrent(new TextComponent());
+        handle = setCurrent(new TextComponent(""));
     }
 
     public ComponentBuilder add(BaseComponent base) {
