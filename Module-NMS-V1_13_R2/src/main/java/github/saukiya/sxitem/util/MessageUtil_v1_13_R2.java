@@ -1,10 +1,9 @@
 package github.saukiya.sxitem.util;
 
+import github.saukiya.sxitem.nbt.NBTTagWrapper;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.minecraft.server.v1_13_R2.NBTTagCompound;
-import org.bukkit.craftbukkit.v1_13_R2.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
 public class MessageUtil_v1_13_R2 extends MessageUtil {
@@ -24,7 +23,11 @@ public class MessageUtil_v1_13_R2 extends MessageUtil {
 
         @Override
         public ComponentBuilder show(ItemStack item) {
-            current.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new BaseComponent[]{new TextComponent(CraftItemStack.asNMSCopy(item).save(new NBTTagCompound()).toString())}));
+            NBTTagWrapper wrapper = NbtUtil.getInst().createTagWrapper();
+            wrapper.set("id", item.getType().getKey().getKey());
+            wrapper.set("Count", (byte) item.getAmount());
+            wrapper.set("tag", NbtUtil.getInst().getItemNBT(item));
+            current.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new BaseComponent[]{new TextComponent(wrapper.nbtToString())}));
             return this;
         }
     }

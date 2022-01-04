@@ -1,11 +1,15 @@
 package github.saukiya.sxitem.util;
 
+import lombok.Getter;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public abstract class MessageUtil implements NMS {
+
+    @Getter
+    private static final MessageUtil inst = NMS.getInst(MessageUtil.class, "v1_16_R3", "v1_13_R2", "v1_12_R1", "v1_11_R1", "v1_8_R3");
 
     /**
      * 发送消息给玩家 - 支持PlaceholderAPI
@@ -18,7 +22,7 @@ public abstract class MessageUtil implements NMS {
         send(sender, Message.getMsg(loc, args));
     }
 
-    public final void send(CommandSender sender, String msg) {
+    public void send(CommandSender sender, String msg) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             msg = PlaceholderUtil.setPlaceholders(player, msg);
@@ -43,8 +47,4 @@ public abstract class MessageUtil implements NMS {
     }
 
     public abstract ComponentBuilder componentBuilder();
-
-    public static MessageUtil getInst() {
-        return NMS.getInst(MessageUtil.class);
-    }
 }
