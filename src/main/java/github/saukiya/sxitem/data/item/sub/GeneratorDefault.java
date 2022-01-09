@@ -21,6 +21,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.util.NumberConversions;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -95,9 +96,9 @@ public class GeneratorDefault implements IGenerator, IUpdate {
     public BaseComponent getNameComponent() {
         if (displayName != null)
             return new TextComponent(RandomDocker.getInst().replace(displayName).replace("&", "§"));
-        ComponentBuilder cb = MessageUtil.getInst().componentBuilder();
+        ComponentBuilder cb = MessageUtil.getInst().componentBuilder().add("§r");
         for (String id : ids) {
-            if (cb.getHandle().getExtra() != null) cb.add("§8|");
+            if (cb.getHandle().getExtra().size() != 1) cb.add("§8|§r");
             Material material = ItemManager.getMaterial(id);
             if (material != null) cb.add(material);
             else cb.add(id);
@@ -130,7 +131,7 @@ public class GeneratorDefault implements IGenerator, IUpdate {
     public ConfigurationSection saveItem(ItemStack saveItem, ConfigurationSection config) {
         ItemMeta itemMeta = saveItem.getItemMeta();
         config.set("Name", itemMeta.hasDisplayName() ? itemMeta.getDisplayName().replace("§", "&") : null);
-        config.set("ID", saveItem.getType().name());
+        config.set("ID", saveItem.getType().name() + (saveItem.getDurability() != 0 ? ":" + saveItem.getDurability() : ""));
         if (saveItem.getAmount() > 1)
             config.set("Amount", saveItem.getAmount());
         if (itemMeta.hasLore())
@@ -172,13 +173,15 @@ public class GeneratorDefault implements IGenerator, IUpdate {
     }
 
     public ItemStack getItem(@Nonnull Player player, RandomDocker docker) {
-        String materialName = docker.replace(ids.get(SXItem.getRandom().nextInt(ids.size())));
-        Material material = ItemManager.getMaterial(materialName);
+        String[] materAndDur = docker.replace(ids.get(SXItem.getRandom().nextInt(ids.size()))).split(":");
+        Material material = ItemManager.getMaterial(materAndDur[0]);
         if (material == null) {
-            SXItem.getInst().getLogger().warning("Item-" + getKey() + " ID ERROR: " + materialName);
+            SXItem.getInst().getLogger().warning("Item-" + getKey() + " ID ERROR: " + materAndDur[0]);
             return ItemManager.getEmptyItem();
         }
         ItemStack item = new ItemStack(material, Integer.parseInt(docker.replace(config.getString("Amount", "1"))));
+        short durability = materAndDur.length > 1 ? Short.parseShort(materAndDur[1]) : NumberConversions.toShort(config.get("Durability"));
+        if (durability > 1) item.setDurability(durability);
         ItemMeta meta = item.getItemMeta();
 
         String itemName = docker.replace(PlaceholderUtil.setPlaceholders(player, this.displayName));

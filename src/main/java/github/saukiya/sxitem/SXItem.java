@@ -46,6 +46,7 @@ public class SXItem extends JavaPlugin {
         Message.loadMessage();
         mainCommand = new MainCommand();
 
+        ItemManager.loadMaterialData();
         ItemManager.registerGenerator(new GeneratorDefault());
         ItemManager.registerGenerator(new GeneratorImport());
     }
