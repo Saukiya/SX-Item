@@ -24,7 +24,6 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         new GiveCommand().registerCommand();
         new SaveCommand().registerCommand();
         new NBTCommand().registerCommand();
-        new TestCommand().registerCommand();
         new ReloadCommand().registerCommand();
     }
 
