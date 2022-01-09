@@ -29,6 +29,7 @@ public class RandomManager {
 
     public RandomManager() {
         loadData();
+        randoms.put('b', new BooleanRandom());
         randoms.put('c', new CalculatorRandom());
         randoms.put('l', new LockStringRandom());
         randoms.put('s', new StringRandom());
