@@ -16,7 +16,6 @@ import java.util.logging.Level;
 public class Config {
 
     public static final String LOGGER_LEVEL = "LoggerLevel";
-    public static final String ITEM_MAP_SORT = "ItemMapSort";
     public static final String DECIMAL_FORMAT = "DecimalFormat";
     public static final String TIME_FORMAT = "TimeFormat";
 
@@ -37,7 +36,6 @@ public class Config {
 
     public static void setup() {
         SXItem.getInst().getLogger().setLevel(Level.parse(config.getString(LOGGER_LEVEL, "ALL")));
-        SXItem.getItemManager().setItemMapSort(config.getBoolean(ITEM_MAP_SORT));
         SXItem.setDf(new DecimalFormat(config.getString(DECIMAL_FORMAT)));
     }
 }
