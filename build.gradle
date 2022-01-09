@@ -7,7 +7,7 @@ allprojects {
     apply plugin: 'java'
 
     group 'github.saukiya'
-    version '1.0-SNAPSHOT'
+    version '3.0.0'// + '-SNAPSHOT'
 
     repositories {
         mavenCentral()
@@ -47,6 +47,12 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
 }
 
+//
+task copyLatestJar(type: Copy) {
+    from "$rootDir/plugins/${project.name}-${project.version}.jar"
+    into("$rootDir/plugins/").rename {"${project.name}-Latest.jar"}
+}
+
 shadowJar {
     // 过滤未使用的依赖
     minimize()
@@ -57,9 +63,10 @@ shadowJar {
         from(sub.getBuildDir().toString() + '/classes/java/main')
     })
     // 设置导出名称
-    archiveFileName.set("${project.name}.jar")
+    archiveFileName.set("${project.name}-${project.version}.jar")
     // 设置导出路径
-    destinationDirectory.set(file("$rootDir/plugins/$project.version"))
+    destinationDirectory.set(file("$rootDir/plugins"))
+    finalizedBy(copyLatestJar)
 }
 
 //执行该task前必须执行子模块的task
