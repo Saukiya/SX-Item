@@ -35,7 +35,6 @@ import java.util.stream.Collectors;
 /**
  * @author Saukiya
  */
-//TODO 与SX-Item本体做拆分
 public class ItemManager implements Listener {
     @Getter
     private static final List<IGenerator> generators = new ArrayList<>();
@@ -65,7 +64,6 @@ public class ItemManager implements Listener {
         this.defaultFile = defaultFile;
         this.itemFiles = new File(plugin.getDataFolder(), "Item");
         plugin.getLogger().info("Loaded " + generators.size() + " ItemGenerators");
-        loadMaterialData();
         loadItemData();
         Bukkit.getPluginManager().registerEvents(this, plugin);
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
@@ -371,8 +369,8 @@ public class ItemManager implements Listener {
         boolean methodUse = NMS.compareTo("v1_13_R1") >= 0;
         for (Map.Entry<String, Object> entry : yaml.getValues(false).entrySet()) {
             Material material = Material.getMaterial(entry.getKey());
-            try {
-                if (material == null) {
+            if (material == null) {
+                try {
                     if (methodUse) material = Material.getMaterial(entry.getKey(), true);
                     if (material == null) {
                         SXItem.getInst().getLogger().warning("Material.yml No Material - " + entry.getKey());
@@ -386,9 +384,13 @@ public class ItemManager implements Listener {
                         yaml.set(material.name(), entry.getValue());
                     }
                     yaml.set(entry.getKey(), null);
+                } catch (Exception ignored) {
+                    SXItem.getInst().getLogger().warning("Material.yml No Material - " + entry.getKey());
+                    continue;
                 }
-            } catch (Exception ignored) {
-                SXItem.getInst().getLogger().warning("Material.yml No Material - " + entry.getKey());
+            }
+            if (methodUse && material.isLegacy()) {
+                SXItem.getInst().getLogger().warning("Material Legacy - " + entry.getKey() + " > " + material);
                 continue;
             }
             for (String key : entry.getValue().toString().split(",")) {
@@ -401,9 +403,7 @@ public class ItemManager implements Listener {
                 }
             }
         }
-        if (change) {
-            yaml.save(file);
-        }
+        if (change) yaml.save(file);
         SXItem.getInst().getLogger().info("Loaded " + materialMap.size() + " Materials");
     }
 
