@@ -1,8 +1,8 @@
 ADMIN:
   NO_ITEM: '&7[SX-Item] &c物品不存在'
   GIVE_ITEM: '&7[SX-Item] &c给予 &6{0} &a{1}&c 个 &6{2}&c 物品'
+  HAS_ITEM: '&7[SX-Item] &a物品编号 &6{0} &a已经存在'
   SAVE_ITEM: '&7[SX-Item] &a物品编号 &6{0} &a成功保存'
-  GIVE_KIT: '&7[SX-Item] &c给予 &6{0} &a1&c 个 &6{1}&c 工具包'
   SAVE_NO_TYPE: '&7[SX-Item] &c物品编号 &4{0} &c保存失败, 请检查该生成器是否存在, 并支持保存物品'
   SAVE_ITEM_ERROR: '&7[SX-Item] &c物品 &4{0} &c保存出现不可预知的错误'
   NO_PERMISSION_CMD: '&8[&c错误&8] &c你没有权限执行此指令'
@@ -14,7 +14,7 @@ ADMIN:
 COMMAND:
   GIVE: 给予玩家物品
   SAVE: 保存当前的物品到配置文件
-  NBT: 查看物品NBT数据
+  NBT: 查看和修改物品NBT数据
   KIT: 给与玩家工具包
   CMD: 查询指令来源
   CHAT: 聊天系统
