@@ -44,7 +44,7 @@ public class NBTCommand extends SubCommand {
                         .suggestCommand(item.getType().name());
                 String keys = String.join("/", ItemManager.getMaterialString(item.getType()));
                 if (keys.length() != 0) cb.add("-").add(keys).show("点击复制").suggestCommand(keys);
-                cb.add("] §c物品拥有以下NBT:");
+                cb.add("] §cItem-NBT:");
                 cb.send(sender);
                 sendNBT("§7", NbtUtil.getInst().getItemTag(item), sender);
                 return;
@@ -87,7 +87,7 @@ public class NBTCommand extends SubCommand {
             } else {
                 nbtShow = entry.getValue().getValue().toString();
             }
-            MessageUtil.getInst().componentBuilder().add("§7- ").add("§c[Type]").show(typeShow).add(" ").add(path).show(nbtShow).send(sender);
+            MessageUtil.getInst().componentBuilder().add("§7- ").add("§c[Type-" + typeShow.charAt(0) + "]").show(typeShow).add(" ").add(path).show(nbtShow).send(sender);
         }
     }
 }

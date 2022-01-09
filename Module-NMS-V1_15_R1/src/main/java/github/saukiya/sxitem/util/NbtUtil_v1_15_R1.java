@@ -153,10 +153,10 @@ public class NbtUtil_v1_15_R1 extends NbtUtil {
         }
 
         NBTItemWrapperImpl(ItemStack itemStack, net.minecraft.server.v1_15_R1.ItemStack nmsItem) {
-            super(nmsItem.getTag());
+            super(nmsItem.getOrCreateTag());
+            if (nmsItem.isEmpty()) throw new NullPointerException();
             this.itemStack = itemStack;
             this.nmsItem = nmsItem;
-            if (nmsItem.isEmpty()) throw new NullPointerException();
         }
 
         @Override
