@@ -60,6 +60,13 @@ public class Test {
 //        yamlToTagTest();
 //        gsonTest();
 //        conversionNBT();
+        Map<String, String> map = new HashMap<>();
+        for (int i = 5; i > 0; i--) {
+            for (int i1 = 0; i1 < 2; i1++) {
+                map.put(i + "-" + i1, "");
+            }
+        }
+        System.out.println(1 - 0.2);
     }
 
     public static String c(String... versions) {
