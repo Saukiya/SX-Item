@@ -156,7 +156,7 @@ public class GeneratorDefault implements IGenerator, IUpdate {
 
     @Override
     public ItemStack update(ItemStack oldItem, NBTTagWrapper oldWrapper, Player player) {
-        RandomDocker randomDocker = new RandomDocker();
+        RandomDocker randomDocker = new RandomDocker(randomMap);
         Map<String, String> map = (Map<String, String>) oldWrapper.getMap(SXItem.getInst().getName() + ".Lock");
         if (map != null) map.forEach((k, v) -> randomDocker.getLockMap().put(k, v));
         return getItem(player, randomDocker);
@@ -180,8 +180,16 @@ public class GeneratorDefault implements IGenerator, IUpdate {
             return ItemManager.getEmptyItem();
         }
         ItemStack item = new ItemStack(material, Integer.parseInt(docker.replace(config.getString("Amount", "1"))));
-        short durability = materAndDur.length > 1 ? Short.parseShort(materAndDur[1]) : NumberConversions.toShort(config.get("Durability"));
-        if (durability > 1) item.setDurability(durability);
+        String durability = materAndDur.length > 1 ? materAndDur[1] : docker.replace(config.getString("Durability"));
+        if (durability != null) {
+            if (durability.endsWith("%")) {
+                item.setDurability((short) (material.getMaxDurability() * (1 - Double.parseDouble(durability.substring(0, durability.length() - 1)) / 100)));
+            } else if (durability.startsWith("<")) {
+                item.setDurability((short) (material.getMaxDurability() - Short.parseShort(durability.substring(1))));
+            } else {
+                item.setDurability(Short.parseShort(durability));
+            }
+        }
         ItemMeta meta = item.getItemMeta();
 
         String itemName = docker.replace(PlaceholderUtil.setPlaceholders(player, this.displayName));

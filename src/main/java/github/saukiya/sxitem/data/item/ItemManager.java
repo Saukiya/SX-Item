@@ -5,9 +5,7 @@ import github.saukiya.sxitem.event.SXItemSpawnEvent;
 import github.saukiya.sxitem.event.SXItemUpdateEvent;
 import github.saukiya.sxitem.nbt.NBTItemWrapper;
 import github.saukiya.sxitem.nbt.NBTTagWrapper;
-import github.saukiya.sxitem.util.MessageUtil;
-import github.saukiya.sxitem.util.NMS;
-import github.saukiya.sxitem.util.NbtUtil;
+import github.saukiya.sxitem.util.*;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
@@ -31,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Saukiya
@@ -53,7 +52,7 @@ public class ItemManager implements Listener {
 
     private final Map<String, String> linkMap = new HashMap<>();
 
-    private Map<String, IGenerator> itemMap = new HashMap<>();
+    private final Map<String, IGenerator> itemMap = new HashMap<>();
 
     public ItemManager() {
         this(SXItem.getInst(), "Item/Default/Default.yml", "Item/NoLoad/Default.yml");
@@ -299,37 +298,24 @@ public class ItemManager implements Listener {
                     .send(sender));
         } else {
             // 物品
-            int filterSize = 0, size = 0;
             MessageUtil.getInst().componentBuilder()
                     .add("§eItemList§8 - §7ClickGet " + (search != null ? "§8[§c" + search.replaceAll("(^\\||<$)", "") + "§8]" : ""))
                     .show("§8§o§lTo DirectoryList")
                     .runCommand("/sxitem give")
                     .send(sender);
-            for (Map.Entry<String, IGenerator> entry : itemMap.entrySet()) {
-                IGenerator ig = entry.getValue();
-                if (search != null && !(entry.getKey() + ig.getName() + "|" + ig.getPathName() + "<").contains(search)) {
-                    filterSize++;
-                    continue;
+            Map<String, ComponentBuilder> items = new TreeMap<>();
+            itemMap.forEach((key, ig) -> {
+                if (search == null || (key + ig.getName() + "|" + ig.getPathName() + "<").contains(search)) {
+                    items.put(key, MessageUtil.getInst().componentBuilder()
+                            .runCommand("/sxitem give " + key)
+                            .add(" §b" + (items.size() + 1) + " - §a" + key + " §8[§7")
+                            .add(ig.getNameComponent())
+                            .add("§8]§7 - §8[§cType:" + ig.getType() + "§8]")
+                            .show("§7" + ig.getConfigString() + "§8§o§lPath: " + ig.getPathName()));
                 }
-                MessageUtil.getInst().componentBuilder()
-                        .runCommand("/sxitem give " + entry.getKey())
-                        .add(" §b" + ++size + " - §a" + entry.getKey() + " §8[§7")
-                        .add(ig.getNameComponent())
-                        .add("§8]§7 - §8[§cType:" + ig.getType() + "§8]")
-                        .show("§7" + ig.getConfigString() + "§8§o§lPath: " + ig.getPathName())
-                        .send(sender);
-            }
-            if (search != null && filterSize != 0) {
-                sender.sendMessage("§7> Filter§c " + filterSize + " §7Items, Find §c" + size + "§7 Items.");
-            }
-        }
-    }
-
-    public void setItemMapSort(boolean value) {
-        if (value && itemMap.getClass().equals(HashMap.class)) {
-            itemMap = new TreeMap<>(itemMap);
-        } else if (!value && itemMap.getClass().equals(TreeMap.class)) {
-            itemMap = new HashMap<>(itemMap);
+            });
+            items.values().forEach(s -> s.send(sender));
+            sender.sendMessage("§7Find §c" + items.size() + "§7 Items.");
         }
     }
 
