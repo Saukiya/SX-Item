@@ -50,7 +50,7 @@ dependencies {
 //
 task copyLatestJar(type: Copy) {
     from "$rootDir/plugins/${project.name}-${project.version}.jar"
-    into("$rootDir/plugins/").rename {"${project.name}-Latest.jar"}
+    into("$rootDir/plugins/").rename { "${project.name}-Latest.jar" }
 }
 
 shadowJar {
