@@ -157,9 +157,10 @@ public class NbtUtil_v1_8_R3 extends NbtUtil {
 
         NBTItemWrapperImpl(ItemStack itemStack, net.minecraft.server.v1_8_R3.ItemStack nmsItem) {
             super(nmsItem.getTag());
+            if (itemStack.getType() == Material.AIR) throw new NullPointerException();
             this.itemStack = itemStack;
             this.nmsItem = nmsItem;
-            if (itemStack.getType() == Material.AIR) throw new NullPointerException();
+            if (!nmsItem.hasTag()) nmsItem.setTag(getHandle());
         }
 
         @Override

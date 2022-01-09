@@ -8,6 +8,7 @@ import io.netty.buffer.Unpooled;
 import lombok.SneakyThrows;
 import net.minecraft.server.v1_12_R1.*;
 import org.apache.commons.lang.Validate;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
@@ -160,9 +161,10 @@ public class NbtUtil_v1_12_R1 extends NbtUtil {
 
         NBTItemWrapperImpl(ItemStack itemStack, net.minecraft.server.v1_12_R1.ItemStack nmsItem) {
             super(nmsItem.getTag());
+            if (itemStack.getType() == Material.AIR) throw new NullPointerException();
             this.itemStack = itemStack;
             this.nmsItem = nmsItem;
-            if (nmsItem.isEmpty()) throw new NullPointerException();
+            if (!nmsItem.hasTag()) nmsItem.setTag(getHandle());
         }
 
         @Override
