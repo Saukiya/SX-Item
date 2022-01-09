@@ -20,6 +20,7 @@ public class ReloadCommand extends SubCommand {
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         Config.loadConfig();
+        Config.setup();
         Message.loadMessage();
         SXItem.getRandomManager().loadData();
         ItemManager.loadMaterialData();
