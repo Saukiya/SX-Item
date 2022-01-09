@@ -94,7 +94,7 @@ public class TestCommand extends SubCommand {
             }
         }
         player.sendMessage("调用NBT物品通过");
-        Bukkit.dispatchCommand(player, "si nbt all");
+        Bukkit.dispatchCommand(player, "sxi nbt all");
 
         MessageUtil.getInst().sendTitle(player, "测试Title", "fadein:20 stay:100 fadeOut: 100", 20, 100, 100);
         MessageUtil.getInst().sendActionBar(player, "测试ActionBar");
