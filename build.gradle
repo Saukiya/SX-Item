@@ -1,30 +1,20 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.1.2"
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
-apply plugin: 'java'
-
-group 'github.saukiya'
-version '3.0.0'
-
-// 子项目设置
-subprojects {
-    apply plugin: 'java'
-    dependencies {
-        compileOnly fileTree('lib')
-        compileOnly getRootProject()
-    }
-}
-
 // 全局设置
 allprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven-publish'
+
+    group 'github.saukiya'
+    version '3.0.0'
 
     repositories {
         mavenCentral()
-
         //Github Project
-        maven { url "https://jitpack.io" }
+        maven { url 'https://jitpack.io' }
         //bStats-bukkit
-        maven { url "https://repo.codemc.org/repository/maven-public" }
+        maven { url 'https://repo.codemc.org/repository/maven-public' }
     }
 
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -33,6 +23,14 @@ allprojects {
     dependencies {
         compileOnly 'org.projectlombok:lombok:1.18.22'
         annotationProcessor 'org.projectlombok:lombok:1.18.22'
+    }
+}
+
+// 子项目设置
+subprojects{
+    dependencies {
+        compileOnly fileTree('lib')
+        compileOnly getRootProject()
     }
 }
 
@@ -47,7 +45,7 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
 }
 
-//
+//拷贝到目录下
 task copyLatestJar(type: Copy) {
     from shadowJar.archiveFile.get().asFile.path
     into("$rootDir").rename { "${project.name}-Latest.jar" }
@@ -58,20 +56,16 @@ shadowJar {
     minimize()
     // bStats重定向
     relocate('org.bstats', 'github.saukiya.sxitem.bstats')
+    //执行所有子项目的 classes task
+    dependsOn getSubprojects().stream().map(sub -> sub.getPath() + ':classes').toList()
     // 获得子模块的classes文件
     getSubprojects().forEach(sub -> {
         from(sub.getBuildDir().toString() + '/classes/java/main')
     })
-//    finalizedBy(copyLatestJar)
+    finalizedBy(copyLatestJar)
 }
 
-//执行该task前必须执行子模块的task
-shadowJar.dependsOn() {
-    //执行所有子项目的classes
-    getSubprojects().stream().map(sub -> sub.getPath() + ':classes').toList()
-}
-
-//gradle 需要对文件中含有的'$'进行转义: $ -> \$
+//需要对资源文件中含有的'$'进行转义: $ -> \$
 processResources {
     expand(version: version)
 }
