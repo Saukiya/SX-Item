@@ -1,13 +1,22 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.0.0"
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+}
+apply plugin: 'java'
+
+group 'github.saukiya'
+version '3.0.0'
+
+// 子项目设置
+subprojects {
+    apply plugin: 'java'
+    dependencies {
+        compileOnly fileTree('lib')
+        compileOnly getRootProject()
+    }
 }
 
 // 全局设置
 allprojects {
-    apply plugin: 'java'
-
-    group 'github.saukiya'
-    version '3.0.0'// + '-SNAPSHOT'
 
     repositories {
         mavenCentral()
@@ -22,27 +31,18 @@ allprojects {
     targetCompatibility = JavaVersion.VERSION_1_8
 
     dependencies {
-        compileOnly 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
         compileOnly 'org.projectlombok:lombok:1.18.22'
         annotationProcessor 'org.projectlombok:lombok:1.18.22'
-    }
-}
-
-// 子项目设置
-subprojects {
-    dependencies {
-        compileOnly fileTree('lib')
-        compileOnly getRootProject()
     }
 }
 
 dependencies {
     compileOnly fileTree("Module-NMS-V1_18_R1/lib")
     implementation 'org.bstats:bstats-bukkit:2.2.1'
+    compileOnly 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
 
-    testImplementation fileTree("Module-NMS-V1_17_R1/lib")
     testImplementation getSubprojects()
-    testImplementation 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
+    testImplementation fileTree("Module-NMS-V1_17_R1/lib")
     testImplementation 'org.projectlombok:lombok:1.18.22'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
 }
