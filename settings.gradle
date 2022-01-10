@@ -1,11 +1,13 @@
 rootProject.name = 'SX-Item'
-include 'Module-NMS-V1_8_R3'
-include 'Module-NMS-V1_11_R1'
-include 'Module-NMS-V1_12_R1'
-include 'Module-NMS-V1_13_R2'
-include 'Module-NMS-V1_14_R1'
-include 'Module-NMS-V1_15_R1'
-include 'Module-NMS-V1_16_R3'
-include 'Module-NMS-V1_17_R1'
-include 'Module-NMS-V1_18_R1'
+if (!System.env.JITPACK) {
+    include 'Module-NMS-V1_8_R3'
+    include 'Module-NMS-V1_11_R1'
+    include 'Module-NMS-V1_12_R1'
+    include 'Module-NMS-V1_13_R2'
+    include 'Module-NMS-V1_14_R1'
+    include 'Module-NMS-V1_15_R1'
+    include 'Module-NMS-V1_16_R3'
+    include 'Module-NMS-V1_17_R1'
+    include 'Module-NMS-V1_18_R1'
+}
 
