@@ -49,8 +49,8 @@ dependencies {
 
 //
 task copyLatestJar(type: Copy) {
-    from "$rootDir/plugins/${project.name}-${project.version}.jar"
-    into("$rootDir/plugins/").rename { "${project.name}-Latest.jar" }
+    from shadowJar.archiveFile.get().asFile.path
+    into("$rootDir").rename { "${project.name}-Latest.jar" }
 }
 
 shadowJar {
@@ -62,11 +62,7 @@ shadowJar {
     getSubprojects().forEach(sub -> {
         from(sub.getBuildDir().toString() + '/classes/java/main')
     })
-    // 设置导出名称
-    archiveFileName.set("${project.name}-${project.version}.jar")
-    // 设置导出路径
-    destinationDirectory.set(file("$rootDir/plugins"))
-    finalizedBy(copyLatestJar)
+//    finalizedBy(copyLatestJar)
 }
 
 //执行该task前必须执行子模块的task
