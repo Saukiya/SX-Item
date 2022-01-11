@@ -354,7 +354,7 @@ public class ItemManager implements Listener {
         }
         boolean change = false;
         YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
-        boolean methodUse = NMS.compareTo("v1_13_R1") >= 0;
+        boolean methodUse = NMS.compareTo(1, 13, 1) >= 0;
         for (Map.Entry<String, Object> entry : yaml.getValues(false).entrySet()) {
             Material material = Material.getMaterial(entry.getKey());
             if (material == null) {

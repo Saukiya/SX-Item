@@ -29,7 +29,7 @@ public class TagLongArray extends TagListBase<Long, long[]> {
         public TagListBase toTag(Object object) {
             if (object instanceof long[]) {
                 long[] longs = (long[]) object;
-                if (NMS.compareTo("v1_12_R1") >= 0) return new TagLongArray(longs);
+                if (NMS.compareTo(1, 12, 1) >= 0) return new TagLongArray(longs);
                 return Arrays.stream(longs).mapToObj(TagLong::new).collect(Collectors.toCollection(TagList::new));
             }
             return null;

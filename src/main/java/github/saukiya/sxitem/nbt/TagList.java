@@ -41,7 +41,7 @@ public class TagList extends TagListBase<TagBase, List<?>> {
                 List<?> objectList = (List<?>) object;
                 if (!objectList.isEmpty()) {
                     Set<Class> classSet = objectList.stream().map(Object::getClass).collect(Collectors.toSet());
-                    if (classSet.contains(Long.class) && NMS.compareTo("v1_12_R1") >= 0) {
+                    if (classSet.contains(Long.class) && NMS.compareTo(1, 12, 1) >= 0) {
                         return objectList.stream().map(o -> ((Number) o).longValue()).collect(Collectors.toCollection(TagLongArray::new));
                     } else if (classSet.contains(Integer.class)) {
                         return objectList.stream().map(o -> ((Number) o).intValue()).collect(Collectors.toCollection(TagIntArray::new));
