@@ -6,6 +6,7 @@ import github.saukiya.sxitem.command.SubCommand;
 import github.saukiya.sxitem.data.item.IGenerator;
 import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.util.Message;
+import github.saukiya.sxitem.util.MessageUtil;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -27,31 +28,30 @@ public class SaveCommand extends SubCommand {
 
     @Override
     public void onCommand(CommandSender sender, String[] args) {
-
         if (args.length < 2) {
-            sender.sendMessage(Message.getMsg(Message.ADMIN__NO_FORMAT));
+            MessageUtil.send(sender, Message.getMsg(Message.ADMIN__NO_FORMAT));
             return;
         }
         String itemName = args[1];
         Player player = (Player) sender;
         ItemStack itemStack = player.getEquipment().getItemInHand();
         if (itemStack.getType() == Material.AIR) {
-            player.sendMessage(Message.getMsg(Message.ADMIN__NO_ITEM));
+            MessageUtil.send(player, Message.getMsg(Message.ADMIN__NO_ITEM));
             return;
         }
         if (SXItem.getItemManager().hasItem(itemName)) {
-            player.sendMessage(Message.getMsg(Message.ADMIN__HAS_ITEM, itemName));
+            MessageUtil.send(player, Message.getMsg(Message.ADMIN__HAS_ITEM, itemName));
             return;
         }
         try {
             if (SXItem.getItemManager().saveItem(itemName, itemStack, args.length > 2 ? args[2] : "Default")) {
-                sender.sendMessage(Message.getMsg(Message.ADMIN__SAVE_ITEM, itemName));
+                MessageUtil.send(sender, Message.getMsg(Message.ADMIN__SAVE_ITEM, itemName));
             } else {
-                sender.sendMessage(Message.getMsg(Message.ADMIN__SAVE_NO_TYPE, itemName));
+                MessageUtil.send(sender, Message.getMsg(Message.ADMIN__SAVE_NO_TYPE, itemName));
             }
         } catch (IOException e) {
             e.printStackTrace();
-            sender.sendMessage(Message.getMsg(Message.ADMIN__SAVE_ITEM_ERROR, itemName));
+            MessageUtil.send(sender, Message.getMsg(Message.ADMIN__SAVE_ITEM_ERROR, itemName));
         }
     }
 
