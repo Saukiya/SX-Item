@@ -1,10 +1,10 @@
 plugins {
+    id 'maven-publish'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 // 全局设置
 allprojects {
     apply plugin: 'java'
-    apply plugin: 'maven-publish'
 
     group 'github.saukiya'
     version '3.0.0'
@@ -68,4 +68,12 @@ shadowJar {
 //需要对资源文件中含有的'$'进行转义: $ -> \$
 processResources {
     expand(version: version)
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
 }
