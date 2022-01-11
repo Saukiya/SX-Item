@@ -3,6 +3,7 @@ package github.saukiya.sxitem.command.sub;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.command.SubCommand;
 import github.saukiya.sxitem.util.Message;
+import github.saukiya.sxitem.util.MessageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Item;
@@ -42,7 +43,7 @@ public class GiveCommand extends SubCommand {
             player = (Player) sender;
         }
         if (player == null) {
-            sender.sendMessage(Message.getMsg(Message.ADMIN__NO_ONLINE));
+            MessageUtil.send(sender, Message.getMsg(Message.ADMIN__NO_ONLINE));
             return;
         }
 
@@ -58,8 +59,7 @@ public class GiveCommand extends SubCommand {
                 item.setPickupDelay(40);
             }
         }
-        sender.sendMessage(Message.getMsg(Message.ADMIN__GIVE_ITEM, player.getName(), String.valueOf(amount), args[1]));
-
+        MessageUtil.send(sender, Message.getMsg(Message.ADMIN__GIVE_ITEM, player.getName(), String.valueOf(amount), args[1]));
     }
 
     @Override

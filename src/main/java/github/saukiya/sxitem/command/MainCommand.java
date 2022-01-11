@@ -6,6 +6,7 @@ import github.saukiya.sxitem.command.sub.NBTCommand;
 import github.saukiya.sxitem.command.sub.ReloadCommand;
 import github.saukiya.sxitem.command.sub.SaveCommand;
 import github.saukiya.sxitem.util.Message;
+import github.saukiya.sxitem.util.MessageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -66,14 +67,14 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         for (SubCommand sub : SubCommand.commands) {
             if (sub.cmd.equalsIgnoreCase(args[0])) {
                 if (!sub.isUse(sender, type)) {
-                    sender.sendMessage(Message.getMsg(Message.ADMIN__NO_PERMISSION_CMD));
+                    MessageUtil.send(sender, Message.getMsg(Message.ADMIN__NO_PERMISSION_CMD));
                 } else {
                     sub.onCommand(sender, args);
                 }
                 return true;
             }
         }
-        sender.sendMessage(Message.getMsg(Message.ADMIN__NO_CMD, args[0]));
+        MessageUtil.send(sender, Message.getMsg(Message.ADMIN__NO_CMD, args[0]));
         return true;
     }
 
