@@ -27,7 +27,7 @@ allprojects {
 }
 
 // 子项目设置
-subprojects{
+subprojects {
     dependencies {
         compileOnly fileTree('lib')
         compileOnly getRootProject()
