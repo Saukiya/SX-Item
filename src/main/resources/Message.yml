@@ -9,18 +9,9 @@ ADMIN:
   NO_CMD: '&8[&c错误&8] &c未找到此子指令:{0}'
   NO_FORMAT: '&8[&c错误&8] &c格式错误'
   NO_ONLINE: '&8[&c错误&8] &c玩家不在线或玩家不存在'
-  NO_CONSOLE: '&8[&c错误&8] &c控制台不允许执行此指令'
   PLUGIN_RELOAD: '&7[SX-Item] §c插件已重载'
 COMMAND:
   GIVE: 给予玩家物品
   SAVE: 保存当前的物品到配置文件
   NBT: 查看和修改物品NBT数据
-  KIT: 给与玩家工具包
-  CMD: 查询指令来源
-  CHAT: 聊天系统
-  ATTACK: 开启自动攻击
-  BLOCK: 审查附近的方块
-  CHEST: 审查附近的容器
-  ENTITY: 审查附近的实体
-  PLUGINS: 插件列表
   RELOAD: 重新加载这个插件的配置
