@@ -88,13 +88,24 @@ public interface NMS {
     /**
      * 比较版本
      *
-     * @param version 所需版本(v?_?_R?)
+     * @param version 所需版本: "v{0}_{1}_R{2}" or "{0}_{1}_{2}"
      * @return 1/0/-1   当前版本(1大于/0等于/-1小于)所需版本
      */
     static int compareTo(String version) {
         Matcher matcher = Data.VERSION_PATTERN.matcher(version);
-        if (!matcher.matches()) return 0;
+        if (!matcher.matches()) return -1;
         return IntStream.range(0, 3).map(i -> Integer.compare(Data.thisVersionSplit[i], Integer.parseInt(matcher.group(i + 1)))).filter(ct -> ct != 0).findFirst().orElse(0);
+    }
+
+    /**
+     * 比较版本
+     *
+     * @param version 对应NMS: v{0}_{1}_R{2}
+     * @return 1/0/-1   当前版本(1大于/0等于/-1小于)所需版本
+     */
+    static int compareTo(int... version) {
+        if (version.length < 3) return -1;
+        return IntStream.range(0, 3).map(i -> Integer.compare(Data.thisVersionSplit[i], version[i])).filter(i -> i != 0).findFirst().orElse(0);
     }
 }
 
