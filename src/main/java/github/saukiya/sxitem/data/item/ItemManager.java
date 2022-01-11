@@ -190,7 +190,7 @@ public class ItemManager implements Listener {
             wrapper.set(plugin.getName() + ".HashCode", ((IUpdate) ig).updateCode());
             wrapper.save();
         }
-        SXItemSpawnEvent event = new SXItemSpawnEvent(player, ig, item);
+        SXItemSpawnEvent event = new SXItemSpawnEvent(plugin, player, ig, item);
         Bukkit.getPluginManager().callEvent(event);
         return event.getItem();
     }
@@ -215,22 +215,18 @@ public class ItemManager implements Listener {
         for (ItemStack item : itemStacks) {
             if (item == null) continue;
             NBTTagWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item);
-            // TODO 添加兼容设置->需测试
-            updateItemInPlugin(player, item, plugin.getName() + ".ItemKey", plugin.getName() + ".HashCode", wrapper);
-//            if (!updateItemInPlugin(player, item, plugin.getName() + ".ItemKey", plugin.getName() + ".HashCode", wrapper)) {
-//                updateItemInPlugin(player, item, "SX-Attribute-Name", "SX-Attribute-HashCode", wrapper);
-//            }
+            updateItemInPlugin(player, item, plugin.getName() + ".ItemKey", wrapper);
         }
     }
 
-    public void updateItemInPlugin(Player player, ItemStack item, String keyName, String hashCodeName, NBTTagWrapper oldWrapper) {
+    public void updateItemInPlugin(Player player, ItemStack item, String keyPath, NBTTagWrapper oldWrapper) {
         if (item == null) return;
         if (oldWrapper == null) oldWrapper = NbtUtil.getInst().getItemTagWrapper(item);
-        IGenerator ig = itemMap.get(oldWrapper.getString(keyName));
+        IGenerator ig = itemMap.get(oldWrapper.getString(keyPath));
         if (ig == null) return;
         if (ig instanceof IUpdate) {
             IUpdate updateIg = (IUpdate) ig;
-            Integer hashCode = oldWrapper.getInt(hashCodeName);
+            Integer hashCode = oldWrapper.getInt(plugin.getName() + ".HashCode");
             if (updateIg.isUpdate() && (hashCode == null || updateIg.updateCode() != hashCode)) {
                 ItemStack newItem = updateIg.update(item, oldWrapper, player);
                 NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(newItem);
@@ -238,7 +234,7 @@ public class ItemManager implements Listener {
                 wrapper.set(plugin.getName() + ".HashCode", ((IUpdate) ig).updateCode());
                 wrapper.save();
 
-                SXItemUpdateEvent event = new SXItemUpdateEvent(player, ig, newItem, item);
+                SXItemUpdateEvent event = new SXItemUpdateEvent(plugin, player, ig, newItem, item);
                 Bukkit.getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
                     item.setType(event.getItem().getType());
@@ -279,7 +275,7 @@ public class ItemManager implements Listener {
      * @param search String
      */
     public void sendItemMapToPlayer(CommandSender sender, String search) {
-        sender.sendMessage("");
+        sender.sendMessage();
         if (search != null && search.equals("")) {
             // 文件夹
             MessageUtil.getInst().componentBuilder()
@@ -376,10 +372,6 @@ public class ItemManager implements Listener {
                     SXItem.getInst().getLogger().warning("Material.yml No Material - " + entry.getKey());
                     continue;
                 }
-            }
-            if (methodUse && material.isLegacy()) {
-                SXItem.getInst().getLogger().warning("Material Legacy - " + entry.getKey() + " > " + material);
-                continue;
             }
             for (String key : entry.getValue().toString().split(",")) {
                 if (!key.isEmpty()) {
