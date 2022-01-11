@@ -45,10 +45,8 @@ public abstract class NbtUtil implements NMS {
         }
     }
 
-    /**
-     * TODO 场景需求:
-     * 1.获取NMSItem、以及获取ItemNBT，减少重复asCopy
-     */
+    //TODO 场景需求:
+    //1.获取NMSItem、以及获取ItemNBT，减少重复asCopy
 
     /**
      * 获取物品的TagCompound
