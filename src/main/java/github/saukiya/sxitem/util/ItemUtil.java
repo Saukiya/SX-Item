@@ -64,21 +64,29 @@ public abstract class ItemUtil implements NMS {
     public abstract List<AttributeData> getAttributes(ItemStack item);
 
     /**
-     * 设置Attribute属性
+     * 设置Attribute属性, 会覆盖原有的数据
      *
      * @param item ItemStack
      * @param list List[AttributeData]
      */
-    public abstract void addAttributes(ItemStack item, List<AttributeData> list);
+    public abstract void setAttributes(ItemStack item, @Nullable List<AttributeData> list);
 
     /**
-     * 设置Attribute属性
+     * 添加Attribute属性
+     *
+     * @param item ItemStack
+     * @param list List[AttributeData]
+     */
+    public abstract void addAttributes(ItemStack item, @Nonnull List<AttributeData> list);
+
+    /**
+     * 添加Attribute属性
      * 成员参数不使用原有的Attribute、AttributeModifier，
      *
      * @param item ItemStack
      * @param data AttributeData
      */
-    public abstract void addAttribute(ItemStack item, AttributeData data);
+    public abstract void addAttribute(ItemStack item, @Nonnull AttributeData data);
 
     @NoArgsConstructor
     @Accessors(chain = true)

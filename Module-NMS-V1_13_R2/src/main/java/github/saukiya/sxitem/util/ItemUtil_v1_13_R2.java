@@ -1,5 +1,7 @@
 package github.saukiya.sxitem.util;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -70,28 +72,52 @@ public class ItemUtil_v1_13_R2 extends ItemUtil {
     }
 
     @Override
+    public void setAttributes(ItemStack item, List<AttributeData> list) {
+        ItemMeta meta = item.getItemMeta();
+        Multimap<Attribute, AttributeModifier> map = null;
+        if (list != null && !list.isEmpty()) {
+            map = HashMultimap.create();
+            Attribute attribute;
+            for (AttributeData data : list) {
+                if ((attribute = getAttribute(data)) == null) continue;
+                map.put(attribute, getAttributeModifier(data));
+            }
+        }
+        meta.setAttributeModifiers(map);
+    }
+
+    @Override
     public void addAttributes(ItemStack item, List<AttributeData> list) {
         ItemMeta meta = item.getItemMeta();
-        list.forEach(data -> addAttribute(meta, data));
+        Attribute attribute;
+        for (AttributeData data : list) {
+            if ((attribute = getAttribute(data)) == null) continue;
+            meta.addAttributeModifier(attribute, getAttributeModifier(data));
+        }
         item.setItemMeta(meta);
     }
 
     @Override
     public void addAttribute(ItemStack item, AttributeData data) {
         ItemMeta meta = item.getItemMeta();
-        addAttribute(meta, data);
+        Attribute attribute = getAttribute(data);
+        if (attribute == null) return;
+        meta.addAttributeModifier(attribute, getAttributeModifier(data));
         item.setItemMeta(meta);
     }
 
-    public void addAttribute(ItemMeta meta, AttributeData data) {
-        Arrays.stream(Attribute.values()).filter(attr -> attr.name().equals(data.getAttrName())).findFirst().ifPresent(
-                attribute -> meta.addAttributeModifier(attribute, new AttributeModifier(
-                        data.getUniqueId(),
-                        data.getName(),
-                        data.getAmount(),
-                        AttributeModifier.Operation.values()[data.getOperation()],
-                        Arrays.stream(EquipmentSlot.values()).filter(s -> s.name().equals(data.getSlot())).findFirst().orElse(null)
-                ))
+
+    public Attribute getAttribute(AttributeData data) {
+        return Arrays.stream(Attribute.values()).filter(attr -> attr.name().equals(data.getAttrName())).findFirst().orElse(null);
+    }
+
+    public AttributeModifier getAttributeModifier(AttributeData data) {
+        return new AttributeModifier(
+                data.getUniqueId(),
+                data.getName(),
+                data.getAmount(),
+                AttributeModifier.Operation.values()[data.getOperation()],
+                Arrays.stream(EquipmentSlot.values()).filter(s -> s.name().equals(data.getSlot())).findFirst().orElse(null)
         );
     }
 }
