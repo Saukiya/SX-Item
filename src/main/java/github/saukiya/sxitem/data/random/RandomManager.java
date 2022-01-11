@@ -29,14 +29,13 @@ public class RandomManager {
 
     public RandomManager() {
         loadData();
-        randoms.put('b', new BooleanRandom());
-        randoms.put('c', new CalculatorRandom());
-        randoms.put('l', new LockStringRandom());
-        randoms.put('s', new StringRandom());
-        randoms.put('t', new TimeRandom());
-        randoms.put('d', new DoubleRandom());
-        randoms.put('i', new IntRandom());
-        randoms.put('r', randoms.get('i'));
+        new BooleanRandom().register('b');
+        new CalculatorRandom().register('c');
+        new LockStringRandom().register('l');
+        new StringRandom().register('s');
+        new TimeRandom().register('t');
+        new DoubleRandom().register('d');
+        new IntRandom().register('i', 'r');
     }
 
     /**

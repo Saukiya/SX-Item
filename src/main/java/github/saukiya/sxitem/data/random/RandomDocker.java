@@ -115,7 +115,7 @@ public class RandomDocker extends StrLookup {
     @Override
     public String lookup(String s) {
         if (REGEX.matcher(s).matches()) {
-            IRandom random = SXItem.getRandomManager().randoms.get(s.charAt(0));
+            IRandom random = SXItem.getRandomManager().getRandoms().get(s.charAt(0));
             if (random != null) {
                 String str = random.replace(s.substring(2), this);
                 return str != null ? str : "%DeleteLore%";
