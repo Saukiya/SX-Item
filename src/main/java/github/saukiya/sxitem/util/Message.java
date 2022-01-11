@@ -2,14 +2,12 @@ package github.saukiya.sxitem.util;
 
 import github.saukiya.sxitem.SXItem;
 import lombok.Getter;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.IntStream;
 
 /**
  * NMS化
@@ -18,8 +16,6 @@ import java.util.stream.IntStream;
  */
 
 public enum Message {
-    ELEVATOR__UP,
-    ELEVATOR__DOWN,
 
     ADMIN__NO_ITEM,
     ADMIN__GIVE_ITEM,
@@ -31,20 +27,11 @@ public enum Message {
     ADMIN__NO_CMD,
     ADMIN__NO_FORMAT,
     ADMIN__NO_ONLINE,
-    ADMIN__NO_CONSOLE,
     ADMIN__PLUGIN_RELOAD,
 
     COMMAND__GIVE,
     COMMAND__SAVE,
     COMMAND__NBT,
-    COMMAND__KIT,
-    COMMAND__CHAT,
-    COMMAND__CMD,
-    COMMAND__BLOCK,
-    COMMAND__CHEST,
-    COMMAND__ENTITY,
-    COMMAND__ATTACK,
-    COMMAND__PLUGINS,
     COMMAND__RELOAD;
 
     @Getter
@@ -75,7 +62,7 @@ public enum Message {
      * @return String
      */
     public static String getMsg(Message loc, Object... args) {
-        return ChatColor.translateAlternateColorCodes('&', MessageFormat.format(messages.getString(loc.toString(), "Null Message: " + loc), args));
+        return MessageFormat.format(messages.getString(loc.toString(), "Null Message: " + loc), args).replace("&", "§");
     }
 
     /**
@@ -88,7 +75,7 @@ public enum Message {
     public static List<String> getStringList(Message loc, Object... args) {
         List<String> list = messages.getStringList(loc.toString());
         if (list.size() == 0) return Collections.singletonList("Null Message: " + loc);
-        IntStream.range(0, list.size()).forEach(i -> list.set(i, MessageFormat.format(list.get(i), args).replace("&", "§")));
+        list.replaceAll(str -> MessageFormat.format(str, args).replace("&", "§"));
         return list;
     }
 }
