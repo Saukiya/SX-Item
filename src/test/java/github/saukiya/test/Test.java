@@ -6,12 +6,12 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.RandomDocker;
+import github.saukiya.sxitem.data.random.randoms.CalculatorRandom;
 import github.saukiya.sxitem.nbt.TagBase;
 import github.saukiya.sxitem.nbt.TagCompound;
 import github.saukiya.sxitem.nbt.TagType;
 import github.saukiya.sxitem.util.NMS;
 import github.saukiya.sxitem.util.NbtUtil;
-import github.saukiya.sxitem.util.NbtUtil_v1_18_R1;
 import github.saukiya.sxitem.util.Tuple;
 import lombok.SneakyThrows;
 import net.minecraft.nbt.*;
@@ -60,13 +60,7 @@ public class Test {
 //        yamlToTagTest();
 //        gsonTest();
 //        conversionNBT();
-        Map<String, String> map = new HashMap<>();
-        for (int i = 5; i > 0; i--) {
-            for (int i1 = 0; i1 < 2; i1++) {
-                map.put(i + "-" + i1, "");
-            }
-        }
-        System.out.println(1 - 0.2);
+        System.out.println(new CalculatorRandom().replace("(2+(3*4)) / 7", null));
     }
 
     public static String c(String... versions) {
@@ -161,7 +155,7 @@ public class Test {
         qwqTagCompound.set("string", NBTTagString.a("测试文本"));
         testTagCompound.set("ints", new NBTTagIntArray(new int[]{5, 23, 7, 873, 4, 46, 3, 7, 34}));
 
-        NbtUtil_v1_18_R1 nbtUtil = new NbtUtil_v1_18_R1();
+        NbtUtil nbtUtil = NbtUtil.getInst();
         TagCompound compound = nbtUtil.asTagCompoundCopy(nbtTagCompound);
         System.out.println(nbtTagCompound);
         System.out.println("getCompound: \t" + compound.get("sub")); //正确
