@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * 物品更新事件
@@ -23,8 +24,8 @@ public class SXItemUpdateEvent extends SXItemSpawnEvent implements Cancellable {
 
     private boolean cancelled = false;
 
-    public SXItemUpdateEvent(Player player, IGenerator ig, ItemStack item, ItemStack oldItem) {
-        super(player, ig, item);
+    public SXItemUpdateEvent(JavaPlugin plugin, Player player, IGenerator ig, ItemStack item, ItemStack oldItem) {
+        super(plugin, player, ig, item);
         this.oldItem = oldItem;
     }
 
