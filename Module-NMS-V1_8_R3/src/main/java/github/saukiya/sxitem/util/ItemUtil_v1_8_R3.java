@@ -8,6 +8,8 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ItemUtil_v1_8_R3 extends ItemUtil {
@@ -35,38 +37,51 @@ public class ItemUtil_v1_8_R3 extends ItemUtil {
 
     @Override
     public List<AttributeData> getAttributes(ItemStack item) {
-        NBTTagWrapper nbtTagWrapper = NbtUtil.getInst().getItemTagWrapper(item);
-        List<Map<String, Object>> modifiers = (List<Map<String, Object>>) nbtTagWrapper.getList("AttributeModifiers");
-        if (modifiers == null) return null;
-        return modifiers.stream().map(map -> new AttributeData(
-                (String) map.get("AttributeName"),
-                new UUID((long) map.get("UUIDMost"), (long) map.get("UUIDLeast")),
-                (String) map.get("Name"),
-                (double) map.get("Amount"),
-                (int) map.get("Operation"),
-                (String) map.get("Slot")
-        )).collect(Collectors.toList());
+        return ((List<Map<String, Object>>) NbtUtil.getInst().getItemTagWrapper(item).getList("AttributeModifiers", new ArrayList<>())).stream().map(
+                map -> new AttributeData(
+                        (String) map.get("AttributeName"),
+                        new UUID((long) map.get("UUIDMost"), (long) map.get("UUIDLeast")),
+                        (String) map.get("Name"),
+                        (double) map.get("Amount"),
+                        (int) map.get("Operation"),
+                        (String) map.get("Slot")
+                )
+        ).collect(Collectors.toList());
+    }
+
+    @Override
+    public void setAttributes(ItemStack item, List<AttributeData> list) {
+        editAttribute(item, wrapper -> new ArrayList<>(), modifiers -> {
+            if (list != null) {
+                list.forEach(data -> addAttribute(modifiers, data));
+            }
+        });
     }
 
     @Override
     public void addAttributes(ItemStack item, List<AttributeData> list) {
-        NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item);
-        List<Object> modifiers = (List<Object>) wrapper.getList("AttributeModifiers", new ArrayList<>());
-        list.forEach(data -> addAttribute(modifiers, data));
-        wrapper.set("AttributeModifiers", modifiers);
-        wrapper.save();
+        editAttribute(item, modifiers -> list.forEach(data -> addAttribute(modifiers, data)));
     }
 
     @Override
     public void addAttribute(ItemStack item, AttributeData data) {
+        editAttribute(item, modifiers -> addAttribute(modifiers, data));
+    }
+
+    public void editAttribute(ItemStack item, Consumer<List<Object>> computeListFunction) {
+        editAttribute(item, wrapper -> (List<Object>) wrapper.getList("AttributeModifiers", new ArrayList<>()), computeListFunction);
+    }
+
+    public void editAttribute(ItemStack item, Function<NBTTagWrapper, List<Object>> toListFunction, Consumer<List<Object>> computeListFunction) {
         NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item);
-        List<Object> list = (List<Object>) wrapper.getList("AttributeModifiers", new ArrayList<>());
-        addAttribute(list, data);
-        wrapper.set("AttributeModifiers", list);
+        List<Object> modifiers = toListFunction.apply(wrapper);
+        computeListFunction.accept(modifiers);
+        wrapper.set("AttributeModifiers", modifiers == null || modifiers.isEmpty() ? null : modifiers);
         wrapper.save();
     }
 
     public void addAttribute(List<Object> list, AttributeData data) {
+        if (data.getAttrNameNBT() == null) return;
         Map<String, Object> map = new HashMap<>();
         map.put("AttributeName", data.getAttrNameNBT());
         map.put("UUIDMost", data.getUniqueId().getMostSignificantBits());
