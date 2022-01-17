@@ -5,6 +5,7 @@ import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.data.item.sub.GeneratorDefault;
 import github.saukiya.sxitem.data.item.sub.GeneratorImport;
 import github.saukiya.sxitem.data.random.RandomManager;
+import github.saukiya.sxitem.data.random.randoms.*;
 import github.saukiya.sxitem.util.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -47,8 +48,15 @@ public class SXItem extends JavaPlugin {
         mainCommand = new MainCommand();
 
         ItemManager.loadMaterialData();
-        ItemManager.registerGenerator(new GeneratorDefault());
-        ItemManager.registerGenerator(new GeneratorImport());
+        ItemManager.register(new GeneratorDefault());
+        ItemManager.register(new GeneratorImport());
+        RandomManager.register(new BooleanRandom(), 'b');
+        RandomManager.register(new CalculatorRandom(), 'c');
+        RandomManager.register(new LockStringRandom(), 'l');
+        RandomManager.register(new StringRandom(), 's');
+        RandomManager.register(new TimeRandom(), 't');
+        RandomManager.register(new DoubleRandom(), 'd');
+        RandomManager.register(new IntRandom(), 'i', 'r');
     }
 
     @Override
