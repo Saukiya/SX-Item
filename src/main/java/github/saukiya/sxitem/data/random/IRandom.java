@@ -1,7 +1,5 @@
 package github.saukiya.sxitem.data.random;
 
-import github.saukiya.sxitem.SXItem;
-
 public interface IRandom {
     /**
      * 替换字符串内容
@@ -19,7 +17,7 @@ public interface IRandom {
      */
     default void register(char... types) {
         for (char type : types) {
-            SXItem.getRandomManager().getRandoms().put(type, this);
+            RandomManager.RANDOMS.put(type, this);
         }
     }
 }

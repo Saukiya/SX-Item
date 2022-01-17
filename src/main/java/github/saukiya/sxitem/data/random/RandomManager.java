@@ -3,7 +3,6 @@ package github.saukiya.sxitem.data.random;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.nodes.MultipleNode;
 import github.saukiya.sxitem.data.random.nodes.SingletonNode;
-import github.saukiya.sxitem.data.random.randoms.*;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.configuration.ConfigurationSection;
@@ -18,24 +17,15 @@ import java.util.*;
  */
 public class RandomManager {
 
+    protected static final Map<Character, IRandom> RANDOMS = new HashMap<>();
+
     private final File file = new File(SXItem.getInst().getDataFolder(), "RandomString");
 
     @Getter
     Map<String, INode> map = new HashMap();
 
-    //随机处理
-    @Getter
-    Map<Character, IRandom> randoms = new HashMap<>();
-
     public RandomManager() {
         loadData();
-        new BooleanRandom().register('b');
-        new CalculatorRandom().register('c');
-        new LockStringRandom().register('l');
-        new StringRandom().register('s');
-        new TimeRandom().register('t');
-        new DoubleRandom().register('d');
-        new IntRandom().register('i', 'r');
     }
 
     /**
@@ -123,6 +113,28 @@ public class RandomManager {
         INode node = map.get(key);
         if (node != null) return node.get();
         return null;
+    }
+
+    /**
+     * 获取随机类型
+     *
+     * @param type 类型
+     * @return 随机处理
+     */
+    public static IRandom getRandom(char type) {
+        return RANDOMS.get(type);
+    }
+
+    /**
+     * 注册新的随机类型
+     *
+     * @param random 随机处理
+     * @param types  类型
+     */
+    public static void register(IRandom random, char... types) {
+        for (char type : types) {
+            RANDOMS.put(type, random);
+        }
     }
 
     /**
