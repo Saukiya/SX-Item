@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,7 +59,7 @@ public class SaveCommand extends SubCommand {
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
         if (args.length == 3) {
-            return ItemManager.getGenerators().stream().map(IGenerator::getType).collect(Collectors.toList());
+            return new ArrayList<>(ItemManager.getGenerators().keySet());
         }
         return null;
     }
