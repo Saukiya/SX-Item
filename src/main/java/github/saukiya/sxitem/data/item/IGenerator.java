@@ -11,13 +11,6 @@ import org.bukkit.inventory.ItemStack;
 public interface IGenerator {
 
     /**
-     * 返回生成器类型
-     *
-     * @return Type
-     */
-    String getType();
-
-    /**
      * 实例化物品生成器
      *
      * @param pathName 路径
@@ -26,6 +19,13 @@ public interface IGenerator {
      * @return ItemGenerator
      */
     IGenerator newGenerator(String pathName, String key, ConfigurationSection config);
+
+    /**
+     * 返回生成器类型
+     *
+     * @return Type
+     */
+    String getType();
 
     /**
      * 返回路径
