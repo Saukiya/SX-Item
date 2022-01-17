@@ -3,7 +3,6 @@ package github.saukiya.sxitem.command.sub;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.command.SenderType;
 import github.saukiya.sxitem.command.SubCommand;
-import github.saukiya.sxitem.data.item.IGenerator;
 import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.util.Message;
 import github.saukiya.sxitem.util.MessageUtil;
@@ -15,7 +14,6 @@ import org.bukkit.inventory.ItemStack;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Saukiya
