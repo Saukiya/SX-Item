@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
  */
 public class ItemManager implements Listener {
     @Getter
-    private static final List<IGenerator> generators = new ArrayList<>();
+    private static final Map<String, IGenerator> generators = new HashMap<>();
     @Getter
     private static final ItemStack emptyItem = new ItemStack(Material.AIR, 0);
     @Getter
@@ -136,7 +136,7 @@ public class ItemManager implements Listener {
                     }
                     String pathName = getPathName(files);
                     String type = yaml.getString(key + ".Type", "Default");
-                    IGenerator generator = getGenerator(type);
+                    IGenerator generator = getGenerators().get(type);
                     if (generator != null) {
                         itemMap.put(key, generator.newGenerator(pathName, key, yaml.getConfigurationSection(key)));
                     } else {
@@ -155,6 +155,17 @@ public class ItemManager implements Listener {
      */
     private String getPathName(File file) {
         return file.toString().replace("plugins" + File.separator + "SX-Item" + File.separator, "").replace(File.separator, ">");
+    }
+
+    public IGenerator getGenerator(String key) {
+        return itemMap.get(key);
+    }
+
+    public IGenerator getGenerator(ItemStack item) {
+        if (item != null && item.hasItemMeta()) {
+            return itemMap.get(NbtUtil.getInst().getItemTagWrapper(item).getString(plugin.getName() + ".ItemKey"));
+        }
+        return null;
     }
 
     /**
@@ -254,7 +265,7 @@ public class ItemManager implements Listener {
      * @throws IOException IOException
      */
     public boolean saveItem(String key, ItemStack item, String type) throws IOException {
-        IGenerator generator = getGenerator(type);
+        IGenerator generator = generators.get(type);
         if (generator == null) return false;
         ConfigurationSection config = new MemoryConfiguration();
         config.set("Type", generator.getType());
@@ -408,15 +419,12 @@ public class ItemManager implements Listener {
      * @param generator ItemGenerator
      */
     public static void registerGenerator(IGenerator generator) {
-        if (generator.getType() == null || getGenerator(generator.getType()) != null) {
+        if (generator.getType() == null || generators.containsKey(generator.getType())) {
             SXItem.getInst().getLogger().warning("ItemGenerator >>  [" + generator.getClass().getSimpleName() + "] Type Error!");
             return;
         }
-        generators.add(generator);
+        generators.put(generator.getType(), generator);
         SXItem.getInst().getLogger().info("ItemGenerator >> Register [" + generator.getClass().getSimpleName() + "] To Type " + generator.getType() + " !");
     }
 
-    public static IGenerator getGenerator(String type) {
-        return generators.stream().filter(g -> g.getType().equals(type)).findFirst().orElse(null);
-    }
 }
