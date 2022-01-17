@@ -6,7 +6,6 @@ import github.saukiya.sxitem.util.MessageUtil;
 import org.bukkit.command.CommandSender;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,8 +13,6 @@ import java.util.List;
  * @author Saukiya
  */
 public abstract class SubCommand {
-
-    static final List<SubCommand> commands = new ArrayList<>();
 
     String cmd, arg = "";
 
@@ -25,13 +22,6 @@ public abstract class SubCommand {
 
     public SubCommand(String cmd) {
         this.cmd = cmd;
-    }
-
-    /**
-     * 注册指令方法
-     */
-    public final void registerCommand() {
-        commands.add(this);
     }
 
     private String permission() {

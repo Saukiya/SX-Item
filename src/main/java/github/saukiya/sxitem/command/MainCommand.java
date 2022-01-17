@@ -15,6 +15,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,26 +25,26 @@ import java.util.stream.Collectors;
 
 public class MainCommand implements CommandExecutor, TabCompleter {
 
+    private static final List<SubCommand> COMMANDS = new ArrayList<>();
+
     public MainCommand() {
-        new GiveCommand().registerCommand();
-        new SaveCommand().registerCommand();
-        new NBTCommand().registerCommand();
-        new ReloadCommand().registerCommand();
+        register(new GiveCommand());
+        register(new SaveCommand());
+        register(new NBTCommand());
+        register(new ReloadCommand());
     }
 
     public void setup(String command) {
         SXItem.getInst().getCommand(command).setExecutor(this);
         SXItem.getInst().getCommand(command).setTabCompleter(this);
-        SubCommand.commands.stream().filter(subCommand -> subCommand instanceof Listener).forEach(subCommand -> {
-            Bukkit.getPluginManager().registerEvents((Listener) subCommand, SXItem.getInst());
-            SXItem.getInst().getLogger().info("RegListener " + subCommand.getClass().getSimpleName());
-        });
-        SubCommand.commands.forEach(SubCommand::onEnable);
-        SXItem.getInst().getLogger().info("Load " + SubCommand.commands.size() + " Commands");
+        COMMANDS.stream().filter(subCommand -> subCommand instanceof Listener).forEach(subCommand -> Bukkit.getPluginManager().registerEvents((Listener) subCommand, SXItem.getInst()));
+
+        COMMANDS.forEach(SubCommand::onEnable);
+        SXItem.getInst().getLogger().info("Load " + COMMANDS.size() + " Commands");
     }
 
     public void reload() {
-        SubCommand.commands.forEach(SubCommand::onReload);
+        COMMANDS.forEach(SubCommand::onReload);
     }
 
     private SenderType getType(CommandSender sender) {
@@ -56,7 +57,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         if (args.length == 0) {
             sender.sendMessage("§0-§8 --§7 ---§c ----§4 -----§b " + SXItem.getInst().getName() + "§4 -----§c ----§7 ---§8 --§0 - §0Author Saukiya");
             String color = "§7";
-            for (SubCommand sub : SubCommand.commands) {
+            for (SubCommand sub : COMMANDS) {
                 if (sub.isUse(sender, type) && !sub.hide) {
                     color = color.length() > 0 ? "" : "§7";
                     sub.sendIntroduction(sender, color, label);
@@ -64,7 +65,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             }
             return true;
         }
-        for (SubCommand sub : SubCommand.commands) {
+        for (SubCommand sub : COMMANDS) {
             if (sub.cmd.equalsIgnoreCase(args[0])) {
                 if (!sub.isUse(sender, type)) {
                     MessageUtil.send(sender, Message.getMsg(Message.ADMIN__NO_PERMISSION_CMD));
@@ -81,6 +82,10 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
         SenderType type = getType(sender);
-        return args.length == 1 ? SubCommand.commands.stream().filter(sub -> sub.isUse(sender, type) && !sub.hide && sub.cmd.contains(args[0])).map(sub -> sub.cmd).collect(Collectors.toList()) : SubCommand.commands.stream().filter(sub -> sub.cmd.equalsIgnoreCase(args[0])).findFirst().filter(sub -> sub.isUse(sender, type)).map(sub -> sub.onTabComplete(sender, args)).orElse(null);
+        return args.length == 1 ? COMMANDS.stream().filter(sub -> sub.isUse(sender, type) && !sub.hide && sub.cmd.contains(args[0])).map(sub -> sub.cmd).collect(Collectors.toList()) : COMMANDS.stream().filter(sub -> sub.cmd.equalsIgnoreCase(args[0])).findFirst().filter(sub -> sub.isUse(sender, type)).map(sub -> sub.onTabComplete(sender, args)).orElse(null);
+    }
+
+    public static void register(SubCommand command) {
+        COMMANDS.add(command);
     }
 }
