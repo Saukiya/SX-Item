@@ -157,10 +157,22 @@ public class ItemManager implements Listener {
         return file.toString().replace("plugins" + File.separator + "SX-Item" + File.separator, "").replace(File.separator, ">");
     }
 
+    /**
+     * 通过key获取该物品的生成器
+     *
+     * @param key
+     * @return
+     */
     public IGenerator getGenerator(String key) {
         return itemMap.get(key);
     }
 
+    /**
+     * 通过识别物品key获取该物品的生成器(需要支持接口IUpdate)
+     *
+     * @param item
+     * @return
+     */
     public IGenerator getGenerator(ItemStack item) {
         if (item != null && item.hasItemMeta()) {
             return itemMap.get(NbtUtil.getInst().getItemTagWrapper(item).getString(plugin.getName() + ".ItemKey"));
@@ -418,7 +430,7 @@ public class ItemManager implements Listener {
      *
      * @param generator ItemGenerator
      */
-    public static void registerGenerator(IGenerator generator) {
+    public static void register(IGenerator generator) {
         if (generator.getType() == null || generators.containsKey(generator.getType())) {
             SXItem.getInst().getLogger().warning("ItemGenerator >>  [" + generator.getClass().getSimpleName() + "] Type Error!");
             return;
