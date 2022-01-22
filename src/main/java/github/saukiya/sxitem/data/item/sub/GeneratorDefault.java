@@ -123,7 +123,7 @@ public class GeneratorDefault implements IGenerator, IUpdate {
 
     @Override
     public ItemStack getItem(Player player) {
-        return getItem(player, new RandomDocker(randomMap));
+        return getItem(player, new RandomDocker(randomMap, player));
     }
 
     @Override
@@ -155,7 +155,7 @@ public class GeneratorDefault implements IGenerator, IUpdate {
 
     @Override
     public ItemStack update(ItemStack oldItem, NBTTagWrapper oldWrapper, Player player) {
-        RandomDocker randomDocker = new RandomDocker(randomMap);
+        RandomDocker randomDocker = new RandomDocker(randomMap, player);
         Map<String, String> map = (Map<String, String>) oldWrapper.getMap(SXItem.getInst().getName() + ".Lock");
         if (map != null) map.forEach((k, v) -> randomDocker.getLockMap().put(k, v));
         return getItem(player, randomDocker);

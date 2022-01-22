@@ -109,20 +109,9 @@ public class RandomManager {
     }
 
     public static String random(String key, Map<String, INode> map) {
-        if (map == null) return null;
-        INode node = map.get(key);
-        if (node != null) return node.get();
-        return null;
-    }
-
-    /**
-     * 获取随机类型
-     *
-     * @param type 类型
-     * @return 随机处理
-     */
-    public static IRandom getRandom(char type) {
-        return RANDOMS.get(type);
+        INode node;
+        if (map == null || (node = map.get(key)) == null) return null;
+        return node.get();
     }
 
     /**
@@ -138,12 +127,22 @@ public class RandomManager {
     }
 
     /**
+     * 获取随机类型
+     *
+     * @param type 类型
+     * @return 随机处理
+     */
+    protected static IRandom getRandom(char type) {
+        return RANDOMS.get(type);
+    }
+
+    /**
      * 加载数据-读取V值
      *
      * @param value yaml参数
      * @return String
      */
-    public static String loadDataString(Object value) {
+    protected static String loadDataString(Object value) {
         if (value == null) return null;
         if (value instanceof List) value = String.join("\n", (List) value);
         return value.toString().replace("/n", "\n").replace("\\n", "\n");
