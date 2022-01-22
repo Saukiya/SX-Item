@@ -5,13 +5,14 @@ import github.saukiya.sxitem.nbt.TagBase;
 import github.saukiya.sxitem.nbt.TagCompound;
 import github.saukiya.sxitem.nbt.TagList;
 import github.saukiya.sxitem.nbt.TagString;
+import github.saukiya.sxitem.util.PlaceholderUtil;
 import lombok.Getter;
 import org.apache.commons.lang.text.StrLookup;
 import org.apache.commons.lang.text.StrMatcher;
 import org.apache.commons.lang.text.StrSubstitutor;
+import org.bukkit.entity.Player;
 
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -19,17 +20,13 @@ import java.util.stream.Collectors;
  * 用于存放创建物品时调用的局部变量、lockMap。
  * <p>
  * 流程：
- * 1. new Random Docker
- * 2. docker.setRandom() -> get()
- * 3. docker.getLockMap()
+ * 1. new RandomDocker(map, player).replace("");
  */
 public class RandomDocker extends StrLookup {
 
 
     static final StrMatcher PRE_MATCHER = StrMatcher.charMatcher('<');
     static final StrMatcher SUF_MATCHER = StrMatcher.charMatcher('>');
-
-    static final Pattern REGEX = Pattern.compile("^.:.+?");
 
     @Getter
     static final RandomDocker inst = new RandomDocker();
@@ -39,21 +36,31 @@ public class RandomDocker extends StrLookup {
     }
 
     final StrSubstitutor ss = new StrSubstitutor(this, PRE_MATCHER, SUF_MATCHER, StrSubstitutor.DEFAULT_ESCAPE);
-
+    @Getter
+    final Map<String, INode> localMap;
+    @Getter
+    final Player player;
+    @Getter
+    final HashSet<String> lockLog = new HashSet<>();
     @Getter
     Map<String, String> lockMap = new HashMap<>();
-    @Getter
-    HashSet<String> lockLog = new HashSet<>();
-
-    Map<String, INode> localMap = null;
-
-    public RandomDocker(Map<String, INode> map) {
-        this();
-        localMap = map;
-    }
 
     public RandomDocker() {
-        ss.setEnableSubstitutionInVariables(true);
+        this(null, null);
+    }
+
+    public RandomDocker(Map<String, INode> localMap) {
+        this(localMap, null);
+    }
+
+    public RandomDocker(Player player) {
+        this(null, player);
+    }
+
+    public RandomDocker(Map<String, INode> localMap, Player player) {
+        this.localMap = localMap;
+        this.player = player;
+        this.ss.setEnableSubstitutionInVariables(true);
     }
 
     /**
@@ -73,7 +80,7 @@ public class RandomDocker extends StrLookup {
      * @return RandomText
      */
     public List<String> replace(List<String> list) {
-        return list.stream().flatMap(str -> Arrays.stream(ss.replace(str).split("\n"))).filter(s -> !s.contains("%DeleteLore%")).collect(Collectors.toList());
+        return list.stream().flatMap(str -> Arrays.stream(ss.replace(str).split("\n"))).filter(s -> !s.contains("%DeleteLore")).collect(Collectors.toList());
     }
 
     /**
@@ -114,11 +121,15 @@ public class RandomDocker extends StrLookup {
 
     @Override
     public String lookup(String s) {
-        if (REGEX.matcher(s).matches()) {
+        if (s.length() > 2 && s.charAt(1) == ':') {
             IRandom random = RandomManager.getRandom(s.charAt(0));
             if (random != null) {
-                String str = random.replace(s.substring(2), this);
-                return str != null ? str : "%DeleteLore%";
+                String str = s.substring(2);
+                if (str.indexOf('%') != s.lastIndexOf('%')) {
+                    str = PlaceholderUtil.setPlaceholders(player, str);
+                }
+                str = random.replace(str, this);
+                return str != null ? str : "%DeleteLore";
             }
             SXItem.getInst().getLogger().warning("No Random Type: " + s.charAt(0));
         }
