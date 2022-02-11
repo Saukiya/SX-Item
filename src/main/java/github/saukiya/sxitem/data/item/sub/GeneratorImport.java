@@ -9,8 +9,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import javax.annotation.Nullable;
-
 /**
  * @author Saukiya
  */
@@ -58,13 +56,13 @@ public class GeneratorImport implements IGenerator {
     }
 
     @Override
-    public BaseComponent getNameComponent() {
-        return MessageUtil.getInst().componentBuilder().add(item).getHandle();
+    public String getName() {
+        return item.getItemMeta().hasDisplayName() ? item.getItemMeta().getDisplayName() : item.getType().name();
     }
 
     @Override
-    public String getName() {
-        return item.getItemMeta().hasDisplayName() ? item.getItemMeta().getDisplayName() : item.getType().name();
+    public BaseComponent getNameComponent() {
+        return MessageUtil.getInst().componentBuilder().add(item).getHandle();
     }
 
     @Override
@@ -78,7 +76,7 @@ public class GeneratorImport implements IGenerator {
     }
 
     @Override
-    public ItemStack getItem(@Nullable Player player) {
+    public ItemStack getItem(Player player) {
         return item.clone();
     }
 

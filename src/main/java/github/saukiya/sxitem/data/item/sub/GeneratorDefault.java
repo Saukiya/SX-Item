@@ -6,6 +6,7 @@ import github.saukiya.sxitem.data.item.IUpdate;
 import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.data.random.INode;
 import github.saukiya.sxitem.data.random.RandomDocker;
+import github.saukiya.sxitem.support.PlaceholderSupport;
 import github.saukiya.sxitem.nbt.*;
 import github.saukiya.sxitem.util.*;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
-import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -92,6 +92,12 @@ public class GeneratorDefault implements IGenerator, IUpdate {
     }
 
     @Override
+    public String getName() {
+        if (displayName != null) return RandomDocker.getInst().replace(displayName).replace("&", "§");
+        return "§7" + String.join("§8|§7", ids);
+    }
+
+    @Override
     public BaseComponent getNameComponent() {
         if (displayName != null)
             return new TextComponent(RandomDocker.getInst().replace(displayName).replace("&", "§"));
@@ -103,12 +109,6 @@ public class GeneratorDefault implements IGenerator, IUpdate {
             else cb.add(id);
         }
         return cb.getHandle();
-    }
-
-    @Override
-    public String getName() {
-        if (displayName != null) return RandomDocker.getInst().replace(displayName).replace("&", "§");
-        return "§7" + String.join("§8|§7", ids);
     }
 
     @Override
@@ -171,7 +171,7 @@ public class GeneratorDefault implements IGenerator, IUpdate {
         return update;
     }
 
-    public ItemStack getItem(@Nonnull Player player, RandomDocker docker) {
+    public ItemStack getItem(Player player, RandomDocker docker) {
         String[] materAndDur = docker.replace(ids.get(SXItem.getRandom().nextInt(ids.size()))).split(":");
         Material material = ItemManager.getMaterial(materAndDur[0]);
         if (material == null) {
@@ -191,12 +191,12 @@ public class GeneratorDefault implements IGenerator, IUpdate {
         }
         ItemMeta meta = item.getItemMeta();
 
-        String itemName = docker.replace(PlaceholderUtil.setPlaceholders(player, this.displayName));
+        String itemName = docker.replace(PlaceholderSupport.setPlaceholders(player, this.displayName));
         if (itemName != null) {
             meta.setDisplayName(itemName.replace("&", "§"));
         }
 
-        List<String> loreList = docker.replace(PlaceholderUtil.setPlaceholders(player, config.getStringList("Lore")));
+        List<String> loreList = docker.replace(PlaceholderSupport.setPlaceholders(player, config.getStringList("Lore")));
         loreList.replaceAll(lore -> lore.replace("&", "§"));
         meta.setLore(loreList);
 
@@ -221,7 +221,7 @@ public class GeneratorDefault implements IGenerator, IUpdate {
 
         ItemUtil.getInst().setUnbreakable(meta, config.getBoolean("Unbreakable"));
 
-        ItemUtil.getInst().setSkull(meta, docker.replace(PlaceholderUtil.setPlaceholders(player, config.getString("SkullName"))));
+        ItemUtil.getInst().setSkull(meta, docker.replace(PlaceholderSupport.setPlaceholders(player, config.getString("SkullName"))));
 
         if (meta instanceof LeatherArmorMeta && config.isString("Color")) {
             ((LeatherArmorMeta) meta).setColor(Color.fromRGB(Integer.parseInt(docker.replace(config.getString("Color")), 16)));
