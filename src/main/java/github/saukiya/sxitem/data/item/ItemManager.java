@@ -313,8 +313,7 @@ public class ItemManager implements Listener {
                 list.add("§b" + (list.size() + 1) + " - §a" + key + " §8[§7" + ig.getName() + "§8]§7 - §8[§cType:" + ig.getType() + "§8]");
             });
             map.forEach((key, value) -> MessageUtil.getInst().componentBuilder().runCommand("/sxitem give |" + key + "<")
-                    .add(" §8[§c" + key.replace(">", "§b>§c") + "§8]§7 - ")
-                    .add("Has §c" + value.size() + "§7 Item")
+                    .add(" §8[§c" + key.replace(">", "§b>§c") + "§8]§7 - Has §c" + value.size() + "§7 Item")
                     .show(String.join("\n", value))
                     .send(sender));
         } else {
