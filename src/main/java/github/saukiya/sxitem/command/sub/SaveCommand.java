@@ -28,29 +28,29 @@ public class SaveCommand extends SubCommand {
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         if (args.length < 2) {
-            MessageUtil.send(sender, Message.getMsg(Message.ADMIN__NO_FORMAT));
+            MessageUtil.send(sender, Message.ADMIN__NO_FORMAT.get());
             return;
         }
         String itemName = args[1];
         Player player = (Player) sender;
         ItemStack itemStack = player.getEquipment().getItemInHand();
         if (itemStack.getType() == Material.AIR) {
-            MessageUtil.send(player, Message.getMsg(Message.ADMIN__NO_ITEM));
+            MessageUtil.send(player, Message.ADMIN__NO_ITEM.get());
             return;
         }
         if (SXItem.getItemManager().hasItem(itemName)) {
-            MessageUtil.send(player, Message.getMsg(Message.ADMIN__HAS_ITEM, itemName));
+            MessageUtil.send(player, Message.ADMIN__HAS_ITEM.get(itemName));
             return;
         }
         try {
             if (SXItem.getItemManager().saveItem(itemName, itemStack, args.length > 2 ? args[2] : "Default")) {
-                MessageUtil.send(sender, Message.getMsg(Message.ADMIN__SAVE_ITEM, itemName));
+                MessageUtil.send(sender, Message.ADMIN__SAVE_ITEM.get(itemName));
             } else {
-                MessageUtil.send(sender, Message.getMsg(Message.ADMIN__SAVE_NO_TYPE, itemName));
+                MessageUtil.send(sender, Message.ADMIN__SAVE_NO_TYPE.get(itemName));
             }
         } catch (IOException e) {
             e.printStackTrace();
-            MessageUtil.send(sender, Message.getMsg(Message.ADMIN__SAVE_ITEM_ERROR, itemName));
+            MessageUtil.send(sender, Message.ADMIN__SAVE_ITEM_ERROR.get(itemName));
         }
     }
 

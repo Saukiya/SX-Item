@@ -28,6 +28,6 @@ public class ReloadCommand extends SubCommand {
         SXItem.getItemManager().loadItemData();
         SXItem.getMainCommand().reload();
         Bukkit.getOnlinePlayers().forEach(player -> SXItem.getItemManager().updateItem(player, player.getInventory().getContents()));
-        MessageUtil.send(sender, Message.getMsg(Message.ADMIN__PLUGIN_RELOAD));
+        MessageUtil.send(sender, Message.ADMIN__PLUGIN_RELOAD.get());
     }
 }

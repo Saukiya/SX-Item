@@ -43,7 +43,7 @@ public class GiveCommand extends SubCommand {
             player = (Player) sender;
         }
         if (player == null) {
-            MessageUtil.send(sender, Message.getMsg(Message.ADMIN__NO_ONLINE));
+            MessageUtil.send(sender, Message.ADMIN__NO_ONLINE.get());
             return;
         }
 
@@ -59,7 +59,7 @@ public class GiveCommand extends SubCommand {
                 item.setPickupDelay(40);
             }
         }
-        MessageUtil.send(sender, Message.getMsg(Message.ADMIN__GIVE_ITEM, player.getName(), String.valueOf(amount), args[1]));
+        MessageUtil.send(sender, Message.ADMIN__GIVE_ITEM.get(player.getName(), String.valueOf(amount), args[1]));
     }
 
     @Override
