@@ -18,6 +18,7 @@ public class Config {
     public static final String LOGGER_LEVEL = "LoggerLevel";
     public static final String DECIMAL_FORMAT = "DecimalFormat";
     public static final String TIME_FORMAT = "TimeFormat";
+    public static final String GIVE_OVERFLOW_DROP = "GiveOverflowDrop";
 
     @Getter
     private static YamlConfiguration config;
