@@ -68,14 +68,14 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         for (SubCommand sub : COMMANDS) {
             if (sub.cmd.equalsIgnoreCase(args[0])) {
                 if (!sub.isUse(sender, type)) {
-                    MessageUtil.send(sender, Message.getMsg(Message.ADMIN__NO_PERMISSION_CMD));
+                    MessageUtil.send(sender, Message.ADMIN__NO_PERMISSION_CMD.get());
                 } else {
                     sub.onCommand(sender, args);
                 }
                 return true;
             }
         }
-        MessageUtil.send(sender, Message.getMsg(Message.ADMIN__NO_CMD, args[0]));
+        MessageUtil.send(sender, Message.ADMIN__NO_CMD.get(args[0]));
         return true;
     }
 
