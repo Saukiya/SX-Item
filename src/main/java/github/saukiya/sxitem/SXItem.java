@@ -45,6 +45,7 @@ public class SXItem extends JavaPlugin {
     @Override
     public void onLoad() {
         inst = this;
+        LogUtil.setup();
         Config.loadConfig();
         Message.loadMessage();
         mainCommand = new MainCommand();
@@ -82,6 +83,7 @@ public class SXItem extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        LogUtil.close();
         Bukkit.getOnlinePlayers().forEach(HumanEntity::closeInventory);
     }
 }
