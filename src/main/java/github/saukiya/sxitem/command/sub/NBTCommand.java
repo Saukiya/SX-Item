@@ -6,6 +6,7 @@ import github.saukiya.sxitem.command.SubCommand;
 import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.nbt.*;
 import github.saukiya.sxitem.util.ComponentBuilder;
+import github.saukiya.sxitem.util.Message;
 import github.saukiya.sxitem.util.MessageUtil;
 import github.saukiya.sxitem.util.NbtUtil;
 import org.bukkit.Material;
@@ -37,16 +38,17 @@ public class NBTCommand extends SubCommand {
         ItemStack item = player.getEquipment().getItemInHand();
         if (item.getType() != Material.AIR) {
             if (args.length < 2 || args[1].equals("all")) {
+                TagCompound tagCompound = NbtUtil.getInst().getItemTag(item);
                 ComponentBuilder cb = MessageUtil.getInst().componentBuilder()
                         .add("§7[")
                         .add(item.getType().name())
-                        .show("点击复制")
+                        .show(Message.INFO__CLICK_COPY.get())
                         .suggestCommand(item.getType().name());
                 String keys = String.join("/", ItemManager.getMaterialString(item.getType()));
-                if (keys.length() != 0) cb.add("-").add(keys).show("点击复制").suggestCommand(keys);
-                cb.add("] §cItem-NBT:");
+                if (keys.length() != 0) cb.add("-").add(keys).show(Message.INFO__CLICK_COPY.get()).suggestCommand(keys);
+                cb.add("] ").add("§cItem-NBT").show(tagCompound.toString());
                 cb.send(sender);
-                sendNBT("§7", NbtUtil.getInst().getItemTag(item), sender);
+                sendNBT("", tagCompound, sender);
                 return;
             }
 
@@ -87,7 +89,7 @@ public class NBTCommand extends SubCommand {
             } else {
                 nbtShow = entry.getValue().getValue().toString();
             }
-            MessageUtil.getInst().componentBuilder().add("§7- ").add("§c[Type-" + typeShow.charAt(0) + "]").show(typeShow).add(" ").add(path).show(nbtShow).send(sender);
+            MessageUtil.getInst().componentBuilder().add("§7- ").add("§c[Type-" + typeShow.charAt(0) + "]").show(typeShow).add(" ").add("§7" + path).suggestCommand(path).show(nbtShow).send(sender);
         }
     }
 }

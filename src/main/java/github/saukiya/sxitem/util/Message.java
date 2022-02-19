@@ -29,6 +29,8 @@ public enum Message {
     ADMIN__NO_ONLINE,
     ADMIN__PLUGIN_RELOAD,
 
+    INFO__CLICK_COPY,
+
     COMMAND__GIVE,
     COMMAND__SAVE,
     COMMAND__NBT,
@@ -43,6 +45,29 @@ public enum Message {
     }
 
     /**
+     * 获取String
+     *
+     * @param args Object...
+     * @return String
+     */
+    public String get(Object... args) {
+        return MessageFormat.format(messages.getString(toString(), "Null Message: " + this), args).replace("&", "§");
+    }
+
+    /**
+     * 获取List
+     *
+     * @param args Object...
+     * @return List
+     */
+    public List<String> getList(Object... args) {
+        List<String> list = messages.getStringList(toString());
+        if (list.size() == 0) return Collections.singletonList("Null Message: " + this);
+        list.replaceAll(str -> MessageFormat.format(str, args).replace("&", "§"));
+        return list;
+    }
+
+    /**
      * 加载Message类
      */
     public static void loadMessage() {
@@ -52,30 +77,5 @@ public enum Message {
             SXItem.getInst().saveResource("Message.yml", true);
         }
         messages = YamlConfiguration.loadConfiguration(file);
-    }
-
-    /**
-     * 获取String
-     *
-     * @param loc  Message
-     * @param args Object...
-     * @return String
-     */
-    public static String getMsg(Message loc, Object... args) {
-        return MessageFormat.format(messages.getString(loc.toString(), "Null Message: " + loc), args).replace("&", "§");
-    }
-
-    /**
-     * 获取List
-     *
-     * @param loc  Message
-     * @param args Object...
-     * @return List
-     */
-    public static List<String> getStringList(Message loc, Object... args) {
-        List<String> list = messages.getStringList(loc.toString());
-        if (list.size() == 0) return Collections.singletonList("Null Message: " + loc);
-        list.replaceAll(str -> MessageFormat.format(str, args).replace("&", "§"));
-        return list;
     }
 }
