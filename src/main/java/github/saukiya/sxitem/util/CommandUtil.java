@@ -1,6 +1,7 @@
 package github.saukiya.sxitem.util;
 
 import github.saukiya.sxitem.SXItem;
+import github.saukiya.sxitem.helper.PlaceholderHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -26,7 +27,7 @@ public class CommandUtil {
     public static void run(Player player, List<String> commandList) {
         int delay = 0;
         Runnable runnable;
-        for (String cmd : PlaceholderUtil.setPlaceholders(player, commandList)) {
+        for (String cmd : PlaceholderHelper.setPlaceholders(player, commandList)) {
             String command = cmd.replace("%player%", player.getName()).replace('&', '§');
             Matcher matcher = PATTERN.matcher(command);
             if (matcher.find()) {
@@ -49,7 +50,7 @@ public class CommandUtil {
      * @param command Command
      */
     public static void run(Player player, String command) {
-        command = PlaceholderUtil.setPlaceholders(player, command).replace("%player%", player.getName()).replace('&', '§');
+        command = PlaceholderHelper.setPlaceholders(player, command).replace("%player%", player.getName()).replace('&', '§');
         Matcher matcher = PATTERN.matcher(command);
         if (matcher.find()) {
             run(player, matcher.group(1), matcher.group(2));

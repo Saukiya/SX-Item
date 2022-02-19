@@ -6,6 +6,8 @@ import github.saukiya.sxitem.data.item.sub.GeneratorDefault;
 import github.saukiya.sxitem.data.item.sub.GeneratorImport;
 import github.saukiya.sxitem.data.random.RandomManager;
 import github.saukiya.sxitem.data.random.randoms.*;
+import github.saukiya.sxitem.helper.MythicMobsHelper;
+import github.saukiya.sxitem.helper.PlaceholderHelper;
 import github.saukiya.sxitem.util.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -71,7 +73,8 @@ public class SXItem extends JavaPlugin {
         itemManager = new ItemManager();
 
         Config.setup();
-        PlaceholderUtil.setup();
+        PlaceholderHelper.setup();
+        MythicMobsHelper.setup();
         mainCommand.setup("sxitem");
         getLogger().info("Loading Time: " + (System.currentTimeMillis() - oldTimes) + " ms");
         getLogger().info("Author: Saukiya");
