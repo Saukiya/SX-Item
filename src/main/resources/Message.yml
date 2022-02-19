@@ -10,6 +10,8 @@ ADMIN:
   NO_FORMAT: '&8[&c错误&8] &c格式错误'
   NO_ONLINE: '&8[&c错误&8] &c玩家不在线或玩家不存在'
   PLUGIN_RELOAD: '&7[SX-Item] §c插件已重载'
+INFO:
+  CLICK_COPY: '点击复制'
 COMMAND:
   GIVE: 给予玩家物品
   SAVE: 保存当前的物品到配置文件

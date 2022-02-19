@@ -76,9 +76,7 @@ public class RandomManager {
         for (Map.Entry<String, Object> entry : config.getValues(false).entrySet()) {
             if (entry.getKey().startsWith("NoLoad")) continue;
             Object obj = entry.getValue();
-            if (obj instanceof String) {
-                inputMap.put(entry.getKey(), new SingletonNode(obj.toString()));
-            } else if (obj instanceof List) {
+            if (obj instanceof List) {
                 MultipleNode singletonNode = new MultipleNode();
                 if (((List) obj).get(0) instanceof Map) {
                     for (Map value : (List<Map>) obj) {
@@ -91,7 +89,7 @@ public class RandomManager {
                         if (tempMap.put(value, tempMap.getOrDefault(value, 0) + 1) != null)
                             convertParent = convert = true;
                     }
-                    tempMap.forEach((o, size) -> singletonNode.add(size.doubleValue(), loadDataString(o)));
+                    tempMap.forEach((v, size) -> singletonNode.add(size.doubleValue(), loadDataString(v)));
                     if (convert) {
                         List<Map<Integer, Object>> list = new ArrayList<>();
                         tempMap.forEach((o, size) -> list.add(Collections.singletonMap(size, o)));
@@ -99,6 +97,8 @@ public class RandomManager {
                     }
                 }
                 if (!singletonNode.isEmpty()) inputMap.put(entry.getKey(), singletonNode);
+            } else {
+                inputMap.put(entry.getKey(), new SingletonNode(loadDataString(obj)));
             }
         }
         return convertParent;
