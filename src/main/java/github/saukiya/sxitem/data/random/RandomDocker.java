@@ -5,7 +5,7 @@ import github.saukiya.sxitem.nbt.TagBase;
 import github.saukiya.sxitem.nbt.TagCompound;
 import github.saukiya.sxitem.nbt.TagList;
 import github.saukiya.sxitem.nbt.TagString;
-import github.saukiya.sxitem.util.PlaceholderUtil;
+import github.saukiya.sxitem.helper.PlaceholderHelper;
 import lombok.Getter;
 import org.apache.commons.lang.text.StrLookup;
 import org.apache.commons.lang.text.StrMatcher;
@@ -126,7 +126,7 @@ public class RandomDocker extends StrLookup {
             if (random != null) {
                 String str = s.substring(2);
                 if (str.indexOf('%') != s.lastIndexOf('%')) {
-                    str = PlaceholderUtil.setPlaceholders(player, str);
+                    str = PlaceholderHelper.setPlaceholders(player, str);
                 }
                 str = random.replace(str, this);
                 return str != null ? str : "%DeleteLore";

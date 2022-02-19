@@ -6,7 +6,7 @@ import github.saukiya.sxitem.data.item.IUpdate;
 import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.data.random.INode;
 import github.saukiya.sxitem.data.random.RandomDocker;
-import github.saukiya.sxitem.support.PlaceholderSupport;
+import github.saukiya.sxitem.helper.PlaceholderHelper;
 import github.saukiya.sxitem.nbt.*;
 import github.saukiya.sxitem.util.*;
 import lombok.NoArgsConstructor;
@@ -191,12 +191,12 @@ public class GeneratorDefault implements IGenerator, IUpdate {
         }
         ItemMeta meta = item.getItemMeta();
 
-        String itemName = docker.replace(PlaceholderSupport.setPlaceholders(player, this.displayName));
+        String itemName = docker.replace(PlaceholderHelper.setPlaceholders(player, this.displayName));
         if (itemName != null) {
             meta.setDisplayName(itemName.replace("&", "§"));
         }
 
-        List<String> loreList = docker.replace(PlaceholderSupport.setPlaceholders(player, config.getStringList("Lore")));
+        List<String> loreList = docker.replace(PlaceholderHelper.setPlaceholders(player, config.getStringList("Lore")));
         loreList.replaceAll(lore -> lore.replace("&", "§"));
         meta.setLore(loreList);
 
@@ -221,7 +221,7 @@ public class GeneratorDefault implements IGenerator, IUpdate {
 
         ItemUtil.getInst().setUnbreakable(meta, config.getBoolean("Unbreakable"));
 
-        ItemUtil.getInst().setSkull(meta, docker.replace(PlaceholderSupport.setPlaceholders(player, config.getString("SkullName"))));
+        ItemUtil.getInst().setSkull(meta, docker.replace(PlaceholderHelper.setPlaceholders(player, config.getString("SkullName"))));
 
         if (meta instanceof LeatherArmorMeta && config.isString("Color")) {
             ((LeatherArmorMeta) meta).setColor(Color.fromRGB(Integer.parseInt(docker.replace(config.getString("Color")), 16)));

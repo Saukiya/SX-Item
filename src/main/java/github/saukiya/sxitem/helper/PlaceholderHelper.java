@@ -1,4 +1,4 @@
-package github.saukiya.sxitem.util;
+package github.saukiya.sxitem.helper;
 
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.RandomDocker;
@@ -16,7 +16,7 @@ import java.util.List;
  * @Author 格洛
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class PlaceholderUtil {
+public class PlaceholderHelper {
 
     static boolean enabled;
 
