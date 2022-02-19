@@ -6,6 +6,7 @@ api-version: 1.13
 website: https://github.com/Saukiya/SX-Item
 softdepend:
   - PlaceholderAPI
+  - MythicMobs
 
 commands:
   sxitem:

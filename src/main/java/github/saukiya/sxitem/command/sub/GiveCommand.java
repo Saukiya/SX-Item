@@ -2,6 +2,7 @@ package github.saukiya.sxitem.command.sub;
 
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.command.SubCommand;
+import github.saukiya.sxitem.util.Config;
 import github.saukiya.sxitem.util.Message;
 import github.saukiya.sxitem.util.MessageUtil;
 import org.bukkit.Bukkit;
@@ -54,9 +55,11 @@ public class GiveCommand extends SubCommand {
             ItemStack itemStack = SXItem.getItemManager().getItem(args[1], player);
             if (inv.firstEmpty() != -1) {
                 inv.addItem(itemStack);
-            } else {
+            } else if (Config.getConfig().getBoolean(Config.GIVE_OVERFLOW_DROP)) {
                 Item item = player.getWorld().dropItem(player.getLocation(), itemStack);
                 item.setPickupDelay(40);
+            } else {
+                SXItem.getInst().getLogger().warning("Give Error Player:" + player.getName() + " ItemKey:" + args[1]);
             }
         }
         MessageUtil.send(sender, Message.ADMIN__GIVE_ITEM.get(player.getName(), String.valueOf(amount), args[1]));

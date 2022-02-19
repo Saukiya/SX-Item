@@ -4,3 +4,5 @@ LoggerLevel: "ALL"
 DecimalFormat: '#.##'
 #日期格式化
 TimeFormat: yyyy/MM/dd HH:mm
+#给予物品时背包满了则掉落
+GiveOverflowDrop: true
