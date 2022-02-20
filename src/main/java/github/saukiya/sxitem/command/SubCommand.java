@@ -51,7 +51,7 @@ public abstract class SubCommand {
     }
 
     public String getIntroduction() {
-        return Arrays.stream(Message.values()).filter(loc -> loc.name().equals("COMMAND__" + cmd.toUpperCase())).findFirst().map(Message::get).orElse("§7No Introduction");
+        return Message.get("COMMAND." + cmd.toUpperCase());
     }
 
     public void sendIntroduction(CommandSender sender, String color, String label) {

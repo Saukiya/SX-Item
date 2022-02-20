@@ -9,6 +9,8 @@ import github.saukiya.sxitem.util.MessageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
+import java.util.logging.Level;
+
 /**
  * @author Saukiya
  */
@@ -27,6 +29,7 @@ public class ReloadCommand extends SubCommand {
         ItemManager.loadMaterialData();
         SXItem.getItemManager().loadItemData();
         SXItem.getMainCommand().reload();
+        SXItem.getSdf().remove();
         Bukkit.getOnlinePlayers().forEach(player -> SXItem.getItemManager().updateItem(player, player.getInventory().getContents()));
         MessageUtil.send(sender, Message.ADMIN__PLUGIN_RELOAD.get());
     }

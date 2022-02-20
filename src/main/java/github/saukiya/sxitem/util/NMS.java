@@ -31,7 +31,7 @@ public interface NMS {
                         return (NMS) Class.forName(target.getName() + "_" + version).getDeclaredConstructor().newInstance();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        SXItem.getInst().getLogger().warning(target.getSimpleName() + " No Version : " + Data.VERSION);
+                        SXItem.getInst().getLogger().severe(target.getSimpleName() + " No Version : " + Data.VERSION);
                     }
                     return null;
                 });
