@@ -51,7 +51,7 @@ public abstract class SubCommand {
     }
 
     public String getIntroduction() {
-        return Message.get("COMMAND." + cmd.toUpperCase());
+        return Message.staticGet("COMMAND." + cmd.toUpperCase());
     }
 
     public void sendIntroduction(CommandSender sender, String color, String label) {
