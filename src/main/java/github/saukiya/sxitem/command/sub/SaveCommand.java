@@ -57,7 +57,7 @@ public class SaveCommand extends SubCommand {
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
         if (args.length == 3) {
-            return new ArrayList<>(ItemManager.getGenerators().keySet());
+            return new ArrayList<>(ItemManager.getLoadFunction().keySet());
         }
         return null;
     }

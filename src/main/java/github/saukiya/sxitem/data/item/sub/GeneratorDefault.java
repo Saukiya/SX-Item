@@ -8,14 +8,16 @@ import github.saukiya.sxitem.data.random.INode;
 import github.saukiya.sxitem.data.random.RandomDocker;
 import github.saukiya.sxitem.helper.PlaceholderHelper;
 import github.saukiya.sxitem.nbt.*;
-import github.saukiya.sxitem.util.*;
-import lombok.NoArgsConstructor;
+import github.saukiya.sxitem.util.ComponentBuilder;
+import github.saukiya.sxitem.util.ItemUtil;
+import github.saukiya.sxitem.util.MessageUtil;
+import github.saukiya.sxitem.util.NbtUtil;
+import lombok.Getter;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -24,19 +26,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 /**
  * @author Saukiya
  */
-@NoArgsConstructor
-public class GeneratorDefault implements IGenerator, IUpdate {
-
-    String pathName;
-
-    String key;
-
-    ConfigurationSection config;
+@Getter
+public class GeneratorDefault extends IGenerator implements IUpdate {
 
     String displayName;
 
@@ -46,16 +43,12 @@ public class GeneratorDefault implements IGenerator, IUpdate {
 
     TagCompound nbt;
 
-    String configString;
-
     int hashCode;
 
     boolean update;
 
-    private GeneratorDefault(String pathName, String key, ConfigurationSection config) {
-        this.pathName = pathName;
-        this.key = key;
-        this.config = config;
+    public GeneratorDefault(String key, ConfigurationSection config) {
+        super(key, config);
         this.displayName = config.getString("Name");
         this.ids = config.isList("ID") ? config.getStringList("ID") : Collections.singletonList(config.getString(".ID", "APPLE"));
         if (config.contains("Random")) {
@@ -64,114 +57,11 @@ public class GeneratorDefault implements IGenerator, IUpdate {
         if (config.contains("NBT")) {
             this.nbt = (TagCompound) TagType.toTag(config.getConfigurationSection("NBT"));
         }
-        YamlConfiguration yaml = new YamlConfiguration();
-        config.getValues(false).forEach(yaml::set);
-        this.configString = yaml.saveToString();
         this.hashCode = configString.hashCode();
         this.update = config.getBoolean("Update");
     }
 
-    @Override
-    public String getType() {
-        return "Default";
-    }
-
-    @Override
-    public IGenerator newGenerator(String pathName, String key, ConfigurationSection config) {
-        return new GeneratorDefault(pathName, key, config);
-    }
-
-    @Override
-    public String getPathName() {
-        return pathName;
-    }
-
-    @Override
-    public String getKey() {
-        return key;
-    }
-
-    @Override
-    public String getName() {
-        if (displayName != null) return RandomDocker.getInst().replace(displayName).replace("&", "§");
-        return "§7" + String.join("§8|§7", ids);
-    }
-
-    @Override
-    public BaseComponent getNameComponent() {
-        if (displayName != null)
-            return new TextComponent(RandomDocker.getInst().replace(displayName).replace("&", "§"));
-        ComponentBuilder cb = MessageUtil.getInst().componentBuilder().add("§r");
-        for (String id : ids) {
-            if (cb.getHandle().getExtra().size() != 1) cb.add("§8|§r");
-            Material material = ItemManager.getMaterial(id);
-            if (material != null) cb.add(material);
-            else cb.add(id);
-        }
-        return cb.getHandle();
-    }
-
-    @Override
-    public ConfigurationSection getConfig() {
-        return config;
-    }
-
-    @Override
-    public String getConfigString() {
-        return configString;
-    }
-
-    @Override
-    public ItemStack getItem(Player player) {
-        return getItem(player, new RandomDocker(randomMap, player));
-    }
-
-    @Override
-    public ConfigurationSection saveItem(ItemStack saveItem, ConfigurationSection config) {
-        ItemMeta itemMeta = saveItem.getItemMeta();
-        config.set("Name", itemMeta.hasDisplayName() ? itemMeta.getDisplayName().replace("§", "&") : null);
-        config.set("ID", saveItem.getType().name() + (saveItem.getDurability() != 0 ? ":" + saveItem.getDurability() : ""));
-        if (saveItem.getAmount() > 1)
-            config.set("Amount", saveItem.getAmount());
-        if (itemMeta.hasLore())
-            config.set("Lore", itemMeta.getLore().stream().map(s -> s.replace("§", "&")).collect(Collectors.toList()));
-        if (itemMeta.hasEnchants())
-            config.set("EnchantList", itemMeta.getEnchants().entrySet().stream().map(entry -> entry.getKey().getName() + ":" + entry.getValue()).collect(Collectors.toList()));
-        if (itemMeta.getItemFlags().size() > 0)
-            config.set("ItemFlagList", itemMeta.getItemFlags().stream().map(Enum::name).collect(Collectors.toList()));
-        if (ItemUtil.getInst().isUnbreakable(itemMeta))
-            config.set("Unbreakable", true);
-        List<ItemUtil.AttributeData> attributeList = ItemUtil.getInst().getAttributes(saveItem);
-        if (attributeList != null) {
-            List<String> list = new ArrayList<>();
-            attributeList.forEach(data -> list.add(data.getAttrName() + ":" + data.getAmount() + ":" + data.getOperation() + (data.getSlot() != null ? ":" + data.getSlot() : "")));
-            config.set("Attributes", list);
-        }
-        if (itemMeta instanceof LeatherArmorMeta)
-            config.set("Color", Integer.toHexString(((LeatherArmorMeta) itemMeta).getColor().asRGB()));
-        config.set("SkullName", ItemUtil.getInst().getSkull(itemMeta));
-        return config;
-    }
-
-    @Override
-    public ItemStack update(ItemStack oldItem, NBTTagWrapper oldWrapper, Player player) {
-        RandomDocker randomDocker = new RandomDocker(randomMap, player);
-        Map<String, String> map = (Map<String, String>) oldWrapper.getMap(SXItem.getInst().getName() + ".Lock");
-        if (map != null) map.forEach((k, v) -> randomDocker.getLockMap().put(k, v));
-        return getItem(player, randomDocker);
-    }
-
-    @Override
-    public int updateCode() {
-        return hashCode;
-    }
-
-    @Override
-    public boolean isUpdate() {
-        return update;
-    }
-
-    public ItemStack getItem(Player player, RandomDocker docker) {
+    private ItemStack getItem(Player player, RandomDocker docker) {
         String[] materAndDur = docker.replace(ids.get(SXItem.getRandom().nextInt(ids.size()))).split(":");
         Material material = ItemManager.getMaterial(materAndDur[0]);
         if (material == null) {
@@ -253,5 +143,80 @@ public class GeneratorDefault implements IGenerator, IUpdate {
 
         wrapper.save();
         return item;
+    }
+
+    @Override
+    public String getType() {
+        return "Default";
+    }
+
+    @Override
+    public String getName() {
+        if (displayName != null) return RandomDocker.getInst().replace(displayName).replace("&", "§");
+        return "§7" + String.join("§8|§7", ids);
+    }
+
+    @Override
+    public BaseComponent getNameComponent() {
+        if (displayName != null)
+            return new TextComponent(RandomDocker.getInst().replace(displayName).replace("&", "§"));
+        ComponentBuilder cb = MessageUtil.getInst().componentBuilder().add("§r");
+        for (String id : ids) {
+            if (cb.getHandle().getExtra().size() != 1) cb.add("§8|§r");
+            Material material = ItemManager.getMaterial(id);
+            if (material != null) cb.add(material);
+            else cb.add(id);
+        }
+        return cb.getHandle();
+    }
+
+    @Override
+    public ItemStack getItem(Player player, Object... args) {
+        return getItem(player, args.length > 0 && args[0] instanceof RandomDocker ? (RandomDocker) args[0] : new RandomDocker(randomMap, player));
+    }
+
+    @Override
+    public ItemStack update(ItemStack oldItem, NBTTagWrapper oldWrapper, Player player) {
+        RandomDocker randomDocker = new RandomDocker(randomMap, player);
+        Map<String, String> map = (Map<String, String>) oldWrapper.getMap(SXItem.getInst().getName() + ".Lock");
+        if (map != null) map.forEach((k, v) -> randomDocker.getLockMap().put(k, v));
+        return getItem(player, randomDocker);
+    }
+
+    @Override
+    public int updateCode() {
+        return hashCode;
+    }
+
+    @Override
+    public boolean isUpdate() {
+        return update;
+    }
+
+    public static BiConsumer<ItemStack, ConfigurationSection> saveFunc() {
+        return (item, config) -> {
+            ItemMeta itemMeta = item.getItemMeta();
+            config.set("Name", itemMeta.hasDisplayName() ? itemMeta.getDisplayName().replace("§", "&") : null);
+            config.set("ID", item.getType().name() + (item.getDurability() != 0 ? ":" + item.getDurability() : ""));
+            if (item.getAmount() > 1)
+                config.set("Amount", item.getAmount());
+            if (itemMeta.hasLore())
+                config.set("Lore", itemMeta.getLore().stream().map(s -> s.replace("§", "&")).collect(Collectors.toList()));
+            if (itemMeta.hasEnchants())
+                config.set("EnchantList", itemMeta.getEnchants().entrySet().stream().map(entry -> entry.getKey().getName() + ":" + entry.getValue()).collect(Collectors.toList()));
+            if (itemMeta.getItemFlags().size() > 0)
+                config.set("ItemFlagList", itemMeta.getItemFlags().stream().map(Enum::name).collect(Collectors.toList()));
+            if (ItemUtil.getInst().isUnbreakable(itemMeta))
+                config.set("Unbreakable", true);
+            List<ItemUtil.AttributeData> attributeList = ItemUtil.getInst().getAttributes(item);
+            if (attributeList != null) {
+                List<String> list = new ArrayList<>();
+                attributeList.forEach(data -> list.add(data.getAttrName() + ":" + data.getAmount() + ":" + data.getOperation() + (data.getSlot() != null ? ":" + data.getSlot() : "")));
+                config.set("Attributes", list);
+            }
+            if (itemMeta instanceof LeatherArmorMeta)
+                config.set("Color", Integer.toHexString(((LeatherArmorMeta) itemMeta).getColor().asRGB()));
+            config.set("SkullName", ItemUtil.getInst().getSkull(itemMeta));
+        };
     }
 }

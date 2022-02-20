@@ -28,9 +28,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -38,7 +41,9 @@ import java.util.stream.Collectors;
  */
 public class ItemManager implements Listener {
     @Getter
-    private static final Map<String, IGenerator> generators = new HashMap<>();
+    private static final Map<String, BiFunction<String, ConfigurationSection, IGenerator>> loadFunction = new HashMap<>();
+    @Getter
+    private static final Map<String, BiConsumer<ItemStack, ConfigurationSection>> saveFunction = new HashMap<>();
     @Getter
     private static final ItemStack emptyItem = new ItemStack(Material.AIR, 0);
     @Getter
@@ -64,7 +69,7 @@ public class ItemManager implements Listener {
         this.plugin = plugin;
         this.defaultFile = defaultFile;
         this.itemFiles = new File(plugin.getDataFolder(), "Item");
-        plugin.getLogger().info("Loaded " + generators.size() + " ItemGenerators");
+        plugin.getLogger().info("Loaded " + loadFunction.size() + " ItemGenerators");
         loadItemData();
         Bukkit.getPluginManager().registerEvents(this, plugin);
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
@@ -136,9 +141,11 @@ public class ItemManager implements Listener {
                     }
                     String pathName = getPathName(files);
                     String type = yaml.getString(key + ".Type", "Default");
-                    IGenerator generator = getGenerators().get(type);
-                    if (generator != null) {
-                        itemMap.put(key, generator.newGenerator(pathName, key, yaml.getConfigurationSection(key)));
+                    BiFunction<String, ConfigurationSection, IGenerator> function = getLoadFunction().get(type);
+                    if (function != null) {
+                        ConfigurationSection config = yaml.getConfigurationSection(key);
+                        config.set("Path", getPathName(files));
+                        itemMap.put(key, function.apply(key, yaml.getConfigurationSection(key)));
                     } else {
                         plugin.getLogger().warning("Don't Item Type: " + file.getName() + File.separator + key + " - " + type + " !");
                     }
@@ -187,10 +194,10 @@ public class ItemManager implements Listener {
      * @param player   Player
      * @return ItemStack / null
      */
-    public ItemStack getItem(String itemName, @Nonnull Player player) {
+    public ItemStack getItem(String itemName, @Nonnull Player player, Object... args) {
         IGenerator ig = itemMap.get(itemName);
         if (ig != null) {
-            return getItem(ig, player);
+            return getItem(ig, player, args);
         } else {
             Material material = getMaterial(itemName);
             if (material != null) return new ItemStack(material);
@@ -205,8 +212,8 @@ public class ItemManager implements Listener {
      * @param player Player
      * @return ItemStack / null
      */
-    public ItemStack getItem(IGenerator ig, Player player) {
-        ItemStack item = ig.getItem(player);
+    public ItemStack getItem(IGenerator ig, Player player, Object... args) {
+        ItemStack item = ig.getItem(player, args);
         if (item != emptyItem && item != null && ig instanceof IUpdate) {
             NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item);
             wrapper.set(plugin.getName() + ".ItemKey", ig.getKey());
@@ -277,17 +284,18 @@ public class ItemManager implements Listener {
      * @throws IOException IOException
      */
     public boolean saveItem(String key, ItemStack item, String type) throws IOException {
-        IGenerator generator = generators.get(type);
-        if (generator == null) return false;
+        BiConsumer<ItemStack, ConfigurationSection> function = saveFunction.get(type);
+        if (function == null) return false;
         ConfigurationSection config = new MemoryConfiguration();
-        config.set("Type", generator.getType());
-        config = generator.saveItem(item, config);
-        if (config == null) return false;
-        File file = new File(itemFiles, "Type-" + generator.getType() + File.separator + "Item.yml");
+        config.set("Type", type);
+        function.accept(item, config);
+        if (config.getKeys(false).size() == 1) return false;
+        File file = new File(itemFiles, "Type-" + type + File.separator + "Item.yml");
         YamlConfiguration yaml = file.exists() ? YamlConfiguration.loadConfiguration(file) : new YamlConfiguration();
         yaml.set(key, config);
         yaml.save(file);
-        itemMap.put(key, generator.newGenerator(getPathName(file.getParentFile()), key, config));
+        config.set("Path", getPathName(file.getParentFile()));
+        itemMap.put(key, loadFunction.get(type).apply(key, config));
         return true;
     }
 
@@ -309,7 +317,7 @@ public class ItemManager implements Listener {
 
             Map<String, List<String>> map = new TreeMap<>();
             itemMap.forEach((key, ig) -> {
-                List<String> list = map.computeIfAbsent(ig.getPathName(), k -> new ArrayList<>());
+                List<String> list = map.computeIfAbsent(ig.getConfig().getString("Path"), k -> new ArrayList<>());
                 list.add("§b" + (list.size() + 1) + " - §a" + key + " §8[§7" + ig.getName() + "§8]§7 - §8[§cType:" + ig.getType() + "§8]");
             });
             map.forEach((key, value) -> MessageUtil.getInst().componentBuilder().runCommand("/sxitem give |" + key + "<")
@@ -325,13 +333,13 @@ public class ItemManager implements Listener {
                     .send(sender);
             Map<String, ComponentBuilder> items = new TreeMap<>();
             itemMap.forEach((key, ig) -> {
-                if (search == null || (key + ig.getName() + "|" + ig.getPathName() + "<").contains(search)) {
+                if (search == null || (key + ig.getName() + "|" + ig.getConfig().getString("Path") + "<").contains(search)) {
                     items.put(key, MessageUtil.getInst().componentBuilder()
                             .runCommand("/sxitem give " + key)
                             .add(" §b" + (items.size() + 1) + " - §a" + key + " §8[§7")
                             .add(ig.getNameComponent())
                             .add("§8]§7 - §8[§cType:" + ig.getType() + "§8]")
-                            .show("§7" + ig.getConfigString() + "§8§o§lPath: " + ig.getPathName()));
+                            .show("§7" + ig.getConfigString()));
                 }
             });
             items.values().forEach(s -> s.send(sender));
@@ -427,15 +435,18 @@ public class ItemManager implements Listener {
     /**
      * 注册物品生成器
      *
-     * @param generator ItemGenerator
+     * @param type     类型
+     * @param loadFunc 加载方法
+     * @param saveFunc 保存方法
      */
-    public static void register(IGenerator generator) {
-        if (generator.getType() == null || generators.containsKey(generator.getType())) {
-            SXItem.getInst().getLogger().warning("ItemGenerator >>  [" + generator.getClass().getSimpleName() + "] Type Error!");
+    public static void register(String type, @Nonnull BiFunction<String, ConfigurationSection, IGenerator> loadFunc, @Nullable BiConsumer<ItemStack, ConfigurationSection> saveFunc) {
+        if (type == null || loadFunction.containsKey(type)) {
+            SXItem.getInst().getLogger().severe("ItemGenerator >> Type Error: " + type);
             return;
         }
-        generators.put(generator.getType(), generator);
-        SXItem.getInst().getLogger().info("ItemGenerator >> Register [" + generator.getClass().getSimpleName() + "] To Type " + generator.getType() + " !");
+        loadFunction.put(type, loadFunc);
+        if (saveFunc != null) saveFunction.put(type, saveFunc);
+        SXItem.getInst().getLogger().info("ItemGenerator >> Type Register: " + type);
     }
 
 }
