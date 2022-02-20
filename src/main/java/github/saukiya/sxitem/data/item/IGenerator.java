@@ -1,73 +1,53 @@
 package github.saukiya.sxitem.data.item;
 
+import lombok.Getter;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * @author Saukiya
+ * @author Saukiya TODO 添加RandomGenerator
  */
-public interface IGenerator {
+@Getter
+public abstract class IGenerator {
 
-    /**
-     * 实例化物品生成器
-     *
-     * @param pathName 路径
-     * @param key      编号
-     * @param config   配置
-     * @return ItemGenerator
-     */
-    IGenerator newGenerator(String pathName, String key, ConfigurationSection config);
+    protected String key;
+
+    protected ConfigurationSection config;
+
+    protected String configString;
+
+    public IGenerator(String key, ConfigurationSection config) {
+        this.key = key;
+        this.config = config;
+        YamlConfiguration yaml = new YamlConfiguration();
+        config.getValues(false).forEach(yaml::set);
+        this.configString = (configString = yaml.saveToString()).substring(0, configString.length() - 1);
+    }
 
     /**
      * 返回生成器类型
      *
      * @return Type
      */
-    String getType();
+    public abstract String getType();
 
-    /**
-     * 返回路径
-     *
-     * @return Path
-     */
-    String getPathName();
-
-    /**
-     * 返回物品编号
-     *
-     * @return Key
-     */
-    String getKey();
 
     /**
      * 返回物品展示名
      *
      * @return Name
      */
-    String getName();
+    public abstract String getName();
 
     /**
      * 返回展示组件
      *
      * @return
      */
-    BaseComponent getNameComponent();
-
-    /**
-     * 返回配置信息
-     *
-     * @return Config
-     */
-    ConfigurationSection getConfig();
-
-    /**
-     * 返回带转义符的配置文本信息
-     *
-     * @return Config
-     */
-    String getConfigString();
+    public abstract BaseComponent getNameComponent();
 
     /**
      * 获取物品
@@ -75,16 +55,5 @@ public interface IGenerator {
      * @param player Player
      * @return Item
      */
-    ItemStack getItem(Player player);
-
-    /**
-     * 保存物品到config中
-     * null则不带save功能
-     *
-     * @param saveItem ItemStack
-     * @param config   ConfigurationSection
-     * @return
-     */
-    ConfigurationSection saveItem(ItemStack saveItem, ConfigurationSection config);
-
+    protected abstract ItemStack getItem(Player player, Object... args);
 }

@@ -51,8 +51,8 @@ public class SXItem extends JavaPlugin {
         mainCommand = new MainCommand();
 
         ItemManager.loadMaterialData();
-        ItemManager.register(new GeneratorDefault());
-        ItemManager.register(new GeneratorImport());
+        ItemManager.register("Default", GeneratorDefault::new, GeneratorDefault.saveFunc());
+        ItemManager.register("Import", GeneratorImport::new, GeneratorImport.saveFunc());
         RandomManager.register(new BooleanRandom(), 'b');
         RandomManager.register(new CalculatorRandom(), 'c');
         RandomManager.register(new LockStringRandom(), 'l');
