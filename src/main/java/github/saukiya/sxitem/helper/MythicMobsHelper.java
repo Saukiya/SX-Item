@@ -5,6 +5,7 @@ import github.saukiya.sxitem.data.item.IGenerator;
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobDeathEvent;
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobSpawnEvent;
 import io.lumine.xikage.mythicmobs.mobs.MythicMob;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -15,25 +16,13 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
-public class MythicMobsHelper implements Listener {
+public class MythicMobsHelper {
 
-    public static void setup() {
-        if (Bukkit.getPluginManager().isPluginEnabled("MythicMobs")) {
-            Bukkit.getPluginManager().registerEvents(new MythicMobsHelper(), SXItem.getInst());
-        }
-    }
-
-    /**
-     * MythicMobs - 穿戴装备
-     * 格式:
-     * SX-Equipment:
-     * - Default-1:0 0.8
-     *
-     * @param event
-     */
-    @EventHandler
-    void on(MythicMobSpawnEvent event) {
+    //格式: - 物品ID:位置 概率
+    @Setter
+    private static Consumer<MythicMobSpawnEvent> spawnConsumer = event -> {
         if (event.getEntity() instanceof LivingEntity) {
             LivingEntity entity = (LivingEntity) event.getEntity();
             EntityEquipment eq = entity.getEquipment();
@@ -70,10 +59,11 @@ public class MythicMobsHelper implements Listener {
                 }
             }
         }
-    }
+    };
 
-    @EventHandler
-    void on(MythicMobDeathEvent event) {
+    //格式: - 物品ID 数量 概率
+    @Setter
+    private static Consumer<MythicMobDeathEvent> deathConsumer = event -> {
         System.out.println("MythicMobDeathEvent " + (event.getKiller() instanceof Player));
         if (event.getKiller() instanceof Player) {
             MythicMob mm = event.getMobType();
@@ -103,6 +93,23 @@ public class MythicMobsHelper implements Listener {
                 }
             }
             event.setDrops(drops);
+        }
+    };
+
+    public static void setup() {
+        if (Bukkit.getPluginManager().isPluginEnabled("MythicMobs")) {
+            Bukkit.getPluginManager().registerEvents(new Listener() {
+
+                @EventHandler
+                void on(MythicMobSpawnEvent event) {
+                    spawnConsumer.accept(event);
+                }
+
+                @EventHandler
+                void on(MythicMobDeathEvent event) {
+                    deathConsumer.accept(event);
+                }
+            }, SXItem.getInst());
         }
     }
 }
