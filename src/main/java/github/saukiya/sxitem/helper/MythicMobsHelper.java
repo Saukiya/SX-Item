@@ -20,7 +20,10 @@ import java.util.function.Consumer;
 
 public class MythicMobsHelper {
 
-    //格式: - 物品ID:位置 概率
+    /**
+     * SX-Equipment:
+     * - 物品ID:位置 概率
+     */
     @Setter
     private static Consumer<MythicMobSpawnEvent> spawnConsumer = event -> {
         if (event.getEntity() instanceof LivingEntity) {
@@ -61,14 +64,15 @@ public class MythicMobsHelper {
         }
     };
 
-    //格式: - 物品ID 数量 概率
+    /**
+     * SX-Drop:
+     * - 物品ID 数量 概率
+     */
     @Setter
     private static Consumer<MythicMobDeathEvent> deathConsumer = event -> {
-        System.out.println("MythicMobDeathEvent " + (event.getKiller() instanceof Player));
         if (event.getKiller() instanceof Player) {
             MythicMob mm = event.getMobType();
             List<ItemStack> drops = event.getDrops();
-            System.out.println(mm.getConfig().getStringList("SX-Drop"));
             for (String str : mm.getConfig().getStringList("SX-Drop")) {
                 String[] args = str.split(" ");
                 IGenerator ig = SXItem.getItemManager().getGenerator(args[0]);
@@ -86,7 +90,6 @@ public class MythicMobsHelper {
                         amount = Integer.parseInt(args[1]);
                     }
                 }
-                System.out.println("[SX] MM drops " + ig.getKey() + "\tSize: " + amount);
                 // 给予
                 for (int i = 0; i < amount; i++) {
                     drops.add(ig.getItem((Player) event.getKiller()));
