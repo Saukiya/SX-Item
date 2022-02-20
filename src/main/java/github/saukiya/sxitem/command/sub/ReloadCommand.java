@@ -9,8 +9,6 @@ import github.saukiya.sxitem.util.MessageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
-import java.util.logging.Level;
-
 /**
  * @author Saukiya
  */
