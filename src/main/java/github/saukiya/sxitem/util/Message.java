@@ -46,7 +46,7 @@ public enum Message {
      * @return String
      */
     public String get(Object... args) {
-        return get(toString(), args);
+        return staticGet(toString(), args);
     }
 
     /**
@@ -56,7 +56,7 @@ public enum Message {
      * @return List
      */
     public List<String> getList(Object... args) {
-        return getList(toString(), args);
+        return staticGetList(toString(), args);
     }
 
     /**
@@ -71,11 +71,11 @@ public enum Message {
         messages = YamlConfiguration.loadConfiguration(file);
     }
 
-    public static String get(String loc, Object... args) {
+    public static String staticGet(String loc, Object... args) {
         return MessageFormat.format(messages.getString(loc, "Null Message: " + loc), args).replace("&", "§");
     }
 
-    public static List<String> getList(String loc, Object... args) {
+    public static List<String> staticGetList(String loc, Object... args) {
         List<String> list = messages.getStringList(loc);
         if (list.size() == 0) return Collections.singletonList("Null Message: " + loc);
         list.replaceAll(str -> MessageFormat.format(str, args).replace("&", "§"));
