@@ -1,11 +1,11 @@
 package github.saukiya.sxitem.data.random;
 
 import github.saukiya.sxitem.SXItem;
+import github.saukiya.sxitem.helper.PlaceholderHelper;
 import github.saukiya.sxitem.nbt.TagBase;
 import github.saukiya.sxitem.nbt.TagCompound;
 import github.saukiya.sxitem.nbt.TagList;
 import github.saukiya.sxitem.nbt.TagString;
-import github.saukiya.sxitem.helper.PlaceholderHelper;
 import lombok.Getter;
 import org.apache.commons.lang.text.StrLookup;
 import org.apache.commons.lang.text.StrMatcher;
@@ -37,12 +37,12 @@ public class RandomDocker extends StrLookup {
 
     final StrSubstitutor ss = new StrSubstitutor(this, PRE_MATCHER, SUF_MATCHER, StrSubstitutor.DEFAULT_ESCAPE);
     @Getter
-    final Map<String, INode> localMap;
-    @Getter
     final Player player;
-    @Getter
+    @Getter// log日志 TODO 可以通过合并localMap解决lockMap预设问题, 但是会产生新的问题
     final HashSet<String> lockLog = new HashSet<>();
-    @Getter
+    @Getter// 局部变量缓存
+    final Map<String, INode> localMap;
+    @Getter// LockRandom 缓存
     Map<String, String> lockMap = new HashMap<>();
 
     public RandomDocker() {
