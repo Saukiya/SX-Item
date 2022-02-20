@@ -6,6 +6,7 @@ import github.saukiya.sxitem.data.item.sub.GeneratorDefault;
 import github.saukiya.sxitem.data.random.INode;
 import github.saukiya.sxitem.data.random.RandomDocker;
 import github.saukiya.sxitem.data.random.nodes.SingletonNode;
+import github.saukiya.sxitem.util.Config;
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobDeathEvent;
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobSpawnEvent;
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicReloadedEvent;
@@ -17,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
@@ -30,12 +32,84 @@ public class MythicMobsHelper {
 
     public static final Map<MythicMob, Map<String, INode>> mobPlaceholders = new HashMap<>();
 
+    @Setter
+    private static Consumer<MythicMobSpawnEvent> spawnConsumer = MythicMobsHelper::spawnFunc;
+
+    @Setter
+    private static Consumer<MythicMobDeathEvent> deathConsumer = MythicMobsHelper::deathFunc;
+
+    public static void setup() {
+        if (Bukkit.getPluginManager().isPluginEnabled("MythicMobs")) {
+            Bukkit.getPluginManager().registerEvents(new Listener() {
+
+                @EventHandler
+                void on(MythicMobSpawnEvent event) {
+                    spawnConsumer.accept(event);
+                }
+
+                @EventHandler
+                void on(MythicMobDeathEvent event) {
+                    deathConsumer.accept(event);
+                }
+
+                @EventHandler
+                void on(MythicReloadedEvent event) {
+                    mobPlaceholders.clear();
+                }
+            }, SXItem.getInst());
+        }
+    }
+
+    /**
+     * SX-Drop:
+     * - 物品ID 数量 概率
+     *
+     * @param event MythicMobDeathEvent
+     */
+    private static void deathFunc(MythicMobDeathEvent event) {
+        if (event.getKiller() instanceof Player) {
+            MythicMob mm = event.getMobType();
+            List<ItemStack> drops = event.getDrops();
+            for (String str : mm.getConfig().getStringList("SX-Drop")) {
+                String[] args = str.split(" ");
+                IGenerator ig = SXItem.getItemManager().getGenerator(args[0]);
+                // 概率
+                if (ig == null || args.length > 2 && args[2].length() > 0 && SXItem.getRandom().nextDouble() > Double.parseDouble(args[2])) {
+                    continue;
+                }
+                // 数量
+                int amount = 1;
+                if (args.length > 1 && args[1].length() > 0) {
+                    if (args[1].contains("-")) {
+                        int[] ints = Arrays.stream(args[1].split("-")).mapToInt(Integer::parseInt).sorted().toArray();
+                        amount = SXItem.getRandom().nextInt(1 + ints[1] - ints[0]) + ints[0];
+                    } else {
+                        amount = Integer.parseInt(args[1]);
+                    }
+                }
+                // 给予
+                if (Config.getConfig().getBoolean(Config.MOB_DROP_TO_PLAYER_INVENTORY)) {
+                    Inventory inventory = ((Player) event.getKiller()).getInventory();
+                    for (int i = 0; i < amount; i++) {
+                        inventory.addItem(getItem(ig, (Player) event.getKiller(), mm));
+                    }
+                } else {
+                    for (int i = 0; i < amount; i++) {
+                        drops.add(getItem(ig, (Player) event.getKiller(), mm));
+                    }
+                }
+            }
+            event.setDrops(drops);
+        }
+    }
+
     /**
      * SX-Equipment:
      * - 物品ID:位置 概率
+     *
+     * @param event MythicMobSpawnEvent
      */
-    @Setter
-    private static Consumer<MythicMobSpawnEvent> spawnConsumer = event -> {
+    private static void spawnFunc(MythicMobSpawnEvent event) {
         if (event.getEntity() instanceof LivingEntity) {
             LivingEntity entity = (LivingEntity) event.getEntity();
             EntityEquipment eq = entity.getEquipment();
@@ -72,42 +146,7 @@ public class MythicMobsHelper {
                 }
             }
         }
-    };
-
-    /**
-     * SX-Drop:
-     * - 物品ID 数量 概率
-     */
-    @Setter
-    private static Consumer<MythicMobDeathEvent> deathConsumer = event -> {
-        if (event.getKiller() instanceof Player) {
-            MythicMob mm = event.getMobType();
-            List<ItemStack> drops = event.getDrops();
-            for (String str : mm.getConfig().getStringList("SX-Drop")) {
-                String[] args = str.split(" ");
-                IGenerator ig = SXItem.getItemManager().getGenerator(args[0]);
-                // 概率
-                if (ig == null || args.length > 2 && args[2].length() > 0 && SXItem.getRandom().nextDouble() > Double.parseDouble(args[2])) {
-                    continue;
-                }
-                // 数量
-                int amount = 1;
-                if (args.length > 1 && args[1].length() > 0) {
-                    if (args[1].contains("-")) {
-                        int[] ints = Arrays.stream(args[1].split("-")).mapToInt(Integer::parseInt).sorted().toArray();
-                        amount = SXItem.getRandom().nextInt(1 + ints[1] - ints[0]) + ints[0];
-                    } else {
-                        amount = Integer.parseInt(args[1]);
-                    }
-                }
-                // 给予
-                for (int i = 0; i < amount; i++) {
-                    drops.add(getItem(ig, (Player) event.getKiller(), mm));
-                }
-            }
-            event.setDrops(drops);
-        }
-    };
+    }
 
     public static ItemStack getItem(IGenerator ig, @Nullable Player player, MythicMob mob) {
         if (ig instanceof GeneratorDefault) {
@@ -122,28 +161,6 @@ public class MythicMobsHelper {
             return SXItem.getItemManager().getItem(ig, player, randomDocker);
         } else {
             return SXItem.getItemManager().getItem(ig, player);
-        }
-    }
-
-    public static void setup() {
-        if (Bukkit.getPluginManager().isPluginEnabled("MythicMobs")) {
-            Bukkit.getPluginManager().registerEvents(new Listener() {
-
-                @EventHandler
-                void on(MythicMobSpawnEvent event) {
-                    spawnConsumer.accept(event);
-                }
-
-                @EventHandler
-                void on(MythicMobDeathEvent event) {
-                    deathConsumer.accept(event);
-                }
-
-                @EventHandler
-                void on(MythicReloadedEvent event) {
-                    mobPlaceholders.clear();
-                }
-            }, SXItem.getInst());
         }
     }
 }
