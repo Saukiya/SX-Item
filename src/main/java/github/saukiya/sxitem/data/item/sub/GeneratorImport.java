@@ -2,57 +2,30 @@ package github.saukiya.sxitem.data.item.sub;
 
 import github.saukiya.sxitem.data.item.IGenerator;
 import github.saukiya.sxitem.util.MessageUtil;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.function.BiConsumer;
 
 /**
  * @author Saukiya
  */
-@NoArgsConstructor
-public class GeneratorImport implements IGenerator {
-
-    String pathName;
-
-    String key;
-
-    ConfigurationSection config;
+@Getter
+public class GeneratorImport extends IGenerator {
 
     ItemStack item;
 
-    String configString;
-
-    private GeneratorImport(String pathName, String key, ConfigurationSection config) {
-        this.pathName = pathName;
-        this.key = key;
-        this.config = config;
+    public GeneratorImport(String key, ConfigurationSection config) {
+        super(key, config);
         this.item = config.getItemStack("Item");
-        YamlConfiguration yaml = new YamlConfiguration();
-        config.getValues(false).forEach(yaml::set);
-        this.configString = yaml.saveToString();
     }
 
     @Override
     public String getType() {
         return "Import";
-    }
-
-    @Override
-    public IGenerator newGenerator(String pathName, String key, ConfigurationSection config) {
-        return new GeneratorImport(pathName, key, config);
-    }
-
-    @Override
-    public String getPathName() {
-        return pathName;
-    }
-
-    @Override
-    public String getKey() {
-        return key;
     }
 
     @Override
@@ -66,23 +39,11 @@ public class GeneratorImport implements IGenerator {
     }
 
     @Override
-    public ConfigurationSection getConfig() {
-        return config;
-    }
-
-    @Override
-    public String getConfigString() {
-        return configString;
-    }
-
-    @Override
-    public ItemStack getItem(Player player) {
+    public ItemStack getItem(Player player, Object... args) {
         return item.clone();
     }
 
-    @Override
-    public ConfigurationSection saveItem(ItemStack saveItem, ConfigurationSection config) {
-        config.set("Item", saveItem);
-        return config;
+    public static BiConsumer<ItemStack, ConfigurationSection> saveFunc() {
+        return (item, config) -> config.set("Item", item);
     }
 }
