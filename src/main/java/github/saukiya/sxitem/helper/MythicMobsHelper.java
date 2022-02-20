@@ -2,8 +2,13 @@ package github.saukiya.sxitem.helper;
 
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.item.IGenerator;
+import github.saukiya.sxitem.data.item.sub.GeneratorDefault;
+import github.saukiya.sxitem.data.random.INode;
+import github.saukiya.sxitem.data.random.RandomDocker;
+import github.saukiya.sxitem.data.random.nodes.SingletonNode;
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobDeathEvent;
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobSpawnEvent;
+import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicReloadedEvent;
 import io.lumine.xikage.mythicmobs.mobs.MythicMob;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -14,11 +19,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class MythicMobsHelper {
+
+    public static final Map<MythicMob, Map<String, INode>> mobPlaceholders = new HashMap<>();
 
     /**
      * SX-Equipment:
@@ -37,7 +47,7 @@ public class MythicMobsHelper {
                 if (ig == null || sap.length > 1 && SXItem.getRandom().nextDouble() > Double.parseDouble(sap[1]))
                     continue;
 
-                ItemStack item = ig.getItem(null);
+                ItemStack item = getItem(ig, null, mm);
                 switch (Integer.parseInt(sap[0])) {
                     case -1:
                         eq.setItemInOffHand(item);
@@ -92,12 +102,28 @@ public class MythicMobsHelper {
                 }
                 // 给予
                 for (int i = 0; i < amount; i++) {
-                    drops.add(ig.getItem((Player) event.getKiller()));
+                    drops.add(getItem(ig, (Player) event.getKiller(), mm));
                 }
             }
             event.setDrops(drops);
         }
     };
+
+    public static ItemStack getItem(IGenerator ig, @Nullable Player player, MythicMob mob) {
+        if (ig instanceof GeneratorDefault) {
+            RandomDocker randomDocker = new RandomDocker(new HashMap<>(((GeneratorDefault) ig).getRandomMap()));
+            // 后续可能会优化 但是先实现再说
+            randomDocker.getLocalMap().putAll(mobPlaceholders.computeIfAbsent(mob, k -> {
+                Map<String, INode> map = new HashMap<>();
+                // TODO 自己来
+                map.put("mob_level", new SingletonNode("薄荷自己来"));
+                return map;
+            }));
+            return SXItem.getItemManager().getItem(ig, player, randomDocker);
+        } else {
+            return SXItem.getItemManager().getItem(ig, player);
+        }
+    }
 
     public static void setup() {
         if (Bukkit.getPluginManager().isPluginEnabled("MythicMobs")) {
@@ -111,6 +137,11 @@ public class MythicMobsHelper {
                 @EventHandler
                 void on(MythicMobDeathEvent event) {
                     deathConsumer.accept(event);
+                }
+
+                @EventHandler
+                void on(MythicReloadedEvent event) {
+                    mobPlaceholders.clear();
                 }
             }, SXItem.getInst());
         }
