@@ -32,6 +32,7 @@ public class LogUtil {
             file.mkdirs();
         }
         fileHandler = new FileHandler(file.getAbsolutePath() + File.separator + dateStr + "-" + index + ".log");
+        fileHandler.setEncoding("UTF-8");
         fileHandler.setFormatter(new Formatter() {
             @Override
             public String format(LogRecord record) {

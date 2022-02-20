@@ -66,7 +66,7 @@ public class MythicMobsHelper implements Listener {
                         eq.setHelmet(item);
                         break;
                     default:
-                        SXItem.getInst().getLogger().warning("MythicMobs - Equipment Error: " + mm.getDisplayName() + " - " + str);
+                        SXItem.getInst().getLogger().severe("MythicMobs - Equipment Error: " + mm.getDisplayName() + " - " + str);
                 }
             }
         }

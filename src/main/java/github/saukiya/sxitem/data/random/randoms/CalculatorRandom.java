@@ -26,7 +26,7 @@ public class CalculatorRandom implements IRandom {
             return SXItem.getDf().format(getResult(key));
         } catch (Exception e) {
             e.printStackTrace();
-            SXItem.getInst().getLogger().warning("Calculator error: " + key);
+            SXItem.getInst().getLogger().severe("Calculator error: " + key);
             return null;
         }
     }
