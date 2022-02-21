@@ -34,11 +34,6 @@ public enum Message {
     @Getter
     private static YamlConfiguration messages;
 
-    @Override
-    public String toString() {
-        return name().replace("__", ".");
-    }
-
     /**
      * 获取String
      *
@@ -57,6 +52,11 @@ public enum Message {
      */
     public List<String> getList(Object... args) {
         return staticGetList(toString(), args);
+    }
+
+    @Override
+    public String toString() {
+        return name().replace("__", ".");
     }
 
     /**

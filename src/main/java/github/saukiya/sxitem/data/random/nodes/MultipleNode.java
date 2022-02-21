@@ -14,6 +14,14 @@ public class MultipleNode implements INode {
     final List<Tuple<Double, String>> list = new ArrayList<>();
     private double maximum;
 
+    public void add(Double weight, String value) {
+        list.add(new Tuple(maximum += weight, value));
+    }
+
+    public boolean isEmpty() {
+        return list.isEmpty();
+    }
+
     @Override
     public String get() {
         double value = SXItem.getRandom().nextDouble() * maximum;
@@ -23,13 +31,5 @@ public class MultipleNode implements INode {
             if (value < tuple.a()) return tuple.b();
         }
         return list.get(last).b();
-    }
-
-    public void add(Double weight, String value) {
-        list.add(new Tuple(maximum += weight, value));
-    }
-
-    public boolean isEmpty() {
-        return list.isEmpty();
     }
 }
