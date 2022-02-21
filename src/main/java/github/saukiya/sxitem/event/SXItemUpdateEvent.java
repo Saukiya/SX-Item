@@ -22,7 +22,7 @@ public class SXItemUpdateEvent extends SXItemSpawnEvent implements Cancellable {
 
     private final ItemStack oldItem;
 
-    private boolean cancelled = false;
+    private boolean cancelled;
 
     public SXItemUpdateEvent(JavaPlugin plugin, Player player, IGenerator ig, ItemStack item, ItemStack oldItem) {
         super(plugin, player, ig, item);

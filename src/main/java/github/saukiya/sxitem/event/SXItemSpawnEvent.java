@@ -16,10 +16,10 @@ import org.bukkit.plugin.java.JavaPlugin;
  *
  * @author Saukiya
  */
-@EqualsAndHashCode(callSuper = true)
-@AllArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class SXItemSpawnEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
