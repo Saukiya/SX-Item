@@ -10,9 +10,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * 开启mm掉落进入玩家背包后给予时触发
+ * 物品更新事件
  *
- * @author Ray_Hughes
+ * @author Saukiya
  */
 @Getter
 @Setter
