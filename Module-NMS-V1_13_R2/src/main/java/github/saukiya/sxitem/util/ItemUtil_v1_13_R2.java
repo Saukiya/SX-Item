@@ -22,6 +22,20 @@ import java.util.UUID;
  */
 public class ItemUtil_v1_13_R2 extends ItemUtil {
 
+    public Attribute getAttribute(AttributeData data) {
+        return Arrays.stream(Attribute.values()).filter(attr -> attr.name().equals(data.getAttrName())).findFirst().orElse(null);
+    }
+
+    public AttributeModifier getAttributeModifier(AttributeData data) {
+        return new AttributeModifier(
+                data.getUniqueId(),
+                data.getName(),
+                data.getAmount(),
+                AttributeModifier.Operation.values()[data.getOperation()],
+                Arrays.stream(EquipmentSlot.values()).filter(s -> s.name().equals(data.getSlot())).findFirst().orElse(null)
+        );
+    }
+
     @Override
     public boolean isUnbreakable(@Nonnull ItemMeta meta) {
         return meta.isUnbreakable();
@@ -104,20 +118,5 @@ public class ItemUtil_v1_13_R2 extends ItemUtil {
         if (attribute == null) return;
         meta.addAttributeModifier(attribute, getAttributeModifier(data));
         item.setItemMeta(meta);
-    }
-
-
-    public Attribute getAttribute(AttributeData data) {
-        return Arrays.stream(Attribute.values()).filter(attr -> attr.name().equals(data.getAttrName())).findFirst().orElse(null);
-    }
-
-    public AttributeModifier getAttributeModifier(AttributeData data) {
-        return new AttributeModifier(
-                data.getUniqueId(),
-                data.getName(),
-                data.getAmount(),
-                AttributeModifier.Operation.values()[data.getOperation()],
-                Arrays.stream(EquipmentSlot.values()).filter(s -> s.name().equals(data.getSlot())).findFirst().orElse(null)
-        );
     }
 }
