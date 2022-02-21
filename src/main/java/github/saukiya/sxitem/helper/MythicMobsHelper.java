@@ -6,10 +6,12 @@ import github.saukiya.sxitem.data.item.sub.GeneratorDefault;
 import github.saukiya.sxitem.data.random.INode;
 import github.saukiya.sxitem.data.random.RandomDocker;
 import github.saukiya.sxitem.data.random.nodes.SingletonNode;
+import github.saukiya.sxitem.event.SXItemGiveToInventoryEvent;
 import github.saukiya.sxitem.util.Config;
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobDeathEvent;
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobSpawnEvent;
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicReloadedEvent;
+import io.lumine.xikage.mythicmobs.mobs.ActiveMob;
 import io.lumine.xikage.mythicmobs.mobs.MythicMob;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -91,11 +93,14 @@ public class MythicMobsHelper {
                 if (Config.getConfig().getBoolean(Config.MOB_DROP_TO_PLAYER_INVENTORY)) {
                     Inventory inventory = ((Player) event.getKiller()).getInventory();
                     for (int i = 0; i < amount; i++) {
-                        inventory.addItem(getItem(ig, (Player) event.getKiller(), mm));
+                        SXItemGiveToInventoryEvent eventI = new SXItemGiveToInventoryEvent((Player) event.getKiller(), event.getMob(), ig);
+                        if (!eventI.isCancelled()) {
+                            inventory.addItem(eventI.getItemStack());
+                        }
                     }
                 } else {
                     for (int i = 0; i < amount; i++) {
-                        drops.add(getItem(ig, (Player) event.getKiller(), mm));
+                        drops.add(getItem(ig, (Player) event.getKiller(), event.getMob()));
                     }
                 }
             }
@@ -121,7 +126,7 @@ public class MythicMobsHelper {
                 if (ig == null || sap.length > 1 && SXItem.getRandom().nextDouble() > Double.parseDouble(sap[1]))
                     continue;
 
-                ItemStack item = getItem(ig, null, mm);
+                ItemStack item = getItem(ig, null, event.getMob());
                 switch (Integer.parseInt(sap[0])) {
                     case -1:
                         eq.setItemInOffHand(item);
@@ -148,14 +153,16 @@ public class MythicMobsHelper {
         }
     }
 
-    public static ItemStack getItem(IGenerator ig, @Nullable Player player, MythicMob mob) {
+    public static ItemStack getItem(IGenerator ig, @Nullable Player player, ActiveMob mob) {
         if (ig instanceof GeneratorDefault) {
             RandomDocker randomDocker = new RandomDocker(new HashMap<>(((GeneratorDefault) ig).getRandomMap()));
             // 后续可能会优化 但是先实现再说
-            randomDocker.getLocalMap().putAll(mobPlaceholders.computeIfAbsent(mob, k -> {
+            randomDocker.getLocalMap().putAll(mobPlaceholders.computeIfAbsent(mob.getType(), k -> {
                 Map<String, INode> map = new HashMap<>();
-                // TODO 自己来
-                map.put("mob_level", new SingletonNode("薄荷自己来"));
+                map.put("mob_level", new SingletonNode(Double.toString(mob.getLevel())));
+                map.put("mob_name_display", new SingletonNode(mob.getDisplayName()));
+                map.put("mob_name_internal", new SingletonNode(mob.getType().getInternalName()));
+                map.put("mob_uuid", new SingletonNode(mob.getUniqueId().toString()));
                 return map;
             }));
             return SXItem.getItemManager().getItem(ig, player, randomDocker);
