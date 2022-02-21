@@ -4,44 +4,37 @@ import github.saukiya.sxitem.data.item.IGenerator;
 import github.saukiya.sxitem.helper.MythicMobsHelper;
 import io.lumine.xikage.mythicmobs.mobs.ActiveMob;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 /**
- * 物品生成事件
+ * 物品放入背包事件
  *
- * @author Saukiya
+ * @author Ray_Hughes
  */
 @Getter
 @Setter
+@RequiredArgsConstructor
 public class SXItemGiveToInventoryEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
 
-    private Player player;
+    private final IGenerator item;
 
-    private ActiveMob mob;
+    private final Player player;
 
-    public IGenerator item;
+    private final ActiveMob mob;
 
-    public boolean cancelled = false;
-
-    public SXItemGiveToInventoryEvent(Player player, ActiveMob mob, IGenerator itemGenerator) {
-        this.player = player;
-        this.mob = mob;
-        this.item = itemGenerator;
-    }
+    private boolean cancelled;
 
     public ItemStack getItemStack() {
         return MythicMobsHelper.getItem(item, player, mob);
     }
 
-
-    @NotNull
     public HandlerList getHandlers() {
         return handlers;
     }

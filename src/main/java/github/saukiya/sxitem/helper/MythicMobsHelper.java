@@ -93,7 +93,7 @@ public class MythicMobsHelper {
                 if (Config.getConfig().getBoolean(Config.MOB_DROP_TO_PLAYER_INVENTORY)) {
                     Inventory inventory = ((Player) event.getKiller()).getInventory();
                     for (int i = 0; i < amount; i++) {
-                        SXItemGiveToInventoryEvent eventI = new SXItemGiveToInventoryEvent((Player) event.getKiller(), event.getMob(), ig);
+                        SXItemGiveToInventoryEvent eventI = new SXItemGiveToInventoryEvent(ig, (Player) event.getKiller(), event.getMob());
                         if (!eventI.isCancelled()) {
                             inventory.addItem(eventI.getItemStack());
                         }
