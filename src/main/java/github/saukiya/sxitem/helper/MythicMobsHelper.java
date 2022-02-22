@@ -5,7 +5,6 @@ import github.saukiya.sxitem.data.item.IGenerator;
 import github.saukiya.sxitem.data.item.sub.GeneratorDefault;
 import github.saukiya.sxitem.data.random.INode;
 import github.saukiya.sxitem.data.random.RandomDocker;
-import github.saukiya.sxitem.data.random.nodes.SingletonNode;
 import github.saukiya.sxitem.event.SXItemGiveToInventoryEvent;
 import github.saukiya.sxitem.util.Config;
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobDeathEvent;
@@ -32,7 +31,7 @@ import java.util.function.Consumer;
 
 public class MythicMobsHelper {
 
-    public static final Map<MythicMob, Map<String, INode>> mobPlaceholders = new HashMap<>();
+    public static final Map<MythicMob, Map<String, String>> mobPlaceholders = new HashMap<>();
 
     @Setter
     private static Consumer<MythicMobSpawnEvent> spawnConsumer = MythicMobsHelper::spawnFunc;
@@ -157,12 +156,12 @@ public class MythicMobsHelper {
         if (ig instanceof GeneratorDefault) {
             RandomDocker randomDocker = new RandomDocker(new HashMap<>(((GeneratorDefault) ig).getRandomMap()));
             // 后续可能会优化 但是先实现再说
-            randomDocker.getLocalMap().putAll(mobPlaceholders.computeIfAbsent(mob.getType(), k -> {
-                Map<String, INode> map = new HashMap<>();
-                map.put("mob_level", new SingletonNode(Double.toString(mob.getLevel())));
-                map.put("mob_name_display", new SingletonNode(mob.getDisplayName()));
-                map.put("mob_name_internal", new SingletonNode(mob.getType().getInternalName()));
-                map.put("mob_uuid", new SingletonNode(mob.getUniqueId().toString()));
+            randomDocker.getOtherList().add(mobPlaceholders.computeIfAbsent(mob.getType(), k -> {
+                Map<String, String> map = new HashMap<>();
+                map.put("mob_level", Double.toString(mob.getLevel()));
+                map.put("mob_name_display", mob.getDisplayName());
+                map.put("mob_name_internal", mob.getType().getInternalName());
+                map.put("mob_uuid", mob.getUniqueId().toString());
                 return map;
             }));
             return SXItem.getItemManager().getItem(ig, player, randomDocker);
