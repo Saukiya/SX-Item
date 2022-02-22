@@ -139,7 +139,7 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item);
         wrapper.setAll((TagCompoundBase) docker.replace(nbt));
 
-        docker.getLockLog().forEach(key -> wrapper.set(SXItem.getInst().getName() + ".Lock." + key, docker.getLockMap().get(key)));
+        docker.getLockMap().forEach((key, value) -> wrapper.set(SXItem.getInst().getName() + ".Lock." + key, value));
 
         wrapper.save();
         return item;
@@ -179,7 +179,7 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
     public ItemStack update(ItemStack oldItem, NBTTagWrapper oldWrapper, Player player) {
         RandomDocker randomDocker = new RandomDocker(randomMap, player);
         Map<String, String> map = (Map<String, String>) oldWrapper.getMap(SXItem.getInst().getName() + ".Lock");
-        if (map != null) map.forEach((k, v) -> randomDocker.getLockMap().put(k, v));
+        if (map != null) randomDocker.getOtherList().add(map);
         return getItem(player, randomDocker);
     }
 

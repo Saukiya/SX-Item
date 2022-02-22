@@ -38,10 +38,10 @@ public class RandomDocker extends StrLookup {
     final StrSubstitutor ss = new StrSubstitutor(this, PRE_MATCHER, SUF_MATCHER, StrSubstitutor.DEFAULT_ESCAPE);
     @Getter
     final Player player;
-    @Getter// log日志 TODO 可以通过合并localMap解决lockMap预设问题, 但是会产生新的问题
-    final HashSet<String> lockLog = new HashSet<>();
     @Getter// 局部变量缓存
     final Map<String, INode> localMap;
+    @Getter// 其他变量
+    final List<Map<String, String>> otherList = new ArrayList<>();
     @Getter// LockRandom 缓存
     Map<String, String> lockMap = new HashMap<>();
 
@@ -114,7 +114,10 @@ public class RandomDocker extends StrLookup {
      * @return RandomString
      */
     public String random(String key) {
-        String str = RandomManager.random(key, localMap);
+        String str;
+        str = otherList.stream().map(map -> map.get(key)).findFirst().orElse(null);
+        if (str != null) return str;
+        str = RandomManager.random(key, localMap);
         if (str != null) return str;
         return SXItem.getRandomManager().random(key);
     }
