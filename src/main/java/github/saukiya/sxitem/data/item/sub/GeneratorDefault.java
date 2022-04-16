@@ -61,6 +61,48 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         this.update = config.getBoolean("Update");
     }
 
+    @Override
+    public String getType() {
+        return "Default";
+    }
+
+    @Override
+    public String getName() {
+        if (displayName != null) return RandomDocker.getInst().replace(displayName).replace("&", "§");
+        return "§7" + String.join("§8|§7", ids);
+    }
+
+    @Override
+    public BaseComponent getNameComponent() {
+        if (displayName != null)
+            return new TextComponent(RandomDocker.getInst().replace(displayName).replace("&", "§"));
+        ComponentBuilder cb = MessageUtil.getInst().componentBuilder().add("§r");
+        for (String id : ids) {
+            if (cb.getHandle().getExtra().size() != 1) cb.add("§8|§r");
+            Material material = ItemManager.getMaterial(id);
+            if (material != null) cb.add(material);
+            else cb.add(id);
+        }
+        return cb.getHandle();
+    }
+
+    @Override
+    protected ItemStack getItem(Player player, Object... args) {
+        if (args.length > 0 && args[0] instanceof RandomDocker)
+            return getItem(player, (RandomDocker) args[0]);
+        RandomDocker randomDocker = new RandomDocker(randomMap, player);
+        if (args.length > 0) {
+            if (args[0] instanceof Map) {
+                randomDocker.getOtherList().add((Map<String, String>) args[0]);
+            } else if (args[0] instanceof String) {
+                Map<String, String> map = new HashMap<>();
+                for (int i = 1; i < args.length; i++, i++) map.put((String) args[i - 1], (String) args[i]);
+                randomDocker.getOtherList().add(map);
+            }
+        }
+        return getItem(player, randomDocker);
+    }
+
     private ItemStack getItem(Player player, RandomDocker docker) {
         String[] materAndDur = docker.replace(ids.get(SXItem.getRandom().nextInt(ids.size()))).split(":");
         Material material = ItemManager.getMaterial(materAndDur[0]);
@@ -139,47 +181,17 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item);
         wrapper.setAll((TagCompoundBase) docker.replace(nbt));
 
-        docker.getLockLog().forEach(key -> wrapper.set(SXItem.getInst().getName() + ".Lock." + key, docker.getLockMap().get(key)));
+        docker.getLockMap().forEach((key, value) -> wrapper.set(SXItem.getInst().getName() + ".Lock." + key, value));
 
         wrapper.save();
         return item;
     }
 
     @Override
-    public String getType() {
-        return "Default";
-    }
-
-    @Override
-    public String getName() {
-        if (displayName != null) return RandomDocker.getInst().replace(displayName).replace("&", "§");
-        return "§7" + String.join("§8|§7", ids);
-    }
-
-    @Override
-    public BaseComponent getNameComponent() {
-        if (displayName != null)
-            return new TextComponent(RandomDocker.getInst().replace(displayName).replace("&", "§"));
-        ComponentBuilder cb = MessageUtil.getInst().componentBuilder().add("§r");
-        for (String id : ids) {
-            if (cb.getHandle().getExtra().size() != 1) cb.add("§8|§r");
-            Material material = ItemManager.getMaterial(id);
-            if (material != null) cb.add(material);
-            else cb.add(id);
-        }
-        return cb.getHandle();
-    }
-
-    @Override
-    public ItemStack getItem(Player player, Object... args) {
-        return getItem(player, args.length > 0 && args[0] instanceof RandomDocker ? (RandomDocker) args[0] : new RandomDocker(randomMap, player));
-    }
-
-    @Override
     public ItemStack update(ItemStack oldItem, NBTTagWrapper oldWrapper, Player player) {
         RandomDocker randomDocker = new RandomDocker(randomMap, player);
         Map<String, String> map = (Map<String, String>) oldWrapper.getMap(SXItem.getInst().getName() + ".Lock");
-        if (map != null) map.forEach((k, v) -> randomDocker.getLockMap().put(k, v));
+        if (map != null) randomDocker.getOtherList().add(map);
         return getItem(player, randomDocker);
     }
 
