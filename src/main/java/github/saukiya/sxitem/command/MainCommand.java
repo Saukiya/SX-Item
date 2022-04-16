@@ -82,7 +82,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
         SenderType type = getType(sender);
-        return args.length == 1 ? COMMANDS.stream().filter(sub -> sub.isUse(sender, type) && !sub.hide && sub.cmd.contains(args[0])).map(sub -> sub.cmd).collect(Collectors.toList()) : COMMANDS.stream().filter(sub -> sub.cmd.equalsIgnoreCase(args[0])).findFirst().filter(sub -> sub.isUse(sender, type)).map(sub -> sub.onTabComplete(sender, args)).orElse(null);
+        return args.length == 1 ? COMMANDS.stream().filter(sub -> sub.isUse(sender, type) && !sub.hide && sub.cmd.contains(args[0])).map(sub -> sub.cmd).collect(Collectors.toList()) : COMMANDS.stream().filter(sub -> sub.cmd.equalsIgnoreCase(args[0]) && sub.isUse(sender, type)).findFirst().map(sub -> sub.onTabComplete(sender, args)).orElse(null);
     }
 
     public static void register(SubCommand command) {
