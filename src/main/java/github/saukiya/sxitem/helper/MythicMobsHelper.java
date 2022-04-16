@@ -152,11 +152,17 @@ public class MythicMobsHelper {
         }
     }
 
+    /**
+     * 依据 ActiveMob 提供变量 生成 Item
+     *
+     * @param ig
+     * @param player
+     * @param mob
+     * @return
+     */
     public static ItemStack getItem(IGenerator ig, @Nullable Player player, ActiveMob mob) {
         if (ig instanceof GeneratorDefault) {
-            RandomDocker randomDocker = new RandomDocker(new HashMap<>(((GeneratorDefault) ig).getRandomMap()));
-            // 后续可能会优化 但是先实现再说
-            randomDocker.getOtherList().add(mobPlaceholders.computeIfAbsent(mob.getType(), k -> {
+            return SXItem.getItemManager().getItem(ig, player, mobPlaceholders.computeIfAbsent(mob.getType(), k -> {
                 Map<String, String> map = new HashMap<>();
                 map.put("mob_level", Double.toString(mob.getLevel()));
                 map.put("mob_name_display", mob.getDisplayName());
@@ -164,7 +170,12 @@ public class MythicMobsHelper {
                 map.put("mob_uuid", mob.getUniqueId().toString());
                 return map;
             }));
-            return SXItem.getItemManager().getItem(ig, player, randomDocker);
+
+//            return SXItem.getItemManager().getItem(ig, player,
+//                    "mob_level", Double.toString(mob.getLevel()),
+//                    "mob_name_display", mob.getDisplayName(),
+//                    "mob_name_internal", mob.getType().getInternalName(),
+//                    "mob_uuid", mob.getUniqueId().toString());
         } else {
             return SXItem.getItemManager().getItem(ig, player);
         }

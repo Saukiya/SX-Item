@@ -181,7 +181,7 @@ public class ItemManager implements Listener {
      * @return
      */
     public IGenerator getGenerator(ItemStack item) {
-        if (item != null && item.hasItemMeta()) {
+        if (item != null && !item.getType().equals(Material.AIR) && item.hasItemMeta()) {
             return itemMap.get(NbtUtil.getInst().getItemTagWrapper(item).getString(plugin.getName() + ".ItemKey"));
         }
         return null;
