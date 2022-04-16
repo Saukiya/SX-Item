@@ -2,6 +2,7 @@ package github.saukiya.sxitem.command.sub;
 
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.command.SubCommand;
+import github.saukiya.sxitem.data.item.IGenerator;
 import github.saukiya.sxitem.util.Config;
 import github.saukiya.sxitem.util.Message;
 import github.saukiya.sxitem.util.MessageUtil;
@@ -13,7 +14,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -23,7 +26,7 @@ public class GiveCommand extends SubCommand {
 
     public GiveCommand() {
         super("give");
-        setArg(" <ItemName> <Player> <Amount>");
+        setArg(" <ItemName> [Player] [Amount] [key:value...]");
     }
 
     @Override
@@ -34,7 +37,8 @@ public class GiveCommand extends SubCommand {
         }
         Player player = null;
 
-        if (!SXItem.getItemManager().hasItem(args[1])) {
+        IGenerator ig = SXItem.getItemManager().getGenerator(args[1]);
+        if (ig == null) {
             SXItem.getItemManager().sendItemMapToPlayer(sender, args[1]);
             return;
         }
@@ -50,9 +54,19 @@ public class GiveCommand extends SubCommand {
 
         int amount = args.length > 3 ? Integer.parseInt(args[3].replaceAll("[^\\d]", "")) : 1;
 
+        Map<String, String> otherMap = null;
+        if (args.length > 4) {
+            otherMap = new HashMap<>();
+            for (int i = 4; i < args.length; i++) {
+                String[] splits = args[i].split(":");
+                otherMap.put(splits[0], splits[1]);
+            }
+        }
+
         Inventory inv = player.getInventory();
         for (int i = 0; i < amount; i++) {
-            ItemStack itemStack = SXItem.getItemManager().getItem(args[1], player);
+            ItemStack itemStack = SXItem.getItemManager().getItem(ig, player, otherMap);
+
             if (inv.firstEmpty() != -1) {
                 inv.addItem(itemStack);
             } else if (Config.getConfig().getBoolean(Config.GIVE_OVERFLOW_DROP)) {
