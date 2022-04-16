@@ -39,7 +39,7 @@ public class GeneratorImport extends IGenerator {
     }
 
     @Override
-    public ItemStack getItem(Player player, Object... args) {
+    protected ItemStack getItem(Player player, Object... args) {
         return item.clone();
     }
 
