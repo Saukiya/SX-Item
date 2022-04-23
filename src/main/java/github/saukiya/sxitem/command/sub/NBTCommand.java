@@ -46,7 +46,8 @@ public class NBTCommand extends SubCommand {
                         .suggestCommand(item.getType().name());
                 String keys = String.join("/", ItemManager.getMaterialString(item.getType()));
                 if (keys.length() != 0) cb.add("-").add(keys).show(Message.INFO__CLICK_COPY.get()).suggestCommand(keys);
-                cb.add("] ").add("§cItem-NBT").show(tagCompound.toString());
+                cb.add("] ");
+                if (tagCompound != null) cb.add("§cItem-NBT").show(tagCompound.toString());
                 cb.send(sender);
                 sendNBT("", tagCompound, sender);
                 return;
