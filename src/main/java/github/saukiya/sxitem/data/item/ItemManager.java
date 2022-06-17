@@ -139,12 +139,11 @@ public class ItemManager implements Listener {
                         linkMap.put(key, yaml.getString(key));
                         continue;
                     }
-                    String pathName = getPathName(files);
                     String type = yaml.getString(key + ".Type", "Default");
                     BiFunction<String, ConfigurationSection, IGenerator> function = getLoadFunction().get(type);
                     if (function != null) {
                         ConfigurationSection config = yaml.getConfigurationSection(key);
-                        config.set("Path", getPathName(files));
+                        config.set("Path", getPathName(file));
                         itemMap.put(key, function.apply(key, yaml.getConfigurationSection(key)));
                     } else {
                         plugin.getLogger().warning("Don't Item Type: " + file.getName() + File.separator + key + " - " + type + " !");

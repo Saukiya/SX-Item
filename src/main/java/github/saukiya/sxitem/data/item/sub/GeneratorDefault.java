@@ -221,11 +221,8 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
             if (ItemUtil.getInst().isUnbreakable(itemMeta))
                 config.set("Unbreakable", true);
             List<ItemUtil.AttributeData> attributeList = ItemUtil.getInst().getAttributes(item);
-            if (attributeList != null) {
-                List<String> list = new ArrayList<>();
-                attributeList.forEach(data -> list.add(data.getAttrName() + ":" + data.getAmount() + ":" + data.getOperation() + (data.getSlot() != null ? ":" + data.getSlot() : "")));
-                config.set("Attributes", list);
-            }
+            if (attributeList != null && attributeList.size() > 0)
+                config.set("Attributes", attributeList.stream().map(data -> data.getAttrName() + ":" + data.getAmount() + ":" + data.getOperation() + (data.getSlot() != null ? ":" + data.getSlot() : "")).collect(Collectors.toList()));
             if (itemMeta instanceof LeatherArmorMeta)
                 config.set("Color", Integer.toHexString(((LeatherArmorMeta) itemMeta).getColor().asRGB()));
             config.set("SkullName", ItemUtil.getInst().getSkull(itemMeta));
