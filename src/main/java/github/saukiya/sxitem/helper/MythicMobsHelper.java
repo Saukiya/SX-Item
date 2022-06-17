@@ -3,8 +3,6 @@ package github.saukiya.sxitem.helper;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.item.IGenerator;
 import github.saukiya.sxitem.data.item.sub.GeneratorDefault;
-import github.saukiya.sxitem.data.random.INode;
-import github.saukiya.sxitem.data.random.RandomDocker;
 import github.saukiya.sxitem.event.SXItemGiveToInventoryEvent;
 import github.saukiya.sxitem.util.Config;
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobDeathEvent;
@@ -162,20 +160,11 @@ public class MythicMobsHelper {
      */
     public static ItemStack getItem(IGenerator ig, @Nullable Player player, ActiveMob mob) {
         if (ig instanceof GeneratorDefault) {
-            return SXItem.getItemManager().getItem(ig, player, mobPlaceholders.computeIfAbsent(mob.getType(), k -> {
-                Map<String, String> map = new HashMap<>();
-                map.put("mob_level", Double.toString(mob.getLevel()));
-                map.put("mob_name_display", mob.getDisplayName());
-                map.put("mob_name_internal", mob.getType().getInternalName());
-                map.put("mob_uuid", mob.getUniqueId().toString());
-                return map;
-            }));
-
-//            return SXItem.getItemManager().getItem(ig, player,
-//                    "mob_level", Double.toString(mob.getLevel()),
-//                    "mob_name_display", mob.getDisplayName(),
-//                    "mob_name_internal", mob.getType().getInternalName(),
-//                    "mob_uuid", mob.getUniqueId().toString());
+            return SXItem.getItemManager().getItem(ig, player,
+                    "mob_level", Double.toString(mob.getLevel()),
+                    "mob_name_display", mob.getDisplayName(),
+                    "mob_name_internal", mob.getType().getInternalName(),
+                    "mob_uuid", mob.getUniqueId().toString());
         } else {
             return SXItem.getItemManager().getItem(ig, player);
         }
