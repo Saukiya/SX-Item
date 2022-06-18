@@ -19,7 +19,7 @@ import org.bukkit.inventory.ItemStack;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class SXItemGiveToInventoryEvent extends Event {
+public class SXItemMythicMobsGiveToInventoryEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
 
@@ -29,10 +29,12 @@ public class SXItemGiveToInventoryEvent extends Event {
 
     private final ActiveMob mob;
 
+    private final ItemStack itemStack;
+
     private boolean cancelled;
 
     public ItemStack getItemStack() {
-        return MythicMobsHelper.getItem(item, player, mob);
+        return itemStack;
     }
 
     public HandlerList getHandlers() {
