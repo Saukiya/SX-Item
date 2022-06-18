@@ -5,10 +5,7 @@ import github.saukiya.sxitem.event.SXItemSpawnEvent;
 import github.saukiya.sxitem.event.SXItemUpdateEvent;
 import github.saukiya.sxitem.nbt.NBTItemWrapper;
 import github.saukiya.sxitem.nbt.NBTTagWrapper;
-import github.saukiya.sxitem.util.ComponentBuilder;
-import github.saukiya.sxitem.util.MessageUtil;
-import github.saukiya.sxitem.util.NMS;
-import github.saukiya.sxitem.util.NbtUtil;
+import github.saukiya.sxitem.util.*;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
@@ -61,6 +58,8 @@ public class ItemManager implements Listener {
 
     private final Map<String, IGenerator> itemMap = new HashMap<>();
 
+    private final List<String> fixedNbtList = new ArrayList<>();
+
     public ItemManager() {
         this(SXItem.getInst(), "Item/Default/Default.yml", "Item/NoLoad/Default.yml");
     }
@@ -91,21 +90,30 @@ public class ItemManager implements Listener {
     public void loadItemData() {
         itemMap.clear();
         linkMap.clear();
+        fixedNbtList.clear();
+        // 加载物品
         if (!itemFiles.exists() || itemFiles.listFiles().length == 0) {
             Arrays.stream(defaultFile).forEach(fileName -> plugin.saveResource(fileName, true));
         }
         loadItem(itemFiles);
         plugin.getLogger().info("Loaded " + itemMap.size() + " Items");
-        linkMap.forEach((k, v) -> {
-            IGenerator ig = itemMap.get(v);
+
+        // 加载挂链
+        Iterator<Map.Entry<String, String>> iterator = linkMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, String> entry = iterator.next();
+            IGenerator ig = itemMap.get(entry.getKey());
             if (ig != null) {
-                itemMap.put(k, ig);
+                itemMap.put(entry.getKey(), ig);
             } else {
-                linkMap.remove(k);
-                plugin.getLogger().info("Linked Error: " + k + "->" + v);
+                iterator.remove();
+                plugin.getLogger().info("Linked Error: " + entry.getKey() + "->" + entry.getValue());
             }
-        });
+        }
         plugin.getLogger().info("Linked " + linkMap.size() + " Items");
+
+        // 加载固定NBT
+        fixedNbtList.addAll(Config.getConfig().getStringList(Config.UPDATE_ITEM_FIXED_NBT));
     }
 
     /**
@@ -261,6 +269,9 @@ public class ItemManager implements Listener {
                 NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(newItem);
                 wrapper.set(plugin.getName() + ".ItemKey", ig.getKey());
                 wrapper.set(plugin.getName() + ".HashCode", ((IUpdate) ig).updateCode());
+                for (String s : fixedNbtList) {
+                    wrapper.set(s, oldWrapper.get(s));
+                }
                 wrapper.save();
 
                 SXItemUpdateEvent event = new SXItemUpdateEvent(plugin, player, ig, newItem, item);
