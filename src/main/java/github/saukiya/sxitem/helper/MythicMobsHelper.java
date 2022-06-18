@@ -3,7 +3,7 @@ package github.saukiya.sxitem.helper;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.item.IGenerator;
 import github.saukiya.sxitem.data.item.sub.GeneratorDefault;
-import github.saukiya.sxitem.event.SXItemGiveToInventoryEvent;
+import github.saukiya.sxitem.event.SXItemMythicMobsGiveToInventoryEvent;
 import github.saukiya.sxitem.util.Config;
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobDeathEvent;
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobSpawnEvent;
@@ -62,6 +62,8 @@ public class MythicMobsHelper {
     /**
      * SX-Drop:
      * - 物品ID 数量 概率
+     * - 物品ID 数量 概率 局部变量
+     * - 物品ID 数量 概率 Key1:Value1 Key2:Value2
      *
      * @param event MythicMobDeathEvent
      */
@@ -86,18 +88,20 @@ public class MythicMobsHelper {
                         amount = Integer.parseInt(args[1]);
                     }
                 }
+                Map<String, String> otherMap = getOtherMap(args, 3);
                 // 给予
                 if (Config.getConfig().getBoolean(Config.MOB_DROP_TO_PLAYER_INVENTORY)) {
                     Inventory inventory = ((Player) event.getKiller()).getInventory();
                     for (int i = 0; i < amount; i++) {
-                        SXItemGiveToInventoryEvent eventI = new SXItemGiveToInventoryEvent(ig, (Player) event.getKiller(), event.getMob());
+                        SXItemMythicMobsGiveToInventoryEvent eventI = new SXItemMythicMobsGiveToInventoryEvent(ig, (Player) event.getKiller(), event.getMob(), getItem(ig, (Player) event.getKiller(), event.getMob(), otherMap));
+                        Bukkit.getPluginManager().callEvent(eventI);
                         if (!eventI.isCancelled()) {
                             inventory.addItem(eventI.getItemStack());
                         }
                     }
                 } else {
                     for (int i = 0; i < amount; i++) {
-                        drops.add(getItem(ig, (Player) event.getKiller(), event.getMob()));
+                        drops.add(getItem(ig, (Player) event.getKiller(), event.getMob(), otherMap));
                     }
                 }
             }
@@ -108,6 +112,8 @@ public class MythicMobsHelper {
     /**
      * SX-Equipment:
      * - 物品ID:位置 概率
+     * - 物品ID:位置 概率 局部变量
+     * - 物品ID:位置 概率 Key1:Value1 Key2:Value2
      *
      * @param event MythicMobSpawnEvent
      */
@@ -117,14 +123,15 @@ public class MythicMobsHelper {
             EntityEquipment eq = entity.getEquipment();
             MythicMob mm = event.getMobType();
             for (String str : mm.getConfig().getStringList("SX-Equipment")) {
-                String[] args = str.split(":");
-                IGenerator ig = SXItem.getItemManager().getGenerator(args[0]);
-                String[] sap = args[1].split(" ");
-                if (ig == null || sap.length > 1 && SXItem.getRandom().nextDouble() > Double.parseDouble(sap[1]))
+                String[] args = str.split(" ");
+                String[] sap = args[0].split(":");
+
+                IGenerator ig = SXItem.getItemManager().getGenerator(sap[0]);
+                if (ig == null || args.length > 1 && SXItem.getRandom().nextDouble() > Double.parseDouble(args[1]))
                     continue;
 
-                ItemStack item = getItem(ig, null, event.getMob());
-                switch (Integer.parseInt(sap[0])) {
+                ItemStack item = getItem(ig, null, event.getMob(), getOtherMap(args, 2));
+                switch (Integer.parseInt(sap[1])) {
                     case -1:
                         eq.setItemInOffHand(item);
                         break;
@@ -159,14 +166,31 @@ public class MythicMobsHelper {
      * @return
      */
     public static ItemStack getItem(IGenerator ig, @Nullable Player player, ActiveMob mob) {
+        return getItem(ig, player, mob, new HashMap<>());
+    }
+
+    public static ItemStack getItem(IGenerator ig, @Nullable Player player, ActiveMob mob, Map<String, String> otherMap) {
         if (ig instanceof GeneratorDefault) {
-            return SXItem.getItemManager().getItem(ig, player,
-                    "mob_level", Double.toString(mob.getLevel()),
-                    "mob_name_display", mob.getDisplayName(),
-                    "mob_name_internal", mob.getType().getInternalName(),
-                    "mob_uuid", mob.getUniqueId().toString());
+            otherMap.put("mob_level", Double.toString(mob.getLevel()));
+            otherMap.put("mob_name_display", mob.getDisplayName());
+            otherMap.put("mob_name_internal", mob.getType().getInternalName());
+            otherMap.put("mob_uuid", mob.getUniqueId().toString());
+            return SXItem.getItemManager().getItem(ig, player, otherMap);
         } else {
             return SXItem.getItemManager().getItem(ig, player);
         }
+    }
+
+    public static Map<String, String> getOtherMap(String[] args) {
+        return getOtherMap(args, 0);
+    }
+
+    public static Map<String, String> getOtherMap(String[] args, int index) {
+        Map<String, String> otherMap = new HashMap<>();
+        for (int i = index; i < args.length; i++) {
+            String[] splits = args[i].split(":");
+            otherMap.put(splits[0], splits[1]);
+        }
+        return otherMap;
     }
 }
