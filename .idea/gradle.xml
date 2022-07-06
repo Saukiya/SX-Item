@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleJvm" value="17" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/Module-NMS-V1_11_R1" />
+            <option value="$PROJECT_DIR$/Module-NMS-V1_12_R1" />
+            <option value="$PROJECT_DIR$/Module-NMS-V1_13_R2" />
+            <option value="$PROJECT_DIR$/Module-NMS-V1_14_R1" />
+            <option value="$PROJECT_DIR$/Module-NMS-V1_15_R1" />
+            <option value="$PROJECT_DIR$/Module-NMS-V1_16_R3" />
+            <option value="$PROJECT_DIR$/Module-NMS-V1_17_R1" />
+            <option value="$PROJECT_DIR$/Module-NMS-V1_18_R2" />
+            <option value="$PROJECT_DIR$/Module-NMS-V1_8_R3" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>

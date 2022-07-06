@@ -1,7 +1,6 @@
 package github.saukiya.sxitem.event;
 
 import github.saukiya.sxitem.data.item.IGenerator;
-import github.saukiya.sxitem.helper.MythicMobsHelper;
 import io.lumine.xikage.mythicmobs.mobs.ActiveMob;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

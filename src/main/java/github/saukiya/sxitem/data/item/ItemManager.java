@@ -1,8 +1,11 @@
 package github.saukiya.sxitem.data.item;
 
+import dev.lone.itemsadder.api.CustomStack;
+import dev.lone.itemsadder.api.ItemsAdder;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.event.SXItemSpawnEvent;
 import github.saukiya.sxitem.event.SXItemUpdateEvent;
+import github.saukiya.sxitem.helper.ItemsAdderHelper;
 import github.saukiya.sxitem.nbt.NBTItemWrapper;
 import github.saukiya.sxitem.nbt.NBTTagWrapper;
 import github.saukiya.sxitem.util.*;
@@ -22,6 +25,7 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nonnull;
@@ -221,8 +225,19 @@ public class ItemManager implements Listener {
      */
     public ItemStack getItem(IGenerator ig, Player player, Object... args) {
         ItemStack item = ig.getItem(player, args);
+        NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item);
+        if (ItemsAdderHelper.isEnable()) {
+            String ia = ig.getConfig().getString("ItemsAdder", "null");
+            boolean exists = CustomStack.getInstance(ia) != null;
+            if (!ia.equals("null") && exists) {
+                int cmd = CustomStack.getInstance(ia).getItemStack().getItemMeta().getCustomModelData();
+                item.setType(CustomStack.getInstance(ia).getItemStack().getType());
+                ItemMeta meta = item.getItemMeta();
+                meta.setCustomModelData(cmd);
+                item.setItemMeta(meta);
+            }
+        }
         if (item != emptyItem && item != null && ig instanceof IUpdate) {
-            NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item);
             wrapper.set(plugin.getName() + ".ItemKey", ig.getKey());
             wrapper.set(plugin.getName() + ".HashCode", ((IUpdate) ig).updateCode());
             wrapper.save();
@@ -271,6 +286,17 @@ public class ItemManager implements Listener {
                 wrapper.set(plugin.getName() + ".HashCode", ((IUpdate) ig).updateCode());
                 for (String s : fixedNbtList) {
                     wrapper.set(s, oldWrapper.get(s));
+                }
+                if (ItemsAdderHelper.isEnable()) {
+                    String ia = ig.getConfig().getString("ItemsAdder", "null");
+                    boolean exists = CustomStack.getInstance(ia) != null;
+                    if (!ia.equals("null") && exists) {
+                        int cmd = CustomStack.getInstance(ia).getItemStack().getItemMeta().getCustomModelData();
+                        item.setType(CustomStack.getInstance(ia).getItemStack().getType());
+                        ItemMeta meta = item.getItemMeta();
+                        meta.setCustomModelData(cmd);
+                        item.setItemMeta(meta);
+                    }
                 }
                 wrapper.save();
 

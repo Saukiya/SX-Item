@@ -8,6 +8,6 @@ if (!System.env.JITPACK) {
     include 'Module-NMS-V1_15_R1'
     include 'Module-NMS-V1_16_R3'
     include 'Module-NMS-V1_17_R1'
-    include 'Module-NMS-V1_18_R1'
+    include 'Module-NMS-V1_18_R2'
 }
 

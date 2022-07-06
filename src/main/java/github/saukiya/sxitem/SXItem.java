@@ -6,6 +6,7 @@ import github.saukiya.sxitem.data.item.sub.GeneratorDefault;
 import github.saukiya.sxitem.data.item.sub.GeneratorImport;
 import github.saukiya.sxitem.data.random.RandomManager;
 import github.saukiya.sxitem.data.random.randoms.*;
+import github.saukiya.sxitem.helper.ItemsAdderHelper;
 import github.saukiya.sxitem.helper.MythicMobsHelper;
 import github.saukiya.sxitem.helper.PlaceholderHelper;
 import github.saukiya.sxitem.util.*;
@@ -74,8 +75,20 @@ public class SXItem extends JavaPlugin {
         itemManager = new ItemManager();
 
         Config.setup();
-        PlaceholderHelper.setup();
-        MythicMobsHelper.setup();
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null){
+            PlaceholderHelper.setup();
+            getLogger().info("PlaceholderAPI Hook!");
+
+        }else {
+            getLogger().info("PlaceholderAPI未加载");
+        }
+        if (Bukkit.getPluginManager().getPlugin("MythicMobs") != null){
+            MythicMobsHelper.setup();
+            getLogger().info("MythicMobs Hook!");
+        }else {
+            getLogger().info("MythicMobs4未加载");
+        }
+        ItemsAdderHelper.setup();
         mainCommand.setup("sxitem");
         getLogger().info("Loading Time: " + (System.currentTimeMillis() - oldTimes) + " ms");
         getLogger().info("Author: Saukiya");
