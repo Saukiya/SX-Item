@@ -8,6 +8,7 @@ import github.saukiya.sxitem.data.random.RandomManager;
 import github.saukiya.sxitem.data.random.randoms.*;
 import github.saukiya.sxitem.helper.ItemsAdderHelper;
 import github.saukiya.sxitem.helper.MythicMobsHelper;
+import github.saukiya.sxitem.helper.MythicMobsVHelper;
 import github.saukiya.sxitem.helper.PlaceholderHelper;
 import github.saukiya.sxitem.util.*;
 import lombok.Getter;
@@ -15,6 +16,7 @@ import lombok.Setter;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.text.DecimalFormat;
@@ -82,11 +84,15 @@ public class SXItem extends JavaPlugin {
         }else {
             getLogger().info("PlaceholderAPI未加载");
         }
-        if (Bukkit.getPluginManager().getPlugin("MythicMobs") != null){
+        Plugin mythicMobs = Bukkit.getPluginManager().getPlugin("MythicMobs");
+        if ((mythicMobs != null) && mythicMobs.getDescription().getVersion().startsWith("4")){
             MythicMobsHelper.setup();
-            getLogger().info("MythicMobs Hook!");
+            getLogger().info("MythicMobs4 Hook!");
+        }else if ((mythicMobs != null) && mythicMobs.getDescription().getVersion().startsWith("5")){
+            MythicMobsVHelper.setup();
+            getLogger().info("MythicMobs5 Hook!");
         }else {
-            getLogger().info("MythicMobs4未加载");
+            getLogger().info("MythicMobs未加载");
         }
         ItemsAdderHelper.setup();
         mainCommand.setup("sxitem");

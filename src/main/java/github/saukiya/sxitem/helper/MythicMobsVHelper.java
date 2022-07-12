@@ -5,11 +5,11 @@ import github.saukiya.sxitem.data.item.IGenerator;
 import github.saukiya.sxitem.data.item.sub.GeneratorDefault;
 import github.saukiya.sxitem.event.SXItemMythicMobsGiveToInventoryEvent;
 import github.saukiya.sxitem.util.Config;
-import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobDeathEvent;
-import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobSpawnEvent;
-import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicReloadedEvent;
-import io.lumine.xikage.mythicmobs.mobs.ActiveMob;
-import io.lumine.xikage.mythicmobs.mobs.MythicMob;
+import io.lumine.mythic.api.mobs.MythicMob;
+import io.lumine.mythic.bukkit.events.MythicMobDeathEvent;
+import io.lumine.mythic.bukkit.events.MythicMobSpawnEvent;
+import io.lumine.mythic.bukkit.events.MythicReloadedEvent;
+import io.lumine.mythic.core.mobs.ActiveMob;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
@@ -27,15 +27,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class MythicMobsHelper {
+public class MythicMobsVHelper {
 
     public static final Map<MythicMob, Map<String, String>> mobPlaceholders = new HashMap<>();
 
     @Setter
-    private static Consumer<MythicMobSpawnEvent> spawnConsumer = MythicMobsHelper::spawnFunc;
+    private static Consumer<MythicMobSpawnEvent> spawnConsumer = MythicMobsVHelper::spawnFunc;
 
     @Setter
-    private static Consumer<MythicMobDeathEvent> deathConsumer = MythicMobsHelper::deathFunc;
+    private static Consumer<MythicMobDeathEvent> deathConsumer = MythicMobsVHelper::deathFunc;
 
     public static void setup() {
         if (Bukkit.getPluginManager().isPluginEnabled("MythicMobs")) {
@@ -93,11 +93,7 @@ public class MythicMobsHelper {
                 if (Config.getConfig().getBoolean(Config.MOB_DROP_TO_PLAYER_INVENTORY)) {
                     Inventory inventory = ((Player) event.getKiller()).getInventory();
                     for (int i = 0; i < amount; i++) {
-                        SXItemMythicMobsGiveToInventoryEvent eventI = new SXItemMythicMobsGiveToInventoryEvent(ig, (Player) event.getKiller(), event.getMob(), getItem(ig, (Player) event.getKiller(), event.getMob(), otherMap));
-                        Bukkit.getPluginManager().callEvent(eventI);
-                        if (!eventI.isCancelled()) {
-                            inventory.addItem(eventI.getItemStack());
-                        }
+                        inventory.addItem(getItem(ig, (Player) event.getKiller(), event.getMob(), otherMap));
                     }
                 } else {
                     for (int i = 0; i < amount; i++) {
@@ -132,11 +128,7 @@ public class MythicMobsHelper {
                 if (Config.getConfig().getBoolean(Config.MOB_DROP_TO_PLAYER_INVENTORY)) {
                     Inventory inventory = player.getInventory();
                     for (int i = 0; i < amount; i++) {
-                        SXItemMythicMobsGiveToInventoryEvent eventI = new SXItemMythicMobsGiveToInventoryEvent(ig, player, event.getMob(), getItem(ig, player, event.getMob(), otherMap));
-                        Bukkit.getPluginManager().callEvent(eventI);
-                        if (!eventI.isCancelled()) {
-                            inventory.addItem(eventI.getItemStack());
-                        }
+                        inventory.addItem(getItem(ig, player, event.getMob(), otherMap));
                     }
                 } else {
                     for (int i = 0; i < amount; i++) {
