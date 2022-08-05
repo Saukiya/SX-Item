@@ -94,7 +94,6 @@ public class SXItem extends JavaPlugin {
         }else {
             getLogger().info("MythicMobs未加载");
         }
-        ItemsAdderHelper.setup();
         mainCommand.setup("sxitem");
         getLogger().info("Loading Time: " + (System.currentTimeMillis() - oldTimes) + " ms");
         getLogger().info("Author: Saukiya");

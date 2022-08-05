@@ -1,11 +1,8 @@
 package github.saukiya.sxitem.data.item;
 
-import dev.lone.itemsadder.api.CustomStack;
-import dev.lone.itemsadder.api.ItemsAdder;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.event.SXItemSpawnEvent;
 import github.saukiya.sxitem.event.SXItemUpdateEvent;
-import github.saukiya.sxitem.helper.ItemsAdderHelper;
 import github.saukiya.sxitem.nbt.NBTItemWrapper;
 import github.saukiya.sxitem.nbt.NBTTagWrapper;
 import github.saukiya.sxitem.util.*;
@@ -25,7 +22,6 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nonnull;
@@ -165,6 +161,30 @@ public class ItemManager implements Listener {
         }
     }
 
+    public void loadItemFromOther(File file) {
+        YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
+        for (String key : yaml.getKeys(false)) {
+            if (key.startsWith("NoLoad")) continue;
+            if (itemMap.containsKey(key)) {
+                plugin.getLogger().warning("Don't Repeat Item Name: " + file.getName() + File.separator + key + " !");
+                continue;
+            }
+            if (yaml.isString(key)) {
+                linkMap.put(key, yaml.getString(key));
+                continue;
+            }
+            String type = yaml.getString(key + ".Type", "Default");
+            BiFunction<String, ConfigurationSection, IGenerator> function = getLoadFunction().get(type);
+            if (function != null) {
+                ConfigurationSection config = yaml.getConfigurationSection(key);
+                config.set("Path", getPathName(file));
+                itemMap.put(key, function.apply(key, yaml.getConfigurationSection(key)));
+            } else {
+                plugin.getLogger().warning("Don't Item Type: " + file.getName() + File.separator + key + " - " + type + " !");
+            }
+        }
+    }
+
     /**
      * 获取路径简称
      *
@@ -226,17 +246,6 @@ public class ItemManager implements Listener {
     public ItemStack getItem(IGenerator ig, Player player, Object... args) {
         ItemStack item = ig.getItem(player, args);
         NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item);
-        if (ItemsAdderHelper.isEnable()) {
-            String ia = ig.getConfig().getString("ItemsAdder", "null");
-            boolean exists = CustomStack.getInstance(ia) != null;
-            if (!ia.equals("null") && exists) {
-                int cmd = CustomStack.getInstance(ia).getItemStack().getItemMeta().getCustomModelData();
-                item.setType(CustomStack.getInstance(ia).getItemStack().getType());
-                ItemMeta meta = item.getItemMeta();
-                meta.setCustomModelData(cmd);
-                item.setItemMeta(meta);
-            }
-        }
         if (item != emptyItem && item != null && ig instanceof IUpdate) {
             wrapper.set(plugin.getName() + ".ItemKey", ig.getKey());
             wrapper.set(plugin.getName() + ".HashCode", ((IUpdate) ig).updateCode());
@@ -287,19 +296,7 @@ public class ItemManager implements Listener {
                 for (String s : fixedNbtList) {
                     wrapper.set(s, oldWrapper.get(s));
                 }
-                if (ItemsAdderHelper.isEnable()) {
-                    String ia = ig.getConfig().getString("ItemsAdder", "null");
-                    boolean exists = CustomStack.getInstance(ia) != null;
-                    if (!ia.equals("null") && exists) {
-                        int cmd = CustomStack.getInstance(ia).getItemStack().getItemMeta().getCustomModelData();
-                        item.setType(CustomStack.getInstance(ia).getItemStack().getType());
-                        ItemMeta meta = item.getItemMeta();
-                        meta.setCustomModelData(cmd);
-                        item.setItemMeta(meta);
-                    }
-                }
                 wrapper.save();
-
                 SXItemUpdateEvent event = new SXItemUpdateEvent(plugin, player, ig, newItem, item);
                 Bukkit.getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
