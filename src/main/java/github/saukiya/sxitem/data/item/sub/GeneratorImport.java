@@ -7,6 +7,7 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.function.BiConsumer;
 
@@ -18,8 +19,8 @@ public class GeneratorImport extends IGenerator {
 
     ItemStack item;
 
-    public GeneratorImport(String key, ConfigurationSection config) {
-        super(key, config);
+    public GeneratorImport(String key, ConfigurationSection config, JavaPlugin plugin) {
+        super(key, config, plugin);
         this.item = config.getItemStack("Item");
     }
 
@@ -43,7 +44,7 @@ public class GeneratorImport extends IGenerator {
         return item.clone();
     }
 
-    public static BiConsumer<ItemStack, ConfigurationSection> saveFunc() {
+    public static Saver saveFunc() {
         return (item, config) -> config.set("Item", item);
     }
 }

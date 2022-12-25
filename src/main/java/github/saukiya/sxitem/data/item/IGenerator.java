@@ -6,6 +6,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * @author Saukiya TODO 添加RandomGenerator
@@ -19,12 +20,24 @@ public abstract class IGenerator {
 
     protected String configString;
 
-    public IGenerator(String key, ConfigurationSection config) {
+    protected JavaPlugin plugin;
+
+    public IGenerator(String key, ConfigurationSection config, JavaPlugin plugin) {
         this.key = key;
         this.config = config;
         YamlConfiguration yaml = new YamlConfiguration();
         config.getValues(false).forEach(yaml::set);
         this.configString = (configString = yaml.saveToString()).substring(0, configString.length() - 1);
+        this.plugin = plugin;
+    }
+
+    /**
+     * 返回插件来源
+     *
+     * @return
+     */
+    public JavaPlugin getPlugin() {
+        return plugin;
     }
 
     /**
@@ -33,7 +46,6 @@ public abstract class IGenerator {
      * @return Type
      */
     public abstract String getType();
-
 
     /**
      * 返回物品展示名
@@ -56,4 +68,12 @@ public abstract class IGenerator {
      * @return Item
      */
     protected abstract ItemStack getItem(Player player, Object... args);
+
+    public interface Loader {
+        IGenerator apply(String key, ConfigurationSection config, JavaPlugin plugin);
+    }
+
+    public interface Saver {
+        void apply(ItemStack item, ConfigurationSection config);
+    }
 }
