@@ -107,6 +107,21 @@ public interface NMS {
         if (version.length < 3) return -1;
         return IntStream.range(0, 3).map(i -> Integer.compare(Data.thisVersionSplit[i], version[i])).filter(i -> i != 0).findFirst().orElse(0);
     }
+
+    /**
+     * 判断类是否存在
+     *
+     * @param className 类名
+     * @return bool     存在则返回真
+     */
+    static boolean hasClass(String className) {
+        try {
+            Class.forName(className);
+            return true;
+        } catch (ClassNotFoundException ignore) {
+            return false;
+        }
+    }
 }
 
 class Data {
