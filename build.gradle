@@ -40,6 +40,7 @@ dependencies {
     compileOnly fileTree("Module-NMS-V1_19_R2/lib")
     implementation 'org.bstats:bstats-bukkit:2.2.1'
     compileOnly 'io.lumine.xikage:MythicMobs:4.12.0'
+    compileOnly 'io.lumine:Mythic-Dist:5.0.4'
     compileOnly 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
 
     testImplementation fileTree("Module-NMS-V1_17_R1/lib")

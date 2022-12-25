@@ -28,6 +28,9 @@ public class PlaceholderHelper {
                 SXItem.getInst().getLogger().warning("Placeholder error");
                 enabled = false;
             }
+            SXItem.getInst().getLogger().info("PlaceholderHelper Enabled");
+        } else {
+            SXItem.getInst().getLogger().info("PlaceholderHelper Disable");
         }
     }
 

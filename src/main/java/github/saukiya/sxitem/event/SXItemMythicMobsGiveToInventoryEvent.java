@@ -1,7 +1,6 @@
 package github.saukiya.sxitem.event;
 
 import github.saukiya.sxitem.data.item.IGenerator;
-import github.saukiya.sxitem.helper.MythicMobsHelper;
 import io.lumine.xikage.mythicmobs.mobs.ActiveMob;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,7 @@ public class SXItemMythicMobsGiveToInventoryEvent extends Event {
 
     private final Player player;
 
-    private final ActiveMob mob;
+    private final String mobType;
 
     private final ItemStack itemStack;
 
