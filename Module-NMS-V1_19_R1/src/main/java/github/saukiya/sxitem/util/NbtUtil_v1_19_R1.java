@@ -8,7 +8,7 @@ import io.netty.buffer.Unpooled;
 import lombok.SneakyThrows;
 import net.minecraft.nbt.*;
 import org.apache.commons.lang.Validate;
-import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.DataInputStream;
@@ -20,11 +20,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class NbtUtil_v1_18_R1 extends NbtUtil {
+public class NbtUtil_v1_19_R1 extends NbtUtil {
 
     @Override
     public NBTTagCompound getItemNBT(ItemStack itemStack) {
-        return CraftItemStack.asNMSCopy(itemStack).s();
+        return CraftItemStack.asNMSCopy(itemStack).u();
     }
 
     @Override
@@ -153,7 +153,7 @@ public class NbtUtil_v1_18_R1 extends NbtUtil {
         }
 
         NBTItemWrapperImpl(ItemStack itemStack, net.minecraft.world.item.ItemStack nmsItem) {
-            super(nmsItem.t());
+            super(nmsItem.u());
             if (nmsItem.b()) throw new NullPointerException();
             this.itemStack = itemStack;
             this.nmsItem = nmsItem;
