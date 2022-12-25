@@ -29,8 +29,6 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -38,9 +36,9 @@ import java.util.stream.Collectors;
  */
 public class ItemManager implements Listener {
     @Getter
-    private static final Map<String, BiFunction<String, ConfigurationSection, IGenerator>> loadFunction = new HashMap<>();
+    private static final Map<String, IGenerator.Loader> loadFunction = new HashMap<>();
     @Getter
-    private static final Map<String, BiConsumer<ItemStack, ConfigurationSection>> saveFunction = new HashMap<>();
+    private static final Map<String, IGenerator.Saver> saveFunction = new HashMap<>();
     @Getter
     private static final ItemStack emptyItem = new ItemStack(Material.AIR, 0);
     @Getter
@@ -51,7 +49,7 @@ public class ItemManager implements Listener {
     private final File itemFiles;
 
     private final String[] defaultFile;
-    //? 抱有疑问的线程安全
+
     private final List<Player> checkPlayers = new ArrayList<>();
 
     private final Map<String, String> linkMap = new HashMap<>();
@@ -88,7 +86,7 @@ public class ItemManager implements Listener {
      * 读取物品数据
      */
     public void loadItemData() {
-        itemMap.clear();
+        itemMap.values().removeIf(ig -> ig.plugin.equals(plugin));
         linkMap.clear();
         fixedNbtList.clear();
         // 加载物品
@@ -148,14 +146,51 @@ public class ItemManager implements Listener {
                         continue;
                     }
                     String type = yaml.getString(key + ".Type", "Default");
-                    BiFunction<String, ConfigurationSection, IGenerator> function = getLoadFunction().get(type);
+                    IGenerator.Loader function = getLoadFunction().get(type);
                     if (function != null) {
                         ConfigurationSection config = yaml.getConfigurationSection(key);
+                        config.set("Plugin", plugin.getName());
                         config.set("Path", getPathName(file));
-                        itemMap.put(key, function.apply(key, yaml.getConfigurationSection(key)));
+                        itemMap.put(key, function.apply(key, yaml.getConfigurationSection(key), plugin));
                     } else {
                         plugin.getLogger().warning("Don't Item Type: " + file.getName() + File.separator + key + " - " + type + " !");
                     }
+                }
+            }
+        }
+    }
+
+    /**
+     * 外部加载物品
+     * 注意事项:
+     * 1.不可以覆盖其他插件的key值。
+     * 2.不会被SX重载时清除。
+     * 3.每次加载清空上次的存储
+     * 4.不允许使用链接模式
+     *
+     * @param plugin  插件名
+     * @param configs 配置列表
+     */
+    public void loadItem(JavaPlugin plugin, ConfigurationSection... configs) {
+        itemMap.values().removeIf(ig -> ig.plugin.equals(plugin));
+        for (ConfigurationSection config : configs) {
+            for (String key : config.getKeys(false)) {
+                if (key.startsWith("NoLoad")) continue;
+                if (itemMap.containsKey(key)) {
+                    plugin.getLogger().warning("Don't Repeat Item Name: " + plugin.getName() + File.separator + key + " !");
+                    continue;
+                }
+                if (config.isString(key)) {
+                    plugin.getLogger().warning("Don't Link Item Name: " + plugin.getName() + File.separator + key + " !");
+                    continue;
+                }
+                String type = config.getString(key + ".Type", "Default");
+                IGenerator.Loader function = getLoadFunction().get(type);
+                if (function != null) {
+                    config.set(key + ".Plugin", plugin.getName());
+                    itemMap.put(key, function.apply(key, config.getConfigurationSection(key), plugin));
+                } else {
+                    plugin.getLogger().warning("Don't Item Type: " + plugin.getName() + File.separator + key + " - " + type + " !");
                 }
             }
         }
@@ -222,10 +257,10 @@ public class ItemManager implements Listener {
     public ItemStack getItem(IGenerator ig, Player player, Object... args) {
         ItemStack item = ig.getItem(player, args);
         if (item != emptyItem && item != null && ig instanceof IUpdate) {
-            NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item);
-            wrapper.set(plugin.getName() + ".ItemKey", ig.getKey());
-            wrapper.set(plugin.getName() + ".HashCode", ((IUpdate) ig).updateCode());
-            wrapper.save();
+            NbtUtil.getInst().getItemTagWrapper(item).builder()
+                    .set(plugin.getName() + ".ItemKey", ig.getKey())
+                    .set(plugin.getName() + ".HashCode", ((IUpdate) ig).updateCode())
+                    .save();
         }
         SXItemSpawnEvent event = new SXItemSpawnEvent(plugin, player, ig, item);
         Bukkit.getPluginManager().callEvent(event);
@@ -245,7 +280,7 @@ public class ItemManager implements Listener {
     /**
      * 更新物品
      *
-     * @param player     PlayerC
+     * @param player     Player
      * @param itemStacks ItemStack...
      */
     public void updateItem(Player player, ItemStack... itemStacks) {
@@ -294,18 +329,18 @@ public class ItemManager implements Listener {
      * @throws IOException IOException
      */
     public boolean saveItem(String key, ItemStack item, String type) throws IOException {
-        BiConsumer<ItemStack, ConfigurationSection> function = saveFunction.get(type);
+        IGenerator.Saver function = saveFunction.get(type);
         if (function == null) return false;
         ConfigurationSection config = new MemoryConfiguration();
         config.set("Type", type);
-        function.accept(item, config);
+        function.apply(item, config);
         if (config.getKeys(false).size() == 1) return false;
         File file = new File(itemFiles, "Type-" + type + File.separator + "Item.yml");
         YamlConfiguration yaml = file.exists() ? YamlConfiguration.loadConfiguration(file) : new YamlConfiguration();
         yaml.set(key, config);
         yaml.save(file);
         config.set("Path", getPathName(file.getParentFile()));
-        itemMap.put(key, loadFunction.get(type).apply(key, config));
+        itemMap.put(key, loadFunction.get(type).apply(key, config, plugin));
         return true;
     }
 
@@ -449,7 +484,7 @@ public class ItemManager implements Listener {
      * @param loadFunc 加载方法
      * @param saveFunc 保存方法
      */
-    public static void register(String type, @Nonnull BiFunction<String, ConfigurationSection, IGenerator> loadFunc, @Nullable BiConsumer<ItemStack, ConfigurationSection> saveFunc) {
+    public static void register(String type, @Nonnull IGenerator.Loader loadFunc, @Nullable IGenerator.Saver saveFunc) {
         if (type == null || loadFunction.containsKey(type)) {
             SXItem.getInst().getLogger().severe("ItemGenerator >> Type Error: " + type);
             return;

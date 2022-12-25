@@ -24,6 +24,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -47,8 +48,8 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
 
     boolean update;
 
-    public GeneratorDefault(String key, ConfigurationSection config) {
-        super(key, config);
+    public GeneratorDefault(String key, ConfigurationSection config, JavaPlugin plugin) {
+        super(key, config, plugin);
         this.displayName = config.getString("Name");
         this.ids = config.isList("ID") ? config.getStringList("ID") : Collections.singletonList(config.getString(".ID", "APPLE"));
         if (config.contains("Random")) {
@@ -205,7 +206,7 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         return update;
     }
 
-    public static BiConsumer<ItemStack, ConfigurationSection> saveFunc() {
+    public static Saver saveFunc() {
         return (item, config) -> {
             ItemMeta itemMeta = item.getItemMeta();
             config.set("Name", itemMeta.hasDisplayName() ? itemMeta.getDisplayName().replace("§", "&") : null);
