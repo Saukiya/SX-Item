@@ -7,9 +7,6 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.function.BiConsumer;
 
 /**
  * @author Saukiya
@@ -19,8 +16,8 @@ public class GeneratorImport extends IGenerator {
 
     ItemStack item;
 
-    public GeneratorImport(String key, ConfigurationSection config, JavaPlugin plugin) {
-        super(key, config, plugin);
+    public GeneratorImport(String key, ConfigurationSection config, String group) {
+        super(key, config, group);
         this.item = config.getItemStack("Item");
     }
 

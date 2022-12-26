@@ -20,24 +20,15 @@ public abstract class IGenerator {
 
     protected String configString;
 
-    protected JavaPlugin plugin;
+    protected String group;
 
-    public IGenerator(String key, ConfigurationSection config, JavaPlugin plugin) {
+    public IGenerator(String key, ConfigurationSection config, String group) {
         this.key = key;
         this.config = config;
         YamlConfiguration yaml = new YamlConfiguration();
         config.getValues(false).forEach(yaml::set);
         this.configString = (configString = yaml.saveToString()).substring(0, configString.length() - 1);
-        this.plugin = plugin;
-    }
-
-    /**
-     * 返回插件来源
-     *
-     * @return
-     */
-    public JavaPlugin getPlugin() {
-        return plugin;
+        this.group = group;
     }
 
     /**
@@ -70,7 +61,7 @@ public abstract class IGenerator {
     protected abstract ItemStack getItem(Player player, Object... args);
 
     public interface Loader {
-        IGenerator apply(String key, ConfigurationSection config, JavaPlugin plugin);
+        IGenerator apply(String key, ConfigurationSection config, String group);
     }
 
     public interface Saver {

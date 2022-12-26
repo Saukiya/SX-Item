@@ -24,10 +24,8 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 /**
@@ -48,8 +46,8 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
 
     boolean update;
 
-    public GeneratorDefault(String key, ConfigurationSection config, JavaPlugin plugin) {
-        super(key, config, plugin);
+    public GeneratorDefault(String key, ConfigurationSection config, String group) {
+        super(key, config, group);
         this.displayName = config.getString("Name");
         this.ids = config.isList("ID") ? config.getStringList("ID") : Collections.singletonList(config.getString(".ID", "APPLE"));
         if (config.contains("Random")) {
