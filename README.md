@@ -33,6 +33,6 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.github.Saukiya:SX-Item:3.1.0'
+    implementation 'com.github.Saukiya:SX-Item:-SNAPSHOT'
 }
 ```
