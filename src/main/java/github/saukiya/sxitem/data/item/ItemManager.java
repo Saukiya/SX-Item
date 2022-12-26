@@ -86,14 +86,14 @@ public class ItemManager implements Listener {
      * 读取物品数据
      */
     public void loadItemData() {
-        itemMap.values().removeIf(ig -> ig.plugin.equals(plugin));
+        itemMap.values().removeIf(ig -> ig.group.equals(plugin.getName()));
         linkMap.clear();
         fixedNbtList.clear();
         // 加载物品
         if (!itemFiles.exists() || itemFiles.listFiles().length == 0) {
             Arrays.stream(defaultFile).forEach(fileName -> plugin.saveResource(fileName, true));
         }
-        loadItem(itemFiles);
+        loadItem(plugin.getName(), itemFiles);
         plugin.getLogger().info("Loaded " + itemMap.size() + " Items");
 
         // 加载挂链
@@ -128,11 +128,11 @@ public class ItemManager implements Listener {
      *
      * @param files File
      */
-    private void loadItem(File files) {
+    private void loadItem(String group, File files) {
         for (File file : files.listFiles()) {
             if (file.getName().startsWith("NoLoad")) continue;
             if (file.isDirectory()) {
-                loadItem(file);
+                loadItem(group, file);
             } else {
                 YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
                 for (String key : yaml.getKeys(false)) {
@@ -149,9 +149,8 @@ public class ItemManager implements Listener {
                     IGenerator.Loader function = getLoadFunction().get(type);
                     if (function != null) {
                         ConfigurationSection config = yaml.getConfigurationSection(key);
-                        config.set("Plugin", plugin.getName());
-                        config.set("Path", getPathName(file));
-                        itemMap.put(key, function.apply(key, yaml.getConfigurationSection(key), plugin));
+                        config.set("Path", group + "#" + getPathName(file));
+                        itemMap.put(key, function.apply(key, yaml.getConfigurationSection(key), group));
                     } else {
                         plugin.getLogger().warning("Don't Item Type: " + file.getName() + File.separator + key + " - " + type + " !");
                     }
@@ -162,39 +161,54 @@ public class ItemManager implements Listener {
 
     /**
      * 外部加载物品
+     *
+     * @param group     组名
+     * @param configs   配置列表
+     */
+    public void loadItem(String group, ConfigurationSection... configs) {
+        Map<String, ConfigurationSection> mapConfig = new HashMap<>();
+        for (int i = 0; i < configs.length; i++) {
+            mapConfig.put(String.valueOf(i), configs[i]);
+        }
+        loadItem(group, mapConfig);
+    }
+
+    /**
+     * 外部加载物品
      * 注意事项:
      * 1.不可以覆盖其他插件的key值。
      * 2.不会被SX重载时清除。
      * 3.每次加载清空上次的存储
      * 4.不允许使用链接模式
      *
-     * @param plugin  插件名
-     * @param configs 配置列表
+     * @param group     组名
+     * @param configs   配置列表
      */
-    public void loadItem(JavaPlugin plugin, ConfigurationSection... configs) {
-        itemMap.values().removeIf(ig -> ig.plugin.equals(plugin));
-        for (ConfigurationSection config : configs) {
-            for (String key : config.getKeys(false)) {
-                if (key.startsWith("NoLoad")) continue;
-                if (itemMap.containsKey(key)) {
-                    plugin.getLogger().warning("Don't Repeat Item Name: " + plugin.getName() + File.separator + key + " !");
-                    continue;
-                }
-                if (config.isString(key)) {
-                    plugin.getLogger().warning("Don't Link Item Name: " + plugin.getName() + File.separator + key + " !");
-                    continue;
-                }
-                String type = config.getString(key + ".Type", "Default");
-                IGenerator.Loader function = getLoadFunction().get(type);
-                if (function != null) {
-                    config.set(key + ".Plugin", plugin.getName());
-                    itemMap.put(key, function.apply(key, config.getConfigurationSection(key), plugin));
-                } else {
-                    plugin.getLogger().warning("Don't Item Type: " + plugin.getName() + File.separator + key + " - " + type + " !");
-                }
-            }
-        }
-    }
+     public void loadItem(String group, Map<String, ConfigurationSection> configs) {
+         if (group.equals(plugin.getName())) return;
+         itemMap.values().removeIf(ig -> ig.group.equals(group));
+         configs.forEach((path, config) -> {
+             for (String key : config.getKeys(false)) {
+                 if (key.startsWith("NoLoad")) continue;
+                 if (itemMap.containsKey(key)) {
+                     plugin.getLogger().warning("Don't Repeat Item Name: " + path + File.separator + key + " !");
+                     continue;
+                 }
+                 if (config.isString(key)) {
+                     plugin.getLogger().warning("Don't Link Item Name: " + path + File.separator + key + " !");
+                     continue;
+                 }
+                 String type = config.getString(key + ".Type", "Default");
+                 IGenerator.Loader function = getLoadFunction().get(type);
+                 if (function != null) {
+                     config.set(key + ".Path", group + "#" + path);
+                     itemMap.put(key, function.apply(key, config.getConfigurationSection(key), group));
+                 } else {
+                     plugin.getLogger().warning("Don't Item Type: " + path + File.separator + key + " - " + type + " !");
+                 }
+             }
+         });
+     }
 
     /**
      * 获取路径简称
@@ -339,8 +353,8 @@ public class ItemManager implements Listener {
         YamlConfiguration yaml = file.exists() ? YamlConfiguration.loadConfiguration(file) : new YamlConfiguration();
         yaml.set(key, config);
         yaml.save(file);
-        config.set("Path", getPathName(file.getParentFile()));
-        itemMap.put(key, loadFunction.get(type).apply(key, config, plugin));
+        config.set("Path", plugin.getName() + "#" + getPathName(file.getParentFile()));
+        itemMap.put(key, loadFunction.get(type).apply(key, config, plugin.getName()));
         return true;
     }
 
