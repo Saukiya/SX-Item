@@ -4,13 +4,13 @@
 
 [![](https://jitpack.io/v/Saukiya/SX-Item.svg)](https://jitpack.io/#Saukiya/SX-Item)
 
-支持服务端:
+### 支持服务端:(未在列表内则未经过测试)
 
+- paper
 - spigot
 - bukkit
-- mohist
 
-支持版本:
+### 支持版本:
 
 - 1.8.8
 - 1.11.2
@@ -23,3 +23,16 @@
 - 1.18.2
 - 1.19.2
 - 1.19.3
+
+### 使用Gradle导入
+```groovy
+allprojects {
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+dependencies {
+    implementation 'com.github.Saukiya:SX-Item:3.1.0'
+}
+```
