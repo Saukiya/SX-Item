@@ -1,5 +1,5 @@
 #日志等级: [OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL]
-LoggerLevel: "ALL"
+LoggerLevel: "INFO"
 #浮点数格式化
 DecimalFormat: '#.##'
 #日期格式化
