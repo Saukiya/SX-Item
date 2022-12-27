@@ -1,7 +1,7 @@
 package github.saukiya.sxitem.util;
 
-import github.saukiya.sxitem.SXItem;
 import lombok.SneakyThrows;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.text.MessageFormat;
@@ -13,12 +13,16 @@ import java.util.logging.LogRecord;
 
 public class LogUtil {
 
-    static File file = new File(SXItem.getInst().getDataFolder(), "logs");
+    JavaPlugin plugin;
 
-    static FileHandler fileHandler;
+    File file;
+
+    FileHandler fileHandler;
 
     @SneakyThrows
-    public static void setup() {
+    public LogUtil(JavaPlugin plugin) {
+        this.plugin = plugin;
+        this.file = new File(plugin.getDataFolder(), "logs");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String dateStr = sdf.format(new Date());
         int index = 1;
@@ -39,11 +43,11 @@ public class LogUtil {
                 return MessageFormat.format("[{0}] {1}\n", record.getLevel(), record.getMessage());
             }
         });
-        SXItem.getInst().getLogger().addHandler(fileHandler);
+        plugin.getLogger().addHandler(fileHandler);
     }
 
-    public static void close() {
-        SXItem.getInst().getLogger().removeHandler(fileHandler);
+    public void destroy() {
+        plugin.getLogger().removeHandler(fileHandler);
         fileHandler.close();
     }
 }

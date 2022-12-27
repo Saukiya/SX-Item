@@ -41,11 +41,12 @@ public class SXItem extends JavaPlugin {
     private static RandomManager randomManager;
     @Getter
     private static ItemManager itemManager;
+    private static LogUtil logUtil;
 
     @Override
     public void onLoad() {
         inst = this;
-        LogUtil.setup();
+        logUtil = new LogUtil(inst);
         Config.loadConfig();
         Message.loadMessage();
         mainCommand = new MainCommand();
@@ -83,7 +84,7 @@ public class SXItem extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        LogUtil.close();
+        logUtil.destroy();
         Bukkit.getOnlinePlayers().forEach(HumanEntity::closeInventory);
     }
 }
