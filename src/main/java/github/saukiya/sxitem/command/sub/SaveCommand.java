@@ -21,7 +21,7 @@ import java.util.List;
 public class SaveCommand extends SubCommand {
     public SaveCommand() {
         super("save");
-        setArg(" <ItemName> [Type]");
+        setArg("<ItemName> [Type]");
         setType(SenderType.PLAYER);
     }
 
@@ -35,22 +35,22 @@ public class SaveCommand extends SubCommand {
         Player player = (Player) sender;
         ItemStack itemStack = player.getEquipment().getItemInHand();
         if (itemStack.getType() == Material.AIR) {
-            MessageUtil.send(player, Message.ADMIN__NO_ITEM.get());
+            MessageUtil.send(player, Message.GIVE__NO_ITEM.get());
             return;
         }
         if (SXItem.getItemManager().hasItem(itemName)) {
-            MessageUtil.send(player, Message.ADMIN__HAS_ITEM.get(itemName));
+            MessageUtil.send(player, Message.SAVE__HAS_ITEM.get(itemName));
             return;
         }
         try {
             if (SXItem.getItemManager().saveItem(itemName, itemStack, args.length > 2 ? args[2] : "Default")) {
-                MessageUtil.send(sender, Message.ADMIN__SAVE_ITEM.get(itemName));
+                MessageUtil.send(sender, Message.SAVE__SAVE_ITEM.get(itemName));
             } else {
-                MessageUtil.send(sender, Message.ADMIN__SAVE_NO_TYPE.get(itemName));
+                MessageUtil.send(sender, Message.SAVE__SAVE_NO_TYPE.get(itemName));
             }
         } catch (IOException e) {
             e.printStackTrace();
-            MessageUtil.send(sender, Message.ADMIN__SAVE_ITEM_ERROR.get(itemName));
+            MessageUtil.send(sender, Message.SAVE__SAVE_ITEM_ERROR.get(itemName));
         }
     }
 
