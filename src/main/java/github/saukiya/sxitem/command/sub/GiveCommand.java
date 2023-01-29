@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 public class GiveCommand extends SubCommand implements Listener {
 
     public GiveCommand() {
-        super("give");
+        super("give", 0);
         setArg("<ItemName> [Player] [Amount] [key:value...]");
     }
 

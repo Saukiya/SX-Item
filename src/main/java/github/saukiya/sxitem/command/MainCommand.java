@@ -13,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     public void onEnable(String command) {
         plugin.getCommand(command).setExecutor(this);
         plugin.getCommand(command).setTabCompleter(this);
+        Collections.sort(COMMANDS);
         COMMANDS.stream().filter(subCommand -> subCommand instanceof Listener).forEach(subCommand -> Bukkit.getPluginManager().registerEvents((Listener) subCommand, plugin));
         COMMANDS.forEach(SubCommand::onEnable);
         plugin.getLogger().info("Load " + COMMANDS.size() + " Commands");
