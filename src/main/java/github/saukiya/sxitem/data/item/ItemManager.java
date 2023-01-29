@@ -46,9 +46,9 @@ public class ItemManager implements Listener {
 
     private final JavaPlugin plugin;
 
-    private final File itemFiles;
-
     private final String[] defaultFile;
+
+    private final File itemFiles;
 
     private final List<Player> checkPlayers = new ArrayList<>();
 
@@ -57,10 +57,6 @@ public class ItemManager implements Listener {
     private final Map<String, IGenerator> itemMap = new HashMap<>();
 
     private final List<String> fixedNbtList = new ArrayList<>();
-
-    public ItemManager() {
-        this(SXItem.getInst(), "Item/Default/Default.yml", "Item/NoLoad/Default.yml");
-    }
 
     public ItemManager(JavaPlugin plugin, String... defaultFile) {
         this.plugin = plugin;
@@ -450,7 +446,7 @@ public class ItemManager implements Listener {
                         continue;
                     }
                     change = true;
-                    SXItem.getInst().getLogger().info("Material.yml Change MaterialName - " + entry.getKey() + " To " + material.name());
+                    SXItem.getInst().getLogger().config("Material.yml Change MaterialName - " + entry.getKey() + " To " + material.name());
                     if (yaml.contains(material.name())) {
                         yaml.set(material.name(), yaml.getString(material.name()) + "," + entry.getValue());
                     } else {

@@ -28,7 +28,7 @@ public class NBTCommand extends SubCommand {
 
     public NBTCommand() {
         super("nbt");
-        setArg(" <set/remove/all> <key> <value>");
+        setArg("<set/remove/all> <key> <value>");
         setType(SenderType.PLAYER);
     }
 
@@ -42,10 +42,10 @@ public class NBTCommand extends SubCommand {
                 ComponentBuilder cb = MessageUtil.getInst().componentBuilder()
                         .add("§7[")
                         .add(item.getType().name())
-                        .show(Message.INFO__CLICK_COPY.get())
+                        .show(Message.NBT__CLICK_COPY.get())
                         .suggestCommand(item.getType().name());
                 String keys = String.join("/", ItemManager.getMaterialString(item.getType()));
-                if (keys.length() != 0) cb.add("-").add(keys).show(Message.INFO__CLICK_COPY.get()).suggestCommand(keys);
+                if (keys.length() != 0) cb.add("-").add(keys).show(Message.NBT__CLICK_COPY.get()).suggestCommand(keys);
                 cb.add("] ");
                 if (tagCompound != null) cb.add("§cItem-NBT").show(tagCompound.toString());
                 cb.send(sender);

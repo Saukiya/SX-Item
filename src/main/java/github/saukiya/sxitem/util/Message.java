@@ -17,19 +17,22 @@ import java.util.List;
 
 public enum Message {
 
-    ADMIN__NO_ITEM,
-    ADMIN__GIVE_ITEM,
-    ADMIN__HAS_ITEM,
-    ADMIN__SAVE_ITEM,
-    ADMIN__SAVE_NO_TYPE,
-    ADMIN__SAVE_ITEM_ERROR,
+    GIVE__NO_ITEM,
+    GIVE__GIVE_ITEM,
+    GIVE__GIVE_ITEM_ERROR,
+
+    SAVE__HAS_ITEM,
+    SAVE__SAVE_ITEM,
+    SAVE__SAVE_NO_TYPE,
+    SAVE__SAVE_ITEM_ERROR,
+
+    NBT__CLICK_COPY,
+
     ADMIN__NO_PERMISSION_CMD,
     ADMIN__NO_CMD,
     ADMIN__NO_FORMAT,
     ADMIN__NO_ONLINE,
-    ADMIN__PLUGIN_RELOAD,
-
-    INFO__CLICK_COPY;
+    ADMIN__PLUGIN_RELOAD;
 
     @Getter
     private static YamlConfiguration messages;
@@ -41,7 +44,7 @@ public enum Message {
      * @return String
      */
     public String get(Object... args) {
-        return staticGet(toString(), args);
+        return getStatic(toString(), args);
     }
 
     /**
@@ -51,7 +54,7 @@ public enum Message {
      * @return List
      */
     public List<String> getList(Object... args) {
-        return staticGetList(toString(), args);
+        return getListStatic(toString(), args);
     }
 
     @Override
@@ -71,11 +74,11 @@ public enum Message {
         messages = YamlConfiguration.loadConfiguration(file);
     }
 
-    public static String staticGet(String loc, Object... args) {
+    public static String getStatic(String loc, Object... args) {
         return MessageFormat.format(messages.getString(loc, "Null Message: " + loc), args).replace("&", "§");
     }
 
-    public static List<String> staticGetList(String loc, Object... args) {
+    public static List<String> getListStatic(String loc, Object... args) {
         List<String> list = messages.getStringList(loc);
         if (list.size() == 0) return Collections.singletonList("Null Message: " + loc);
         list.replaceAll(str -> MessageFormat.format(str, args).replace("&", "§"));

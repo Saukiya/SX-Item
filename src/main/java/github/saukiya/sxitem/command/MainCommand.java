@@ -1,12 +1,8 @@
 package github.saukiya.sxitem.command;
 
-import github.saukiya.sxitem.SXItem;
-import github.saukiya.sxitem.command.sub.GiveCommand;
-import github.saukiya.sxitem.command.sub.NBTCommand;
-import github.saukiya.sxitem.command.sub.ReloadCommand;
-import github.saukiya.sxitem.command.sub.SaveCommand;
 import github.saukiya.sxitem.util.Message;
 import github.saukiya.sxitem.util.MessageUtil;
+import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -14,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,29 +19,37 @@ import java.util.stream.Collectors;
 /**
  * @author Saukiya
  */
-
+@AllArgsConstructor
 public class MainCommand implements CommandExecutor, TabCompleter {
 
-    private static final List<SubCommand> COMMANDS = new ArrayList<>();
+    private final List<SubCommand> COMMANDS = new ArrayList<>();
 
-    public MainCommand() {
-        register(new GiveCommand());
-        register(new SaveCommand());
-        register(new NBTCommand());
-        register(new ReloadCommand());
+    private final JavaPlugin plugin;
+
+    /**
+     * 注册指令
+     * 遇到重复的指令时，会删除之前的指令
+     */
+    public void register(SubCommand command) {
+        if (plugin.isEnabled()) return;
+        COMMANDS.removeIf(subCommand -> subCommand.cmd.equals(command.cmd));
+        COMMANDS.add(command);
     }
 
-    public void setup(String command) {
-        SXItem.getInst().getCommand(command).setExecutor(this);
-        SXItem.getInst().getCommand(command).setTabCompleter(this);
-        COMMANDS.stream().filter(subCommand -> subCommand instanceof Listener).forEach(subCommand -> Bukkit.getPluginManager().registerEvents((Listener) subCommand, SXItem.getInst()));
-
+    public void onEnable(String command) {
+        plugin.getCommand(command).setExecutor(this);
+        plugin.getCommand(command).setTabCompleter(this);
+        COMMANDS.stream().filter(subCommand -> subCommand instanceof Listener).forEach(subCommand -> Bukkit.getPluginManager().registerEvents((Listener) subCommand, plugin));
         COMMANDS.forEach(SubCommand::onEnable);
-        SXItem.getInst().getLogger().info("Load " + COMMANDS.size() + " Commands");
+        plugin.getLogger().info("Load " + COMMANDS.size() + " Commands");
     }
 
-    public void reload() {
+    public void onReload() {
         COMMANDS.forEach(SubCommand::onReload);
+    }
+
+    public void onDisable() {
+        COMMANDS.forEach(SubCommand::onDisable);
     }
 
     private SenderType getType(CommandSender sender) {
@@ -52,14 +57,14 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command arg1, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         SenderType type = getType(sender);
         if (args.length == 0) {
-            sender.sendMessage("§0-§8 --§7 ---§c ----§4 -----§b " + SXItem.getInst().getName() + "§4 -----§c ----§7 ---§8 --§0 - §0Author Saukiya");
+            sender.sendMessage("§0-§8 --§7 ---§c ----§4 -----§b " + plugin.getName() + "§4 -----§c ----§7 ---§8 --§0 - §0Author " + plugin.getDescription().getAuthors());
             String color = "§7";
             for (SubCommand sub : COMMANDS) {
                 if (sub.isUse(sender, type) && !sub.hide) {
-                    color = color.length() > 0 ? "" : "§7";
+                    color = color.isEmpty() ? "§7" : "";
                     sub.sendIntroduction(sender, color, label);
                 }
             }
@@ -83,9 +88,5 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
         SenderType type = getType(sender);
         return args.length == 1 ? COMMANDS.stream().filter(sub -> sub.isUse(sender, type) && !sub.hide && sub.cmd.contains(args[0])).map(sub -> sub.cmd).collect(Collectors.toList()) : COMMANDS.stream().filter(sub -> sub.cmd.equalsIgnoreCase(args[0]) && sub.isUse(sender, type)).findFirst().map(sub -> sub.onTabComplete(sender, args)).orElse(null);
-    }
-
-    public static void register(SubCommand command) {
-        COMMANDS.add(command);
     }
 }
