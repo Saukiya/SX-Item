@@ -1,12 +1,12 @@
 package github.saukiya.sxitem.data.random;
 
-import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.nodes.MultipleNode;
 import github.saukiya.sxitem.data.random.nodes.SingletonNode;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -19,12 +19,16 @@ public class RandomManager {
 
     protected static final Map<Character, IRandom> RANDOMS = new HashMap<>();
 
-    private final File file = new File(SXItem.getInst().getDataFolder(), "RandomString");
+    private final JavaPlugin plugin;
+
+    private final String[] defaultFile;
 
     @Getter
-    Map<String, INode> map = new HashMap();
+    private final Map<String, INode> map = new HashMap<>();
 
-    public RandomManager() {
+    public RandomManager(JavaPlugin plugin, String... defaultFile) {
+        this.plugin = plugin;
+        this.defaultFile = defaultFile;
         loadData();
     }
 
@@ -33,12 +37,12 @@ public class RandomManager {
      */
     public void loadData() {
         map.clear();
-        if (!file.exists() || file.listFiles().length == 0) {
-            SXItem.getInst().saveResource("RandomString/DefaultRandom.yml", true);
-            SXItem.getInst().saveResource("RandomString/10Level/Random.yml", true);
+        File randomFiles = new File(plugin.getDataFolder(), "RandomString");
+        if (!randomFiles.exists() || randomFiles.listFiles().length == 0) {
+            Arrays.stream(defaultFile).forEach(fileName -> plugin.saveResource(fileName, true));
         }
-        loadRandomFile(file);
-        SXItem.getInst().getLogger().info("Loaded " + map.size() + " RandomString");
+        loadRandomFile(randomFiles);
+        plugin.getLogger().info("Loaded " + map.size() + " RandomString");
     }
 
     /**
@@ -57,7 +61,7 @@ public class RandomManager {
                 if (loadRandom(map, yml)) {
                     if (file.renameTo(new File(file.getParentFile(), "NoLoad_" + file.getName()))) {
                         yml.save(file);
-                        SXItem.getInst().getLogger().info("Random Convert: " + file.getName());
+                        plugin.getLogger().info("Random Convert: " + file.getName());
                     }
                 }
             }

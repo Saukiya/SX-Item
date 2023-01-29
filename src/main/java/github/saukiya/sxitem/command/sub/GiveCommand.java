@@ -10,23 +10,25 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.metadata.FixedMetadataValue;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * @author Saukiya
  */
-public class GiveCommand extends SubCommand {
+public class GiveCommand extends SubCommand implements Listener {
 
     public GiveCommand() {
         super("give");
-        setArg(" <ItemName> [Player] [Amount] [key:value...]");
+        setArg("<ItemName> [Player] [Amount] [key:value...]");
     }
 
     @Override
@@ -52,7 +54,7 @@ public class GiveCommand extends SubCommand {
             return;
         }
 
-        int amount = args.length > 3 ? Integer.parseInt(args[3].replaceAll("[^\\d]", "")) : 1;
+        int amount = args.length > 3 ? Integer.parseInt(args[3].replaceAll("\\D", "")) : 1;
 
         Map<String, String> otherMap = null;
         if (args.length > 4) {
@@ -71,12 +73,15 @@ public class GiveCommand extends SubCommand {
                 inv.addItem(itemStack);
             } else if (Config.getConfig().getBoolean(Config.GIVE_OVERFLOW_DROP)) {
                 Item item = player.getWorld().dropItem(player.getLocation(), itemStack);
+                item.setMetadata("SX-Item|DropData", new FixedMetadataValue(SXItem.getInst(), player.getName()));
                 item.setPickupDelay(40);
             } else {
                 SXItem.getInst().getLogger().warning("Give Error Player:" + player.getName() + " ItemKey:" + args[1]);
+                ItemMeta meta = itemStack.getItemMeta();
+                MessageUtil.send(player, Message.GIVE__GIVE_ITEM_ERROR.get(meta.hasDisplayName() ? meta.getDisplayName() : args[1]));
             }
         }
-        MessageUtil.send(sender, Message.ADMIN__GIVE_ITEM.get(player.getName(), String.valueOf(amount), args[1]));
+        MessageUtil.send(sender, Message.GIVE__GIVE_ITEM.get(player.getName(), String.valueOf(amount), args[1]));
     }
 
     @Override
@@ -88,5 +93,14 @@ public class GiveCommand extends SubCommand {
             return Collections.singletonList("1");
         }
         return null;
+    }
+
+    @EventHandler
+    void on(PlayerPickupItemEvent event) {
+        Player player = event.getPlayer();
+        if (event.getItem().hasMetadata("SX-Item|DropData") && !player.isOp() && event.getItem().getMetadata("SX-Item|DropData").stream().noneMatch(data -> data.value().equals(player.getName()))) {
+            event.getItem().setPickupDelay(5);
+            event.setCancelled(true);
+        }
     }
 }

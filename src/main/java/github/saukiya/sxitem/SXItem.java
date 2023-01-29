@@ -1,6 +1,10 @@
 package github.saukiya.sxitem;
 
 import github.saukiya.sxitem.command.MainCommand;
+import github.saukiya.sxitem.command.sub.GiveCommand;
+import github.saukiya.sxitem.command.sub.NBTCommand;
+import github.saukiya.sxitem.command.sub.ReloadCommand;
+import github.saukiya.sxitem.command.sub.SaveCommand;
 import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.data.item.sub.GeneratorDefault;
 import github.saukiya.sxitem.data.item.sub.GeneratorImport;
@@ -30,17 +34,18 @@ public class SXItem extends JavaPlugin {
     private static final ThreadLocal<SimpleDateFormat> sdf = ThreadLocal.withInitial(() -> new SimpleDateFormat(Config.getConfig().getString(Config.TIME_FORMAT)));
     @Getter
     private static final Random random = new Random();
-    @Getter
     @Setter
+    @Getter
     private static DecimalFormat df = new DecimalFormat("#.##");
     @Getter
-    private static SXItem inst = null;
+    private static SXItem inst;
     @Getter
     private static MainCommand mainCommand;
     @Getter
     private static RandomManager randomManager;
     @Getter
     private static ItemManager itemManager;
+
     private static LogUtil logUtil;
 
     @Override
@@ -49,7 +54,11 @@ public class SXItem extends JavaPlugin {
         logUtil = new LogUtil(inst);
         Config.loadConfig();
         Message.loadMessage();
-        mainCommand = new MainCommand();
+        mainCommand = new MainCommand(this);
+        mainCommand.register(new GiveCommand());
+        mainCommand.register(new SaveCommand());
+        mainCommand.register(new NBTCommand());
+        mainCommand.register(new ReloadCommand());
 
         ItemManager.loadMaterialData();
         ItemManager.register("Default", GeneratorDefault::new, GeneratorDefault.saveFunc());
@@ -71,20 +80,21 @@ public class SXItem extends JavaPlugin {
         ItemUtil.getInst();
         MessageUtil.getInst();
 
-        randomManager = new RandomManager();
-        itemManager = new ItemManager();
+        randomManager = new RandomManager(this, "RandomString/DefaultRandom.yml", "RandomString/10Level/Random.yml");
+        itemManager = new ItemManager(this, "Item/Default/Default.yml", "Item/NoLoad/Default.yml");
 
         Config.setup();
         PlaceholderHelper.setup();
         MythicMobsHelper.setup();
-        mainCommand.setup("sxitem");
+        mainCommand.onEnable("sxitem");
         getLogger().info("Loading Time: " + (System.currentTimeMillis() - oldTimes) + " ms");
-        getLogger().info("Author: Saukiya");
+        getLogger().info("Author: " + getDescription().getAuthors());
     }
 
     @Override
     public void onDisable() {
-        logUtil.destroy();
         Bukkit.getOnlinePlayers().forEach(HumanEntity::closeInventory);
+        mainCommand.onDisable();
+        logUtil.onDisable();
     }
 }
