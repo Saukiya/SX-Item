@@ -32,6 +32,10 @@ public abstract class SubCommand implements Comparable<SubCommand> {
         return null;
     }
 
+    public boolean isUse(CommandSender sender, SenderType type) {
+        return sender.hasPermission(permission()) && Arrays.stream(types).anyMatch(senderType -> senderType.equals(type) || senderType.equals(SenderType.ALL));
+    }
+
     protected String permission() {
         return SXItem.getInst().getName() + "." + cmd;
     }
@@ -59,10 +63,6 @@ public abstract class SubCommand implements Comparable<SubCommand> {
 
     protected final void setType(SenderType... types) {
         this.types = types;
-    }
-
-    public final boolean isUse(CommandSender sender, SenderType type) {
-        return sender.hasPermission(permission()) && Arrays.stream(types).anyMatch(senderType -> senderType.equals(type) || senderType.equals(SenderType.ALL));
     }
 
     public final void sendIntroduction(CommandSender sender, String color, String label) {
