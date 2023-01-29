@@ -3,6 +3,7 @@ package github.saukiya.sxitem.command;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.util.Message;
 import github.saukiya.sxitem.util.MessageUtil;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.command.CommandSender;
 
 import java.text.MessageFormat;
@@ -12,17 +13,18 @@ import java.util.List;
 /**
  * @author Saukiya
  */
-public abstract class SubCommand {
+@RequiredArgsConstructor
+public abstract class SubCommand implements Comparable<SubCommand> {
 
-    String cmd, arg = "";
+    public final String cmd;
+
+    final int priority;
+
+    String arg = "";
 
     boolean hide = false;
 
-    private SenderType[] types = new SenderType[]{SenderType.ALL};
-
-    public SubCommand(String cmd) {
-        this.cmd = cmd;
-    }
+    SenderType[] types = new SenderType[]{SenderType.ALL};
 
     public abstract void onCommand(CommandSender sender, String[] args);
 
@@ -70,5 +72,10 @@ public abstract class SubCommand {
                 .show(sender.isOp() ? "§8§oPermission: " + permission() : null)
                 .runCommand(clickCommand)
                 .send(sender);
+    }
+
+    @Override
+    public final int compareTo(SubCommand cmd) {
+        return Integer.compare(priority, cmd.priority);
     }
 }

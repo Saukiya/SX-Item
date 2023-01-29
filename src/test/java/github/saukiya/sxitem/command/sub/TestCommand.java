@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class TestCommand extends SubCommand {
     public TestCommand() {
-        super("test");
+        super("test", -1);
         setType(SenderType.PLAYER);
         setHide();
     }
