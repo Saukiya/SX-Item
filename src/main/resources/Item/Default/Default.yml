@@ -46,8 +46,14 @@
 #自动更新 Update [Type:Boolean]
 # 描述: 会自动更新该物品 (注意，随机文本除了<l:>以外也会重新生成)
 #
-#物品标签 NBT [Type:Map-?]
-# 描述: 自由的将NBT节点下的配置信息设置到物品NBT中，可输入/sx nbt查看
+#物品标签 NBT [Type:Map-?] (支持随机)
+# 描述: 自由的将NBT节点下的配置信息设置到物品NBT中，可输入/si nbt查看
+#
+#保护标签 ProtectNBT [Type:List]
+# 描述: 自动更新时保护以下NBT不被更改，可输入/si nbt查看
+# 格式:
+# - "Enchantments" 保护附魔词条不被自动更新
+# - "!protect.data" 解除在全局保护[Config.yml]中的词条
 #
 #局部随机 Random [Type:Map-?]
 # 描述: 设置物品的局部随机变量
@@ -91,7 +97,7 @@
 
 Default-1:
   Name: <s:DefaultPrefix>&c炎之洗礼<s:DefaultSuffix> <s:<l:品质>Color><l:品质>
-  ID: <s:<l:职业>ID>
+  ID: <l:<l:职业>ID>
   Lore:
     - '&6品质等级: <s:<l:品质>Color><l:品质>'
     - '<b:<l:品质>:优秀:史诗>&6限制职业: <l:职业>'
@@ -125,6 +131,8 @@ Default-1:
         - '词条三'
         - 'SX-Attribute预留属性接口'
         - '如需使用随机则需学习高等随机'
+  ProtectNBT: #保护附魔NBT不被更新
+    - "Enchantments"
 
 Default-2:
   Name: '&c机械轻羽之靴'
