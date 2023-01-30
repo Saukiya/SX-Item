@@ -4,10 +4,10 @@ LoggerLevel: "INFO"
 DecimalFormat: '#.##'
 #日期格式化
 TimeFormat: yyyy/MM/dd HH:mm
-#更新项目固定NBT
-UpdateItemFixedNbt:
-  - "sx.attribute"
-#给予物品时背包满了则掉落(简单的拾取保护,只防护玩家的拾取)
+#全局保护NBT列表 [自动更新时保护以下NBT不被更改]
+ProtectNBT:
+  - "protect.data"
+#给予物品时背包满了则掉落 [简单的拾取保护,只防护玩家的拾取]
 GiveOverflowDrop: true
 #史诗怪物掉落的SX物品直接进入玩家背包
 MobDropToPlayerInventory: true
