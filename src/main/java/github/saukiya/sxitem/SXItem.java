@@ -86,7 +86,7 @@ public class SXItem extends JavaPlugin {
         Config.setup();
         PlaceholderHelper.setup();
         MythicMobsHelper.setup();
-        mainCommand.onEnable("sxitem");
+        mainCommand.onEnable("SxItem");
         getLogger().info("Loading Time: " + (System.currentTimeMillis() - oldTimes) + " ms");
         getLogger().info("Author: " + getDescription().getAuthors());
     }

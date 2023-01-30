@@ -52,11 +52,11 @@ public class ItemManager implements Listener {
 
     private final List<Player> checkPlayers = new ArrayList<>();
 
+    private final List<String> protectNbtList = new ArrayList<>();
+
     private final Map<String, String> linkMap = new HashMap<>();
 
     private final Map<String, IGenerator> itemMap = new HashMap<>();
-
-    private final List<String> fixedNbtList = new ArrayList<>();
 
     public ItemManager(JavaPlugin plugin, String... defaultFile) {
         this.plugin = plugin;
@@ -84,7 +84,7 @@ public class ItemManager implements Listener {
     public void loadItemData() {
         itemMap.values().removeIf(ig -> ig.group.equals(plugin.getName()));
         linkMap.clear();
-        fixedNbtList.clear();
+        protectNbtList.clear();
         // 加载物品
         if (!itemFiles.exists() || itemFiles.listFiles().length == 0) {
             Arrays.stream(defaultFile).forEach(fileName -> plugin.saveResource(fileName, true));
@@ -107,7 +107,7 @@ public class ItemManager implements Listener {
         plugin.getLogger().info("Linked " + linkMap.size() + " Items");
 
         // 加载固定NBT
-        fixedNbtList.addAll(Config.getConfig().getStringList(Config.UPDATE_ITEM_FIXED_NBT));
+        Config.getConfig().getStringList(Config.PROTECT_NBT).forEach(this::addProtectNBT);
     }
 
     /**
@@ -222,16 +222,15 @@ public class ItemManager implements Listener {
      * @param key
      * @return
      */
+    @Nullable
     public IGenerator getGenerator(String key) {
         return itemMap.get(key);
     }
 
     /**
      * 通过识别物品key获取该物品的生成器(需要支持接口IUpdate)
-     *
-     * @param item
-     * @return
      */
+    @Nullable
     public IGenerator getGenerator(ItemStack item) {
         if (item != null && !item.getType().equals(Material.AIR) && item.hasItemMeta()) {
             return itemMap.get(NbtUtil.getInst().getItemTagWrapper(item).getString(plugin.getName() + ".ItemKey"));
@@ -241,11 +240,8 @@ public class ItemManager implements Listener {
 
     /**
      * 获取物品
-     *
-     * @param itemName String
-     * @param player   Player
-     * @return ItemStack / null
      */
+    @Nullable
     public ItemStack getItem(String itemName, @Nonnull Player player, Object... args) {
         IGenerator ig = itemMap.get(itemName);
         if (ig != null) {
@@ -259,11 +255,8 @@ public class ItemManager implements Listener {
 
     /**
      * 获取物品
-     *
-     * @param ig     IGenerator
-     * @param player Player
-     * @return ItemStack / null
      */
+    @Nullable
     public ItemStack getItem(IGenerator ig, Player player, Object... args) {
         ItemStack item = ig.getItem(player, args);
         if (item != emptyItem && item != null && ig instanceof IUpdate) {
@@ -279,9 +272,6 @@ public class ItemManager implements Listener {
 
     /**
      * 返回是否存在物品
-     *
-     * @param itemName String
-     * @return boolean
      */
     public boolean hasItem(String itemName) {
         return itemMap.containsKey(itemName) || getMaterial(itemName) != null;
@@ -289,44 +279,44 @@ public class ItemManager implements Listener {
 
     /**
      * 更新物品
-     *
-     * @param player     Player
-     * @param itemStacks ItemStack...
      */
     public void updateItem(Player player, ItemStack... itemStacks) {
-        for (ItemStack item : itemStacks) {
-            if (item == null) continue;
-            NBTTagWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item);
-            updateItemInPlugin(player, item, plugin.getName() + ".ItemKey", wrapper);
-        }
+        updateItem(player, plugin.getName(), itemStacks);
     }
 
-    public void updateItemInPlugin(Player player, ItemStack item, String keyPath, NBTTagWrapper oldWrapper) {
-        if (item == null) return;
-        if (oldWrapper == null) oldWrapper = NbtUtil.getInst().getItemTagWrapper(item);
-        IGenerator ig = itemMap.get(oldWrapper.getString(keyPath));
-        if (ig == null) return;
-        if (ig instanceof IUpdate) {
-            IUpdate updateIg = (IUpdate) ig;
-            Integer hashCode = oldWrapper.getInt(plugin.getName() + ".HashCode");
-            if (updateIg.isUpdate() && (hashCode == null || updateIg.updateCode() != hashCode)) {
+    public void updateItem(Player player, String prefix, ItemStack... itemStacks) {
+        for (ItemStack item : itemStacks) {
+            if (item == null) continue;
+            NBTTagWrapper oldWrapper = NbtUtil.getInst().getItemTagWrapper(item);
+            IGenerator ig = itemMap.get(oldWrapper.getString(prefix + ".ItemKey"));
+            if (ig == null) return;
+            if (ig instanceof IUpdate) {
+                IUpdate updateIg = (IUpdate) ig;
+                Integer hashCode = oldWrapper.getInt(prefix + ".HashCode");
+                if (!updateIg.isUpdate() || (hashCode != null && updateIg.updateCode() == hashCode)) continue;
                 ItemStack newItem = updateIg.update(item, oldWrapper, player);
                 NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(newItem);
                 wrapper.set(plugin.getName() + ".ItemKey", ig.getKey());
                 wrapper.set(plugin.getName() + ".HashCode", ((IUpdate) ig).updateCode());
-                for (String s : fixedNbtList) {
-                    wrapper.set(s, oldWrapper.get(s));
-                }
+                // TODO 发现NBT保护是在物品管理器上 而不是生成器上诶
+                protectNbtList.forEach(nbt -> wrapper.set(nbt, oldWrapper.get(nbt)));
                 wrapper.save();
 
                 SXItemUpdateEvent event = new SXItemUpdateEvent(plugin, player, ig, newItem, item);
                 Bukkit.getPluginManager().callEvent(event);
-                if (!event.isCancelled()) {
-                    item.setType(event.getItem().getType());
-                    item.setItemMeta(event.getItem().getItemMeta());
-                }
+                if (event.isCancelled()) continue;
+                item.setType(event.getItem().getType());
+                item.setItemMeta(event.getItem().getItemMeta());
             }
         }
+    }
+
+    /**
+     * 添加全局保护NBT
+     */
+    public void addProtectNBT(String nbtPath) {
+        if (protectNbtList.contains(nbtPath)) return;
+        protectNbtList.add(nbtPath);
     }
 
     /**
@@ -503,5 +493,4 @@ public class ItemManager implements Listener {
         if (saveFunc != null) saveFunction.put(type, saveFunc);
         SXItem.getInst().getLogger().info("ItemGenerator >> Type Register: " + type);
     }
-
 }

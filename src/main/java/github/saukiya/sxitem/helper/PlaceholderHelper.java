@@ -21,9 +21,10 @@ public class PlaceholderHelper {
     static boolean enabled;
 
     public static void setup() {
-        if (enabled = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             try {
                 new Placeholder().register();
+                enabled = true;
             } catch (Exception e) {
                 SXItem.getInst().getLogger().warning("Placeholder error");
                 enabled = false;

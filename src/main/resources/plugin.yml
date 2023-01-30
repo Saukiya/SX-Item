@@ -9,5 +9,5 @@ softdepend:
   - MythicMobs
 
 commands:
-  sxitem:
+  SxItem:
     aliases: [ sxi,si ]
