@@ -52,7 +52,7 @@ public class ItemManager implements Listener {
 
     private final List<Player> checkPlayers = new ArrayList<>();
 
-    private final List<String> protectNbtList = new ArrayList<>();
+    private final HashSet<String> protectNbtList = new HashSet<>();
 
     private final Map<String, String> linkMap = new HashMap<>();
 
@@ -107,7 +107,7 @@ public class ItemManager implements Listener {
         plugin.getLogger().info("Linked " + linkMap.size() + " Items");
 
         // 加载固定NBT
-        Config.getConfig().getStringList(Config.PROTECT_NBT).forEach(this::addProtectNBT);
+        protectNbtList.addAll(Config.getConfig().getStringList(Config.PROTECT_NBT));
     }
 
     /**
@@ -289,7 +289,6 @@ public class ItemManager implements Listener {
             if (item == null) continue;
             NBTTagWrapper oldWrapper = NbtUtil.getInst().getItemTagWrapper(item);
             IGenerator ig = itemMap.get(oldWrapper.getString(prefix + ".ItemKey"));
-            if (ig == null) return;
             if (ig instanceof IUpdate) {
                 IUpdate updateIg = (IUpdate) ig;
                 Integer hashCode = oldWrapper.getInt(prefix + ".HashCode");
@@ -298,8 +297,16 @@ public class ItemManager implements Listener {
                 NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(newItem);
                 wrapper.set(plugin.getName() + ".ItemKey", ig.getKey());
                 wrapper.set(plugin.getName() + ".HashCode", ((IUpdate) ig).updateCode());
-                // TODO 发现NBT保护是在物品管理器上 而不是生成器上诶
-                protectNbtList.forEach(nbt -> wrapper.set(nbt, oldWrapper.get(nbt)));
+                HashSet<String> protectNBT = new HashSet<>(protectNbtList);
+                for (String nbt : ig.getConfig().getStringList("ProtectNBT")) {
+                    if (nbt.startsWith("!")) {
+                        protectNBT.remove(nbt.substring(1));
+                    } else {
+                        protectNBT.add(nbt);
+                    }
+                }
+                // 存在原始NBT -> 基础数据 -> 原始NBT的性能转换
+                protectNBT.forEach(nbt -> wrapper.set(nbt, oldWrapper.get(nbt)));
                 wrapper.save();
 
                 SXItemUpdateEvent event = new SXItemUpdateEvent(plugin, player, ig, newItem, item);
@@ -309,14 +316,6 @@ public class ItemManager implements Listener {
                 item.setItemMeta(event.getItem().getItemMeta());
             }
         }
-    }
-
-    /**
-     * 添加全局保护NBT
-     */
-    public void addProtectNBT(String nbtPath) {
-        if (protectNbtList.contains(nbtPath)) return;
-        protectNbtList.add(nbtPath);
     }
 
     /**
@@ -466,7 +465,7 @@ public class ItemManager implements Listener {
      * 获取物品材质
      *
      * @param key 索引
-     * @return
+     * @return 材质
      */
     public static Material getMaterial(String key) {
         Material material = materialMap.get(key);
