@@ -328,6 +328,7 @@ public class ItemManager implements Listener {
      * @throws IOException IOException
      */
     public boolean saveItem(String key, ItemStack item, String type) throws IOException {
+        if (itemMap.containsKey(key)) return false;
         IGenerator.Saver function = saveFunction.get(type);
         if (function == null) return false;
         ConfigurationSection config = new MemoryConfiguration();
