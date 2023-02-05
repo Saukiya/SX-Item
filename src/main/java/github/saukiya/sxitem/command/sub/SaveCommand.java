@@ -43,7 +43,7 @@ public class SaveCommand extends SubCommand {
             return;
         }
         try {
-            if (SXItem.getItemManager().saveItem(itemName, itemStack, args.length > 2 ? args[2] : "Default")) {
+            if (SXItem.getItemManager().saveItem(itemName, itemStack.clone(), args.length > 2 ? args[2] : "Default")) {
                 MessageUtil.send(sender, Message.SAVE__SAVE_ITEM.get(itemName));
             } else {
                 MessageUtil.send(sender, Message.SAVE__SAVE_NO_TYPE.get(itemName));
