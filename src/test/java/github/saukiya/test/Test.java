@@ -1,12 +1,10 @@
 package github.saukiya.test;
 
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
+import com.google.gson.stream.JsonReader;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.RandomDocker;
-import github.saukiya.sxitem.data.random.randoms.CalculatorRandom;
 import github.saukiya.sxitem.nbt.TagBase;
 import github.saukiya.sxitem.nbt.TagCompound;
 import github.saukiya.sxitem.nbt.TagType;
@@ -20,7 +18,8 @@ import org.apache.commons.lang.text.StrMatcher;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.File;
+import java.io.*;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -60,7 +59,40 @@ public class Test {
 //        yamlToTagTest();
 //        gsonTest();
 //        conversionNBT();
-        System.out.println(new CalculatorRandom().replace("(2+(3*4)) / 7", null));
+        checkUpdate();
+    }
+
+    public static JsonElement getJsonFromUrl(String url) {
+        try (
+            InputStream inputStream = new URL(url).openStream();
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            JsonReader jsonReader = new JsonReader(inputStreamReader)
+        ) {
+            return new Gson().fromJson(jsonReader, JsonElement.class);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public static void checkUpdate() {
+        // 从Url中读取Json
+        JsonObject json = getJsonFromUrl("https://api.github.com/repos/Saukiya/SX-Item/releases/latest").getAsJsonObject();
+        // 版本号(tag号)
+        String version = json.get("tag_name").getAsString();
+        // 网页链接
+        String html = json.get("html_url").getAsString();
+        // 版本详情
+        String[] desc = json.get("body").getAsString().split("\\r\\n");
+        // 资源列表
+        JsonArray assets = json.get("assets").getAsJsonArray();
+        // 插件下载地址
+        String downLoadUrl = IntStream.range(0, assets.size()).mapToObj(i -> assets.get(i).getAsJsonObject()).filter(asset -> asset.get("name").getAsString().endsWith("-all.jar")).findFirst().get().get("browser_download_url").getAsString();
+
+        System.out.println("\n\n\n");
+        System.out.println("Version: " + version);
+        System.out.println("Html: " + html);
+        System.out.println("DownloadUrl: " + downLoadUrl);
+        System.out.println("Info: \n\t" + String.join("\n\t", desc));
     }
 
     public static String c(String... versions) {
