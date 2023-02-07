@@ -48,20 +48,20 @@ public class ItemManager implements Listener {
 
     private final String[] defaultFile;
 
-    private final File itemFiles;
+    private final File itemDirectory;
 
     private final List<Player> checkPlayers = new ArrayList<>();
 
     private final HashSet<String> protectNbtList = new HashSet<>();
 
-    private final Map<String, String> linkMap = new HashMap<>();
+    private final Map<Tuple<String, String>, String> linkMap = new HashMap<>();
 
     private final Map<String, IGenerator> itemMap = new HashMap<>();
 
     public ItemManager(JavaPlugin plugin, String... defaultFile) {
         this.plugin = plugin;
         this.defaultFile = defaultFile;
-        this.itemFiles = new File(plugin.getDataFolder(), "Item");
+        this.itemDirectory = new File(plugin.getDataFolder(), "Item");
         plugin.getLogger().info("Loaded " + loadFunction.size() + " ItemGenerators");
         loadItemData();
         Bukkit.getPluginManager().registerEvents(this, plugin);
@@ -82,31 +82,15 @@ public class ItemManager implements Listener {
      * 读取物品数据
      */
     public void loadItemData() {
-        itemMap.values().removeIf(ig -> ig.group.equals(plugin.getName()));
-        linkMap.clear();
-        protectNbtList.clear();
-        // 加载物品
-        if (!itemFiles.exists() || itemFiles.listFiles().length == 0) {
+        // 写入默认配置文件
+        if (!itemDirectory.exists() || itemDirectory.listFiles().length == 0) {
             Arrays.stream(defaultFile).forEach(fileName -> plugin.saveResource(fileName, true));
         }
-        loadItem(plugin.getName(), itemFiles);
+        // 加载物品
+        loadItem(plugin.getName(), itemDirectory);
         plugin.getLogger().info("Loaded " + itemMap.size() + " Items");
-
-        // 加载挂链
-        Iterator<Map.Entry<String, String>> iterator = linkMap.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<String, String> entry = iterator.next();
-            IGenerator ig = itemMap.get(entry.getKey());
-            if (ig != null) {
-                itemMap.put(entry.getKey(), ig);
-            } else {
-                iterator.remove();
-                plugin.getLogger().info("Linked Error: " + entry.getKey() + "->" + entry.getValue());
-            }
-        }
-        plugin.getLogger().info("Linked " + linkMap.size() + " Items");
-
         // 加载固定NBT
+        protectNbtList.clear();
         protectNbtList.addAll(Config.getConfig().getStringList(Config.PROTECT_NBT));
     }
 
@@ -120,46 +104,22 @@ public class ItemManager implements Listener {
     }
 
     /**
-     * 遍历读取物品数据
+     * 加载物品列表
      *
-     * @param files File
+     * @param group     组名
+     * @param directory 文件夹
      */
-    private void loadItem(String group, File files) {
-        for (File file : files.listFiles()) {
-            if (file.getName().startsWith("NoLoad")) continue;
-            if (file.isDirectory()) {
-                loadItem(group, file);
-            } else {
-                YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
-                for (String key : yaml.getKeys(false)) {
-                    if (key.startsWith("NoLoad")) continue;
-                    if (itemMap.containsKey(key)) {
-                        plugin.getLogger().warning("Don't Repeat Item Name: " + file.getName() + File.separator + key + " !");
-                        continue;
-                    }
-                    if (yaml.isString(key)) {
-                        linkMap.put(key, yaml.getString(key));
-                        continue;
-                    }
-                    String type = yaml.getString(key + ".Type", "Default");
-                    IGenerator.Loader function = getLoadFunction().get(type);
-                    if (function != null) {
-                        ConfigurationSection config = yaml.getConfigurationSection(key);
-                        config.set("Path", group + "#" + getPathName(file));
-                        itemMap.put(key, function.apply(key, yaml.getConfigurationSection(key), group));
-                    } else {
-                        plugin.getLogger().warning("Don't Item Type: " + file.getName() + File.separator + key + " - " + type + " !");
-                    }
-                }
-            }
-        }
+    public void loadItem(String group, File directory) {
+        Map<String, ConfigurationSection> configs = new HashMap<>();
+        loadConfigs(directory, configs, "");
+        loadItem(group, configs);
     }
 
     /**
-     * 外部加载物品
+     * 加载物品列表
      *
-     * @param group     组名
-     * @param configs   配置列表
+     * @param group   组名
+     * @param configs 配置列表
      */
     public void loadItem(String group, ConfigurationSection... configs) {
         Map<String, ConfigurationSection> mapConfig = new HashMap<>();
@@ -170,50 +130,74 @@ public class ItemManager implements Listener {
     }
 
     /**
-     * 外部加载物品
+     * 加载物品列表
      * 注意事项:
-     * 1.不可以覆盖其他插件的key值。
-     * 2.不会被SX重载时清除。
+     * 1.不可以覆盖其他group的key值
+     * 2.不会被SX重载时清除
      * 3.每次加载清空上次的存储
-     * 4.不允许使用链接模式
      *
      * @param group     组名
-     * @param configs   配置列表
+     * @param configs   带名字的配置列表
      */
-     public void loadItem(String group, Map<String, ConfigurationSection> configs) {
-         if (group.equals(plugin.getName())) return;
-         itemMap.values().removeIf(ig -> ig.group.equals(group));
-         configs.forEach((path, config) -> {
-             for (String key : config.getKeys(false)) {
-                 if (key.startsWith("NoLoad")) continue;
-                 if (itemMap.containsKey(key)) {
-                     plugin.getLogger().warning("Don't Repeat Item Name: " + path + File.separator + key + " !");
-                     continue;
-                 }
-                 if (config.isString(key)) {
-                     plugin.getLogger().warning("Don't Link Item Name: " + path + File.separator + key + " !");
-                     continue;
-                 }
-                 String type = config.getString(key + ".Type", "Default");
-                 IGenerator.Loader function = getLoadFunction().get(type);
-                 if (function != null) {
-                     config.set(key + ".Path", group + "#" + path);
-                     itemMap.put(key, function.apply(key, config.getConfigurationSection(key), group));
-                 } else {
-                     plugin.getLogger().warning("Don't Item Type: " + path + File.separator + key + " - " + type + " !");
-                 }
-             }
-         });
-     }
+    public void loadItem(String group, Map<String, ConfigurationSection> configs) {
+        itemMap.values().removeIf(ig -> ig.group.equals(group));
+        Iterator<Tuple<String, String>> linkKeys = linkMap.keySet().iterator();
+        while (linkKeys.hasNext()) {
+            Tuple<String, String> linkEntry = linkKeys.next();
+            if (!linkEntry.a().equals(group)) continue;
+            itemMap.remove(linkEntry.b());
+            linkKeys.remove();
+        }
+        configs.forEach((path, config) -> {
+            for (String key : config.getKeys(false)) {
+                if (key.startsWith("NoLoad")) continue;
+                if (itemMap.containsKey(key)) {
+                    plugin.getLogger().warning("Don't Repeat Item Name: " + path + File.separator + key + " !");
+                    continue;
+                }
+                if (config.isString(key)) {
+                    linkMap.put(new Tuple<>(group, key), config.getString(key));
+                    itemMap.put(key, null);
+                    continue;
+                }
+                String type = config.getString(key + ".Type", "Default");
+                IGenerator.Loader function = getLoadFunction().get(type);
+                if (function != null) {
+                    config.set(key + ".Path", group + "#" + path);
+                    itemMap.put(key, function.apply(key, config.getConfigurationSection(key), group));
+                } else {
+                    plugin.getLogger().warning("Don't Item Type: " + path + File.separator + key + " - " + type + " !");
+                }
+            }
+        });
+        ReLoadLink();
+    }
 
-    /**
-     * 获取路径简称
-     *
-     * @param file File
-     * @return PathName
-     */
-    private String getPathName(File file) {
-        return file.toString().replace("plugins" + File.separator + "SX-Item" + File.separator, "").replace(File.separator, ">");
+    private void ReLoadLink() {
+        Iterator<Map.Entry<Tuple<String, String>, String>> iterator = linkMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Tuple<String, String>, String> entry = iterator.next();
+            IGenerator ig = itemMap.get(entry.getKey().b());
+            if (ig != null) {
+                itemMap.put(entry.getKey().b(), ig);
+            } else {
+                itemMap.remove(entry.getKey().b());
+                iterator.remove();
+                plugin.getLogger().info("Linked Null: " + entry.getKey().a() + ":" + entry.getKey().b() + "->" + entry.getValue());
+            }
+        }
+    }
+
+    private void loadConfigs(File directory, Map<String, ConfigurationSection> configs, String path) {
+        for (File file : directory.listFiles()) {
+            if (file.getName().startsWith("NoLoad")) continue;
+            String filePath = !path.isEmpty() ? path + File.separator + file.getName() : file.getName();
+            if (file.isDirectory()) {
+                loadConfigs(file, configs, filePath);
+            } else if (file.getName().endsWith(".yml")) {
+                configs.put(filePath, YamlConfiguration.loadConfiguration(file));
+            }
+        }
     }
 
     /**
@@ -335,11 +319,12 @@ public class ItemManager implements Listener {
         config.set("Type", type);
         function.apply(item, config);
         if (config.getKeys(false).size() == 1) return false;
-        File file = new File(itemFiles, "Type-" + type + File.separator + "Item.yml");
+        String filePath = "Type-" + type + File.separator + "Item.yml";
+        File file = new File(itemDirectory, filePath);
         YamlConfiguration yaml = file.exists() ? YamlConfiguration.loadConfiguration(file) : new YamlConfiguration();
         yaml.set(key, config);
         yaml.save(file);
-        config.set("Path", plugin.getName() + "#" + getPathName(file.getParentFile()));
+        config.set("Path", plugin.getName() + "#" + filePath);
         itemMap.put(key, loadFunction.get(type).apply(key, config, plugin.getName()));
         return true;
     }
