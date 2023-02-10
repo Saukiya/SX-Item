@@ -1,6 +1,5 @@
 package github.saukiya.sxitem.helper;
 
-import com.google.common.collect.ImmutableMap;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.item.IGenerator;
 import github.saukiya.sxitem.event.SXItemMythicMobsGiveToInventoryEvent;
@@ -197,12 +196,12 @@ public class MythicMobsHelper {
          * @param mob
          */
         public static Map<String, String> getMobMap(io.lumine.xikage.mythicmobs.mobs.ActiveMob mob) {
-            return ImmutableMap.of(
-                    "mob_level", Double.toString(mob.getLevel()),
-                    "mob_name_display", mob.getDisplayName(),
-                    "mob_name_internal", mob.getType().getInternalName(),
-                    "mob_uuid", mob.getUniqueId().toString()
-            );
+            Map<String, String> map = new HashMap<>();
+            map.put("mob_level", Double.toString(mob.getLevel()));
+            map.put("mob_name_display", mob.getDisplayName());
+            map.put("mob_name_internal", mob.getType().getInternalName());
+            map.put("mob_uuid", mob.getUniqueId().toString());
+            return map;
         }
     }
 
@@ -240,12 +239,12 @@ public class MythicMobsHelper {
          * @param mob
          */
         public static Map<String, String> getMobMap(io.lumine.mythic.core.mobs.ActiveMob mob) {
-            return ImmutableMap.of(
-                    "mob_level", Double.toString(mob.getLevel()),
-                    "mob_name_display", mob.getDisplayName(),
-                    "mob_name_internal", mob.getType().getInternalName(),
-                    "mob_uuid", mob.getUniqueId().toString()
-            );
+            Map<String, String> map = new HashMap<>();
+            map.put("mob_level", Double.toString(mob.getLevel()));
+            map.put("mob_name_display", mob.getDisplayName());
+            map.put("mob_name_internal", mob.getType().getInternalName());
+            map.put("mob_uuid", mob.getUniqueId().toString());
+            return map;
         }
     }
 }
