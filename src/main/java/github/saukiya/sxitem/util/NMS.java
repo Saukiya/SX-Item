@@ -27,7 +27,6 @@ public interface NMS {
                 t = Data.INST_MAP.computeIfAbsent(target, k -> {
                     try {
                         String version = Arrays.stream(versions).filter(ver -> compareTo(ver) >= 0).findFirst().orElse(Data.VERSION);
-                        SXItem.getInst().getLogger().info(target.getSimpleName() + " use Version: " + version);
                         return (NMS) Class.forName(target.getName() + "_" + version).getDeclaredConstructor().newInstance();
                     } catch (Exception e) {
                         e.printStackTrace();

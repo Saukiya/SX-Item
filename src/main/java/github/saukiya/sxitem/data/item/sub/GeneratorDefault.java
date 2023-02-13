@@ -122,12 +122,12 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         }
         ItemMeta meta = item.getItemMeta();
 
-        String itemName = docker.replace(PlaceholderHelper.setPlaceholders(player, this.displayName));
+        String itemName = docker.replace(this.displayName);
         if (itemName != null) {
             meta.setDisplayName(itemName.replace("&", "§"));
         }
 
-        List<String> loreList = docker.replace(PlaceholderHelper.setPlaceholders(player, config.getStringList("Lore")));
+        List<String> loreList = docker.replace(config.getStringList("Lore"));
         loreList.replaceAll(lore -> lore.replace("&", "§"));
         meta.setLore(loreList);
 
@@ -152,7 +152,7 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
 
         ItemUtil.getInst().setUnbreakable(meta, config.getBoolean("Unbreakable"));
 
-        ItemUtil.getInst().setSkull(meta, docker.replace(PlaceholderHelper.setPlaceholders(player, config.getString("SkullName"))));
+        ItemUtil.getInst().setSkull(meta, docker.replace(config.getString("SkullName")));
 
         if (meta instanceof LeatherArmorMeta && config.isString("Color")) {
             ((LeatherArmorMeta) meta).setColor(Color.fromRGB(Integer.parseInt(docker.replace(config.getString("Color")), 16)));
