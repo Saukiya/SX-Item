@@ -86,7 +86,7 @@ public class RandomDocker extends StrLookup {
      * @return RandomText
      */
     public String replace(String string) {
-        return ss.replace(string);
+        return PlaceholderHelper.setPlaceholders(getPlayer(), ss.replace(string));
     }
 
     /**
@@ -96,7 +96,7 @@ public class RandomDocker extends StrLookup {
      * @return RandomText
      */
     public List<String> replace(List<String> list) {
-        return list.stream().flatMap(str -> Arrays.stream(ss.replace(str).split("\n"))).filter(s -> !s.contains("%DeleteLore")).collect(Collectors.toList());
+        return PlaceholderHelper.setPlaceholders(getPlayer(), list.stream().flatMap(str -> Arrays.stream(ss.replace(str).split("\n"))).filter(s -> !s.contains("%DeleteLore")).collect(Collectors.toList()));
     }
 
     /**
@@ -117,7 +117,7 @@ public class RandomDocker extends StrLookup {
                 ((TagList) tagBase).forEach((v) -> tagList.add(replace(v)));
                 return tagList;
             case STRING:
-                return new TagString(replace(((TagString) tagBase).getValue()));
+                return new TagString(PlaceholderHelper.setPlaceholders(getPlayer(), replace(((TagString) tagBase).getValue())));
             default:
                 return tagBase;
         }
@@ -139,18 +139,16 @@ public class RandomDocker extends StrLookup {
     }
 
     @Override
-    public String lookup(String s) {
-        if (s.length() > 2 && s.charAt(1) == ':') {
-            IRandom random = RandomManager.getRandom(s.charAt(0));
+    public String lookup(String str) {
+        if (str.length() > 2 && str.charAt(1) == ':') {
+            IRandom random = RandomManager.getRandom(str.charAt(0));
             if (random != null) {
-                String str = s.substring(2);
-                if (str.indexOf('%') != s.lastIndexOf('%')) {
+                if (str.indexOf('%') != str.lastIndexOf('%'))
                     str = PlaceholderHelper.setPlaceholders(player, str);
-                }
-                str = random.replace(str, this);
+                str = random.replace(str.substring(2), this);
                 return str != null ? str : "%DeleteLore";
             }
-            SXItem.getInst().getLogger().warning("No Random Type: " + s.charAt(0));
+            SXItem.getInst().getLogger().warning("No Random Type: " + str.charAt(0));
         }
         return null;
     }
