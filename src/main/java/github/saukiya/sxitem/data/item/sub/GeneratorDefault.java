@@ -24,6 +24,11 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -139,6 +144,30 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
             if (enchantment != null && level != 0) {
                 meta.addEnchant(enchantment, level, true);
             }
+        }
+
+        if (meta instanceof PotionMeta) {
+            PotionType type = PotionType.valueOf(config.getString("Potion.type", "POISON"));
+            PotionData data = new PotionData(type);
+            ((PotionMeta) meta).setBasePotionData(data);
+            ConfigurationSection sub = config.getConfigurationSection("Potion.effects");
+            if (sub != null) {
+                for (String effectId : sub.getKeys(false)) {
+                    PotionEffectType effect = PotionEffectType.getByName(effectId);
+                    if (effect != null) {
+                        int duration = sub.getInt(effectId + ".duration", 0);
+                        int amplifier = sub.getInt(effectId + ".amplifier", 0);
+                        boolean ambient = sub.getBoolean(effectId + ".ambient", true);
+                        boolean particles = sub.getBoolean(effectId + ".particles", true);
+                        boolean icon = sub.getBoolean(effectId + ".icon", true);
+                        ((PotionMeta) meta).addCustomEffect(new PotionEffect(effect, duration, amplifier, ambient, particles, icon), true);
+                    }
+                }
+            }
+        }
+        int customData = config.getInt("CustomModelData", -1);
+        if (customData != -1) {
+            meta.setCustomModelData(customData);
         }
 
         for (String flagName : config.getStringList("ItemFlagList")) {
