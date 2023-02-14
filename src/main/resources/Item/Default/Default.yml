@@ -94,6 +94,28 @@
 # 参考WIKI: https://minecraft.fandom.com/zh/wiki/%E5%B1%9E%E6%80%A7?variant=zh-cn
 # 参考API:  https://hub.spigotmc.org/javadocs/spigot/org/bukkit/attribute/package-summary.html
 #
+# 自定义材质ID CustomModelData: 1000
+#
+# 药水写法
+#   Potion:
+#    #药水的样式(显示用)
+#    type: JUMP
+#    effects:
+#      这里的Key就是药水的效果
+#      ABSORPTION:
+#        duration: 20
+#        amplifier: 1
+#        ambient: true
+#        particles: true
+#        icon: true
+#      FAST_DIGGING:
+#        duration: 20
+#        amplifier: 1
+#        ambient: true
+#        particles: true
+#        icon: true
+# 参考API: https://bukkit.windit.net/javadoc/org/bukkit/potion/PotionEffectType.html
+#
 
 Default-1:
   Name: <s:DefaultPrefix>&c炎之洗礼<s:DefaultSuffix> <s:<l:品质>Color><l:品质>
