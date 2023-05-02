@@ -187,6 +187,7 @@ public class MythicMobsHelper {
                 sxDropList.addAll(event.getMobType().getConfig().getStringList("SX-Drops"));
                 deathHandler.death(mobType, mobLocation, mobMap, player, drops, sxDropList);
                 event.setDrops(drops);
+                return;
             }
         }
 

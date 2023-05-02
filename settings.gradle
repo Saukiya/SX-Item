@@ -11,5 +11,6 @@ if (!System.env.JITPACK) {
     include 'Module-NMS-V1_18_R2'
     include 'Module-NMS-V1_19_R1'
     include 'Module-NMS-V1_19_R2'
+    include 'Module-NMS-V1_19_R3'
 }
 
