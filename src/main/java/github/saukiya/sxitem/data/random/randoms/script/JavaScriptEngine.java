@@ -1,56 +1,56 @@
 package github.saukiya.sxitem.data.random.randoms.script;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptContext;
+import javax.script.*;
 import java.io.File;
 import java.io.FileReader;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class JavaScriptEngine {
-    private static JavaScriptEngine instance;
+    private static final JavaScriptEngine INSTANCE = new JavaScriptEngine();
     private final ScriptEngine engine;
-    private final ScriptContext context;
+    private final Compilable compilableEngine;
+    private final ConcurrentHashMap<String, CompiledScript> compiledScripts;
 
     private JavaScriptEngine() {
         ScriptEngineManager manager = new ScriptEngineManager();
         engine = manager.getEngineByName("js");
-        context = engine.getContext();
+        compilableEngine = (Compilable) engine;
+        compiledScripts = new ConcurrentHashMap<>();
     }
 
-    public static synchronized JavaScriptEngine getInstance() {
-        if (instance == null) {
-            instance = new JavaScriptEngine();
-        }
-        return instance;
+    public static JavaScriptEngine getInstance() {
+        return INSTANCE;
     }
-
 
     public void loadScript(String filename) throws Exception {
-        FileReader reader = new FileReader(filename);
-        context.setReader(reader);
-        engine.eval(reader);
+        loadScript(new File(filename));
     }
 
-    public void loadScript(File filename) throws Exception {
-        FileReader reader = new FileReader(filename);
-        context.setReader(reader);
-        engine.eval(reader);
-    }
-
-    public void reloadScriptEngine() {
-        instance = new JavaScriptEngine();
-    }
-
-    public Object callFunction(String functionName, Object... args) throws Exception {
-        StringBuilder builder = new StringBuilder();
-        builder.append(functionName).append("(");
-        for (int i = 0; i < args.length; i++) {
-            if (i > 0) {
-                builder.append(",");
-            }
-            builder.append(args[i]);
+    public void loadScript(File file) throws Exception {
+        try (FileReader reader = new FileReader(file)) {
+            CompiledScript compiled = compilableEngine.compile(reader);
+            compiledScripts.put(file.getName(), compiled);
         }
-        builder.append(")");
-        return engine.eval(builder.toString());
+    }
+
+    public void unloadScript(String scriptName) {
+        compiledScripts.remove(scriptName);
+    }
+
+    public Object callFunction(String scriptName, String functionName, Object... args) throws Exception {
+        CompiledScript compiled = compiledScripts.get(scriptName);
+        if (compiled == null) {
+            throw new Exception("Script not found: " + scriptName);
+        }
+
+        Bindings bindings = engine.createBindings();
+        for (int i = 0; i < args.length; i++) {
+            String paramName = "arg" + i;
+            bindings.put(paramName, args[i]);
+        }
+
+        Object result = compiled.eval(bindings);
+        Invocable invocableEngine = (Invocable) engine;
+        return invocableEngine.invokeFunction(functionName, bindings);
     }
 }
