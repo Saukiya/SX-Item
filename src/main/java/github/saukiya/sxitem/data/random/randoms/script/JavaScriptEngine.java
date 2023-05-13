@@ -1,5 +1,9 @@
 package github.saukiya.sxitem.data.random.randoms.script;
 
+import github.saukiya.sxitem.SXItem;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
 import javax.script.*;
 import java.io.File;
 import java.io.FileReader;
@@ -18,7 +22,7 @@ public class JavaScriptEngine {
         compiledScripts = new ConcurrentHashMap<>();
     }
 
-    public static JavaScriptEngine getInstance() {
+    public static synchronized JavaScriptEngine getInstance() {
         return INSTANCE;
     }
 
@@ -37,13 +41,17 @@ public class JavaScriptEngine {
         compiledScripts.remove(scriptName);
     }
 
-    public Object callFunction(String scriptName, String functionName, Object... args) throws Exception {
+    public Object callFunction(Player sender, String scriptName, String functionName, Object... args) throws Exception {
         CompiledScript compiled = compiledScripts.get(scriptName);
         if (compiled == null) {
             throw new Exception("Script not found: " + scriptName);
         }
 
         Bindings bindings = engine.createBindings();
+        bindings.put("sender", sender);
+        bindings.put("sxitem", SXItem.getInst());
+        bindings.put("server", Bukkit.getServer());
+
         for (int i = 0; i < args.length; i++) {
             String paramName = "arg" + i;
             bindings.put(paramName, args[i]);
