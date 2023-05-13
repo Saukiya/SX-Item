@@ -2,6 +2,7 @@ package github.saukiya.sxitem.data.random.randoms.script;
 
 import github.saukiya.sxitem.data.random.IRandom;
 import github.saukiya.sxitem.data.random.RandomDocker;
+import org.bukkit.entity.Player;
 
 import java.util.List;
 
@@ -9,17 +10,17 @@ public class JavaScriptRandom implements IRandom {
 
     //<j: script#<l:A> <l:B> <l:C>>
 
-    public static void test() {
+    public static void test(Player player) {
         //用法
         try {
             //这个data不一定是String
-            Object data = JavaScriptEngine.getInstance().callFunction("方法名", "参数");
+            Object data = JavaScriptEngine.getInstance().callFunction(player, "SN", "FN");
 
             //不太懂java 瞎写了
             if (data instanceof List) {
                 List<String> list = (List<String>) data;
             }
-            if (data instanceof String){
+            if (data instanceof String) {
 
             }
 
