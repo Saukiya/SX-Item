@@ -11,3 +11,6 @@ ProtectNBT:
 GiveOverflowDrop: true
 #史诗怪物掉落的SX物品直接进入玩家背包
 MobDropToPlayerInventory: true
+
+ScriptLib:
+  "FileUtils" : "org.bukkit.util.FileUtil"
