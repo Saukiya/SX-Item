@@ -1,7 +1,9 @@
 package github.saukiya.sxitem.data.random.randoms.script;
 
 import github.saukiya.sxitem.SXItem;
+import github.saukiya.sxitem.util.Config;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import javax.script.*;
@@ -20,6 +22,23 @@ public class JavaScriptEngine {
         engine = manager.getEngineByName("js");
         compilableEngine = (Compilable) engine;
         compiledScripts = new ConcurrentHashMap<>();
+        init();
+    }
+
+    private void init() {
+        StringBuilder stringBuilder = new StringBuilder();
+        ConfigurationSection scriptLib = Config.getConfig().getConfigurationSection("ScriptLib");
+        if (scriptLib == null) {
+            return;
+        }
+        for (String key : scriptLib.getKeys(false)) {
+            stringBuilder.append("const ").append(key).append(" = ").append(scriptLib.getString(key)).append("\n");
+        }
+        try {
+            compilableEngine.compile(stringBuilder.toString());
+        } catch (ScriptException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static synchronized JavaScriptEngine getInstance() {
