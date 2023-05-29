@@ -1,7 +1,9 @@
 package github.saukiya.sxitem.data.random.randoms.script;
 
 import github.saukiya.sxitem.SXItem;
+import github.saukiya.sxitem.data.random.RandomDocker;
 import github.saukiya.sxitem.util.Config;
+import jdk.dynalink.beans.StaticClass;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -9,6 +11,7 @@ import org.bukkit.entity.Player;
 import javax.script.*;
 import java.io.File;
 import java.io.FileReader;
+import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class JavaScriptEngine {
@@ -20,6 +23,9 @@ public class JavaScriptEngine {
     private JavaScriptEngine() {
         ScriptEngineManager manager = new ScriptEngineManager();
         engine = manager.getEngineByName("js");
+        engine.put("Bukkit", StaticClass.forClass(Bukkit.class));
+        engine.put("SXItem", StaticClass.forClass(SXItem.class));
+        engine.put("Arrays", StaticClass.forClass(Arrays.class));
         compilableEngine = (Compilable) engine;
         compiledScripts = new ConcurrentHashMap<>();
         init();
@@ -60,24 +66,13 @@ public class JavaScriptEngine {
         compiledScripts.remove(scriptName);
     }
 
-    public Object callFunction(Player sender, String scriptName, String functionName, Object... args) throws Exception {
+    public Object callFunction(String scriptName, String functionName, RandomDocker docker, Object[] args) throws Exception {
         CompiledScript compiled = compiledScripts.get(scriptName);
         if (compiled == null) {
             throw new Exception("Script not found: " + scriptName);
         }
 
-        Bindings bindings = engine.createBindings();
-        bindings.put("sender", sender);
-        bindings.put("sxitem", SXItem.getInst());
-        bindings.put("server", Bukkit.getServer());
-
-        for (int i = 0; i < args.length; i++) {
-            String paramName = "arg" + i;
-            bindings.put(paramName, args[i]);
-        }
-
-        Object result = compiled.eval(bindings);
         Invocable invocableEngine = (Invocable) engine;
-        return invocableEngine.invokeFunction(functionName, bindings);
+        return invocableEngine.invokeFunction(functionName, docker, args);
     }
 }

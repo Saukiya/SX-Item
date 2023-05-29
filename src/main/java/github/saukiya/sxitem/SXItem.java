@@ -10,6 +10,7 @@ import github.saukiya.sxitem.data.item.sub.GeneratorDefault;
 import github.saukiya.sxitem.data.item.sub.GeneratorImport;
 import github.saukiya.sxitem.data.random.RandomManager;
 import github.saukiya.sxitem.data.random.randoms.*;
+import github.saukiya.sxitem.data.random.randoms.script.JavaScriptRandom;
 import github.saukiya.sxitem.helper.MythicMobsHelper;
 import github.saukiya.sxitem.helper.PlaceholderHelper;
 import github.saukiya.sxitem.util.*;
@@ -70,6 +71,7 @@ public class SXItem extends JavaPlugin {
         RandomManager.register(new TimeRandom(), 't');
         RandomManager.register(new DoubleRandom(), 'd');
         RandomManager.register(new IntRandom(), 'i', 'r');
+        RandomManager.register(new JavaScriptRandom(), 'j');
     }
 
     @Override
