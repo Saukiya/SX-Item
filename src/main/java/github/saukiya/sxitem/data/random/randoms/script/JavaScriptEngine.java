@@ -35,8 +35,8 @@ public class JavaScriptEngine {
         for (String key : scriptLib.getKeys(false)) {
             stringBuilder.append("const ").append(key).append(" = ").append(scriptLib.getString(key)).append(";\n");
         }
-        stringBuilder.append("const sxitem = ").append(SXItem.getInst().getClass()).append("; \n");
-        stringBuilder.append("const server = ").append(Bukkit.getServer().getClass()).append("; \n");
+//        stringBuilder.append("const sxitem = ").append("github.saukiya.sxitem.SXItem;").append("; \n");
+//        stringBuilder.append("const server = ").append(Bukkit.getServer().getClass()).append("; \n");
         try {
             compilableEngine.compile(stringBuilder.toString());
         } catch (ScriptException e) {
