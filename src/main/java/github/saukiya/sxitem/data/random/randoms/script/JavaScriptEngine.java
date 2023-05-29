@@ -33,8 +33,10 @@ public class JavaScriptEngine {
             return;
         }
         for (String key : scriptLib.getKeys(false)) {
-            stringBuilder.append("const ").append(key).append(" = ").append(scriptLib.getString(key)).append("\n");
+            stringBuilder.append("const ").append(key).append(" = ").append(scriptLib.getString(key)).append(";\n");
         }
+        stringBuilder.append("const sxitem = ").append(SXItem.getInst().getClass()).append("; \n");
+        stringBuilder.append("const server = ").append(Bukkit.getServer().getClass()).append("; \n");
         try {
             compilableEngine.compile(stringBuilder.toString());
         } catch (ScriptException e) {
@@ -69,8 +71,6 @@ public class JavaScriptEngine {
 
         Bindings bindings = engine.createBindings();
         bindings.put("sender", sender);
-        bindings.put("sxitem", SXItem.getInst());
-        bindings.put("server", Bukkit.getServer());
 
         bindings.putAll(args);
 
