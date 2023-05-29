@@ -9,9 +9,23 @@ public class JavaScriptReader {
 
     private static final ArrayList<File> jsFiles = new ArrayList<>();
 
+    public static void initScript() {
+        try {
+            JavaScriptEngine.getInstance();
+            readScripts();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static ArrayList<File> findJavaScriptFiles() {
-        File dir = new File(SXItem.getInst().getDataFolder(), "scripts");
+        File dir = new File(SXItem.getInst().getDataFolder(), "script");
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
         addJavaScriptFiles(dir);
+        System.out.println("Found " + jsFiles.size() + " scripts.");
+        System.out.println(dir.getPath());
         return jsFiles;
     }
 
@@ -29,7 +43,9 @@ public class JavaScriptReader {
     }
 
     public static void readScripts() throws Exception {
-        for (File jsFile : findJavaScriptFiles()) {
+        findJavaScriptFiles();
+        for (File jsFile : jsFiles) {
+            System.out.println("Loading... script: " + jsFile.getName());
             JavaScriptEngine.getInstance().loadScript(jsFile);
         }
     }
