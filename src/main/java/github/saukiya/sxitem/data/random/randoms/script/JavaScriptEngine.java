@@ -63,15 +63,13 @@ public class JavaScriptEngine {
         compiledScripts.remove(scriptName);
     }
 
-    public Object callFunction(Player sender, String scriptName, String functionName, Map<String, Object> args) throws Exception {
+    public Object callFunction(String scriptName, String functionName, Map<String, Object> args) throws Exception {
         CompiledScript compiled = compiledScripts.get(scriptName);
         if (compiled == null) {
             throw new Exception("Script not found: " + scriptName);
         }
 
         Bindings bindings = engine.createBindings();
-        bindings.put("sender", sender);
-
         bindings.putAll(args);
 
         Object result = compiled.eval(bindings);
