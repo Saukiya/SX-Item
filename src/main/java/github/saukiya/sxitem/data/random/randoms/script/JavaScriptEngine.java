@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import javax.script.*;
 import java.io.File;
 import java.io.FileReader;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class JavaScriptEngine {
@@ -60,7 +61,7 @@ public class JavaScriptEngine {
         compiledScripts.remove(scriptName);
     }
 
-    public Object callFunction(Player sender, String scriptName, String functionName, Object... args) throws Exception {
+    public Object callFunction(Player sender, String scriptName, String functionName, Map<String, Object> args) throws Exception {
         CompiledScript compiled = compiledScripts.get(scriptName);
         if (compiled == null) {
             throw new Exception("Script not found: " + scriptName);
@@ -71,10 +72,7 @@ public class JavaScriptEngine {
         bindings.put("sxitem", SXItem.getInst());
         bindings.put("server", Bukkit.getServer());
 
-        for (int i = 0; i < args.length; i++) {
-            String paramName = "arg" + i;
-            bindings.put(paramName, args[i]);
-        }
+        bindings.putAll(args);
 
         Object result = compiled.eval(bindings);
         Invocable invocableEngine = (Invocable) engine;
