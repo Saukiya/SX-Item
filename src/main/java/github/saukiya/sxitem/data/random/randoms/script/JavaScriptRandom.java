@@ -15,7 +15,7 @@ public class JavaScriptRandom implements IRandom {
         //用法
         try {
             //这个data不一定是String
-            Object data = JavaScriptEngine.getInstance().callFunction(player, "SN", "FN", new HashMap<>());
+            Object data = JavaScriptEngine.getInstance().callFunction("SN", "FN", new HashMap<>());
 
             //不太懂java 瞎写了
             if (data instanceof List) {
