@@ -10,8 +10,9 @@ import org.bukkit.entity.Player;
 import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
 import javax.script.*;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,6 +28,7 @@ public class JavaScriptEngine {
         engine.put("Bukkit", StaticClass.forClass(Bukkit.class));
         engine.put("SXItem", StaticClass.forClass(SXItem.class));
         engine.put("Arrays", StaticClass.forClass(Arrays.class));
+        engine.put("Utils", StaticClass.forClass(JavaScriptUtils.class));
         compilableEngine = (Compilable) engine;
         compiledScripts = new ConcurrentHashMap<>();
         init();
@@ -57,10 +59,15 @@ public class JavaScriptEngine {
     }
 
     public void loadScript(File file) throws Exception {
-        try (FileReader reader = new FileReader(file)) {
-            CompiledScript compiled = compilableEngine.compile(reader);
+
+        try{
+            InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
+            CompiledScript compiled = compilableEngine.compile(inputStreamReader);
             compiledScripts.put(file.getName().replace(".js", ""), compiled);
-            System.out.println("Loaded script: " + file.getName());
+            //System.out.println("Loaded script: " + file.getName());
+            inputStreamReader.close();
+        } catch (FileNotFoundException | ScriptException e) {
+            throw new RuntimeException(e);
         }
     }
 

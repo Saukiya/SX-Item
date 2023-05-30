@@ -3,7 +3,10 @@ package github.saukiya.sxitem.data.random.randoms.script;
 import github.saukiya.sxitem.data.random.IRandom;
 import github.saukiya.sxitem.data.random.RandomDocker;
 import org.bukkit.entity.Player;
+import org.openjdk.nashorn.api.scripting.ScriptObjectMirror;
+import org.openjdk.nashorn.internal.objects.NativeArray;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,6 +31,15 @@ public class JavaScriptRandom implements IRandom {
                 return e.getMessage();
             }
             if (result instanceof List) return String.join("\n", (List<String>) result);
+            if (result instanceof ScriptObjectMirror) {
+                ScriptObjectMirror som = (ScriptObjectMirror) result;
+                List<String> list = new ArrayList<>();
+                int i = 0;
+                while (som.get(String.valueOf(i)) != null) {
+                    list.add(som.get(String.valueOf(i++)).toString());
+                }
+                return String.join("\n", list);
+            }
             return result.toString();
         }
         return null;
