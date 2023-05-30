@@ -24,8 +24,8 @@ public class JavaScriptReader {
             dir.mkdir();
         }
         addJavaScriptFiles(dir);
-        System.out.println("Found " + jsFiles.size() + " scripts.");
-        System.out.println(dir.getPath());
+        //System.out.println("Found " + jsFiles.size() + " scripts.");
+        //System.out.println(dir.getPath());
         return jsFiles;
     }
 
@@ -45,7 +45,7 @@ public class JavaScriptReader {
     public static void readScripts() throws Exception {
         findJavaScriptFiles();
         for (File jsFile : jsFiles) {
-            System.out.println("Loading... script: " + jsFile.getName());
+            //System.out.println("Loading... script: " + jsFile.getName());
             JavaScriptEngine.getInstance().loadScript(jsFile);
         }
     }
