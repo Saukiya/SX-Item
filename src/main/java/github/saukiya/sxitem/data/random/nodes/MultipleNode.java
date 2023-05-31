@@ -15,7 +15,7 @@ public class MultipleNode implements INode {
     private double maximum;
 
     public void add(Double weight, String value) {
-        list.add(new Tuple(maximum += weight, value));
+        list.add(new Tuple<>(maximum += weight, value));
     }
 
     public boolean isEmpty() {

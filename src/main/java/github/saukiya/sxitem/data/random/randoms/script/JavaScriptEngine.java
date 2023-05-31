@@ -7,25 +7,28 @@ import jdk.dynalink.beans.StaticClass;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
 import javax.script.*;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class JavaScriptEngine {
-    private static final JavaScriptEngine INSTANCE = new JavaScriptEngine();
+    private static JavaScriptEngine INSTANCE = new JavaScriptEngine();
     private final ScriptEngine engine;
     private final Compilable compilableEngine;
     private final ConcurrentHashMap<String, CompiledScript> compiledScripts;
 
     private JavaScriptEngine() {
-        ScriptEngineManager manager = new ScriptEngineManager();
-        engine = manager.getEngineByName("js");
+        engine = new ScriptEngineManager().getEngineByName("js");
+//        engine = new NashornScriptEngineFactory().getScriptEngine(SXItem.class.getClassLoader());
         engine.put("Bukkit", StaticClass.forClass(Bukkit.class));
         engine.put("SXItem", StaticClass.forClass(SXItem.class));
         engine.put("Arrays", StaticClass.forClass(Arrays.class));
+        engine.put("Utils", StaticClass.forClass(JavaScriptUtils.class));
         compilableEngine = (Compilable) engine;
         compiledScripts = new ConcurrentHashMap<>();
         init();
@@ -47,7 +50,7 @@ public class JavaScriptEngine {
         }
     }
 
-    public static synchronized JavaScriptEngine getInstance() {
+    public static JavaScriptEngine getInstance() {
         return INSTANCE;
     }
 
@@ -56,9 +59,15 @@ public class JavaScriptEngine {
     }
 
     public void loadScript(File file) throws Exception {
-        try (FileReader reader = new FileReader(file)) {
-            CompiledScript compiled = compilableEngine.compile(reader);
-            compiledScripts.put(file.getName(), compiled);
+
+        try{
+            InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
+            CompiledScript compiled = compilableEngine.compile(inputStreamReader);
+            compiledScripts.put(file.getName().replace(".js", ""), compiled);
+            //System.out.println("Loaded script: " + file.getName());
+            inputStreamReader.close();
+        } catch (FileNotFoundException | ScriptException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -66,12 +75,16 @@ public class JavaScriptEngine {
         compiledScripts.remove(scriptName);
     }
 
+    public void reloadEngine() {
+        INSTANCE = new JavaScriptEngine();
+    }
+
     public Object callFunction(String scriptName, String functionName, RandomDocker docker, Object[] args) throws Exception {
         CompiledScript compiled = compiledScripts.get(scriptName);
         if (compiled == null) {
             throw new Exception("Script not found: " + scriptName);
         }
-
+        compiled.eval();
         Invocable invocableEngine = (Invocable) engine;
         return invocableEngine.invokeFunction(functionName, docker, args);
     }
