@@ -19,8 +19,8 @@ allprojects {
         maven { url 'https://repo.codemc.org/repository/maven-public' }
     }
 
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 
     dependencies {
         compileOnly 'org.projectlombok:lombok:1.18.22'
