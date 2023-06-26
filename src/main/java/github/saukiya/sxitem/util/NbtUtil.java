@@ -66,6 +66,15 @@ public abstract class NbtUtil implements NMS {
     public abstract Object getItemNBT(ItemStack itemStack);
 
     /**
+     * 创建一个空的NBT封装器
+     *
+     * @return NBTTagWrapper
+     */
+    public final NBTTagWrapper createTagWrapper() {
+        return createTagWrapper(null);
+    }
+
+    /**
      * 获取ITEM-NBT封装器
      *
      * @param itemStack 物品
@@ -78,7 +87,7 @@ public abstract class NbtUtil implements NMS {
      *
      * @return NBTTagWrapper
      */
-    public abstract NBTTagWrapper createTagWrapper();
+    public abstract NBTTagWrapper createTagWrapper(Object nbtTagCompound);
 
     /**
      * nmsNBTCompound转sxNBTCompound

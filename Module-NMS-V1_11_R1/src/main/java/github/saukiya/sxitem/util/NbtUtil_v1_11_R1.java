@@ -34,8 +34,8 @@ public class NbtUtil_v1_11_R1 extends NbtUtil {
     }
 
     @Override
-    public NBTTagWrapper createTagWrapper() {
-        return new NBTTagWrapperImpl(null);
+    public NBTTagWrapper createTagWrapper(Object nbtTagCompound) {
+        return new NBTTagWrapperImpl((NBTTagCompound) nbtTagCompound);
     }
 
     @SneakyThrows
