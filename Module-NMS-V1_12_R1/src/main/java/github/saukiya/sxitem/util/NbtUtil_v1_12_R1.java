@@ -34,8 +34,8 @@ public class NbtUtil_v1_12_R1 extends NbtUtil {
     }
 
     @Override
-    public NBTTagWrapper createTagWrapper() {
-        return new NBTTagWrapperImpl(null);
+    public NBTTagWrapper createTagWrapper(Object nbtTagCompound) {
+        return new NBTTagWrapperImpl((NBTTagCompound) nbtTagCompound);
     }
 
     @SneakyThrows
@@ -79,7 +79,7 @@ public class NbtUtil_v1_12_R1 extends NbtUtil {
                 case 11:
                     return ((NBTTagIntArray) nbtBase).d();
                 case 12:
-                    return NMS.getPrivateField(nbtBase, "b");
+                    return NMS.privateField(nbtBase, "b");
                 case 8:
                     return ((NBTTagString) nbtBase).c_();
                 case 1:
