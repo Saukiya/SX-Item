@@ -47,7 +47,7 @@ public interface NMS {
      * @return 返回字段
      */
     @SneakyThrows
-    static <T> T getPrivateField(Object target, String fieldName) {
+    static <T> T privateField(Object target, String fieldName) {
         Field privateField = Data.FIELD_CACHE_MAP
                 .computeIfAbsent(target.getClass(), key -> new HashMap<>())
                 .computeIfAbsent(fieldName, key -> {
@@ -70,7 +70,7 @@ public interface NMS {
      * @return 返回实例
      */
     @SneakyThrows
-    static <T> T newPrivateInstance(Class<T> target, Object... args) {
+    static <T> T privateInstance(Class<T> target, Object... args) {
         Constructor[] constructors = target.getDeclaredConstructors();
         for (Constructor constructor : constructors) {
             if (constructor.getParameterCount() == args.length) {
