@@ -67,7 +67,7 @@ shadowJar {
 task buildLastJar(type: Copy) {
     dependsOn shadowJar
     from shadowJar.archiveFile.get().asFile.path
-    into("$rootDir").rename { "${project.name}-${version}.jar" }
+    into("$rootDir").rename { "${project.name}-Latest.jar" }
 }
 
 //需要对资源文件中含有的'$'进行转义: $ -> \$
