@@ -7,7 +7,7 @@ allprojects {
     apply plugin: 'java'
 
     group 'github.saukiya'
-    version '3.1.12'
+    version '3.2.1'
 
     repositories {
         mavenCentral()
