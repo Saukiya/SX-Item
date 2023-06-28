@@ -3,7 +3,7 @@ package github.saukiya.sxitem.data.random;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.helper.PlaceholderHelper;
 import github.saukiya.sxitem.util.Config;
-import jdk.dynalink.beans.StaticClass;
+import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
@@ -62,13 +63,20 @@ public class ScriptManager {
     /**
      * 初始化引擎
      */
+    @SneakyThrows
     private void initEngine() {
         // TODO 遍历可选引擎
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");
-        engine.put("Bukkit", StaticClass.forClass(Bukkit.class));
-        engine.put("SXItem", StaticClass.forClass(SXItem.class));
-        engine.put("Arrays", StaticClass.forClass(Arrays.class));
-        engine.put("Utils", StaticClass.forClass(Utils.class));
+
+        // class路径在jdk8中不一致
+        Class<?> clazz = Class.forName(System.getProperty("java.class.version").startsWith("52") ?
+                "jdk.internal.dynalink.beans.StaticClass" :
+                "jdk.dynalink.beans.StaticClass");
+        Method method = clazz.getMethod("forClass", Class.class);
+        engine.put("Bukkit", method.invoke(null, Bukkit.class));
+        engine.put("SXItem", method.invoke(null, SXItem.class));
+        engine.put("Arrays", method.invoke(null, Arrays.class));
+        engine.put("Utils", method.invoke(null, Utils.class));
         compilableEngine = (Compilable) engine;
         invocable = (Invocable) engine;
         compiledScripts.clear();
