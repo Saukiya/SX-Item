@@ -9,9 +9,9 @@ import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.data.item.sub.GeneratorDefault;
 import github.saukiya.sxitem.data.item.sub.GeneratorImport;
 import github.saukiya.sxitem.data.random.RandomManager;
+import github.saukiya.sxitem.data.random.ScriptManager;
 import github.saukiya.sxitem.data.random.randoms.*;
-import github.saukiya.sxitem.data.random.randoms.script.JavaScriptRandom;
-import github.saukiya.sxitem.data.random.randoms.script.JavaScriptReader;
+import github.saukiya.sxitem.data.random.randoms.ScriptRandom;
 import github.saukiya.sxitem.helper.MythicMobsHelper;
 import github.saukiya.sxitem.helper.PlaceholderHelper;
 import github.saukiya.sxitem.util.*;
@@ -44,6 +44,8 @@ public class SXItem extends JavaPlugin {
     @Getter
     private static MainCommand mainCommand;
     @Getter
+    private static ScriptManager scriptManager;
+    @Getter
     private static RandomManager randomManager;
     @Getter
     private static ItemManager itemManager;
@@ -66,8 +68,6 @@ public class SXItem extends JavaPlugin {
         ItemManager.register("Default", GeneratorDefault::new, GeneratorDefault.saveFunc());
         ItemManager.register("Import", GeneratorImport::new, GeneratorImport.saveFunc());
 
-        JavaScriptReader.initScript();
-
         RandomManager.register(new BooleanRandom(), 'b');
         RandomManager.register(new CalculatorRandom(), 'c');
         RandomManager.register(new LockStringRandom(), 'l');
@@ -75,7 +75,7 @@ public class SXItem extends JavaPlugin {
         RandomManager.register(new TimeRandom(), 't');
         RandomManager.register(new DoubleRandom(), 'd');
         RandomManager.register(new IntRandom(), 'i', 'r');
-        RandomManager.register(new JavaScriptRandom(), 'j');
+        RandomManager.register(new ScriptRandom(), 'j');
     }
 
     @Override
@@ -86,6 +86,7 @@ public class SXItem extends JavaPlugin {
         ItemUtil.getInst();
         MessageUtil.getInst();
 
+        scriptManager = new ScriptManager(this, "Scripts/Default.js");
         randomManager = new RandomManager(this, "RandomString/DefaultRandom.yml", "RandomString/10Level/Random.yml");
         itemManager = new ItemManager(this, "Item/Default/Default.yml", "Item/NoLoad/Default.yml");
 
