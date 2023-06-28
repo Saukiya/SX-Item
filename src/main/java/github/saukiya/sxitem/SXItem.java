@@ -86,7 +86,7 @@ public class SXItem extends JavaPlugin {
         ItemUtil.getInst();
         MessageUtil.getInst();
 
-        scriptManager = new ScriptManager(this, "Scripts/Default.js");
+        scriptManager = new ScriptManager(this, "Scripts/Global.js", "Scripts/Default.js");
         randomManager = new RandomManager(this, "RandomString/DefaultRandom.yml", "RandomString/10Level/Random.yml");
         itemManager = new ItemManager(this, "Item/Default/Default.yml", "Item/NoLoad/Default.yml");
 

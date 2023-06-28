@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -44,14 +45,14 @@ public class ScriptManager {
      * 重新加载
      */
     public void reload() {
-        initEngine();
-        File scriptFiles = new File(plugin.getDataFolder(), "Scripts");
-        if (!scriptFiles.exists() || scriptFiles.listFiles().length == 0) {
-            Arrays.stream(defaultFile).forEach(fileName -> plugin.saveResource(fileName, true));
-        }
         try {
+            File scriptFiles = new File(plugin.getDataFolder(), "Scripts");
+            if (!scriptFiles.exists() || scriptFiles.listFiles().length == 0) {
+                Arrays.stream(defaultFile).forEach(fileName -> plugin.saveResource(fileName, true));
+            }
+            initEngine();
             loadScriptFile(scriptFiles);
-        } catch (IOException | ScriptException e) {
+        } catch (Exception e) {
             plugin.getLogger().warning("Load scripts error, Please see reported as follows");
             e.printStackTrace();
             compiledScripts.clear();
@@ -63,11 +64,10 @@ public class ScriptManager {
     /**
      * 初始化引擎
      */
-    @SneakyThrows
-    private void initEngine() {
+    private void initEngine() throws Exception {
         // TODO 遍历可选引擎
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");
-
+        if (engine == null) throw new ScriptException("No Find ScriptEngine: js");
         // class路径在jdk8中不一致
         Class<?> clazz = Class.forName(System.getProperty("java.class.version").startsWith("52") ?
                 "jdk.internal.dynalink.beans.StaticClass" :
@@ -80,17 +80,9 @@ public class ScriptManager {
         compilableEngine = (Compilable) engine;
         invocable = (Invocable) engine;
         compiledScripts.clear();
-        StringBuilder stringBuilder = new StringBuilder();
-        ConfigurationSection scriptLib = Config.getConfig().getConfigurationSection("ScriptLib");
-        if (scriptLib == null) return;
-        for (String key : scriptLib.getKeys(false)) {
-            stringBuilder.append("const ").append(key).append(" = ").append(scriptLib.getString(key)).append("\n");
-        }
-        try {
-            compilableEngine.compile(stringBuilder.toString());
-        } catch (ScriptException e) {
-            throw new RuntimeException(e);
-        }
+        // 这玩意最好隔离出来单独搞个Global.js
+        InputStreamReader globalReader = new InputStreamReader(new FileInputStream(new File(plugin.getDataFolder(), "Scripts/Global.js")), StandardCharsets.UTF_8);
+        compilableEngine.compile(globalReader);
     }
 
     /**
@@ -100,7 +92,7 @@ public class ScriptManager {
      */
     private void loadScriptFile(File files) throws IOException, ScriptException {
         for (File file : files.listFiles()) {
-            if (file.getName().startsWith("NoLoad")) continue;
+            if (file.getName().startsWith("NoLoad") || file.getName().endsWith("Scripts/Global.js")) continue;
             if (file.isDirectory()) {
                 loadScriptFile(file);
                 // TODO 可选引擎后缀
