@@ -3,7 +3,6 @@ package github.saukiya.sxitem.data.random.randoms;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.IRandom;
 import github.saukiya.sxitem.data.random.RandomDocker;
-import org.openjdk.nashorn.api.scripting.ScriptObjectMirror;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +29,9 @@ public class ScriptRandom implements IRandom {
                 return e.getMessage();
             }
             if (result instanceof List) return String.join("\n", (List<String>) result);
-            if (result instanceof ScriptObjectMirror) {
-                ScriptObjectMirror som = (ScriptObjectMirror) result;
+            // TODO 这玩意只支持class版本 55.0 , jdk8的版本是52.0 System.getProperty("java.class.version")
+            if (result instanceof org.openjdk.nashorn.api.scripting.ScriptObjectMirror) {
+                org.openjdk.nashorn.api.scripting.ScriptObjectMirror som = (org.openjdk.nashorn.api.scripting.ScriptObjectMirror) result;
                 List<String> list = new ArrayList<>();
                 int i = 0;
                 while (som.get(String.valueOf(i)) != null) {
