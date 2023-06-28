@@ -336,7 +336,7 @@ public class ItemManager implements Listener {
      * @param search String
      */
     public void sendItemMapToPlayer(CommandSender sender, String search) {
-        sender.sendMessage();
+        sender.sendMessage("");
         if (search != null && search.equals("")) {
             // 文件夹
             MessageUtil.getInst().componentBuilder()
