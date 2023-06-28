@@ -53,8 +53,7 @@ public class ScriptManager {
             initEngine();
             loadScriptFile(scriptFiles);
         } catch (Exception e) {
-            plugin.getLogger().warning("Load scripts error, Please see reported as follows");
-            e.printStackTrace();
+            plugin.getLogger().warning("Load scripts error: " + e.getMessage());
             compiledScripts.clear();
             return;
         }
@@ -83,6 +82,7 @@ public class ScriptManager {
         // 这玩意最好隔离出来单独搞个Global.js
         InputStreamReader globalReader = new InputStreamReader(new FileInputStream(new File(plugin.getDataFolder(), "Scripts/Global.js")), StandardCharsets.UTF_8);
         compilableEngine.compile(globalReader);
+        globalReader.close();
     }
 
     /**
