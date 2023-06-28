@@ -8,10 +8,7 @@ import github.saukiya.sxitem.data.random.INode;
 import github.saukiya.sxitem.data.random.RandomDocker;
 import github.saukiya.sxitem.helper.PlaceholderHelper;
 import github.saukiya.sxitem.nbt.*;
-import github.saukiya.sxitem.util.ComponentBuilder;
-import github.saukiya.sxitem.util.ItemUtil;
-import github.saukiya.sxitem.util.MessageUtil;
-import github.saukiya.sxitem.util.NbtUtil;
+import github.saukiya.sxitem.util.*;
 import lombok.Getter;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -136,7 +133,6 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         loreList.replaceAll(lore -> lore.replace("&", "§"));
         meta.setLore(loreList);
 
-
         for (String enchant : docker.replace(config.getStringList("EnchantList"))) {
             String[] enchantSplit = enchant.split(":");
             Enchantment enchantment = Enchantment.getByName(enchantSplit[0]);
@@ -146,7 +142,8 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
             }
         }
 
-        if (meta instanceof PotionMeta) {
+        // TODO 这玩意最好整合到ItemUtil里做NMS
+        if (NMS.compareTo(1,11,1) >= 0 && meta instanceof PotionMeta) {
             PotionType type = PotionType.valueOf(config.getString("Potion.type", "POISON"));
             PotionData data = new PotionData(type);
             ((PotionMeta) meta).setBasePotionData(data);
@@ -159,15 +156,24 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
                         int amplifier = sub.getInt(effectId + ".amplifier", 0);
                         boolean ambient = sub.getBoolean(effectId + ".ambient", true);
                         boolean particles = sub.getBoolean(effectId + ".particles", true);
-                        boolean icon = sub.getBoolean(effectId + ".icon", true);
-                        ((PotionMeta) meta).addCustomEffect(new PotionEffect(effect, duration, amplifier, ambient, particles, icon), true);
+                        PotionEffect potionEffect;
+                        if (NMS.compareTo(1,13,2) >= 0) {
+                            boolean icon = sub.getBoolean(effectId + ".icon", true);
+                            potionEffect = new PotionEffect(effect, duration, amplifier, ambient, particles, icon);
+                        } else {
+                            potionEffect = new PotionEffect(effect, duration, amplifier, ambient, particles);
+                        }
+                        ((PotionMeta) meta).addCustomEffect(potionEffect, true);
                     }
                 }
             }
         }
-        int customData = config.getInt("CustomModelData", -1);
-        if (customData != -1) {
-            meta.setCustomModelData(customData);
+
+        if (NMS.compareTo(1,14,1) >= 0) {
+            int customData = config.getInt("CustomModelData", -1);
+            if (customData != -1) {
+                meta.setCustomModelData(customData);
+            }
         }
 
         for (String flagName : config.getStringList("ItemFlagList")) {
