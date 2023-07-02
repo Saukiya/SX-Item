@@ -1,12 +1,11 @@
-package github.saukiya.sxitem.data.random;
+package github.saukiya.sxitem.data;
 
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.helper.PlaceholderHelper;
 import github.saukiya.sxitem.util.Config;
-import lombok.SneakyThrows;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -15,10 +14,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -29,15 +28,21 @@ public class ScriptManager {
 
     private final String[] defaultFile;
 
+    private final File globalFile;
+
     private final ConcurrentHashMap<String, CompiledScript> compiledScripts = new ConcurrentHashMap<>();
 
     private Compilable compilableEngine;
 
     private Invocable invocable;
 
+    @Getter
+    private Boolean enabled;
+
     public ScriptManager(JavaPlugin plugin, String... defaultFile) {
         this.plugin = plugin;
         this.defaultFile = defaultFile;
+        this.globalFile = new File(plugin.getDataFolder(), "Scripts/Global.js");
         reload();
     }
 
@@ -52,9 +57,15 @@ public class ScriptManager {
             }
             initEngine();
             loadScriptFile(scriptFiles);
+            enabled = true;
         } catch (Exception e) {
-            plugin.getLogger().warning("Load scripts error: " + e.getMessage());
+            if (e instanceof NullPointerException) {
+                plugin.getLogger().info("Scripts Disabled");
+            } else {
+                plugin.getLogger().warning("Load scripts error: " + e.getMessage());
+            }
             compiledScripts.clear();
+            enabled = false;
             return;
         }
         plugin.getLogger().info("Loaded " + compiledScripts.size() + " Scripts");
@@ -65,13 +76,16 @@ public class ScriptManager {
      */
     private void initEngine() throws Exception {
         // TODO 遍历可选引擎
-        ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");
-        if (engine == null) throw new ScriptException("No Find ScriptEngine: js");
+        String engineName = Config.getConfig().getString(Config.SCRIPT_ENGINE);
+        if (engineName == null || engineName.isEmpty()) throw null;
+        ScriptEngine engine = new ScriptEngineManager().getEngineByName(engineName);
+        if (engine == null) throw new ScriptException("No Find ScriptEngine: " + engineName);
         // class路径在jdk8中不一致
         Class<?> clazz = Class.forName(System.getProperty("java.class.version").startsWith("52") ?
                 "jdk.internal.dynalink.beans.StaticClass" :
                 "jdk.dynalink.beans.StaticClass");
         Method method = clazz.getMethod("forClass", Class.class);
+        // 如果要脱离组织架构的话需要清除SXItem.class 懒了
         engine.put("Bukkit", method.invoke(null, Bukkit.class));
         engine.put("SXItem", method.invoke(null, SXItem.class));
         engine.put("Arrays", method.invoke(null, Arrays.class));
@@ -80,7 +94,7 @@ public class ScriptManager {
         invocable = (Invocable) engine;
         compiledScripts.clear();
         // 这玩意最好隔离出来单独搞个Global.js
-        InputStreamReader globalReader = new InputStreamReader(new FileInputStream(new File(plugin.getDataFolder(), "Scripts/Global.js")), StandardCharsets.UTF_8);
+        InputStreamReader globalReader = new InputStreamReader(new FileInputStream(globalFile), StandardCharsets.UTF_8);
         compilableEngine.compile(globalReader);
         globalReader.close();
     }
@@ -91,8 +105,9 @@ public class ScriptManager {
      * @param files File
      */
     private void loadScriptFile(File files) throws IOException, ScriptException {
+        if (enabled != null && !enabled) return;
         for (File file : files.listFiles()) {
-            if (file.getName().startsWith("NoLoad") || file.getName().endsWith("Scripts/Global.js")) continue;
+            if (file.getName().startsWith("NoLoad") || file.equals(globalFile)) continue;
             if (file.isDirectory()) {
                 loadScriptFile(file);
                 // TODO 可选引擎后缀
@@ -106,6 +121,25 @@ public class ScriptManager {
     }
 
     /**
+     * 获取已加载的脚本文件
+     *
+     * @return 脚本文件列表
+     */
+    public List<String> getFileNames() {
+        return Collections.list(compiledScripts.keys());
+    }
+
+    /**
+     * 判断是否存在该脚本
+     *
+     * @param fileName 脚本文件名
+     * @return boolean
+     */
+    public boolean containsFile(String fileName) {
+        return compiledScripts.containsKey(fileName);
+    }
+
+    /**
      * 执行script
      *
      * @param scriptName   脚本名
@@ -114,6 +148,7 @@ public class ScriptManager {
      * @return script回参
      */
     public Object callFunction(String scriptName, String functionName, Object... args) throws Exception {
+        if (!enabled) return null;
         CompiledScript compiled = compiledScripts.get(scriptName);
         if (compiled == null) {
             throw new Exception("Script not found: " + scriptName);

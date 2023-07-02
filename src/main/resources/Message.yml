@@ -9,6 +9,10 @@ SAVE:
   SAVE_ITEM_ERROR: '&8[SX-Item] &c物品 &4{0} &c保存出现不可预知的错误'
 NBT:
   CLICK_COPY: '点击复制'
+SCRIPT:
+  NULL_FILE: '找不到该脚本文件： {0}'
+  INVOKE_RESULT: '脚本调用回调: {0}, 回调类型: {1}'
+  INVOKE_FAIL: '脚本调用失败： {0}'
 ADMIN:
   NO_PERMISSION_CMD: '&8[&c错误&8] &c你没有权限执行此指令'
   NO_CMD: '&8[&c错误&8] &c未找到此子指令:{0}'
@@ -19,4 +23,5 @@ COMMAND:
   GIVE: 给予玩家物品
   SAVE: 保存当前的物品到配置文件
   NBT: 查看和修改物品NBT数据
+  SCRIPT: 调用脚本函数
   RELOAD: 重新加载这个插件的配置

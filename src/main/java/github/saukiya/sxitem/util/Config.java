@@ -18,6 +18,7 @@ public class Config {
     public static final String LOGGER_LEVEL = "LoggerLevel";
     public static final String DECIMAL_FORMAT = "DecimalFormat";
     public static final String TIME_FORMAT = "TimeFormat";
+    public static final String SCRIPT_ENGINE = "ScriptEngine";
     public static final String PROTECT_NBT = "ProtectNBT";
     public static final String GIVE_OVERFLOW_DROP = "GiveOverflowDrop";
     public static final String MOB_DROP_TO_PLAYER_INVENTORY = "MobDropToPlayerInventory";

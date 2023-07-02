@@ -4,6 +4,8 @@ LoggerLevel: "INFO"
 DecimalFormat: '#.##'
 #日期格式化
 TimeFormat: yyyy/MM/dd HH:mm
+#引擎选择:默认采用JS引擎,该插件不自带引擎模块,如果要禁用可以删除此行
+ScriptEngine: js
 #全局保护NBT列表 [自动更新时保护以下NBT不被更改]
 ProtectNBT:
   - "protect.data"
