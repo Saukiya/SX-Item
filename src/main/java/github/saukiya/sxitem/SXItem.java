@@ -1,15 +1,12 @@
 package github.saukiya.sxitem;
 
 import github.saukiya.sxitem.command.MainCommand;
-import github.saukiya.sxitem.command.sub.GiveCommand;
-import github.saukiya.sxitem.command.sub.NBTCommand;
-import github.saukiya.sxitem.command.sub.ReloadCommand;
-import github.saukiya.sxitem.command.sub.SaveCommand;
+import github.saukiya.sxitem.command.sub.*;
 import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.data.item.sub.GeneratorDefault;
 import github.saukiya.sxitem.data.item.sub.GeneratorImport;
 import github.saukiya.sxitem.data.random.RandomManager;
-import github.saukiya.sxitem.data.random.ScriptManager;
+import github.saukiya.sxitem.data.ScriptManager;
 import github.saukiya.sxitem.data.random.randoms.*;
 import github.saukiya.sxitem.data.random.randoms.ScriptRandom;
 import github.saukiya.sxitem.helper.MythicMobsHelper;
@@ -62,6 +59,7 @@ public class SXItem extends JavaPlugin {
         mainCommand.register(new GiveCommand());
         mainCommand.register(new SaveCommand());
         mainCommand.register(new NBTCommand());
+        mainCommand.register(new ScriptCommand());
         mainCommand.register(new ReloadCommand());
 
         ItemManager.loadMaterialData();
