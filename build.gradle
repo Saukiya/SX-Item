@@ -37,7 +37,7 @@ subprojects {
 }
 
 dependencies {
-    compileOnly fileTree("Module-NMS-V1_20_R1/lib")
+    compileOnly fileTree("Module-NMS-V1_20_R2/lib")
     implementation 'org.bstats:bstats-bukkit:2.2.1'
     compileOnly 'org.openjdk.nashorn:nashorn-core:15.4'
     compileOnly 'io.lumine.xikage:MythicMobs:4.12.0'
