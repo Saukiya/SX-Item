@@ -3,7 +3,7 @@ main: github.saukiya.sxitem.SXItem
 version: $version
 author: Saukiya
 api-version: 1.13
-website: https://github.com/Saukiya/SX-Item
+website: https://github.com/Saukiya/SX-Item/releases
 softdepend:
   - PlaceholderAPI
   - MythicMobs
