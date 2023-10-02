@@ -1,6 +1,7 @@
 package github.saukiya.sxitem.data.random.randoms;
 
 import github.saukiya.sxitem.SXItem;
+import github.saukiya.sxitem.data.ScriptManager;
 import github.saukiya.sxitem.data.random.IRandom;
 import github.saukiya.sxitem.data.random.RandomDocker;
 
@@ -22,15 +23,16 @@ public class ScriptRandom implements IRandom {
             String[] stringArgs = matcher.group(3).split(",");// 如果直接用string[] 那可能数字是字符串
 //            Object[] args = new Object[stringArgs.length];// 除非转换成int或者double?反正放进js里都是数
             Object result;
+            ScriptManager scriptManager = SXItem.getScriptManager();
             try {
-                result = SXItem.getScriptManager().callFunction(matcher.group(1), matcher.group(2), docker, stringArgs);
+                result = scriptManager.callFunction(matcher.group(1), matcher.group(2), docker, stringArgs);
             } catch (Exception e) {
                 e.printStackTrace();
                 return e.getMessage();
             }
             if (result instanceof List) return String.join("\n", (List<String>) result);
             // TODO 这玩意只支持class版本 55.0 , jdk8的版本是52.0 System.getProperty("java.class.version")
-            if (result instanceof org.openjdk.nashorn.api.scripting.ScriptObjectMirror) {
+            if (result.getClass().getSimpleName().equals("ScriptObjectMirror")) {
                 org.openjdk.nashorn.api.scripting.ScriptObjectMirror som = (org.openjdk.nashorn.api.scripting.ScriptObjectMirror) result;
                 List<String> list = new ArrayList<>();
                 int i = 0;
