@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.openjdk.nashorn.api.scripting.ScriptObjectMirror;
 
 import javax.script.*;
 import java.io.File;
@@ -76,8 +77,9 @@ public class ScriptManager {
      */
     private void initEngine() throws Exception {
         // TODO 遍历可选引擎
-        String engineName = Config.getConfig().getString(Config.SCRIPT_ENGINE);
-        if (engineName == null || engineName.isEmpty()) throw null;
+        String engineName = Config.getConfig().getString(Config.SCRIPT_ENGINE, "js");
+        if (engineName.isEmpty()) throw null;
+        System.setProperty("nashorn.args", "--language=es6");
         ScriptEngine engine = new ScriptEngineManager().getEngineByName(engineName);
         if (engine == null) throw new ScriptException("No Find ScriptEngine: " + engineName);
         // class路径在jdk8中不一致
