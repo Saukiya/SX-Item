@@ -7,7 +7,7 @@ allprojects {
     apply plugin: 'java'
 
     group 'github.saukiya'
-    version '3.2.3'
+    version '3.2.4'
 
     repositories {
         mavenCentral()
@@ -26,6 +26,7 @@ allprojects {
         compileOnly 'org.projectlombok:lombok:1.18.22'
         annotationProcessor 'org.projectlombok:lombok:1.18.22'
     }
+
 }
 
 // 子项目设置
@@ -67,7 +68,9 @@ task buildLastJar(type: Copy) {
     dependsOn shadowJar
     from shadowJar.archiveFile.get().asFile.path
     into("$rootDir").rename { "${project.name}-Latest.jar" }
+
 }
+
 
 //需要对资源文件中含有的'$'进行转义: $ -> \$
 processResources {
