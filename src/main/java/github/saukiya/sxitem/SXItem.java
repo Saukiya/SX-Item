@@ -74,6 +74,7 @@ public class SXItem extends JavaPlugin {
         RandomManager.register(new DoubleRandom(), 'd');
         RandomManager.register(new IntRandom(), 'i', 'r');
         RandomManager.register(new ScriptRandom(), 'j');
+        RandomManager.register(new UUIDRandom(), 'u');
     }
 
     @Override
