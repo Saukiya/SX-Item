@@ -45,7 +45,7 @@ dependencies {
     compileOnly 'io.lumine:Mythic-Dist:5.2.1'
     compileOnly 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
 
-    testCompileOnly fileTree("Module-NMS-V1_17_R1/lib")
+    testImplementation fileTree("Module-NMS-V1_17_R1/lib")
     testImplementation 'org.projectlombok:lombok:1.18.22'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
 }
