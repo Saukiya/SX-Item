@@ -18,7 +18,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -34,14 +37,14 @@ public class GiveCommand extends SubCommand implements Listener {
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         if (args.length < 2) {
-            SXItem.getItemManager().sendItemMapToPlayer(sender, sender instanceof Player ? "" : null);
+            SXItem.getItemManager().sendItemInfoToPlayer(sender, sender instanceof Player ? "" : null);
             return;
         }
         Player player = null;
 
         IGenerator ig = SXItem.getItemManager().getGenerator(args[1]);
         if (ig == null) {
-            SXItem.getItemManager().sendItemMapToPlayer(sender, args[1]);
+            SXItem.getItemManager().sendItemInfoToPlayer(sender, args[1]);
             return;
         }
         if (args.length > 2) {

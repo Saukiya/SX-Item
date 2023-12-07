@@ -58,6 +58,8 @@ public class ItemManager implements Listener {
 
     private final Map<String, IGenerator> itemMap = new HashMap<>();
 
+    private final Map<String, List<Tuple<String, List<IGenerator>>>> informationMap = new HashMap<>();
+
     public ItemManager(JavaPlugin plugin, String... defaultFile) {
         this.plugin = plugin;
         this.defaultFile = defaultFile;
@@ -141,6 +143,8 @@ public class ItemManager implements Listener {
      */
     public void loadItem(String group, Map<String, ConfigurationSection> configs) {
         itemMap.values().removeIf(ig -> ig.group.equals(group));
+        List<Tuple<String, List<IGenerator>>> information = new ArrayList<>();
+        informationMap.put(group, information);
         Iterator<Tuple<String, String>> linkKeys = linkMap.keySet().iterator();
         while (linkKeys.hasNext()) {
             Tuple<String, String> linkEntry = linkKeys.next();
@@ -149,6 +153,8 @@ public class ItemManager implements Listener {
             linkKeys.remove();
         }
         configs.forEach((path, config) -> {
+            List<IGenerator> informationList = new ArrayList<>();
+            information.add(new Tuple<>(path, informationList));
             for (String key : config.getKeys(false)) {
                 if (key.startsWith("NoLoad")) continue;
                 if (itemMap.containsKey(key)) {
@@ -161,10 +167,12 @@ public class ItemManager implements Listener {
                     continue;
                 }
                 String type = config.getString(key + ".Type", "Default");
-                IGenerator.Loader function = getLoadFunction().get(type);
-                if (function != null) {
-                    config.set(key + ".Path", group + "#" + path);
-                    itemMap.put(key, function.apply(key, config.getConfigurationSection(key), group));
+                IGenerator.Loader loadFunction = getLoadFunction().get(type);
+                if (loadFunction != null) {
+                    config.set(key + ".Path", path);
+                    IGenerator ig = loadFunction.apply(key, config.getConfigurationSection(key), group);
+                    informationList.add(ig);
+                    itemMap.put(key, ig);
                 } else {
                     plugin.getLogger().warning("Don't Item Type: " + path + File.separator + key + " - " + type + " !");
                 }
@@ -335,7 +343,7 @@ public class ItemManager implements Listener {
      * @param sender CommandSender
      * @param search String
      */
-    public void sendItemMapToPlayer(CommandSender sender, String search) {
+    public void sendItemInfoToPlayer(CommandSender sender, String search) {
         sender.sendMessage("");
         if (search != null && search.equals("")) {
             // 文件夹
@@ -344,16 +352,13 @@ public class ItemManager implements Listener {
                     .show("§8§o§lTo ItemList")
                     .runCommand("/sxitem give |")
                     .send(sender);
-
-            Map<String, List<String>> map = new TreeMap<>();
-            itemMap.forEach((key, ig) -> {
-                List<String> list = map.computeIfAbsent(ig.getConfig().getString("Path"), k -> new ArrayList<>());
-                list.add("§b" + (list.size() + 1) + " - §a" + key + " §8[§7" + ig.getName() + "§8]§7 - §8[§cType:" + ig.getType() + "§8]");
+            informationMap.forEach((group, information) -> {
+                MessageUtil.getInst().componentBuilder().runCommand("/sxitem give |" + group).add(" §c§l" + group + " §7§l>>").send(sender);
+                information.forEach(pathTuple -> MessageUtil.getInst().componentBuilder().runCommand("/sxitem give |" + group + "#" + pathTuple.a() + "<")
+                        .add("  §8[§a" + pathTuple.a() + "§8]§7 - Has §c" + pathTuple.b().size() + "§7 Item")
+                        .show(pathTuple.b().stream().map(ig -> "§a" + ig.key + " §8[§7" + ig.getName() + "§8]§7 - §8[§cType:" + ig.getType() + "§8]").collect(Collectors.joining("\n")))
+                        .send(sender));
             });
-            map.forEach((key, value) -> MessageUtil.getInst().componentBuilder().runCommand("/sxitem give |" + key + "<")
-                    .add(" §8[§c" + key.replace(">", "§b>§c") + "§8]§7 - Has §c" + value.size() + "§7 Item")
-                    .show(String.join("\n", value))
-                    .send(sender));
         } else {
             // 物品
             MessageUtil.getInst().componentBuilder()
@@ -361,19 +366,21 @@ public class ItemManager implements Listener {
                     .show("§8§o§lTo DirectoryList")
                     .runCommand("/sxitem give")
                     .send(sender);
-            Map<String, ComponentBuilder> items = new TreeMap<>();
-            itemMap.forEach((key, ig) -> {
-                if (search == null || (key + ig.getName() + "|" + ig.getConfig().getString("Path") + "<").contains(search)) {
-                    items.put(key, MessageUtil.getInst().componentBuilder()
-                            .runCommand("/sxitem give " + key)
-                            .add(" §b" + (items.size() + 1) + " - §a" + key + " §8[§7")
+            List<ComponentBuilder> items = new ArrayList<>();
+            informationMap.forEach((group, information) -> information.forEach(pathTuple -> pathTuple.b().forEach(ig -> {
+                if (search == null || (ig.key + ig.getName() + "|" + ig.group + "#" + ig.getConfig().getString("Path") + "<").contains(search)) {
+                    items.add(MessageUtil.getInst().componentBuilder()
+                            .runCommand("/sxitem give " + ig.key)
+                            .add(" §b" + (items.size() + 1) + " - §a" + ig.key + " §8[§7")
                             .add(ig.getNameComponent())
-                            .add("§8]§7 - §8[§cType:" + ig.getType() + "§8]")
-                            .show("§7" + ig.getConfigString()));
+                            .add("§8]§7 - §8[")
+                            .add("§cType:" + ig.getType())
+                            .show("§7" + ig.getConfigString())
+                            .add("§8]"));
                 }
-            });
-            items.values().forEach(s -> s.send(sender));
-            sender.sendMessage("§7Find §c" + items.size() + "§7 Items.");
+            })));
+            items.forEach(s -> s.send(sender));
+            sender.sendMessage("§7Find §c" + items.size() + "§7 Items");
         }
     }
 

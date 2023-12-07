@@ -96,7 +96,7 @@ public class RandomDocker extends StrLookup {
      * @return RandomText
      */
     public List<String> replace(List<String> list) {
-        return PlaceholderHelper.setPlaceholders(getPlayer(), list.stream().flatMap(str -> Arrays.stream(ss.replace(str).split("\n"))).filter(s -> !s.contains("%DeleteLore")).collect(Collectors.toList()));
+        return PlaceholderHelper.setPlaceholders(getPlayer(), list.stream().flatMap(str -> Arrays.stream(ss.replace(str).split("\n"))).filter(s -> !s.contains("%DeleteLore") || !s.contains("%deletelore")).collect(Collectors.toList()));
     }
 
     /**

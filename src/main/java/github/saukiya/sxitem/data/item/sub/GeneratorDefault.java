@@ -6,7 +6,6 @@ import github.saukiya.sxitem.data.item.IUpdate;
 import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.data.random.INode;
 import github.saukiya.sxitem.data.random.RandomDocker;
-import github.saukiya.sxitem.helper.PlaceholderHelper;
 import github.saukiya.sxitem.nbt.*;
 import github.saukiya.sxitem.util.*;
 import lombok.Getter;
@@ -27,7 +26,10 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -142,33 +144,6 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
             }
         }
 
-        // TODO 这玩意最好整合到ItemUtil里做NMS
-        if (NMS.compareTo(1,11,1) >= 0 && meta instanceof PotionMeta) {
-            PotionType type = PotionType.valueOf(config.getString("Potion.type", "POISON"));
-            PotionData data = new PotionData(type);
-            ((PotionMeta) meta).setBasePotionData(data);
-            ConfigurationSection sub = config.getConfigurationSection("Potion.effects");
-            if (sub != null) {
-                for (String effectId : sub.getKeys(false)) {
-                    PotionEffectType effect = PotionEffectType.getByName(effectId);
-                    if (effect != null) {
-                        int duration = sub.getInt(effectId + ".duration", 0);
-                        int amplifier = sub.getInt(effectId + ".amplifier", 0);
-                        boolean ambient = sub.getBoolean(effectId + ".ambient", true);
-                        boolean particles = sub.getBoolean(effectId + ".particles", true);
-                        PotionEffect potionEffect;
-                        if (NMS.compareTo(1,13,2) >= 0) {
-                            boolean icon = sub.getBoolean(effectId + ".icon", true);
-                            potionEffect = new PotionEffect(effect, duration, amplifier, ambient, particles, icon);
-                        } else {
-                            potionEffect = new PotionEffect(effect, duration, amplifier, ambient, particles);
-                        }
-                        ((PotionMeta) meta).addCustomEffect(potionEffect, true);
-                    }
-                }
-            }
-        }
-
         if (NMS.compareTo(1,14,1) >= 0) {
             int customData = config.getInt("CustomModelData", -1);
             if (customData != -1) {
@@ -188,6 +163,33 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         ItemUtil.getInst().setUnbreakable(meta, config.getBoolean("Unbreakable"));
 
         ItemUtil.getInst().setSkull(meta, docker.replace(config.getString("SkullName")));
+
+        // TODO 这玩意最好整合到ItemUtil里做NMS
+        if (NMS.compareTo(1, 11, 1) >= 0 && meta instanceof PotionMeta) {
+            if (config.isString("Potion")) {
+                ((PotionMeta) meta).setBasePotionData(new PotionData(PotionType.valueOf(docker.replace(config.getString("Potion", "UNCRAFTABLE")))));
+            } else {
+                ConfigurationSection potionConfig = config.getConfigurationSection("Potion");
+                if (potionConfig != null) {
+                    for (String effectId : potionConfig.getKeys(false)) {
+                        PotionEffectType effect = PotionEffectType.getByName(docker.replace(effectId));
+                        if (effect != null) {
+                            int duration = Integer.parseInt(docker.replace(potionConfig.getString(effectId + ".duration")));
+                            int amplifier = Integer.parseInt(docker.replace(potionConfig.getString(effectId + ".amplifier")));
+                            boolean ambient = potionConfig.getBoolean(effectId + ".ambient", true);
+                            boolean particles = potionConfig.getBoolean(effectId + ".particles", true);
+                            PotionEffect potionEffect;
+                            if (NMS.compareTo(1, 13, 2) >= 0) {
+                                potionEffect = new PotionEffect(effect, duration, amplifier, ambient, particles, potionConfig.getBoolean(effectId + ".icon", true));
+                            } else {
+                                potionEffect = new PotionEffect(effect, duration, amplifier, ambient, particles);
+                            }
+                            ((PotionMeta) meta).addCustomEffect(potionEffect, true);
+                        }
+                    }
+                }
+            }
+        }
 
         if (meta instanceof LeatherArmorMeta && config.isString("Color")) {
             ((LeatherArmorMeta) meta).setColor(Color.fromRGB(Integer.parseInt(docker.replace(config.getString("Color")), 16)));
