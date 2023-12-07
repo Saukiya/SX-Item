@@ -11,6 +11,7 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.lang.reflect.Array;
@@ -55,7 +56,7 @@ public class NbtUtil_v1_17_R1 extends NbtUtil {
     public NBTTagCompound asNMSCompoundCopy(TagCompound tagCompound) {
         ByteBuf buf = Unpooled.buffer();
         writeTagBase(tagCompound, new ByteBufOutputStream(buf));
-        return NBTCompressedStreamTools.a(new DataInputStream(new ByteBufInputStream(buf)), NBTReadLimiter.a);
+        return NBTCompressedStreamTools.a((DataInput) new DataInputStream(new ByteBufInputStream(buf)));
     }
 
     @Override
@@ -148,7 +149,7 @@ public class NbtUtil_v1_17_R1 extends NbtUtil {
         net.minecraft.world.item.ItemStack nmsItem;
         ItemStack itemStack;
 
-        protected NBTItemWrapperImpl(ItemStack itemStack) {
+        private NBTItemWrapperImpl(ItemStack itemStack) {
             this(itemStack, CraftItemStack.asNMSCopy(itemStack));
         }
 

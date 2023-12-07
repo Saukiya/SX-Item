@@ -8,7 +8,7 @@ import io.netty.buffer.Unpooled;
 import lombok.SneakyThrows;
 import net.minecraft.nbt.*;
 import org.apache.commons.lang.Validate;
-import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.DataInputStream;
@@ -20,11 +20,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class NbtUtil_v1_19_R2 extends NbtUtil {
+public class NbtUtil_v1_20_R3 extends NbtUtil {
 
     @Override
     public NBTTagCompound getItemNBT(ItemStack itemStack) {
-        return CraftItemStack.asNMSCopy(itemStack).u();
+        return CraftItemStack.asNMSCopy(itemStack).v();
     }
 
     @Override
@@ -55,7 +55,7 @@ public class NbtUtil_v1_19_R2 extends NbtUtil {
     public NBTTagCompound asNMSCompoundCopy(TagCompound tagCompound) {
         ByteBuf buf = Unpooled.buffer();
         writeTagBase(tagCompound, new ByteBufOutputStream(buf));
-        return NBTCompressedStreamTools.a(new DataInputStream(new ByteBufInputStream(buf)), NBTReadLimiter.a);
+        return NBTCompressedStreamTools.a(new DataInputStream(new ByteBufInputStream(buf)));
     }
 
     @Override
@@ -79,7 +79,7 @@ public class NbtUtil_v1_19_R2 extends NbtUtil {
                 case "TAG_Long_Array":
                     return ((NBTTagLongArray) nbtBase).g();
                 case "TAG_String":
-                    return ((NBTTagString) nbtBase).f_();
+                    return ((NBTTagString) nbtBase).t_();
                 case "TAG_Byte":
                     return ((NBTTagByte) nbtBase).i();
                 case "TAG_Short":
@@ -148,12 +148,12 @@ public class NbtUtil_v1_19_R2 extends NbtUtil {
         net.minecraft.world.item.ItemStack nmsItem;
         ItemStack itemStack;
 
-        protected NBTItemWrapperImpl(ItemStack itemStack) {
+        private NBTItemWrapperImpl(ItemStack itemStack) {
             this(itemStack, CraftItemStack.asNMSCopy(itemStack));
         }
 
         NBTItemWrapperImpl(ItemStack itemStack, net.minecraft.world.item.ItemStack nmsItem) {
-            super(nmsItem.u());
+            super(nmsItem.v());
             if (nmsItem.b()) throw new NullPointerException();
             this.itemStack = itemStack;
             this.nmsItem = nmsItem;

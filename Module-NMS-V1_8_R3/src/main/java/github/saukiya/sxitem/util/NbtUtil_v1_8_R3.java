@@ -56,7 +56,7 @@ public class NbtUtil_v1_8_R3 extends NbtUtil {
     public NBTTagCompound asNMSCompoundCopy(TagCompound tagCompound) {
         ByteBuf buf = Unpooled.buffer();
         writeTagBase(tagCompound, new ByteBufOutputStream(buf));
-        return NBTCompressedStreamTools.a(new DataInputStream(new ByteBufInputStream(buf)), NBTReadLimiter.a);
+        return NBTCompressedStreamTools.a(new DataInputStream(new ByteBufInputStream(buf)));
     }
 
     @Override
@@ -151,7 +151,7 @@ public class NbtUtil_v1_8_R3 extends NbtUtil {
         net.minecraft.server.v1_8_R3.ItemStack nmsItem;
         ItemStack itemStack;
 
-        protected NBTItemWrapperImpl(ItemStack itemStack) {
+        private NBTItemWrapperImpl(ItemStack itemStack) {
             this(itemStack, CraftItemStack.asNMSCopy(itemStack));
         }
 
