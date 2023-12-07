@@ -205,7 +205,8 @@ Default-3:
     - '&cs   - &7正常随机&r [<s:<s:品质>Color>♦&r] [<s:AAA:BBB:CCC>]'
     - '&cd   - &7小数随机&r [<d:2.3_6>]'
     - '&ci&7/&cr - &7整数随机&r [<i:1_7>]'
-    - '&cj   - &7脚本处理 [<j:Default.testFunction#arg>]'
+    - '&cu   - &7UUID随机&r [<u:random>]'
+    - '&cj   - &7脚本处理&r [<j:Default.itemScript#QAQ,QWQ,???,!!!>]'
     - ''
     - "&e局部变量调用全局变量请用 ~"
     - "&c ~ &7在 yml 中表示 &4null"

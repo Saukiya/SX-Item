@@ -1,9 +1,10 @@
 package github.saukiya.sxitem.data.random.randoms;
 
 import github.saukiya.sxitem.SXItem;
-import github.saukiya.sxitem.data.ScriptManager;
 import github.saukiya.sxitem.data.random.IRandom;
 import github.saukiya.sxitem.data.random.RandomDocker;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,12 +21,14 @@ public class ScriptRandom implements IRandom {
         // key = script.function#666,1,aaa
         Matcher matcher = pattern.matcher(key);
         if (matcher.matches()) {
-            String[] stringArgs = matcher.group(3).split(",");// 如果直接用string[] 那可能数字是字符串
-//            Object[] args = new Object[stringArgs.length];// 除非转换成int或者double?反正放进js里都是数
+            Object[] args = matcher.group(3).split(",");
+            for (int i = 0; i < args.length; i++) {
+                Player player = Bukkit.getPlayerExact(args[i].toString());
+                if (player != null) args[i] = player;
+            }
             Object result;
-            ScriptManager scriptManager = SXItem.getScriptManager();
             try {
-                result = scriptManager.callFunction(matcher.group(1), matcher.group(2), docker, stringArgs);
+                result = SXItem.getScriptManager().callFunction(matcher.group(1), matcher.group(2), docker, args);
             } catch (Exception e) {
                 e.printStackTrace();
                 return e.getMessage();
