@@ -1,6 +1,7 @@
 package github.saukiya.sxitem.data.item.sub;
 
 import github.saukiya.sxitem.data.item.IGenerator;
+import github.saukiya.sxitem.util.ComponentBuilder;
 import github.saukiya.sxitem.util.MessageUtil;
 import lombok.Getter;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -33,7 +34,13 @@ public class GeneratorImport extends IGenerator {
 
     @Override
     public BaseComponent getNameComponent() {
-        return MessageUtil.getInst().componentBuilder().add(item).getHandle();
+        ComponentBuilder cb = MessageUtil.getInst().componentBuilder();
+        if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
+            cb.add(item.getItemMeta().getDisplayName());
+        } else {
+            cb.add(item.getType());
+        }
+        return cb.getHandle();
     }
 
     @Override
