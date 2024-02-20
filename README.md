@@ -3,8 +3,9 @@
 [Minecraft-Plugin] 物品管理插件
 
 [文档](https://ray_hughes.gitee.io/fx-blog/2023/08/24/SX-Item/#) ·
-[宣传贴](https://www.mcbbs.net/thread-1471655-1-1.html) ·
-[统计](https://bstats.org/plugin/bukkit/SX-Item)
+[统计](https://bstats.org/plugin/bukkit/SX-Item) ·
+[MineBBS](https://www.minebbs.com/resources/sx-item-1-8-1-20-x.7252/) ·
+[MCBBS](https://www.mcbbs.net/thread-1471655-1-1.html)
 
 ### 支持服务端:(未在列表内则未经过测试)
 
