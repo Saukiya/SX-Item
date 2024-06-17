@@ -33,7 +33,7 @@ public class Config {
         File file = new File(SXItem.getInst().getDataFolder(), "Config.yml");
         if (!file.exists()) {
             SXItem.getInst().getLogger().info("Create Config.yml");
-            SXItem.getInst().saveResource("Config.yml", true);
+            LocalizationUtil.saveResource("Config.yml");
         }
         config = YamlConfiguration.loadConfiguration(file);
     }
