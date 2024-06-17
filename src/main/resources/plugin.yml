@@ -2,6 +2,7 @@ name: SX-Item
 main: github.saukiya.sxitem.SXItem
 version: $version
 authors: [ Saukiya, Ray_Hughes ]
+language: en
 api-version: 1.13
 website: https://github.com/Saukiya/SX-Item/releases
 softdepend:
