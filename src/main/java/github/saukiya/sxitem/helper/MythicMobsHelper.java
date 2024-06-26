@@ -38,7 +38,7 @@ public class MythicMobsHelper {
      * @param event io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobDeathEvent
      */
     @Setter
-    private static DeathHandler deathHandler = (mobType, mobLocation, mobMap, player, drops, sxDropList) -> {
+    private static DeathHandler deathHandler = (mobType, mobLocation, mobMap, killer, drops, sxDropList) -> {
         for (String str : sxDropList) {
             String[] args = str.split(" ");
             IGenerator ig = SXItem.getItemManager().getGenerator(args[0]);
@@ -56,12 +56,18 @@ public class MythicMobsHelper {
                 }
             }
             // 给予
-            Inventory inventory = player.getInventory();
             Map<String, String> otherMap = getOtherMap(args, 3);
             otherMap.putAll(mobMap);
+            //BUGFIX 被伤害来源非玩家击杀(宠物等)不会正常掉落物品
+            Player player = null;
+            Inventory inventory = null;
+            if (killer instanceof Player) {
+                player = (Player) killer;
+                inventory = player.getInventory();
+            }
             for (int i = 0; i < amount; i++) {
                 ItemStack itemStack = SXItem.getItemManager().getItem(ig, player, otherMap);
-                if (Config.getConfig().getBoolean(Config.MOB_DROP_TO_PLAYER_INVENTORY)) {
+                if (player != null  && Config.getConfig().getBoolean(Config.MOB_DROP_TO_PLAYER_INVENTORY)) {
                     SXItemMythicMobsGiveToInventoryEvent eventI = new SXItemMythicMobsGiveToInventoryEvent(ig, player, mobType, itemStack);
                     Bukkit.getPluginManager().callEvent(eventI);
                     if (!eventI.isCancelled()) {
@@ -74,6 +80,9 @@ public class MythicMobsHelper {
                         }
                     }
                 } else {
+                    if (player == null && !Config.getConfig().getBoolean(Config.MOB_DROP_IF_NON_PLAYER_KILLED)) {
+                        continue;
+                    }
                     drops.add(itemStack);
                 }
             }
@@ -155,7 +164,7 @@ public class MythicMobsHelper {
     }
 
     public interface DeathHandler {
-        void death(String mobType, Location mobLocation, Map<String, String> mobMap, Player player, List<ItemStack> drops, List<String> sxDropList);
+        void death(String mobType, Location mobLocation, Map<String, String> mobMap, LivingEntity killer, List<ItemStack> drops, List<String> sxDropList);
     }
 
     public interface SpawnHandler {
@@ -177,17 +186,15 @@ public class MythicMobsHelper {
 
         @EventHandler
         void on(io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobDeathEvent event) {
-            if (event.getKiller() instanceof Player) {
-                String mobType = event.getMobType().getInternalName();
-                Location mobLocation = event.getEntity().getLocation();
-                Map<String, String> mobMap = getMobMap(event.getMob());
-                Player player = (Player) event.getKiller();
-                List<ItemStack> drops = event.getDrops();
-                List<String> sxDropList = event.getMobType().getConfig().getStringList("SX-Drop");
-                sxDropList.addAll(event.getMobType().getConfig().getStringList("SX-Drops"));
-                deathHandler.death(mobType, mobLocation, mobMap, player, drops, sxDropList);
-                event.setDrops(drops);
-            }
+            String mobType = event.getMobType().getInternalName();
+            Location mobLocation = event.getEntity().getLocation();
+            Map<String, String> mobMap = getMobMap(event.getMob());
+            LivingEntity killer = event.getKiller();
+            List<ItemStack> drops = event.getDrops();
+            List<String> sxDropList = event.getMobType().getConfig().getStringList("SX-Drop");
+            sxDropList.addAll(event.getMobType().getConfig().getStringList("SX-Drops"));
+            deathHandler.death(mobType, mobLocation, mobMap, killer, drops, sxDropList);
+            event.setDrops(drops);
         }
 
         /**
@@ -220,17 +227,15 @@ public class MythicMobsHelper {
 
         @EventHandler
         void on(io.lumine.mythic.bukkit.events.MythicMobDeathEvent event) {
-            if (event.getKiller() instanceof Player) {
-                String mobType = event.getMobType().getInternalName();
-                Location mobLocation = event.getEntity().getLocation();
-                Map<String, String> mobMap = getMobMap(event.getMob());
-                Player player = (Player) event.getKiller();
-                List<ItemStack> drops = event.getDrops();
-                List<String> sxDropList = event.getMobType().getConfig().getStringList("SX-Drop");
-                sxDropList.addAll(event.getMobType().getConfig().getStringList("SX-Drops"));
-                deathHandler.death(mobType, mobLocation, mobMap, player, drops, sxDropList);
-                event.setDrops(drops);
-            }
+            String mobType = event.getMobType().getInternalName();
+            Location mobLocation = event.getEntity().getLocation();
+            Map<String, String> mobMap = getMobMap(event.getMob());
+            LivingEntity killer = event.getKiller();
+            List<ItemStack> drops = event.getDrops();
+            List<String> sxDropList = event.getMobType().getConfig().getStringList("SX-Drop");
+            sxDropList.addAll(event.getMobType().getConfig().getStringList("SX-Drops"));
+            deathHandler.death(mobType, mobLocation, mobMap, killer, drops, sxDropList);
+            event.setDrops(drops);
         }
 
         /**

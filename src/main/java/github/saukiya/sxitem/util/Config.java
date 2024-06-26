@@ -22,6 +22,7 @@ public class Config {
     public static final String PROTECT_NBT = "ProtectNBT";
     public static final String GIVE_OVERFLOW_DROP = "GiveOverflowDrop";
     public static final String MOB_DROP_TO_PLAYER_INVENTORY = "MobDropToPlayerInventory";
+    public static final String MOB_DROP_IF_NON_PLAYER_KILLED = "MobDropIfNonPlayerKilled";
 
     @Getter
     private static YamlConfiguration config;
