@@ -13,3 +13,5 @@ ProtectNBT:
 GiveOverflowDrop: true
 #史诗怪物掉落的SX物品直接进入玩家背包
 MobDropToPlayerInventory: true
+#史诗怪物在不被玩家击杀时是否掉落物品
+MobDropIfNonPlayerKilled: false

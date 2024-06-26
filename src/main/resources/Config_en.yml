@@ -11,3 +11,5 @@ ProtectNBT:
 GiveOverflowDrop: true
 # SX-Items dropped by epic monsters go directly into player's inventory
 MobDropToPlayerInventory: true
+# Should epic monsters drop SX-Items when not killed by a player?
+MobDropIfNonPlayerKilled: false
