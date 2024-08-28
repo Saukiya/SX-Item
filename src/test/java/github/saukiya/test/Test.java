@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Test {
@@ -42,6 +43,14 @@ public class Test {
                     "test.sub.remove";
 
     public static void main(String[] args) throws Exception {
+        List<String> list = new ArrayList<>();
+        list.add("1");
+        list.add("%DeleteLore%");
+        list.add("%DeleteLore");
+        list.add("%DeleteLore %deletelore");
+        list.add("4");
+        list = list.stream().flatMap(str -> Arrays.stream(str.split("\n"))).filter(s -> !s.contains("%DeleteLore") && !s.contains("%deletelore")).collect(Collectors.toList());
+        System.out.println(list);
 //        TagCompound tagCompound = new TagCompound();
 //        tagCompound.set("233.233", 2333L);
 //        tagCompound.set("base", "qwq");
