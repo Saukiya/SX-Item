@@ -23,10 +23,20 @@ allprojects {
     targetCompatibility = JavaVersion.VERSION_1_8
 
     dependencies {
-        compileOnly 'org.projectlombok:lombok:1.18.22'
-        annotationProcessor 'org.projectlombok:lombok:1.18.22'
+        compileOnly 'org.projectlombok:lombok:1.18.30'
+        annotationProcessor 'org.projectlombok:lombok:1.18.30'
+        testImplementation 'org.projectlombok:lombok:1.18.30'
+        testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
     }
 
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+        options.compilerArgs << '-Xlint:none'
+        options.compilerArgs << '-nowarn'
+    }
+    tasks.withType(JavaExec) {
+        jvmArgs = ['-Dfile.encoding=UTF-8', '-Dsun.stdout.encoding=UTF-8', '-Dsun.stderr.encoding=UTF-8']
+    }
 }
 
 // 子项目设置
@@ -38,16 +48,15 @@ subprojects {
 }
 
 dependencies {
-    compileOnly fileTree("Module-NMS-V1_20_R2/lib")
+    compileOnly fileTree("Module-NMS-V1_20_R1/lib")
     implementation 'org.bstats:bstats-bukkit:2.2.1'
     compileOnly 'org.openjdk.nashorn:nashorn-core:15.4'
     compileOnly 'io.lumine.xikage:MythicMobs:4.12.0'
     compileOnly 'io.lumine:Mythic-Dist:5.2.1'
     compileOnly 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
 
-    testImplementation fileTree("Module-NMS-V1_17_R1/lib")
-    testImplementation 'org.projectlombok:lombok:1.18.22'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
+    testImplementation fileTree("Module-NMS-V1_20_R1/lib")
+    testImplementation 'com.google.guava:guava:31.0.1-jre'
 }
 
 shadowJar {

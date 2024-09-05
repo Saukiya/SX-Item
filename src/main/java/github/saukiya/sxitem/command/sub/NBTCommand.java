@@ -5,10 +5,7 @@ import github.saukiya.sxitem.command.SenderType;
 import github.saukiya.sxitem.command.SubCommand;
 import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.nbt.*;
-import github.saukiya.sxitem.util.ComponentBuilder;
-import github.saukiya.sxitem.util.Message;
-import github.saukiya.sxitem.util.MessageUtil;
-import github.saukiya.sxitem.util.NbtUtil;
+import github.saukiya.sxitem.util.*;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -35,6 +32,10 @@ public class NBTCommand extends SubCommand {
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         Player player = (Player) sender;
+        if (NMS.compareTo(1, 21, 1) >= 0) {
+            MessageUtil.send(player, "This Version No Support");
+            return;
+        }
         ItemStack item = player.getEquipment().getItemInHand();
         if (item.getType() != Material.AIR) {
             if (args.length < 2 || args[1].equals("all")) {
