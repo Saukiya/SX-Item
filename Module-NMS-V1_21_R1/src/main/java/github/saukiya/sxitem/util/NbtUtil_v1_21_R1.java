@@ -1,13 +1,15 @@
 package github.saukiya.sxitem.util;
 
+import com.mojang.serialization.Codec;
 import github.saukiya.sxitem.nbt.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
 import lombok.SneakyThrows;
-import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.*;
 import net.minecraft.nbt.*;
+import net.minecraft.world.item.component.CustomData;
 import org.apache.commons.lang.Validate;
 import org.bukkit.craftbukkit.v1_21_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
@@ -24,11 +26,21 @@ import java.util.stream.IntStream;
 public class NbtUtil_v1_21_R1 extends NbtUtil {
 
     public NBTTagCompound getItemNBT(net.minecraft.world.item.ItemStack itemStack) {
-        DataComponentMap dataComponentMap = itemStack.a();
-//        dataComponentMap TODO ??
-        NBTTagCompound nbtTagCompound = new NBTTagCompound();
+        PatchedDataComponentMap dataComponentMap = (PatchedDataComponentMap) itemStack.a();
+        System.out.println("dataComponentMap.component");
+        for (TypedDataComponent<?> component : dataComponentMap) {
+            System.out.println("\t" + component.a() + " - " + component.b().getClass().getSimpleName() + "\t" + component.b());
+        }
+
+        CustomData data = dataComponentMap.a(DataComponents.b);
+        NBTTagCompound nbtTagCompound = data != null ? data.d() : new NBTTagCompound();
+//        NBTTagCompound nbtTagCompound = data != null ? data.c() :new NBTTagCompound();
         return nbtTagCompound;
 //        return itemStack.v();
+    }
+
+    public void setItemNBT(net.minecraft.world.item.ItemStack itemStack, NBTTagCompound nbtTagCompound) {
+        itemStack.b(DataComponents.b, CustomData.a(nbtTagCompound));
     }
 
     @Override
@@ -170,6 +182,7 @@ public class NbtUtil_v1_21_R1 extends NbtUtil {
 
         @Override
         public void save() {
+            setItemNBT(nmsItem, getHandle());
             itemStack.setItemMeta(CraftItemStack.getItemMeta(nmsItem));
         }
     }
