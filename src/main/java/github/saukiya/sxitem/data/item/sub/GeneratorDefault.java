@@ -31,11 +31,9 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Saukiya
@@ -111,6 +109,7 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         return getItem(player, randomDocker);
     }
 
+    // TODO 干脆都整到ItemUtil里
     private ItemStack getItem(Player player, RandomDocker docker) {
         String[] materAndDur = docker.replace(ids.get(SXItem.getRandom().nextInt(ids.size()))).split(":");
         Material material = ItemManager.getMaterial(materAndDur[0]);
@@ -171,22 +170,29 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
 
         // TODO 这玩意最好整合到ItemUtil里做NMS
         if (NMS.compareTo(1, 11, 1) >= 0 && meta instanceof PotionMeta) {
+            PotionEffectType[] potionEffectTypes = PotionEffectType.values();
             if (config.isString("Potion")) {
                 //TODO 临时禁用
-                //((PotionMeta) meta).setBasePotionData(new PotionData(PotionType.valueOf(docker.replace(config.getString("Potion", "UNCRAFTABLE")))));
+//                ((PotionMeta) meta).setBasePotionData(new PotionData(PotionType.valueOf(docker.replace(config.getString("Potion", "UNCRAFTABLE")))));
             } else {
                 ConfigurationSection potionConfig = config.getConfigurationSection("Potion");
                 if (potionConfig != null) {
                     for (String effectId : potionConfig.getKeys(false)) {
-                        PotionEffectType effect = PotionEffectType.getByName(docker.replace(effectId));
+                        ConfigurationSection potionEffectConfig = potionConfig.getConfigurationSection(effectId);
+                        effectId = docker.replace(effectId);
+                        PotionEffectType effect = null;
+                        for (PotionEffectType potionEffectType : potionEffectTypes) {
+                            if (!potionEffectType.getName().equals(effectId)) continue;
+                            effect = potionEffectType;
+                        }
                         if (effect != null) {
-                            int duration = Integer.parseInt(docker.replace(potionConfig.getString(effectId + ".duration")));
-                            int amplifier = Integer.parseInt(docker.replace(potionConfig.getString(effectId + ".amplifier")));
-                            boolean ambient = potionConfig.getBoolean(effectId + ".ambient", true);
-                            boolean particles = potionConfig.getBoolean(effectId + ".particles", true);
+                            int duration = Integer.parseInt(docker.replace(potionEffectConfig.getString("duration", "1")));
+                            int amplifier = Integer.parseInt(docker.replace(potionEffectConfig.getString("amplifier", "1")));
+                            boolean ambient = potionEffectConfig.getBoolean("ambient", true);
+                            boolean particles = potionEffectConfig.getBoolean("particles", true);
                             PotionEffect potionEffect;
                             if (NMS.compareTo(1, 13, 2) >= 0) {
-                                potionEffect = new PotionEffect(effect, duration, amplifier, ambient, particles, potionConfig.getBoolean(effectId + ".icon", true));
+                                potionEffect = new PotionEffect(effect, duration, amplifier, ambient, particles, potionEffectConfig.getBoolean("icon", true));
                             } else {
                                 potionEffect = new PotionEffect(effect, duration, amplifier, ambient, particles);
                             }
