@@ -62,6 +62,7 @@ public class SXItem extends JavaPlugin {
         mainCommand.register(new NBTCommand());
         mainCommand.register(new ScriptCommand());
         mainCommand.register(new ReloadCommand());
+        mainCommand.register(new TestCommand());
 
         ItemManager.loadMaterialData();
         ItemManager.register("Default", GeneratorDefault::new, GeneratorDefault.saveFunc());
@@ -93,7 +94,7 @@ public class SXItem extends JavaPlugin {
 
         scriptManager = new ScriptManager(this, "Scripts/Global.js", "Scripts/Default.js");
         randomManager = new RandomManager(this, "RandomString/DefaultRandom.yml", "RandomString/10Level/Random.yml");
-        itemManager = new ItemManager(this, "Item/Default/Default.yml", "Item/NoLoad/Default.yml");
+        itemManager = new ItemManager(this, "Item/Default/Default.yml", "Item/NoLoad/Default.yml", "Item/Default/ComponentGuide.yml");
 
         Config.setup();
         PlaceholderHelper.setup();
