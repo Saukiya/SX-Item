@@ -1,7 +1,7 @@
 name: SX-Item
 main: github.saukiya.sxitem.SXItem
 version: $version
-authors: [ Saukiya, Ray_Hughes ]
+authors: [ Saukiya, Ray_Hughes, Lounode ]
 language: zh
 api-version: 1.13
 website: https://github.com/Saukiya/SX-Item/releases
