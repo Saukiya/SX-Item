@@ -76,14 +76,14 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
 
     @Override
     public String getName() {
-        if (displayName != null) return RandomDocker.getInst().replace(displayName).replace("&", "§");
+        if (displayName != null) return RandomDocker.getInst().replace(displayName).replace('&', '§');
         return "§7" + String.join("§8|§7", ids);
     }
 
     @Override
     public BaseComponent getNameComponent() {
         if (displayName != null)
-            return new TextComponent(RandomDocker.getInst().replace(displayName).replace("&", "§"));
+            return new TextComponent(RandomDocker.getInst().replace(displayName).replace('&', '§'));
         ComponentBuilder cb = MessageUtil.getInst().componentBuilder().add("§r");
         for (String id : ids) {
             if (cb.getHandle().getExtra().size() != 1) cb.add("§8|§r");
@@ -133,11 +133,11 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
 
         String itemName = docker.replace(this.displayName);
         if (itemName != null) {
-            meta.setDisplayName(itemName.replace("&", "§"));
+            meta.setDisplayName(itemName.replace('&', '§'));
         }
 
         List<String> loreList = docker.replace(config.getStringList("Lore"));
-        loreList.replaceAll(lore -> lore.replace("&", "§"));
+        loreList.replaceAll(lore -> lore.replace('&', '§'));
         meta.setLore(loreList);
 
         for (String enchant : docker.replace(config.getStringList("EnchantList"))) {
@@ -289,12 +289,12 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
     public static Saver saveFunc() {
         return (item, config) -> {
             ItemMeta itemMeta = item.getItemMeta();
-            config.set("Name", itemMeta.hasDisplayName() ? itemMeta.getDisplayName().replace("§", "&") : null);
+            config.set("Name", itemMeta.hasDisplayName() ? itemMeta.getDisplayName().replace('§', '&') : null);
             config.set("ID", item.getType().name() + (item.getDurability() != 0 ? ":" + item.getDurability() : ""));
             if (item.getAmount() > 1)
                 config.set("Amount", item.getAmount());
             if (itemMeta.hasLore())
-                config.set("Lore", itemMeta.getLore().stream().map(s -> s.replace("§", "&")).collect(Collectors.toList()));
+                config.set("Lore", itemMeta.getLore().stream().map(s -> s.replace('§', '&')).collect(Collectors.toList()));
             if (itemMeta.hasEnchants())
                 config.set("EnchantList", itemMeta.getEnchants().entrySet().stream().map(entry -> entry.getKey().getName() + ":" + entry.getValue()).collect(Collectors.toList()));
             if (itemMeta.getItemFlags().size() > 0)

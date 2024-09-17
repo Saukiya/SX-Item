@@ -79,13 +79,13 @@ public enum Message {
     }
 
     public static String getStatic(String loc, Object... args) {
-        return MessageFormat.format(messages.getString(loc, "Null Message: " + loc), args).replace("&", "§");
+        return MessageFormat.format(messages.getString(loc, "Null Message: " + loc), args).replace('&', '§');
     }
 
     public static List<String> getListStatic(String loc, Object... args) {
         List<String> list = messages.getStringList(loc);
         if (list.size() == 0) return Collections.singletonList("Null Message: " + loc);
-        list.replaceAll(str -> MessageFormat.format(str, args).replace("&", "§"));
+        list.replaceAll(str -> MessageFormat.format(str, args).replace('&', '§'));
         return list;
     }
 }

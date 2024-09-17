@@ -59,10 +59,9 @@ public class SXItem extends JavaPlugin {
         mainCommand = new MainCommand(this);
         mainCommand.register(new GiveCommand());
         mainCommand.register(new SaveCommand());
+        mainCommand.register(new NBTCommand());
         mainCommand.register(new ScriptCommand());
         mainCommand.register(new ReloadCommand());
-        mainCommand.register(new NBTCommand());
-
 
         ItemManager.loadMaterialData();
         ItemManager.register("Default", GeneratorDefault::new, GeneratorDefault.saveFunc());

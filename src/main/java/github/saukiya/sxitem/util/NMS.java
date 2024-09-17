@@ -127,7 +127,7 @@ class Data {
     protected static final Map<Class<? extends NMS>, NMS> INST_MAP = new HashMap<>();
     protected static final Map<Class<?>, Map<String, Field>> FIELD_CACHE_MAP = new HashMap<>();
     protected static final Map<Class<?>, Class<?>> CLASS_WRAPS_MAP = new HashMap<>();
-    protected static String VERSION;
+    protected static final String VERSION;
     protected static final Pattern VERSION_PATTERN = Pattern.compile("v(\\d+)_(\\d+)_R(\\d+)");
     protected static final int[] thisVersionSplit;
 
@@ -156,33 +156,17 @@ class Data {
      * @date 2024/09/14
      */
     private static int[] getVersion() {
-        String oldVersionSource = Bukkit.getServer() != null ? Bukkit.getServer().getClass().getPackage().getName().split("^.+\\.")[1] : "v1_17_R1";
-
-        Matcher matcher = VERSION_PATTERN.matcher(oldVersionSource);
+        String versionSource = Bukkit.getServer() != null ? Bukkit.getServer().getClass().getPackage().getName().split("^.+\\.")[1] : "v1_17_R1";
+        Matcher matcher = VERSION_PATTERN.matcher(versionSource);
         if (!matcher.matches()) {
-            if (isPaper()) {
-                String newVersionSource = Bukkit.getServer().getBukkitVersion();
-                String newVersion = newVersionSource.split("-")[0];
-                Pattern pattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)");
-                Matcher mc = pattern.matcher(newVersion);
-                mc.matches();
-
-                return IntStream.range(0, mc.groupCount()).map(i -> Integer.parseInt(mc.group(i + 1))).toArray();
+            if (NMS.hasClass("com.destroystokyo.paper.ParticleBuilder")) {
+                versionSource = Bukkit.getServer().getBukkitVersion();
+                Matcher paerMatcher = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)").matcher(versionSource.split("-")[0]);
+                paerMatcher.matches();
+                return IntStream.range(0, paerMatcher.groupCount()).map(i -> Integer.parseInt(paerMatcher.group(i + 1))).toArray();
             }
         }
-        int[] oldVersionSplit = IntStream.range(0, matcher.groupCount()).map(i -> Integer.parseInt(matcher.group(i + 1))).toArray();
-
-        return oldVersionSplit;
-    }
-
-    private static boolean isPaper() {
-        boolean isPaper = false;
-        try {
-            Class.forName("com.destroystokyo.paper.ParticleBuilder");
-            isPaper = true;
-        } catch (ClassNotFoundException ignored) {
-        }
-        return isPaper;
+        return IntStream.range(0, matcher.groupCount()).map(i -> Integer.parseInt(matcher.group(i + 1))).toArray();
     }
 
     protected static boolean checkClass(@Nonnull Class<?> c1, @NonNull Class<?> c2) {

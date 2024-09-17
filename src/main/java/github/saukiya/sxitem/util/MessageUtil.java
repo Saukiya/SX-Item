@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 public abstract class MessageUtil implements NMS {
 
     @Getter
-    private static final MessageUtil inst = NMS.getInst(MessageUtil.class, "v1_16_R3", "v1_13_R2", "v1_12_R1", "v1_11_R1", "v1_8_R3");
+    private static final MessageUtil inst = NMS.getInst(MessageUtil.class, "v1_21_R1", "v1_16_R3", "v1_13_R2", "v1_12_R1", "v1_11_R1", "v1_8_R3");
 
     public void sendActionBar(Player player, String message) {
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));

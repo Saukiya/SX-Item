@@ -8,7 +8,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.openjdk.nashorn.api.scripting.ScriptObjectMirror;
 
 import javax.script.*;
 import java.io.File;
@@ -38,7 +37,7 @@ public class ScriptManager {
     private Invocable invocable;
 
     @Getter
-    private Boolean enabled;
+    private boolean enabled;
 
     public ScriptManager(JavaPlugin plugin, String... defaultFile) {
         this.plugin = plugin;
@@ -107,7 +106,7 @@ public class ScriptManager {
      * @param files File
      */
     private void loadScriptFile(File files) throws IOException, ScriptException {
-        if (enabled != null && !enabled) return;
+        if (!enabled) return;
         for (File file : files.listFiles()) {
             if (file.getName().startsWith("NoLoad") || file.equals(globalFile)) continue;
             if (file.isDirectory()) {
