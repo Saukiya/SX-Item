@@ -251,7 +251,8 @@ public class ItemManager implements Listener {
     @Nullable
     public ItemStack getItem(IGenerator ig, Player player, Object... args) {
         ItemStack item = ig.getItem(player, args);
-        if (item != emptyItem && item != null && ig instanceof IUpdate) {
+        //TODO 临时禁用
+        if (item != emptyItem && item != null && ig instanceof IUpdate && false) {
             NbtUtil.getInst().getItemTagWrapper(item).builder()
                     .set(plugin.getName() + ".ItemKey", ig.getKey())
                     .set(plugin.getName() + ".HashCode", ((IUpdate) ig).updateCode())
