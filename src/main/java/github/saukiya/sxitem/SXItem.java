@@ -86,10 +86,9 @@ public class SXItem extends JavaPlugin {
     public void onEnable() {
         new Metrics(this, 11948);
         long oldTimes = System.currentTimeMillis();
-        //两种API切换
-        if (NMS.compareTo(1, 20, 5) < 0) {
-            NbtUtil.getInst();
-        } else {
+        NbtUtil.getInst();
+        //加载组件API
+        if (NMS.compareTo(1, 20, 5) >= 0) {
             DataComponentAPIBukkit.load();
         }
 

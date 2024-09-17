@@ -62,7 +62,7 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         if (config.contains("Random")) {
             SXItem.getRandomManager().loadRandom(this.randomMap = new HashMap<>(), config.getConfigurationSection("Random"));
         }
-        if (NMS.compareTo(1,20,5) < 0 && config.contains("NBT")) {
+        if (config.contains("NBT")) {
             this.nbt = (TagCompound) TagType.toTag(config.getConfigurationSection("NBT"));
         }
         this.hashCode = configString.hashCode();
@@ -219,51 +219,50 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
                 );
             }
         }
-        if (NMS.compareTo(1,20,5) < 0) {
-            NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item);
-            wrapper.setAll((TagCompoundBase) docker.replace(nbt));
+        NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item);
+        wrapper.setAll((TagCompoundBase) docker.replace(nbt));
 
-            docker.getLockMap().forEach((key, value) -> wrapper.set(SXItem.getInst().getName() + ".Lock." + key, value));
+        docker.getLockMap().forEach((key, value) -> wrapper.set(SXItem.getInst().getName() + ".Lock." + key, value));
 
-            wrapper.save();
-        } else {
-            if (config.contains("Components")) {
-                List<Map<?, ?>> components = config.getMapList("Components");
-                for (Map<?, ?> componentWrapper : components) {
-                    Map.Entry<?, ?> component = componentWrapper.entrySet().iterator().next();
-                    String componentKey = (String) component.getKey();
-                    String componentKeyNamespace = "minecraft";
-                    String componentKeyName;
-                    if (componentKey.contains(":")) {
-                        componentKeyNamespace = componentKey.split(":")[0];
-                        componentKeyName = componentKey.split(":")[1];
-                    } else {
-                        componentKeyName = componentKey;
-                    }
+        wrapper.save();
 
-                    //TODO 支持数据包与MOD的组件
-                    if (!"minecraft".equals(componentKeyNamespace)) {
-                        SXItem.getInst().getLogger().warning(
-                                "Skipping unsupported component: " + componentKeyNamespace + ":" + componentKeyName);
-                        continue;
-                    }
-
-                    DataComponentType<?> componentType = DataComponentType.registry().get(componentKeyName);
-                    if (componentType == null) {
-                        SXItem.getInst().getLogger().warning("Skipping unsupported component: " + componentKeyName);
-                        continue;
-                    }
-                    Gson gson = new Gson();
-                    JsonElement json = gson.toJsonTree(component.getValue());
-
-                    ItemAdapter apply = DataComponentAPI.api().adapter(item);
-
-                    apply.setToJson(componentType, json);
-                    item =  apply.build();
-                    //SXItem.getInst().getLogger().info(apply.serialize().toString());
+        //组件支持
+        if (config.contains("Components")) {
+            List<Map<?, ?>> components = config.getMapList("Components");
+            for (Map<?, ?> componentWrapper : components) {
+                Map.Entry<?, ?> component = componentWrapper.entrySet().iterator().next();
+                String componentKey = (String) component.getKey();
+                String componentKeyNamespace = "minecraft";
+                String componentKeyName;
+                if (componentKey.contains(":")) {
+                    componentKeyNamespace = componentKey.split(":")[0];
+                    componentKeyName = componentKey.split(":")[1];
+                } else {
+                    componentKeyName = componentKey;
                 }
 
+                //TODO 支持数据包与MOD的组件
+                if (!"minecraft".equals(componentKeyNamespace)) {
+                    SXItem.getInst().getLogger().warning(
+                            "Skipping unsupported component: " + componentKeyNamespace + ":" + componentKeyName);
+                    continue;
+                }
+
+                DataComponentType<?> componentType = DataComponentType.registry().get(componentKeyName);
+                if (componentType == null) {
+                    SXItem.getInst().getLogger().warning("Skipping unsupported component: " + componentKeyName);
+                    continue;
+                }
+                Gson gson = new Gson();
+                JsonElement json = gson.toJsonTree(component.getValue());
+
+                ItemAdapter apply = DataComponentAPI.api().adapter(item);
+
+                apply.setToJson(componentType, json);
+                item =  apply.build();
+                //SXItem.getInst().getLogger().info(apply.serialize().toString());
             }
+
         }
 
         return item;

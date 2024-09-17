@@ -222,23 +222,23 @@ Default-3:
       - 1: "Lore"
       - 2: ~
 
-Default-4:
-  Type: Import
-  Item:
-    ==: org.bukkit.inventory.ItemStack
-    type: APPLE
-    meta:
-      ==: ItemMeta
-      meta-type: UNSPECIFIC
-      display-name: §7Import类型的苹果
-      lore:
-        - §7一个Type类型为 Import 的物品
-        - ''
-        - §c如何保存这种类型的物品?§7
-        - ''
-        - §7/sx save 编号 Import
-        - ''
-        - §c它不支持自动更新§7
+#Default-4:
+#  Type: Import
+#  Item:
+#    ==: org.bukkit.inventory.ItemStack
+#    type: APPLE
+#    meta:
+#      ==: ItemMeta
+#      meta-type: UNSPECIFIC
+#      display-name: §7Import类型的苹果
+#      lore:
+#        - §7一个Type类型为 Import 的物品
+#        - ''
+#        - §c如何保存这种类型的物品?§7
+#        - ''
+#        - §7/sx save 编号 Import
+#        - ''
+#        - §c它不支持自动更新§7
 
 Default-5:
   Name: '&b慢剑'
