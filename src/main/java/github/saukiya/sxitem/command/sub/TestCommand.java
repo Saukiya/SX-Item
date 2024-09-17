@@ -113,7 +113,7 @@ public class TestCommand extends SubCommand {
                 .suggestCommand("喵喵喵")
                 .send(player);
         player.sendMessage("调用MessageUtil通过");
-        itemStack.setAmount(0);
+//        itemStack.setAmount(0);
 
         player.sendMessage("基本测试完毕");
     }

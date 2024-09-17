@@ -16,9 +16,9 @@
 #
 #
 
-ComponentGuide1:
+ComponentGuide-1:
   ID: DIAMOND
-  Name: "组件教程1"
+  Name: "组件教程-1"
   Amount: 99
   #组件
   Components:

@@ -1,6 +1,6 @@
 package github.saukiya.sxitem.util;
 
-import com.mojang.serialization.Codec;
+import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.nbt.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
@@ -27,9 +27,11 @@ public class NbtUtil_v1_21_R1 extends NbtUtil {
 
     public NBTTagCompound getItemNBT(net.minecraft.world.item.ItemStack itemStack) {
         PatchedDataComponentMap dataComponentMap = (PatchedDataComponentMap) itemStack.a();
-        System.out.println("dataComponentMap.component");
+        SXItem.getInst().getLogger().config("dataComponentMap.component");
         for (TypedDataComponent<?> component : dataComponentMap) {
-            System.out.println("\t" + component.a() + " - " + component.b().getClass().getSimpleName() + "\t" + component.b());
+            DataComponentType<?> key = component.a();
+            Object value = component.b();
+            SXItem.getInst().getLogger().config(key + "\t" + value.getClass().getSimpleName() + "\t" + value);
         }
 
         CustomData data = dataComponentMap.a(DataComponents.b);
