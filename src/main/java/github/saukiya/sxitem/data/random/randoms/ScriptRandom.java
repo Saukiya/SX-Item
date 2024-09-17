@@ -17,8 +17,7 @@ public class ScriptRandom implements IRandom {
 
     @Override
     public String replace(String key, RandomDocker docker) {
-        // <j:script.function#666,1,aaa>
-        // key = script.function#666,1,aaa
+        if (!SXItem.getScriptManager().isEnabled()) return null;
         Matcher matcher = pattern.matcher(key);
         if (matcher.matches()) {
             Object[] args = matcher.group(3).split(",");
