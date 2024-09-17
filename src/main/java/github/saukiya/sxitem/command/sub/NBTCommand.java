@@ -32,10 +32,6 @@ public class NBTCommand extends SubCommand {
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         Player player = (Player) sender;
-//        if (NMS.compareTo(1, 21, 1) >= 0) {
-//            MessageUtil.send(player, "This Version No Support");
-//            return;
-//        }
         ItemStack item = player.getEquipment().getItemInHand();
         if (item.getType() != Material.AIR) {
             if (args.length < 2 || args[1].equals("all")) {

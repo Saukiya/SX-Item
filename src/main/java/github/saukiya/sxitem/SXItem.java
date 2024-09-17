@@ -12,6 +12,7 @@ import github.saukiya.sxitem.data.random.randoms.ScriptRandom;
 import github.saukiya.sxitem.helper.MythicMobsHelper;
 import github.saukiya.sxitem.helper.PlaceholderHelper;
 import github.saukiya.sxitem.util.*;
+import kr.toxicity.libraries.datacomponent.DataComponentAPIBukkit;
 import lombok.Getter;
 import lombok.Setter;
 import org.bstats.bukkit.Metrics;
@@ -58,9 +59,10 @@ public class SXItem extends JavaPlugin {
         mainCommand = new MainCommand(this);
         mainCommand.register(new GiveCommand());
         mainCommand.register(new SaveCommand());
-        mainCommand.register(new NBTCommand());
         mainCommand.register(new ScriptCommand());
         mainCommand.register(new ReloadCommand());
+        mainCommand.register(new NBTCommand());
+
 
         ItemManager.loadMaterialData();
         ItemManager.register("Default", GeneratorDefault::new, GeneratorDefault.saveFunc());
@@ -82,6 +84,11 @@ public class SXItem extends JavaPlugin {
         new Metrics(this, 11948);
         long oldTimes = System.currentTimeMillis();
         NbtUtil.getInst();
+        //加载组件API
+        if (NMS.compareTo(1, 20, 5) >= 0) {
+            DataComponentAPIBukkit.load();
+        }
+
         ItemUtil.getInst();
         MessageUtil.getInst();
 

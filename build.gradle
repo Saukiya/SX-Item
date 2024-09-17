@@ -17,16 +17,19 @@ allprojects {
         maven { url "https://mvn.lumine.io/repository/maven-public/" }
         //bStats-bukkit
         maven { url 'https://repo.codemc.org/repository/maven-public' }
+        //Paper Api
+        maven { url 'https://repo.papermc.io/repository/maven-public/' }
+
     }
 
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 
     dependencies {
-        compileOnly 'org.projectlombok:lombok:1.18.30'
-        annotationProcessor 'org.projectlombok:lombok:1.18.30'
-        testImplementation 'org.projectlombok:lombok:1.18.30'
-        testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
+        compileOnly 'org.projectlombok:lombok:1.18.34'
+        annotationProcessor 'org.projectlombok:lombok:1.18.34'
+        testImplementation 'org.projectlombok:lombok:1.18.34'
+        testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
     }
 
     tasks.withType(JavaCompile) {
@@ -48,14 +51,17 @@ subprojects {
 }
 
 dependencies {
-    compileOnly fileTree("Module-NMS-V1_20_R1/lib")
+    compileOnly fileTree("Module-NMS-V1_21_R1/lib")
     implementation 'org.bstats:bstats-bukkit:2.2.1'
     compileOnly 'org.openjdk.nashorn:nashorn-core:15.4'
     compileOnly 'io.lumine.xikage:MythicMobs:4.12.0'
     compileOnly 'io.lumine:Mythic-Dist:5.2.1'
     compileOnly 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
 
-    testImplementation fileTree("Module-NMS-V1_20_R1/lib")
+    //Component api
+    implementation("com.github.Lounode:DataComponentAPI:-SNAPSHOT")
+
+    testImplementation fileTree("Module-NMS-V1_21_R1/lib")
     testImplementation 'com.google.guava:guava:31.0.1-jre'
 }
 
@@ -79,7 +85,13 @@ task buildLastJar(type: Copy) {
     into("$rootDir").rename { "${project.name}-Latest.jar" }
 
 }
+//本地测试服务器
+task buildDebugJar(type: Copy) {
+    dependsOn shadowJar
+    from shadowJar.archiveFile.get().asFile.path
+    into("$rootDir/run/plugins").rename { "${project.name}-Debug.jar" }
 
+}
 
 //需要对资源文件中含有的'$'进行转义: $ -> \$
 processResources {

@@ -1,5 +1,7 @@
 package github.saukiya.sxitem.data.item.sub;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.item.IGenerator;
 import github.saukiya.sxitem.data.item.IUpdate;
@@ -8,6 +10,10 @@ import github.saukiya.sxitem.data.random.INode;
 import github.saukiya.sxitem.data.random.RandomDocker;
 import github.saukiya.sxitem.nbt.*;
 import github.saukiya.sxitem.util.*;
+import kr.toxicity.libraries.datacomponent.api.DataComponentAPI;
+import kr.toxicity.libraries.datacomponent.api.DataComponentType;
+import kr.toxicity.libraries.datacomponent.api.ItemAdapter;
+import kr.toxicity.libraries.datacomponent.api.Registry;
 import lombok.Getter;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -21,7 +27,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
@@ -167,7 +172,8 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         // TODO 这玩意最好整合到ItemUtil里做NMS
         if (NMS.compareTo(1, 11, 1) >= 0 && meta instanceof PotionMeta) {
             if (config.isString("Potion")) {
-                ((PotionMeta) meta).setBasePotionData(new PotionData(PotionType.valueOf(docker.replace(config.getString("Potion", "UNCRAFTABLE")))));
+                //TODO 临时禁用
+                //((PotionMeta) meta).setBasePotionData(new PotionData(PotionType.valueOf(docker.replace(config.getString("Potion", "UNCRAFTABLE")))));
             } else {
                 ConfigurationSection potionConfig = config.getConfigurationSection("Potion");
                 if (potionConfig != null) {
@@ -213,13 +219,52 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
                 );
             }
         }
-
         NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item);
         wrapper.setAll((TagCompoundBase) docker.replace(nbt));
 
         docker.getLockMap().forEach((key, value) -> wrapper.set(SXItem.getInst().getName() + ".Lock." + key, value));
 
         wrapper.save();
+
+        //组件支持
+        if (config.contains("Components")) {
+            List<Map<?, ?>> components = config.getMapList("Components");
+            for (Map<?, ?> componentWrapper : components) {
+                Map.Entry<?, ?> component = componentWrapper.entrySet().iterator().next();
+                String componentKey = (String) component.getKey();
+                String componentKeyNamespace = "minecraft";
+                String componentKeyName;
+                if (componentKey.contains(":")) {
+                    componentKeyNamespace = componentKey.split(":")[0];
+                    componentKeyName = componentKey.split(":")[1];
+                } else {
+                    componentKeyName = componentKey;
+                }
+
+                //TODO 支持数据包与MOD的组件
+                if (!"minecraft".equals(componentKeyNamespace)) {
+                    SXItem.getInst().getLogger().warning(
+                            "Skipping unsupported component: " + componentKeyNamespace + ":" + componentKeyName);
+                    continue;
+                }
+
+                DataComponentType<?> componentType = DataComponentType.registry().get(componentKeyName);
+                if (componentType == null) {
+                    SXItem.getInst().getLogger().warning("Skipping unsupported component: " + componentKeyName);
+                    continue;
+                }
+                Gson gson = new Gson();
+                JsonElement json = gson.toJsonTree(component.getValue());
+
+                ItemAdapter apply = DataComponentAPI.api().adapter(item);
+
+                apply.setToJson(componentType, json);
+                item =  apply.build();
+                //SXItem.getInst().getLogger().info(apply.serialize().toString());
+            }
+
+        }
+
         return item;
     }
 
