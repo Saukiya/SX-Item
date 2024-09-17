@@ -61,11 +61,8 @@ public class SXItem extends JavaPlugin {
         mainCommand.register(new SaveCommand());
         mainCommand.register(new ScriptCommand());
         mainCommand.register(new ReloadCommand());
-        if (NMS.compareTo(1, 20, 5) < 0) {
-            mainCommand.register(new NBTCommand());
-        } else {
-            //TODO Component command
-        }
+        mainCommand.register(new NBTCommand());
+
 
         ItemManager.loadMaterialData();
         ItemManager.register("Default", GeneratorDefault::new, GeneratorDefault.saveFunc());
