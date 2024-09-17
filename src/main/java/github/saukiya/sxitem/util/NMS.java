@@ -127,7 +127,7 @@ class Data {
     protected static final Map<Class<? extends NMS>, NMS> INST_MAP = new HashMap<>();
     protected static final Map<Class<?>, Map<String, Field>> FIELD_CACHE_MAP = new HashMap<>();
     protected static final Map<Class<?>, Class<?>> CLASS_WRAPS_MAP = new HashMap<>();
-    protected static final String VERSION = Bukkit.getServer() != null ? Bukkit.getServer().getClass().getPackage().getName().split("^.+\\.")[1] : "v1_17_R1";
+    protected static String VERSION;
     protected static final Pattern VERSION_PATTERN = Pattern.compile("v(\\d+)_(\\d+)_R(\\d+)");
     protected static final int[] thisVersionSplit;
 
@@ -141,9 +141,48 @@ class Data {
         CLASS_WRAPS_MAP.put(float.class, Float.class);
         CLASS_WRAPS_MAP.put(double.class, Double.class);
         CLASS_WRAPS_MAP.put(long.class, Long.class);
-        Matcher matcher = VERSION_PATTERN.matcher(VERSION);
-        matcher.matches();
-        thisVersionSplit = IntStream.range(0, matcher.groupCount()).map(i -> Integer.parseInt(matcher.group(i + 1))).toArray();
+        thisVersionSplit = getVersion();
+        VERSION = "v" + thisVersionSplit[0] + "_" + thisVersionSplit[1] + "_R" + thisVersionSplit[2];
+    }
+
+
+    /**
+     * @see <a href="https://forums.papermc.io/threads/important-dev-psa-future-removal-of-cb-package-relocation.1106/">PaperMC: Important dev PSA: Future removal of CB package relocation</a></br>
+     * After Minecraft Version 1.20.5 PapaerMC removed the CraftBukkit package relocation (e.g. v1_20_R3)</br>
+     * So we have to use a method to detect and solve this problem
+     *
+     * @return {@code int[]}
+     * @author Lounode
+     * @date 2024/09/14
+     */
+    private static int[] getVersion() {
+        String oldVersionSource = Bukkit.getServer() != null ? Bukkit.getServer().getClass().getPackage().getName().split("^.+\\.")[1] : "v1_17_R1";
+
+        Matcher matcher = VERSION_PATTERN.matcher(oldVersionSource);
+        if (!matcher.matches()) {
+            if (isPaper()) {
+                String newVersionSource = Bukkit.getServer().getBukkitVersion();
+                String newVersion = newVersionSource.split("-")[0];
+                Pattern pattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)");
+                Matcher mc = pattern.matcher(newVersion);
+                mc.matches();
+
+                return IntStream.range(0, mc.groupCount()).map(i -> Integer.parseInt(mc.group(i + 1))).toArray();
+            }
+        }
+        int[] oldVersionSplit = IntStream.range(0, matcher.groupCount()).map(i -> Integer.parseInt(matcher.group(i + 1))).toArray();
+
+        return oldVersionSplit;
+    }
+
+    private static boolean isPaper() {
+        boolean isPaper = false;
+        try {
+            Class.forName("com.destroystokyo.paper.ParticleBuilder");
+            isPaper = true;
+        } catch (ClassNotFoundException ignored) {
+        }
+        return isPaper;
     }
 
     protected static boolean checkClass(@Nonnull Class<?> c1, @NonNull Class<?> c2) {
