@@ -27,18 +27,9 @@ public class NbtUtil_v1_21_R1 extends NbtUtil {
 
     public NBTTagCompound getItemNBT(net.minecraft.world.item.ItemStack itemStack) {
         PatchedDataComponentMap dataComponentMap = (PatchedDataComponentMap) itemStack.a();
-        SXItem.getInst().getLogger().config("dataComponentMap.component");
-        for (TypedDataComponent<?> component : dataComponentMap) {
-            DataComponentType<?> key = component.a();
-            Object value = component.b();
-            SXItem.getInst().getLogger().config(key + "\t" + value.getClass().getSimpleName() + "\t" + value);
-        }
-
         CustomData data = dataComponentMap.a(DataComponents.b);
         NBTTagCompound nbtTagCompound = data != null ? data.d() : new NBTTagCompound();
-//        NBTTagCompound nbtTagCompound = data != null ? data.c() :new NBTTagCompound();
         return nbtTagCompound;
-//        return itemStack.v();
     }
 
     public void setItemNBT(net.minecraft.world.item.ItemStack itemStack, NBTTagCompound nbtTagCompound) {
