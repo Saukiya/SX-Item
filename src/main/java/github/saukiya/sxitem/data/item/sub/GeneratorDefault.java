@@ -232,8 +232,8 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
 
         wrapper.save();
 
-        //组件支持
-        if (config.contains("Components")) {
+        // TODO 仅支持Paper
+        if (config.contains("Components") && NMS.hasClass("com.destroystokyo.paper.ParticleBuilder")) {
             List<Map<?, ?>> components = config.getMapList("Components");
             for (Map<?, ?> componentWrapper : components) {
                 Map.Entry<?, ?> component = componentWrapper.entrySet().iterator().next();
