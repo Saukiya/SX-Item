@@ -56,8 +56,8 @@ public class ScriptManager {
                 Arrays.stream(defaultFile).forEach(fileName -> plugin.saveResource(fileName, true));
             }
             initEngine();
-            loadScriptFile(scriptFiles);
             enabled = true;
+            loadScriptFile(scriptFiles);
         } catch (Exception e) {
             if (e instanceof NullPointerException) {
                 plugin.getLogger().info("Scripts Disabled");

@@ -5,7 +5,10 @@ import github.saukiya.sxitem.command.SenderType;
 import github.saukiya.sxitem.command.SubCommand;
 import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.nbt.*;
-import github.saukiya.sxitem.util.*;
+import github.saukiya.sxitem.util.ComponentBuilder;
+import github.saukiya.sxitem.util.Message;
+import github.saukiya.sxitem.util.MessageUtil;
+import github.saukiya.sxitem.util.NbtUtil;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -85,7 +88,7 @@ public class NBTCommand extends SubCommand {
                     typeShow += "-" + tagList.get(0).getTypeId();
                 nbtShow = ((TagList) tagBase).stream().flatMap(tag -> Arrays.stream(tag.getValue().toString().split("\n"))).collect(Collectors.joining("\n"));
             } else {
-                nbtShow = entry.getValue().getValue().toString();
+                nbtShow = entry.getValue().toString();
             }
             MessageUtil.getInst().componentBuilder().add("§7- ").add("§c[Type-" + typeShow.charAt(0) + "]").show(typeShow).add(" ").add("§7" + path).suggestCommand(path).show(nbtShow).send(sender);
         }

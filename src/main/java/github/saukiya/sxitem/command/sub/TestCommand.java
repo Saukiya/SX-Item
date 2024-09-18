@@ -6,6 +6,7 @@ import github.saukiya.sxitem.command.SubCommand;
 import github.saukiya.sxitem.nbt.NBTItemWrapper;
 import github.saukiya.sxitem.nbt.TagCompound;
 import github.saukiya.sxitem.util.MessageUtil;
+import github.saukiya.sxitem.util.NMS;
 import github.saukiya.sxitem.util.NbtUtil;
 import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.bukkit.Bukkit;
@@ -54,9 +55,9 @@ public class TestCommand extends SubCommand {
 
         NBTItemWrapper itemWrapper = NbtUtil.getInst().getItemTagWrapper(itemStack);
         itemWrapper.set("test.string", "2333");
-        itemWrapper.set("test.byte[]", new byte[]{1, 5, 10, 50, 100});
-        itemWrapper.set("test.int[]", new int[]{1, 50, 100, 5000, 10000});
-        itemWrapper.set("test.long[]", new long[]{1, 500, 10000, 5000000, 100000000});
+        itemWrapper.set("test.byteArray", new byte[]{1, 5, 10, 50, 100});
+        itemWrapper.set("test.intArray", new int[]{1, 50, 100, 5000, 10000});
+        itemWrapper.set("test.longArray", new long[]{1, 500, 10000, 5000000, 100000000});
         itemWrapper.set("test.boolean", true);
         itemWrapper.set("test.byte", (byte) 50);
         itemWrapper.set("test.short", (byte) 100);
@@ -68,7 +69,7 @@ public class TestCommand extends SubCommand {
         TagCompound compound = new TagCompound();
         compound.set("string-1", "描述1");
         compound.set("string-2", "描述2");
-        itemWrapper.set("test.NbtList", Arrays.asList(compound, compound));
+        itemWrapper.set("test.nbtList", Arrays.asList(compound, compound));
         itemWrapper.save();
         player.sendMessage("设置NBT物品通过");
 
@@ -76,9 +77,9 @@ public class TestCommand extends SubCommand {
         TagCompound tagCompound = NbtUtil.getInst().toTag(itemWrapper);
         Map<String, Object> map = new HashMap<>();
         map.put("test.string", tagCompound.getString("test.string"));
-        map.put("test.byte[]", tagCompound.getByteArray("test.byte[]"));
-        map.put("test.int[]", tagCompound.getIntArray("test.int[]"));
-        map.put("test.long[]", tagCompound.getLongArray("test.long[]"));
+        map.put("test.byteArray", tagCompound.getByteArray("test.byteArray"));
+        map.put("test.intArray", tagCompound.getIntArray("test.intArray"));
+        map.put("test.longArray", tagCompound.getLongArray("test.longArray"));
         map.put("test.boolean", tagCompound.getBoolean("test.boolean"));
         map.put("test.byte", tagCompound.getByte("test.byte"));
         map.put("test.short", tagCompound.getShort("test.short"));
@@ -87,7 +88,7 @@ public class TestCommand extends SubCommand {
         map.put("test.float", tagCompound.getFloat("test.float"));
         map.put("test.double", tagCompound.getDouble("test.double"));
         map.put("test.stringList", tagCompound.getStringList("test.stringList"));
-        map.put("test.NbtList", tagCompound.getList("test.NbtList"));
+        map.put("test.nbtList", tagCompound.getList("test.nbtList"));
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             if (entry.getValue() == null) {
                 player.sendMessage("Error: " + entry.getKey());
@@ -98,6 +99,12 @@ public class TestCommand extends SubCommand {
 
         MessageUtil.getInst().sendTitle(player, "测试Title", "fadein:20 stay:100 fadeOut: 100", 20, 100, 100);
         MessageUtil.getInst().sendActionBar(player, "测试ActionBar");
+
+        // 1.11.2以下不支持在componentBuilder中带有long[]类型的nbt
+        if (NMS.compareTo(1, 11, 2) >= 0) {
+            itemWrapper.remove("test.longArray");
+            itemWrapper.save();
+        }
 
         MessageUtil.getInst().componentBuilder()
                 .add("测试ComponentBuilder: ")
