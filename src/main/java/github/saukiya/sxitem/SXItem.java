@@ -2,13 +2,12 @@ package github.saukiya.sxitem;
 
 import github.saukiya.sxitem.command.MainCommand;
 import github.saukiya.sxitem.command.sub.*;
+import github.saukiya.sxitem.data.ScriptManager;
 import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.data.item.sub.GeneratorDefault;
 import github.saukiya.sxitem.data.item.sub.GeneratorImport;
 import github.saukiya.sxitem.data.random.RandomManager;
-import github.saukiya.sxitem.data.ScriptManager;
 import github.saukiya.sxitem.data.random.randoms.*;
-import github.saukiya.sxitem.data.random.randoms.ScriptRandom;
 import github.saukiya.sxitem.helper.MythicMobsHelper;
 import github.saukiya.sxitem.helper.PlaceholderHelper;
 import github.saukiya.sxitem.util.*;
