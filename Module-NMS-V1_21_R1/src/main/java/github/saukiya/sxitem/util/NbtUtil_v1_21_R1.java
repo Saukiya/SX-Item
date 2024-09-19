@@ -1,26 +1,29 @@
 package github.saukiya.sxitem.util;
 
-import github.saukiya.sxitem.SXItem;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.JavaOps;
 import github.saukiya.sxitem.nbt.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
 import lombok.SneakyThrows;
-import net.minecraft.core.component.*;
+import net.minecraft.core.IRegistryCustom;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.nbt.*;
 import net.minecraft.world.item.component.CustomData;
 import org.apache.commons.lang.Validate;
-import org.bukkit.NamespacedKey;
-import org.bukkit.block.Block;
-import org.bukkit.block.TileState;
+import org.bukkit.craftbukkit.v1_21_R1.CraftRegistry;
 import org.bukkit.craftbukkit.v1_21_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataContainer;
 
 import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.lang.reflect.Array;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,17 +35,25 @@ public class NbtUtil_v1_21_R1 extends NbtUtil {
     @Override
     public void test(Object... args) {
         super.test(args);
-        if (args[0] instanceof Block block) {
-            SXItem.getInst().getLogger().info("Type: " + block.getType());
-            // 获取方块的 NBT 数据
-            if (block.getState() instanceof TileState tileState) {
-                PersistentDataContainer persistentData = tileState.getPersistentDataContainer(); // CraftPersistentDataContainer
-                // 获取 NBT 数据
-                for (NamespacedKey key : persistentData.getKeys()) {
-                    SXItem.getInst().getLogger().info(key + "\t" + tileState.getPersistentDataContainer());
-                }
-            }
-        }
+        ItemStack itemStack = (ItemStack) args[0];
+        IRegistryCustom registry = CraftRegistry.getMinecraftRegistry();
+        DynamicOps<Object> dynamicOps = registry.a(JavaOps.INSTANCE);
+        net.minecraft.world.item.ItemStack nmsCopy = CraftItemStack.asNMSCopy(itemStack);
+        DataComponentPatch dataComponentPatch = nmsCopy.d();
+//        Object encodeResult = DataComponentPatch.b.encode(dataComponentPatch, dynamicOps, dynamicOps.emptyMap()).getOrThrow();
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("minecraft:item_name", "默认名称(无法被铁砧修改)");
+        map.put("minecraft:custom_name", "带稀有度颜色的名称(可铁砧修改)§c红色");
+        map.put("minecraft:rarity", "epic");
+//        DataComponentMap dataComponentMap = nmsCopy.a();
+//        Object encodeResult = DataComponentMap.b.encode(dataComponentMap, dynamicOps, dynamicOps.emptyMap()).getOrThrow();
+//        SXItem.getInst().getLogger().info("dataResult: " + encodeResult);
+        DataComponentMap decodeResult = DataComponentMap.b.decode(dynamicOps, map).getOrThrow().getFirst();
+//        SXItem.getInst().getLogger().warning("dataResult: " + decodeResult);
+        nmsCopy.b(decodeResult);
+//        SXItem.getInst().getLogger().info("nmsCopy.a: " + nmsCopy.a());
+        itemStack.setItemMeta(CraftItemStack.getItemMeta(nmsCopy));
     }
 
     public NBTTagCompound getItemNBT(net.minecraft.world.item.ItemStack itemStack) {

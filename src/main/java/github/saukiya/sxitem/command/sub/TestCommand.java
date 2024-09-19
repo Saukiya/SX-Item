@@ -1,7 +1,6 @@
 package github.saukiya.sxitem.command.sub;
 
 import github.saukiya.sxitem.SXItem;
-import github.saukiya.sxitem.command.SenderType;
 import github.saukiya.sxitem.command.SubCommand;
 import github.saukiya.sxitem.nbt.NBTItemWrapper;
 import github.saukiya.sxitem.nbt.TagCompound;
@@ -31,7 +30,6 @@ public class TestCommand extends SubCommand {
         Player player = null;
         if (sender instanceof Player) {
             player = (Player) sender;
-            NbtUtil.getInst().test(player.getLocation().add(0, -1.5, 0).getBlock(), Bukkit.getServer());
             sender.sendMessage(Arrays.toString(args));
             if (args.length > 1) {
                 switch (args[1]) {
@@ -49,6 +47,8 @@ public class TestCommand extends SubCommand {
         } else {
             itemStack = SXItem.getItemManager().getItem(args.length > 1 ? args[1] : "Default-1", null);
         }
+        NbtUtil.getInst().test(itemStack);
+        if (true) return;
 
         for (String key : SXItem.getItemManager().getItemList()) {
             try {

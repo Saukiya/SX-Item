@@ -13,7 +13,6 @@ import github.saukiya.sxitem.util.*;
 import kr.toxicity.libraries.datacomponent.api.DataComponentAPI;
 import kr.toxicity.libraries.datacomponent.api.DataComponentType;
 import kr.toxicity.libraries.datacomponent.api.ItemAdapter;
-import kr.toxicity.libraries.datacomponent.api.Registry;
 import lombok.Getter;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -29,11 +28,12 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.potion.PotionType;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author Saukiya
