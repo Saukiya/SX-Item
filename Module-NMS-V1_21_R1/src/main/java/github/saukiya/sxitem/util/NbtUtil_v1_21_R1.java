@@ -1,13 +1,15 @@
 package github.saukiya.sxitem.util;
 
-import github.saukiya.sxitem.nbt.*;
+import github.saukiya.sxitem.nbt.NBTItemWrapper;
+import github.saukiya.sxitem.nbt.NBTTagWrapper;
+import github.saukiya.sxitem.nbt.TagBase;
+import github.saukiya.sxitem.nbt.TagCompound;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
 import lombok.SneakyThrows;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.nbt.*;
 import net.minecraft.world.item.component.CustomData;
 import org.apache.commons.lang.Validate;
@@ -25,21 +27,6 @@ import java.util.stream.IntStream;
 
 public class NbtUtil_v1_21_R1 extends NbtUtil {
 
-    public NBTTagCompound getItemNBT(net.minecraft.world.item.ItemStack itemStack) {
-        PatchedDataComponentMap dataComponentMap = (PatchedDataComponentMap) itemStack.a();
-        CustomData data = dataComponentMap.a(DataComponents.b);
-        return data != null ? data.d() : new NBTTagCompound();
-    }
-
-    public void setItemNBT(net.minecraft.world.item.ItemStack itemStack, NBTTagCompound nbtTagCompound) {
-        itemStack.b(DataComponents.b, CustomData.a(nbtTagCompound));
-    }
-
-    @Override
-    public NBTTagCompound getItemNBT(ItemStack itemStack) {
-        return getItemNBT(CraftItemStack.asNMSCopy(itemStack));
-    }
-
     @Override
     public NBTItemWrapper getItemTagWrapper(ItemStack itemStack) {
         return new NBTItemWrapperImpl(itemStack);
@@ -50,17 +37,34 @@ public class NbtUtil_v1_21_R1 extends NbtUtil {
         return new NBTTagWrapperImpl((NBTTagCompound) nbtTagCompound);
     }
 
+    @Override
+    public net.minecraft.world.item.ItemStack getNMSItem(ItemStack itemStack) {
+        return CraftItemStack.asNMSCopy(itemStack);
+    }
+
+    @Override
+    public void setNMSItem(ItemStack itemStack, Object nmsItem) {
+        itemStack.setItemMeta(CraftItemStack.getItemMeta((net.minecraft.world.item.ItemStack) nmsItem));
+    }
+
+    @Override
+    public NBTTagCompound getNMSItemNBT(Object nmsItem) {
+        var dataComponentMap = ((net.minecraft.world.item.ItemStack) nmsItem).a();
+        CustomData data = dataComponentMap.a(DataComponents.b);
+        return data != null ? data.d() : new NBTTagCompound();
+    }
+
+    @Override
+    public NBTTagCompound getItemNBT(ItemStack itemStack) {
+        return getNMSItemNBT(getNMSItem(itemStack));
+    }
+
     @SneakyThrows
     @Override
     public TagCompound asTagCompoundCopy(Object nbtTagCompound) {
         ByteBuf buf = Unpooled.buffer();
         NBTCompressedStreamTools.a((NBTTagCompound) nbtTagCompound, (DataOutput) new ByteBufOutputStream(buf));
         return (TagCompound) readTagBase(new ByteBufInputStream(buf));
-    }
-
-    @Override
-    public NBTTagCompound parseNMSCompound(String json) throws Exception {
-        return MojangsonParser.a(json);
     }
 
     @SneakyThrows
@@ -72,8 +76,8 @@ public class NbtUtil_v1_21_R1 extends NbtUtil {
     }
 
     @Override
-    public TagBase toTag(Object obj) {
-        return TagType.toTag(obj instanceof NBTBase ? getNMSValue(obj) : obj);
+    public NBTTagCompound parseNMSCompound(String json) throws Exception {
+        return MojangsonParser.a(json);
     }
 
     @Override
@@ -82,7 +86,7 @@ public class NbtUtil_v1_21_R1 extends NbtUtil {
             switch (((NBTBase) nbtBase).c().b()) {
                 case "TAG_Compound":
                     NBTTagCompound nbtTagCompound = (NBTTagCompound) nbtBase;
-                    return nbtTagCompound.e().stream().collect(Collectors.toMap(key -> key, key -> getNMSValue(nbtTagCompound.c(key)), (a, b) -> b));
+                    return nbtTagCompound.e().stream().collect(Collectors.toMap(key -> key, key -> getNMSValue(nbtTagCompound.c(key))));
                 case "TAG_List":
                     return ((NBTTagList) nbtBase).stream().map(this::getNMSValue).collect(Collectors.toList());
                 case "TAG_Byte_Array":
@@ -107,7 +111,7 @@ public class NbtUtil_v1_21_R1 extends NbtUtil {
                     return ((NBTTagDouble) nbtBase).j();
             }
         }
-        return null;
+        return nbtBase;
     }
 
     @Override
@@ -162,26 +166,26 @@ public class NbtUtil_v1_21_R1 extends NbtUtil {
         ItemStack itemStack;
 
         private NBTItemWrapperImpl(ItemStack itemStack) {
-            this(itemStack, CraftItemStack.asNMSCopy(itemStack));
+            this(itemStack, getNMSItem(itemStack));
         }
 
         NBTItemWrapperImpl(ItemStack itemStack, net.minecraft.world.item.ItemStack nmsItem) {
-            super(((NbtUtil_v1_21_R1) NbtUtil_v1_21_R1.getInst()).getItemNBT(nmsItem));
-//          TODO  if (nmsItem.b()) throw new NullPointerException();
+            super(getNMSItemNBT(nmsItem));
+            if (nmsItem.e()) throw new NullPointerException();
             this.itemStack = itemStack;
             this.nmsItem = nmsItem;
         }
 
         @Override
         public void save() {
-            setItemNBT(nmsItem, getHandle());
-            itemStack.setItemMeta(CraftItemStack.getItemMeta(nmsItem));
+            nmsItem.b(DataComponents.b, CustomData.a(handle));
+            setNMSItem(itemStack, nmsItem);
         }
     }
 
     public class NBTTagWrapperImpl implements NBTTagWrapper {
 
-        private final NBTTagCompound handle;
+        final NBTTagCompound handle;
 
         private NBTTagWrapperImpl(NBTTagCompound tagCompound) {
             handle = tagCompound != null ? tagCompound : new NBTTagCompound();
@@ -250,11 +254,10 @@ public class NbtUtil_v1_21_R1 extends NbtUtil {
 
         @Override
         public void save(ItemStack itemStack) {
-            net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(itemStack);
-            if (nmsItem != null) {
-//              TODO  nmsItem.c(handle);
-                itemStack.setItemMeta(CraftItemStack.getItemMeta(nmsItem));
-            }
+            net.minecraft.world.item.ItemStack nmsItem = getNMSItem(itemStack);
+            if (nmsItem == null) return;
+            nmsItem.b(DataComponents.b, CustomData.a(handle));
+            setNMSItem(itemStack, nmsItem);
         }
 
         @Override

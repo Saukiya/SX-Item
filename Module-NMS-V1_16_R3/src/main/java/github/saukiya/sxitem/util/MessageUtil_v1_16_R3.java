@@ -23,7 +23,8 @@ public class MessageUtil_v1_16_R3 extends MessageUtil {
 
         @Override
         public ComponentBuilder show(ItemStack item) {
-            current.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new Item(item.getType().getKey().getKey(), item.getAmount(), ItemTag.ofNbt(String.valueOf(NbtUtil.getInst().getItemNBT(item))))));
+            Object nbt = NbtUtil.getInst().getItemNBT(item);
+            current.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new Item(item.getType().getKey().getKey(), item.getAmount(), ItemTag.ofNbt(String.valueOf(nbt)))));
             return this;
         }
     }

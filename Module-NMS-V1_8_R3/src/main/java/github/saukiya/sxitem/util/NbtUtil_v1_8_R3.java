@@ -1,6 +1,9 @@
 package github.saukiya.sxitem.util;
 
-import github.saukiya.sxitem.nbt.*;
+import github.saukiya.sxitem.nbt.NBTItemWrapper;
+import github.saukiya.sxitem.nbt.NBTTagWrapper;
+import github.saukiya.sxitem.nbt.TagBase;
+import github.saukiya.sxitem.nbt.TagCompound;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
@@ -24,11 +27,6 @@ import java.util.stream.IntStream;
 public class NbtUtil_v1_8_R3 extends NbtUtil {
 
     @Override
-    public NBTTagCompound getItemNBT(ItemStack itemStack) {
-        return CraftItemStack.asNMSCopy(itemStack).getTag();
-    }
-
-    @Override
     public NBTItemWrapper getItemTagWrapper(ItemStack itemStack) {
         return new NBTItemWrapperImpl(itemStack);
     }
@@ -38,17 +36,32 @@ public class NbtUtil_v1_8_R3 extends NbtUtil {
         return new NBTTagWrapperImpl((NBTTagCompound) nbtTagCompound);
     }
 
+    @Override
+    public net.minecraft.server.v1_8_R3.ItemStack getNMSItem(ItemStack itemStack) {
+        return CraftItemStack.asNMSCopy(itemStack);
+    }
+
+    @Override
+    public void setNMSItem(ItemStack itemStack, Object nmsItem) {
+        itemStack.setItemMeta(CraftItemStack.getItemMeta((net.minecraft.server.v1_8_R3.ItemStack) nmsItem));
+    }
+
+    @Override
+    public NBTTagCompound getNMSItemNBT(Object nmsItem) {
+        return ((net.minecraft.server.v1_8_R3.ItemStack) nmsItem).getTag();
+    }
+
+    @Override
+    public NBTTagCompound getItemNBT(ItemStack itemStack) {
+        return getNMSItemNBT(getNMSItem(itemStack));
+    }
+
     @SneakyThrows
     @Override
     public TagCompound asTagCompoundCopy(Object nbtTagCompound) {
         ByteBuf buf = Unpooled.buffer();
         NBTCompressedStreamTools.a((NBTTagCompound) nbtTagCompound, (DataOutput) new ByteBufOutputStream(buf));
         return (TagCompound) readTagBase(new ByteBufInputStream(buf));
-    }
-
-    @Override
-    public NBTTagCompound parseNMSCompound(String json) throws Exception {
-        return MojangsonParser.parse(json);
     }
 
     @SneakyThrows
@@ -60,8 +73,8 @@ public class NbtUtil_v1_8_R3 extends NbtUtil {
     }
 
     @Override
-    public TagBase toTag(Object obj) {
-        return TagType.toTag(obj instanceof NBTBase ? getNMSValue(obj) : obj);
+    public NBTTagCompound parseNMSCompound(String json) throws Exception {
+        return MojangsonParser.parse(json);
     }
 
     @Override
@@ -70,10 +83,10 @@ public class NbtUtil_v1_8_R3 extends NbtUtil {
             switch (((NBTBase) nbtBase).getTypeId()) {
                 case 10:
                     NBTTagCompound nbtTagCompound = (NBTTagCompound) nbtBase;
-                    return nbtTagCompound.c().stream().collect(Collectors.toMap(key -> key, key -> getNMSValue(nbtTagCompound.get(key)), (a, b) -> b));
+                    return nbtTagCompound.c().stream().collect(Collectors.toMap(key -> key, key -> getNMSValue(nbtTagCompound.get(key))));
                 case 9:
                     NBTTagList nbtTagList = (NBTTagList) nbtBase;
-                    return IntStream.range(0, nbtTagList.size()).mapToObj(i -> toTag(nbtTagList.g(i))).collect(Collectors.toCollection(TagList::new));
+                    return IntStream.range(0, nbtTagList.size()).mapToObj(i -> getNMSValue(nbtTagList.g(i))).collect(Collectors.toList());
                 case 7:
                     return ((NBTTagByteArray) nbtBase).c();
                 case 11:
@@ -94,7 +107,7 @@ public class NbtUtil_v1_8_R3 extends NbtUtil {
                     return ((NBTTagDouble) nbtBase).g();
             }
         }
-        return null;
+        return nbtBase;
     }
 
     @Override
@@ -152,26 +165,26 @@ public class NbtUtil_v1_8_R3 extends NbtUtil {
         ItemStack itemStack;
 
         private NBTItemWrapperImpl(ItemStack itemStack) {
-            this(itemStack, CraftItemStack.asNMSCopy(itemStack));
+            this(itemStack, getNMSItem(itemStack));
         }
 
         NBTItemWrapperImpl(ItemStack itemStack, net.minecraft.server.v1_8_R3.ItemStack nmsItem) {
-            super(nmsItem.getTag());
+            super(getNMSItemNBT(nmsItem));
             if (itemStack.getType() == Material.AIR) throw new NullPointerException();
             this.itemStack = itemStack;
             this.nmsItem = nmsItem;
-            if (!nmsItem.hasTag()) nmsItem.setTag(getHandle());
+            if (!nmsItem.hasTag()) nmsItem.setTag(handle);
         }
 
         @Override
         public void save() {
-            itemStack.setItemMeta(CraftItemStack.getItemMeta(nmsItem));
+            setNMSItem(itemStack, nmsItem);
         }
     }
 
     public class NBTTagWrapperImpl implements NBTTagWrapper {
 
-        private final NBTTagCompound handle;
+        final NBTTagCompound handle;
 
         private NBTTagWrapperImpl(NBTTagCompound tagCompound) {
             handle = tagCompound != null ? tagCompound : new NBTTagCompound();
@@ -241,10 +254,9 @@ public class NbtUtil_v1_8_R3 extends NbtUtil {
         @Override
         public void save(ItemStack itemStack) {
             net.minecraft.server.v1_8_R3.ItemStack nmsItem = CraftItemStack.asNMSCopy(itemStack);
-            if (nmsItem != null) {
-                nmsItem.setTag(handle);
-                itemStack.setItemMeta(CraftItemStack.getItemMeta(nmsItem));
-            }
+            if (nmsItem == null) return;
+            nmsItem.setTag(handle);
+            setNMSItem(itemStack, nmsItem);
         }
 
         @Override

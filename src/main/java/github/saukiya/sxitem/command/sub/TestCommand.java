@@ -67,8 +67,8 @@ public class TestCommand extends SubCommand {
                         )
                 )
         );
-        if (true) return;
 
+        long startTime = System.nanoTime();
         for (String key : SXItem.getItemManager().getItemList()) {
             try {
                 SXItem.getItemManager().getItem(key, player);
@@ -76,7 +76,7 @@ public class TestCommand extends SubCommand {
                 sender.sendMessage("物品: " + key + " 有问题");
             }
         }
-        sender.sendMessage("获取SX物品通过");
+        sender.sendMessage("获取SX物品通过-耗时: " + (startTime - System.nanoTime()) + " nano");
 
         NBTItemWrapper itemWrapper = NbtUtil.getInst().getItemTagWrapper(itemStack);
         itemWrapper.set("test.string", "2333");

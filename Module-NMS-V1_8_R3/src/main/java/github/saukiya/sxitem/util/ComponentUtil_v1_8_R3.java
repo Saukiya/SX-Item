@@ -3,20 +3,10 @@ package github.saukiya.sxitem.util;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import github.saukiya.sxitem.nbt.TagCompound;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.Collections;
 
 public class ComponentUtil_v1_8_R3 extends ComponentUtil {
-    @Override
-    public Object getNMSCopyItem(ItemStack itemStack) {
-        return null;
-    }
-
-    @Override
-    public void setBukkitItem(ItemStack itemStack, Object nmsCopyItem) {
-
-    }
 
     @Override
     public Object getDataComponentMap(Object nmsCopyItem) {
