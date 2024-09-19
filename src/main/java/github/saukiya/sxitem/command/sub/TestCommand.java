@@ -4,6 +4,7 @@ import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.command.SubCommand;
 import github.saukiya.sxitem.nbt.NBTItemWrapper;
 import github.saukiya.sxitem.nbt.TagCompound;
+import github.saukiya.sxitem.util.ComponentUtil;
 import github.saukiya.sxitem.util.MessageUtil;
 import github.saukiya.sxitem.util.NMS;
 import github.saukiya.sxitem.util.NbtUtil;
@@ -47,7 +48,25 @@ public class TestCommand extends SubCommand {
         } else {
             itemStack = SXItem.getItemManager().getItem(args.length > 1 ? args[1] : "Default-1", null);
         }
-        NbtUtil.getInst().test(itemStack);
+//        NbtUtil.getInst().test(itemStack);
+
+        Object nmsCopyItem = ComponentUtil.getInst().getNMSCopyItem(itemStack);
+        Map<String, Object> input = new HashMap<>();
+        input.put("minecraft:item_name", "默认名称(无法被铁砧修改)");
+        input.put("minecraft:custom_name", "带稀有度颜色的名称(可铁砧修改)§c红色");
+        input.put("minecraft:rarity", "epic");
+        Object inputComponentMap = ComponentUtil.getInst().valueToMap(input);
+        ComponentUtil.getInst().setDataComponentMap(nmsCopyItem, inputComponentMap);
+        ComponentUtil.getInst().setBukkitItem(itemStack, nmsCopyItem);
+
+        SXItem.getInst().getLogger().info(
+                "mapToJson: " +
+                ComponentUtil.getInst().mapToJson(
+                        ComponentUtil.getInst().getDataComponentMap(
+                                ComponentUtil.getInst().getNMSCopyItem(itemStack)
+                        )
+                )
+        );
         if (true) return;
 
         for (String key : SXItem.getItemManager().getItemList()) {

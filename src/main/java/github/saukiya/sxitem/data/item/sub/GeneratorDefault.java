@@ -225,6 +225,16 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
                 );
             }
         }
+
+        if (config.isConfigurationSection("Components")) {
+            Map<String, Object> components = new HashMap<>();
+            converConfig(components, config.getConfigurationSection("Components"));
+            Object nmsCopyItem = ComponentUtil.getInst().getNMSCopyItem(item);
+            Object inputComponentMap = ComponentUtil.getInst().valueToMap(components);
+            ComponentUtil.getInst().setDataComponentMap(nmsCopyItem, inputComponentMap);
+            ComponentUtil.getInst().setBukkitItem(item, nmsCopyItem);
+        }
+
         NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item);
         wrapper.setAll((TagCompoundBase) docker.replace(nbt));
 
@@ -233,7 +243,7 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         wrapper.save();
 
         // TODO 仅支持Paper
-        if (config.contains("Components") && NMS.hasClass("com.destroystokyo.paper.ParticleBuilder")) {
+        if (config.contains("Components") && NMS.hasClass("com.destroystokyo.paper.ParticleBuilder") && false) {
             List<Map<?, ?>> components = config.getMapList("Components");
             for (Map<?, ?> componentWrapper : components) {
                 Map.Entry<?, ?> component = componentWrapper.entrySet().iterator().next();
@@ -272,6 +282,18 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         }
 
         return item;
+    }
+
+    public void converConfig(Map<String,Object> map, ConfigurationSection config) {
+        config.getValues(false).forEach((k,v) -> {
+            if (v instanceof ConfigurationSection) {
+                Map<String,Object> subComponents = new HashMap<>();
+                converConfig(subComponents, (ConfigurationSection) v);
+                map.put(k, subComponents);
+                return;
+            }
+            map.put(k, v);
+        });
     }
 
     @Override
