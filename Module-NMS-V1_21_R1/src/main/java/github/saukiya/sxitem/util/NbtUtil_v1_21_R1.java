@@ -1,29 +1,22 @@
 package github.saukiya.sxitem.util;
 
-import com.mojang.serialization.DynamicOps;
-import com.mojang.serialization.JavaOps;
 import github.saukiya.sxitem.nbt.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
 import lombok.SneakyThrows;
-import net.minecraft.core.IRegistryCustom;
-import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.nbt.*;
 import net.minecraft.world.item.component.CustomData;
 import org.apache.commons.lang.Validate;
-import org.bukkit.craftbukkit.v1_21_R1.CraftRegistry;
 import org.bukkit.craftbukkit.v1_21_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.lang.reflect.Array;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,30 +24,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class NbtUtil_v1_21_R1 extends NbtUtil {
-
-    @Override
-    public void test(Object... args) {
-        super.test(args);
-        ItemStack itemStack = (ItemStack) args[0];
-        IRegistryCustom registry = CraftRegistry.getMinecraftRegistry();
-        DynamicOps<Object> dynamicOps = registry.a(JavaOps.INSTANCE);
-        net.minecraft.world.item.ItemStack nmsCopy = CraftItemStack.asNMSCopy(itemStack);
-        DataComponentPatch dataComponentPatch = nmsCopy.d();
-//        Object encodeResult = DataComponentPatch.b.encode(dataComponentPatch, dynamicOps, dynamicOps.emptyMap()).getOrThrow();
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("minecraft:item_name", "默认名称(无法被铁砧修改)");
-        map.put("minecraft:custom_name", "带稀有度颜色的名称(可铁砧修改)§c红色");
-        map.put("minecraft:rarity", "epic");
-//        DataComponentMap dataComponentMap = nmsCopy.a();
-//        Object encodeResult = DataComponentMap.b.encode(dataComponentMap, dynamicOps, dynamicOps.emptyMap()).getOrThrow();
-//        SXItem.getInst().getLogger().info("dataResult: " + encodeResult);
-        DataComponentMap decodeResult = DataComponentMap.b.decode(dynamicOps, map).getOrThrow().getFirst();
-//        SXItem.getInst().getLogger().warning("dataResult: " + decodeResult);
-        nmsCopy.b(decodeResult);
-//        SXItem.getInst().getLogger().info("nmsCopy.a: " + nmsCopy.a());
-        itemStack.setItemMeta(CraftItemStack.getItemMeta(nmsCopy));
-    }
 
     public NBTTagCompound getItemNBT(net.minecraft.world.item.ItemStack itemStack) {
         PatchedDataComponentMap dataComponentMap = (PatchedDataComponentMap) itemStack.a();

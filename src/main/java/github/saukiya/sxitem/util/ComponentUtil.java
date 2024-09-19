@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack;
 public abstract class ComponentUtil implements NMS {
 
     @Getter
-    private final static ComponentUtil inst = NMS.getInst(ComponentUtil.class, "v1_21_R1", "v1_8_3");
+    private final static ComponentUtil inst = NMS.getInst(ComponentUtil.class, "v1_21_R1", "v1_8_R3");
 
     public abstract Object getNMSCopyItem(ItemStack itemStack);
     public abstract void setBukkitItem(ItemStack itemStack, Object nmsCopyItem);
