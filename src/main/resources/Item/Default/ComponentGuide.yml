@@ -20,6 +20,10 @@ ComponentGuide-1:
   ID: DIAMOND
   Name: "组件教程-1"
   Amount: 99
+  Lore:
+    - "&c该功能为 1.21.1 新增"
+    - "&c看到这段文本"
+    - "&c代表不支持组件功能"
   #组件
   Components:
     minecraft:item_name: '默认名称(无法被铁砧修改)'
