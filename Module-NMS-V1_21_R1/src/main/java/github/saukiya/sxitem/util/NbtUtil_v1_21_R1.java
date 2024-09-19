@@ -11,8 +11,12 @@ import net.minecraft.core.component.*;
 import net.minecraft.nbt.*;
 import net.minecraft.world.item.component.CustomData;
 import org.apache.commons.lang.Validate;
+import org.bukkit.NamespacedKey;
+import org.bukkit.block.Block;
+import org.bukkit.block.TileState;
 import org.bukkit.craftbukkit.v1_21_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataContainer;
 
 import java.io.DataInputStream;
 import java.io.DataOutput;
@@ -25,11 +29,26 @@ import java.util.stream.IntStream;
 
 public class NbtUtil_v1_21_R1 extends NbtUtil {
 
+    @Override
+    public void test(Object... args) {
+        super.test(args);
+        if (args[0] instanceof Block block) {
+            SXItem.getInst().getLogger().info("Type: " + block.getType());
+            // 获取方块的 NBT 数据
+            if (block.getState() instanceof TileState tileState) {
+                PersistentDataContainer persistentData = tileState.getPersistentDataContainer(); // CraftPersistentDataContainer
+                // 获取 NBT 数据
+                for (NamespacedKey key : persistentData.getKeys()) {
+                    SXItem.getInst().getLogger().info(key + "\t" + tileState.getPersistentDataContainer());
+                }
+            }
+        }
+    }
+
     public NBTTagCompound getItemNBT(net.minecraft.world.item.ItemStack itemStack) {
         PatchedDataComponentMap dataComponentMap = (PatchedDataComponentMap) itemStack.a();
         CustomData data = dataComponentMap.a(DataComponents.b);
-        NBTTagCompound nbtTagCompound = data != null ? data.d() : new NBTTagCompound();
-        return nbtTagCompound;
+        return data != null ? data.d() : new NBTTagCompound();
     }
 
     public void setItemNBT(net.minecraft.world.item.ItemStack itemStack, NBTTagCompound nbtTagCompound) {

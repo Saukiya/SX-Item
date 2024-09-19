@@ -21,37 +21,43 @@ import java.util.Map;
 public class TestCommand extends SubCommand {
     public TestCommand() {
         super("test", -1);
-        setType(SenderType.PLAYER);
         setHide();
     }
 
     @Override
     public void onCommand(CommandSender sender, String[] args) {
-        Player player = (Player) sender;
-        System.out.println(Arrays.toString(args));
-        if (args.length > 1) {
-            switch (args[1]) {
-                case "show":
-                    MessageUtil.getInst().componentBuilder().add(player.getEquipment().getItemInHand()).send(player);
-                    return;
-                case "tran":
-                    MessageUtil.getInst().componentBuilder().add(new TranslatableComponent(args.length > 2 ? args[2] : "null")).send(player);
-                    return;
+        ItemStack itemStack;
+        sender.sendMessage("*该指令用于测试插件运行是否正常*");
+        Player player = null;
+        if (sender instanceof Player) {
+            player = (Player) sender;
+            NbtUtil.getInst().test(player.getLocation().add(0, -1.5, 0).getBlock(), Bukkit.getServer());
+            sender.sendMessage(Arrays.toString(args));
+            if (args.length > 1) {
+                switch (args[1]) {
+                    case "show":
+                        MessageUtil.getInst().componentBuilder().add(player.getEquipment().getItemInHand()).send(player);
+                        return;
+                    case "tran":
+                        MessageUtil.getInst().componentBuilder().add(new TranslatableComponent(args.length > 2 ? args[2] : "null")).send(player);
+                        return;
+                }
             }
+            sender.sendMessage("调用此指令前，请保证手中持有任意物品，这个物品在测试结束后会删除");
+            itemStack = player.getEquipment().getItemInHand();
+            sender.sendMessage("手持物品通过");
+        } else {
+            itemStack = SXItem.getItemManager().getItem(args.length > 1 ? args[1] : "Default-1", null);
         }
-
-        player.sendMessage("调用此指令前，请保证手中持有任意物品，这个物品在测试结束后会删除");
-        ItemStack itemStack = player.getEquipment().getItemInHand();
-        player.sendMessage("手持物品通过");
 
         for (String key : SXItem.getItemManager().getItemList()) {
             try {
                 SXItem.getItemManager().getItem(key, player);
             } catch (Exception e) {
-                player.sendMessage("物品: " + key + " 有问题");
+                sender.sendMessage("物品: " + key + " 有问题");
             }
         }
-        player.sendMessage("获取SX物品通过");
+        sender.sendMessage("获取SX物品通过");
 
         NBTItemWrapper itemWrapper = NbtUtil.getInst().getItemTagWrapper(itemStack);
         itemWrapper.set("test.string", "2333");
@@ -71,7 +77,7 @@ public class TestCommand extends SubCommand {
         compound.set("string-2", "描述2");
         itemWrapper.set("test.nbtList", Arrays.asList(compound, compound));
         itemWrapper.save();
-        player.sendMessage("设置NBT物品通过");
+        sender.sendMessage("设置NBT物品通过");
 
         itemWrapper = NbtUtil.getInst().getItemTagWrapper(itemStack);
         TagCompound tagCompound = NbtUtil.getInst().toTag(itemWrapper);
@@ -91,17 +97,17 @@ public class TestCommand extends SubCommand {
         map.put("test.nbtList", tagCompound.getList("test.nbtList"));
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             if (entry.getValue() == null) {
-                player.sendMessage("Error: " + entry.getKey());
+                sender.sendMessage("Error: " + entry.getKey());
             }
         }
-        player.sendMessage("调用NBT物品通过");
-        Bukkit.dispatchCommand(player, "sxi nbt all");
+        sender.sendMessage("调用NBT物品通过");
+        Bukkit.dispatchCommand(sender, "sxi nbt all");
 
-        MessageUtil.getInst().sendTitle(player, "测试Title", "fadein:20 stay:100 fadeOut: 100", 20, 100, 100);
-        MessageUtil.getInst().sendActionBar(player, "测试ActionBar");
+        MessageUtil.send(sender, "[TITLE]测试Title:fadein-20 stay-100 fadeOut-100:20:100:100");
+        MessageUtil.send(sender, "[ACTIONBAR]测试ActionBar");
 
         // 1.11.2以下不支持在componentBuilder中带有long[]类型的nbt
-        if (NMS.compareTo(1, 11, 2) >= 0) {
+        if (NMS.compareTo(1, 11, 2) < 0) {
             itemWrapper.remove("test.longArray");
             itemWrapper.save();
         }
@@ -118,10 +124,10 @@ public class TestCommand extends SubCommand {
                 .add(itemStack.getType())
                 .show("显示4-显示物品默认名\n显示4-喵喵喵")
                 .suggestCommand("喵喵喵")
-                .send(player);
-        player.sendMessage("调用MessageUtil通过");
+                .send(sender);
+        sender.sendMessage("调用MessageUtil通过");
 //        itemStack.setAmount(0);
 
-        player.sendMessage("基本测试完毕");
+        sender.sendMessage("基本测试完毕");
     }
 }
