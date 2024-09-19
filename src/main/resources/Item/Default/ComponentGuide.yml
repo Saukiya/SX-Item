@@ -22,27 +22,26 @@ ComponentGuide-1:
   Amount: 99
   #组件
   Components:
-    - minecraft:item_name: '默认名称(无法被铁砧修改)'
-    - minecraft:custom_name: '带稀有度颜色的名称(可铁砧修改)§c红色'
+    minecraft:item_name: '默认名称(无法被铁砧修改)'
+    minecraft:custom_name: '带稀有度颜色的名称(可铁砧修改)§c红色'
     #稀有度，染色优先级低于名称
-    - minecraft:rarity: 'epic'
+    minecraft:rarity: 'epic'
     #最大堆叠
-    - minecraft:max_stack_size: 99
-    - minecraft:food:
+    minecraft:max_stack_size: 99
+    minecraft:food:
         can_always_eat: true
         eat_seconds: 1.6
         effects: [ ]
         nutrition: 5
         saturation: 10
-
-    - minecraft:lore:
+    minecraft:lore:
         - '{"text":"§aHello World lores"}'
         - '{"text":"§bThis is the second line"}'
         - '{"text":"§c这是第三行lore"}'
         - '{"text":"§e§l这个物品可以吃"}'
         - '{"text":"§e§l这个物品可以采集石头"}'
         - '{"text":"§a§l这个物品可以堆叠99个"}'
-    - minecraft:tool:
+    minecraft:tool:
         rules:
           - blocks:
               - minecraft:stone
