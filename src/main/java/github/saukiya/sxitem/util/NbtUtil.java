@@ -1,6 +1,5 @@
 package github.saukiya.sxitem.util;
 
-import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.nbt.*;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -8,8 +7,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.DataInput;
 import java.io.DataOutput;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public abstract class NbtUtil implements NMS {
 
@@ -58,10 +55,6 @@ public abstract class NbtUtil implements NMS {
         Object nbt = getItemNBT(itemStack);
         if (nbt == null) return null;
         return asTagCompoundCopy(nbt);
-    }
-
-    public void test(Object... args) {
-        SXItem.getInst().getLogger().info(Arrays.stream(args).map(x -> x.getClass().getSimpleName()).collect(Collectors.joining(",")));
     }
 
     /**

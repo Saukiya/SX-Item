@@ -15,7 +15,12 @@
 #
 #
 #
-
+#堆叠组件: Components [Type:Map]
+# 格式:
+#   minecraft:item_name: '默认名称(无法被铁砧修改)'
+# 参考WIKI: https://zh.minecraft.wiki/w/%E7%89%A9%E5%93%81%E5%A0%86%E5%8F%A0%E7%BB%84%E4%BB%B6
+# 参考API:  https://hub.spigotmc.org/javadocs/spigot/org/bukkit/enchantments/Enchantment.html
+#
 ComponentGuide-1:
   ID: DIAMOND
   Name: "组件教程-1"
@@ -33,20 +38,20 @@ ComponentGuide-1:
     #最大堆叠
     minecraft:max_stack_size: 99
     minecraft:food:
-        can_always_eat: true
-        eat_seconds: 1.6
-        effects: [ ]
-        nutrition: 5
-        saturation: 10
+      can_always_eat: true
+      eat_seconds: 1.6
+      effects: [ ]
+      nutrition: 5
+      saturation: 10
     minecraft:lore:
-        - '{"text":"§aHello World lores"}'
-        - '{"text":"§bThis is the second line"}'
-        - '{"text":"§c这是第三行lore"}'
-        - '{"text":"§e§l这个物品可以吃"}'
-        - '{"text":"§e§l这个物品可以采集石头"}'
-        - '{"text":"§a§l这个物品可以堆叠99个"}'
+      - '{"text":"§aHello World lores"}'
+      - '{"text":"§bThis is the second line"}'
+      - '{"text":"§c这是第三行lore"}'
+      - '{"text":"§e§l这个物品可以吃"}'
+      - '{"text":"§e§l这个物品可以采集石头"}'
+      - '{"text":"§a§l这个物品可以堆叠99个"}'
     minecraft:tool:
-        rules:
-          - blocks:
-              - minecraft:stone
-            correct_for_drops: true
+      rules:
+        - blocks:
+            - minecraft:stone
+          correct_for_drops: true
