@@ -58,9 +58,6 @@ dependencies {
     compileOnly 'io.lumine:Mythic-Dist:5.2.1'
     compileOnly 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
 
-    //Component api
-    implementation("com.github.Lounode:DataComponentAPI:-SNAPSHOT")
-
     testImplementation fileTree("Module-NMS-V1_21_R1/lib")
     testImplementation 'com.google.guava:guava:31.0.1-jre'
 }
