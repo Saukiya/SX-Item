@@ -1,7 +1,5 @@
 package github.saukiya.sxitem.data.item.sub;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.item.IGenerator;
 import github.saukiya.sxitem.data.item.IUpdate;
@@ -10,9 +8,6 @@ import github.saukiya.sxitem.data.random.INode;
 import github.saukiya.sxitem.data.random.RandomDocker;
 import github.saukiya.sxitem.nbt.*;
 import github.saukiya.sxitem.util.*;
-import kr.toxicity.libraries.datacomponent.api.DataComponentAPI;
-import kr.toxicity.libraries.datacomponent.api.DataComponentType;
-import kr.toxicity.libraries.datacomponent.api.ItemAdapter;
 import lombok.Getter;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -241,45 +236,6 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         docker.getLockMap().forEach((key, value) -> wrapper.set(SXItem.getInst().getName() + ".Lock." + key, value));
 
         wrapper.save();
-
-        // TODO 仅支持Paper
-        if (config.contains("Components") && NMS.hasClass("com.destroystokyo.paper.ParticleBuilder") && false) {
-            List<Map<?, ?>> components = config.getMapList("Components");
-            for (Map<?, ?> componentWrapper : components) {
-                Map.Entry<?, ?> component = componentWrapper.entrySet().iterator().next();
-                String componentKey = (String) component.getKey();
-                String componentKeyNamespace = "minecraft";
-                String componentKeyName;
-                if (componentKey.contains(":")) {
-                    componentKeyNamespace = componentKey.split(":")[0];
-                    componentKeyName = componentKey.split(":")[1];
-                } else {
-                    componentKeyName = componentKey;
-                }
-
-                //TODO 支持数据包与MOD的组件
-                if (!"minecraft".equals(componentKeyNamespace)) {
-                    SXItem.getInst().getLogger().warning(
-                            "Skipping unsupported component: " + componentKeyNamespace + ":" + componentKeyName);
-                    continue;
-                }
-
-                DataComponentType<?> componentType = DataComponentType.registry().get(componentKeyName);
-                if (componentType == null) {
-                    SXItem.getInst().getLogger().warning("Skipping unsupported component: " + componentKeyName);
-                    continue;
-                }
-                Gson gson = new Gson();
-                JsonElement json = gson.toJsonTree(component.getValue());
-
-                ItemAdapter apply = DataComponentAPI.api().adapter(item);
-
-                apply.setToJson(componentType, json);
-                item =  apply.build();
-                //SXItem.getInst().getLogger().info(apply.serialize().toString());
-            }
-
-        }
 
         return item;
     }

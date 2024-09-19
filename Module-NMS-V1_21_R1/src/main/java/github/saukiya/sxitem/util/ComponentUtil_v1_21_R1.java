@@ -48,16 +48,6 @@ public class ComponentUtil_v1_21_R1 extends ComponentUtil {
     }
 
     @Override
-    public net.minecraft.world.item.ItemStack getNMSCopyItem(ItemStack itemStack) {
-        return CraftItemStack.asNMSCopy(itemStack);
-    }
-
-    @Override
-    public void setBukkitItem(ItemStack itemStack, Object nmsCopyItem) {
-        itemStack.setItemMeta(CraftItemStack.getItemMeta((net.minecraft.world.item.ItemStack) nmsCopyItem));
-    }
-
-    @Override
     public DataComponentMap getDataComponentMap(Object nmsCopyItem) {
         return ((net.minecraft.world.item.ItemStack) nmsCopyItem).a();
     }
