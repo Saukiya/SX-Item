@@ -11,7 +11,6 @@ import github.saukiya.sxitem.data.random.randoms.*;
 import github.saukiya.sxitem.helper.MythicMobsHelper;
 import github.saukiya.sxitem.helper.PlaceholderHelper;
 import github.saukiya.sxitem.util.*;
-import kr.toxicity.libraries.datacomponent.DataComponentAPIBukkit;
 import lombok.Getter;
 import lombok.Setter;
 import org.bstats.bukkit.Metrics;
@@ -84,10 +83,6 @@ public class SXItem extends JavaPlugin {
         long oldTimes = System.currentTimeMillis();
         NbtUtil.getInst();
         ComponentUtil.getInst();
-        //加载组件API
-        if (NMS.compareTo(1, 20, 5) >= 0) {
-            DataComponentAPIBukkit.load();
-        }
 
         ItemUtil.getInst();
         MessageUtil.getInst();
