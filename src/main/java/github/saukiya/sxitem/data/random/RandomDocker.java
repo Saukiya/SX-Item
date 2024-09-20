@@ -106,7 +106,7 @@ public class RandomDocker extends StrLookup {
      * @return RandomTag
      */
     public TagBase replace(TagBase tagBase) {
-        if (tagBase == null) return tagBase;
+        if (tagBase == null) return null;
         switch (tagBase.getTypeId()) {
             case COMPOUND:
                 TagCompound tagCompound = new TagCompound();

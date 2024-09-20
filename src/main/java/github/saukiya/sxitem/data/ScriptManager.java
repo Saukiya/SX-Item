@@ -8,15 +8,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.openjdk.nashorn.api.scripting.ScriptObjectMirror;
 
 import javax.script.*;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +26,7 @@ public class ScriptManager {
 
     private final JavaPlugin plugin;
 
-    private final String[] defaultFile;
+    private final File rootDirectory;
 
     private final File globalFile;
 
@@ -38,12 +37,12 @@ public class ScriptManager {
     private Invocable invocable;
 
     @Getter
-    private Boolean enabled;
+    private boolean enabled;
 
-    public ScriptManager(JavaPlugin plugin, String... defaultFile) {
+    public ScriptManager(JavaPlugin plugin) {
         this.plugin = plugin;
-        this.defaultFile = defaultFile;
-        this.globalFile = new File(plugin.getDataFolder(), "Scripts/Global.js");
+        this.rootDirectory = new File(plugin.getDataFolder(), "Scripts");
+        this.globalFile = new File(rootDirectory, "Global.js");
         reload();
     }
 
@@ -52,13 +51,13 @@ public class ScriptManager {
      */
     public void reload() {
         try {
-            File scriptFiles = new File(plugin.getDataFolder(), "Scripts");
-            if (!scriptFiles.exists() || scriptFiles.listFiles().length == 0) {
-                Arrays.stream(defaultFile).forEach(fileName -> plugin.saveResource(fileName, true));
+            if (!rootDirectory.exists()) {
+                plugin.getLogger().warning("Directory is not exists: " + rootDirectory.getName());
+                return;
             }
             initEngine();
-            loadScriptFile(scriptFiles);
             enabled = true;
+            loadScriptFile(rootDirectory);
         } catch (Exception e) {
             if (e instanceof NullPointerException) {
                 plugin.getLogger().info("Scripts Disabled");
@@ -96,7 +95,7 @@ public class ScriptManager {
         invocable = (Invocable) engine;
         compiledScripts.clear();
         // 这玩意最好隔离出来单独搞个Global.js
-        InputStreamReader globalReader = new InputStreamReader(new FileInputStream(globalFile), StandardCharsets.UTF_8);
+        InputStreamReader globalReader = new InputStreamReader(Files.newInputStream(globalFile.toPath()), StandardCharsets.UTF_8);
         compilableEngine.compile(globalReader);
         globalReader.close();
     }
@@ -107,14 +106,14 @@ public class ScriptManager {
      * @param files File
      */
     private void loadScriptFile(File files) throws IOException, ScriptException {
-        if (enabled != null && !enabled) return;
+        if (!enabled) return;
         for (File file : files.listFiles()) {
             if (file.getName().startsWith("NoLoad") || file.equals(globalFile)) continue;
             if (file.isDirectory()) {
                 loadScriptFile(file);
                 // TODO 可选引擎后缀
             } else if (file.getName().endsWith(".js")) {
-                InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
+                InputStreamReader inputStreamReader = new InputStreamReader(Files.newInputStream(file.toPath()), StandardCharsets.UTF_8);
                 CompiledScript compiled = compilableEngine.compile(inputStreamReader);
                 compiledScripts.put(file.getName().replace(".js", ""), compiled);
                 inputStreamReader.close();

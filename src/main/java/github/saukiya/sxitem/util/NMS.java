@@ -55,7 +55,8 @@ public interface NMS {
                     try {
                         temp = target.getClass().getDeclaredField(fieldName);
                         temp.setAccessible(true);
-                    } catch (NoSuchFieldException ignored) {
+                    } catch (NoSuchFieldException e) {
+                        e.printStackTrace();
                     }
                     return temp;
                 });
@@ -127,7 +128,7 @@ class Data {
     protected static final Map<Class<? extends NMS>, NMS> INST_MAP = new HashMap<>();
     protected static final Map<Class<?>, Map<String, Field>> FIELD_CACHE_MAP = new HashMap<>();
     protected static final Map<Class<?>, Class<?>> CLASS_WRAPS_MAP = new HashMap<>();
-    protected static final String VERSION = Bukkit.getServer() != null ? Bukkit.getServer().getClass().getPackage().getName().split("^.+\\.")[1] : "v1_17_R1";
+    protected static final String VERSION;
     protected static final Pattern VERSION_PATTERN = Pattern.compile("v(\\d+)_(\\d+)_R(\\d+)");
     protected static final int[] thisVersionSplit;
 
@@ -141,9 +142,32 @@ class Data {
         CLASS_WRAPS_MAP.put(float.class, Float.class);
         CLASS_WRAPS_MAP.put(double.class, Double.class);
         CLASS_WRAPS_MAP.put(long.class, Long.class);
-        Matcher matcher = VERSION_PATTERN.matcher(VERSION);
-        matcher.matches();
-        thisVersionSplit = IntStream.range(0, matcher.groupCount()).map(i -> Integer.parseInt(matcher.group(i + 1))).toArray();
+        thisVersionSplit = getVersion();
+        VERSION = "v" + thisVersionSplit[0] + "_" + thisVersionSplit[1] + "_R" + thisVersionSplit[2];
+    }
+
+
+    /**
+     * @see <a href="https://forums.papermc.io/threads/important-dev-psa-future-removal-of-cb-package-relocation.1106/">PaperMC: Important dev PSA: Future removal of CB package relocation</a></br>
+     * After Minecraft Version 1.20.5 PapaerMC removed the CraftBukkit package relocation (e.g. v1_20_R3)</br>
+     * So we have to use a method to detect and solve this problem
+     *
+     * @return {@code int[]}
+     * @author Lounode
+     * @date 2024/09/14
+     */
+    private static int[] getVersion() {
+        String versionSource = Bukkit.getServer() != null ? Bukkit.getServer().getClass().getPackage().getName().split("^.+\\.")[1] : "v1_17_R1";
+        Matcher matcher = VERSION_PATTERN.matcher(versionSource);
+        if (!matcher.matches()) {
+            if (NMS.hasClass("com.destroystokyo.paper.ParticleBuilder")) {
+                versionSource = Bukkit.getServer().getBukkitVersion();
+                Matcher paerMatcher = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)").matcher(versionSource.split("-")[0]);
+                paerMatcher.matches();
+                return IntStream.range(0, paerMatcher.groupCount()).map(i -> Integer.parseInt(paerMatcher.group(i + 1))).toArray();
+            }
+        }
+        return IntStream.range(0, matcher.groupCount()).map(i -> Integer.parseInt(matcher.group(i + 1))).toArray();
     }
 
     protected static boolean checkClass(@Nonnull Class<?> c1, @NonNull Class<?> c2) {

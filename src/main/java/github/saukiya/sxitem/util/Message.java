@@ -72,20 +72,21 @@ public enum Message {
     public static void loadMessage() {
         File file = new File(SXItem.getInst().getDataFolder(), "Message.yml");
         if (!file.exists()) {
-            SXItem.getInst().getLogger().info("create Message.yml");
-            LocalizationUtil.saveResource("Message.yml");
+            SXItem.getInst().getLogger().warning("File is not exists: Message.yml");
+            messages = new YamlConfiguration();
+            return;
         }
         messages = YamlConfiguration.loadConfiguration(file);
     }
 
     public static String getStatic(String loc, Object... args) {
-        return MessageFormat.format(messages.getString(loc, "Null Message: " + loc), args).replace("&", "§");
+        return MessageFormat.format(messages.getString(loc, "Null Message: " + loc), args).replace('&', '§');
     }
 
     public static List<String> getListStatic(String loc, Object... args) {
         List<String> list = messages.getStringList(loc);
-        if (list.size() == 0) return Collections.singletonList("Null Message: " + loc);
-        list.replaceAll(str -> MessageFormat.format(str, args).replace("&", "§"));
+        if (list.isEmpty()) return Collections.singletonList("Null Message: " + loc);
+        list.replaceAll(str -> MessageFormat.format(str, args).replace('&', '§'));
         return list;
     }
 }

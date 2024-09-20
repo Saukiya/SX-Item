@@ -1,5 +1,6 @@
 package github.saukiya.sxitem.util;
 
+import lombok.Getter;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -13,11 +14,12 @@ import java.util.List;
 
 public abstract class ComponentBuilder {
 
+    @Getter
     protected TextComponent handle;
 
     protected BaseComponent current;
 
-    ComponentBuilder() {
+    protected ComponentBuilder() {
         handle = setCurrent(new TextComponent(""));
     }
 
@@ -74,10 +76,6 @@ public abstract class ComponentBuilder {
 
     public void send(CommandSender sender) {
         sender.spigot().sendMessage(handle);
-    }
-
-    public TextComponent getHandle() {
-        return handle;
     }
 
     protected <V extends BaseComponent> V setCurrent(V baseComponent) {

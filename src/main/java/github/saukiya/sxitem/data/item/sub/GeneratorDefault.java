@@ -21,10 +21,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.potion.PotionType;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -71,14 +69,14 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
 
     @Override
     public String getName() {
-        if (displayName != null) return RandomDocker.getInst().replace(displayName).replace("&", "§");
+        if (displayName != null) return RandomDocker.getInst().replace(displayName).replace('&', '§');
         return "§7" + String.join("§8|§7", ids);
     }
 
     @Override
     public BaseComponent getNameComponent() {
         if (displayName != null)
-            return new TextComponent(RandomDocker.getInst().replace(displayName).replace("&", "§"));
+            return new TextComponent(RandomDocker.getInst().replace(displayName).replace('&', '§'));
         ComponentBuilder cb = MessageUtil.getInst().componentBuilder().add("§r");
         for (String id : ids) {
             if (cb.getHandle().getExtra().size() != 1) cb.add("§8|§r");
@@ -106,6 +104,7 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         return getItem(player, randomDocker);
     }
 
+    // TODO 干脆都整到ItemUtil里
     private ItemStack getItem(Player player, RandomDocker docker) {
         String[] materAndDur = docker.replace(ids.get(SXItem.getRandom().nextInt(ids.size()))).split(":");
         Material material = ItemManager.getMaterial(materAndDur[0]);
@@ -128,11 +127,11 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
 
         String itemName = docker.replace(this.displayName);
         if (itemName != null) {
-            meta.setDisplayName(itemName.replace("&", "§"));
+            meta.setDisplayName(itemName.replace('&', '§'));
         }
 
         List<String> loreList = docker.replace(config.getStringList("Lore"));
-        loreList.replaceAll(lore -> lore.replace("&", "§"));
+        loreList.replaceAll(lore -> lore.replace('&', '§'));
         meta.setLore(loreList);
 
         for (String enchant : docker.replace(config.getStringList("EnchantList"))) {
@@ -166,21 +165,29 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
 
         // TODO 这玩意最好整合到ItemUtil里做NMS
         if (NMS.compareTo(1, 11, 1) >= 0 && meta instanceof PotionMeta) {
+            PotionEffectType[] potionEffectTypes = PotionEffectType.values();
             if (config.isString("Potion")) {
-                ((PotionMeta) meta).setBasePotionData(new PotionData(PotionType.valueOf(docker.replace(config.getString("Potion", "UNCRAFTABLE")))));
+                //TODO 临时禁用
+//                ((PotionMeta) meta).setBasePotionData(new PotionData(PotionType.valueOf(docker.replace(config.getString("Potion", "UNCRAFTABLE")))));
             } else {
                 ConfigurationSection potionConfig = config.getConfigurationSection("Potion");
                 if (potionConfig != null) {
                     for (String effectId : potionConfig.getKeys(false)) {
-                        PotionEffectType effect = PotionEffectType.getByName(docker.replace(effectId));
+                        ConfigurationSection potionEffectConfig = potionConfig.getConfigurationSection(effectId);
+                        effectId = docker.replace(effectId);
+                        PotionEffectType effect = null;
+                        for (PotionEffectType potionEffectType : potionEffectTypes) {
+                            if (!potionEffectType.getName().equals(effectId)) continue;
+                            effect = potionEffectType;
+                        }
                         if (effect != null) {
-                            int duration = Integer.parseInt(docker.replace(potionConfig.getString(effectId + ".duration")));
-                            int amplifier = Integer.parseInt(docker.replace(potionConfig.getString(effectId + ".amplifier")));
-                            boolean ambient = potionConfig.getBoolean(effectId + ".ambient", true);
-                            boolean particles = potionConfig.getBoolean(effectId + ".particles", true);
+                            int duration = Integer.parseInt(docker.replace(potionEffectConfig.getString("duration", "1")));
+                            int amplifier = Integer.parseInt(docker.replace(potionEffectConfig.getString("amplifier", "1")));
+                            boolean ambient = potionEffectConfig.getBoolean("ambient", true);
+                            boolean particles = potionEffectConfig.getBoolean("particles", true);
                             PotionEffect potionEffect;
                             if (NMS.compareTo(1, 13, 2) >= 0) {
-                                potionEffect = new PotionEffect(effect, duration, amplifier, ambient, particles, potionConfig.getBoolean(effectId + ".icon", true));
+                                potionEffect = new PotionEffect(effect, duration, amplifier, ambient, particles, potionEffectConfig.getBoolean("icon", true));
                             } else {
                                 potionEffect = new PotionEffect(effect, duration, amplifier, ambient, particles);
                             }
@@ -214,13 +221,45 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
             }
         }
 
+        if (config.isConfigurationSection("Components")) {
+            Map<String, Object> components = new HashMap<>();
+            converConfig(components, config.getConfigurationSection("Components"));
+            Object nmsCopyItem = ComponentUtil.getInst().getNMSItem(item);
+            Object inputComponentMap = ComponentUtil.getInst().valueToMap(components);
+            ComponentUtil.getInst().setDataComponentMap(nmsCopyItem, inputComponentMap);
+            ComponentUtil.getInst().setNMSItem(item, nmsCopyItem);
+        }
+
         NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item);
         wrapper.setAll((TagCompoundBase) docker.replace(nbt));
 
         docker.getLockMap().forEach((key, value) -> wrapper.set(SXItem.getInst().getName() + ".Lock." + key, value));
 
         wrapper.save();
+
         return item;
+    }
+
+    public void converConfig(Map<String,Object> map, ConfigurationSection config) {
+        config.getValues(false).forEach((k,v) -> {
+            if (v instanceof ConfigurationSection) {
+                Map<String,Object> subComponents = new HashMap<>();
+                converConfig(subComponents, (ConfigurationSection) v);
+                map.put(k, subComponents);
+                return;
+            }
+            map.put(k, v);
+        });
+    }
+
+    @Override
+    public boolean isUpdate() {
+        return update;
+    }
+
+    @Override
+    public int updateCode() {
+        return hashCode;
     }
 
     @Override
@@ -231,33 +270,23 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         return getItem(player, randomDocker);
     }
 
-    @Override
-    public int updateCode() {
-        return hashCode;
-    }
-
-    @Override
-    public boolean isUpdate() {
-        return update;
-    }
-
     public static Saver saveFunc() {
         return (item, config) -> {
             ItemMeta itemMeta = item.getItemMeta();
-            config.set("Name", itemMeta.hasDisplayName() ? itemMeta.getDisplayName().replace("§", "&") : null);
+            config.set("Name", itemMeta.hasDisplayName() ? itemMeta.getDisplayName().replace('§', '&') : null);
             config.set("ID", item.getType().name() + (item.getDurability() != 0 ? ":" + item.getDurability() : ""));
             if (item.getAmount() > 1)
                 config.set("Amount", item.getAmount());
             if (itemMeta.hasLore())
-                config.set("Lore", itemMeta.getLore().stream().map(s -> s.replace("§", "&")).collect(Collectors.toList()));
+                config.set("Lore", itemMeta.getLore().stream().map(s -> s.replace('§', '&')).collect(Collectors.toList()));
             if (itemMeta.hasEnchants())
                 config.set("EnchantList", itemMeta.getEnchants().entrySet().stream().map(entry -> entry.getKey().getName() + ":" + entry.getValue()).collect(Collectors.toList()));
-            if (itemMeta.getItemFlags().size() > 0)
+            if (!itemMeta.getItemFlags().isEmpty())
                 config.set("ItemFlagList", itemMeta.getItemFlags().stream().map(Enum::name).collect(Collectors.toList()));
             if (ItemUtil.getInst().isUnbreakable(itemMeta))
                 config.set("Unbreakable", true);
             List<ItemUtil.AttributeData> attributeList = ItemUtil.getInst().getAttributes(item);
-            if (attributeList != null && attributeList.size() > 0)
+            if (attributeList != null && !attributeList.isEmpty())
                 config.set("Attributes", attributeList.stream().map(data -> data.getAttrName() + ":" + data.getAmount() + ":" + data.getOperation() + (data.getSlot() != null ? ":" + data.getSlot() : "")).collect(Collectors.toList()));
             if (itemMeta instanceof LeatherArmorMeta)
                 config.set("Color", Integer.toHexString(((LeatherArmorMeta) itemMeta).getColor().asRGB()));
