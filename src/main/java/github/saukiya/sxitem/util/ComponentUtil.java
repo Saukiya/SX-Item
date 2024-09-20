@@ -18,20 +18,20 @@ public abstract class ComponentUtil implements NMS {
     }
 
     public abstract Object getDataComponentMap(Object nmsCopyItem);
-    public abstract Object getDataComponentPatch(Object nmsCopyItem);
-
     public abstract void setDataComponentMap(Object nmsCopyItem, Object dataComponentMap);
-    public abstract void setDataComponentPatch(Object nmsCopyItem, Object dataComponentPatch);
 
     public abstract JsonElement mapToJson(Object dataComponentMap);
-    public abstract JsonElement patchToJson(Object dataComponentPatch);
-
     public abstract Object jsonToMap(JsonElement jsonElement);
-    public abstract Object jsonToPatch(JsonElement jsonElement);
 
     public abstract Object mapToValue(Object dataComponentMap);
-    public abstract Object patchToValue(Object dataComponentPatch);
-
     public abstract Object valueToMap(Object javaObject);
+
+    public abstract Object getDataComponentPatch(Object nmsCopyItem);
+    public abstract void setDataComponentPatch(Object nmsCopyItem, Object dataComponentPatch);
+
+    public abstract JsonElement patchToJson(Object dataComponentPatch);
+    public abstract Object jsonToPatch(JsonElement jsonElement);
+
+    public abstract Object patchToValue(Object dataComponentPatch);
     public abstract Object valueToPach(Object javaObject);
 }
