@@ -72,8 +72,9 @@ public enum Message {
     public static void loadMessage() {
         File file = new File(SXItem.getInst().getDataFolder(), "Message.yml");
         if (!file.exists()) {
-            SXItem.getInst().getLogger().info("Create Message.yml");
-            LocalizationUtil.saveResource(SXItem.getInst(), "Message.yml");
+            SXItem.getInst().getLogger().warning("File is not exists: Message.yml");
+            messages = new YamlConfiguration();
+            return;
         }
         messages = YamlConfiguration.loadConfiguration(file);
     }

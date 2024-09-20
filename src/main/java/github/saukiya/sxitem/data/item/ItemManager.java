@@ -46,9 +46,7 @@ public class ItemManager implements Listener {
 
     private final JavaPlugin plugin;
 
-    private final String[] defaultFile;
-
-    private final File itemDirectory;
+    private final File rootDirectory;
 
     private final List<Player> checkPlayers = new ArrayList<>();
 
@@ -60,10 +58,9 @@ public class ItemManager implements Listener {
 
     private final Map<String, List<Tuple<String, List<IGenerator>>>> informationMap = new HashMap<>();
 
-    public ItemManager(JavaPlugin plugin, String... defaultFile) {
+    public ItemManager(JavaPlugin plugin) {
         this.plugin = plugin;
-        this.defaultFile = defaultFile;
-        this.itemDirectory = new File(plugin.getDataFolder(), "Item");
+        this.rootDirectory = new File(plugin.getDataFolder(), "Item");
         plugin.getLogger().info("Loaded " + loadFunction.size() + " ItemGenerators");
         loadItemData();
         Bukkit.getPluginManager().registerEvents(this, plugin);
@@ -84,12 +81,12 @@ public class ItemManager implements Listener {
      * 读取物品数据
      */
     public void loadItemData() {
-        // 写入默认配置文件
-        if (!itemDirectory.exists() || itemDirectory.listFiles().length == 0) {
-            Arrays.stream(defaultFile).forEach(fileName -> LocalizationUtil.saveResource(plugin, fileName));
+        if (!rootDirectory.exists()) {
+            plugin.getLogger().warning("Directory is not exists: " + rootDirectory.getName());
+            return;
         }
         // 加载物品
-        loadItem(plugin.getName(), itemDirectory);
+        loadItem(plugin.getName(), rootDirectory);
         plugin.getLogger().info("Loaded " + itemMap.size() + " Items");
         // 加载固定NBT
         protectNbtList.clear();
@@ -103,6 +100,15 @@ public class ItemManager implements Listener {
      */
     public Set<String> getItemList() {
         return itemMap.keySet();
+    }
+
+    /**
+     * 获取物品生成器列表
+     *
+     * @return Collection
+     */
+    public Collection<IGenerator> getGeneratorList() {
+        return itemMap.values();
     }
 
     /**
@@ -328,7 +334,7 @@ public class ItemManager implements Listener {
         function.apply(item, config);
         if (config.getKeys(false).size() == 1) return false;
         String filePath = "Type-" + type + File.separator + "Item.yml";
-        File file = new File(itemDirectory, filePath);
+        File file = new File(rootDirectory, filePath);
         YamlConfiguration yaml = file.exists() ? YamlConfiguration.loadConfiguration(file) : new YamlConfiguration();
         yaml.set(key, config);
         yaml.save(file);

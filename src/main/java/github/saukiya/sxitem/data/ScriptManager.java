@@ -3,7 +3,6 @@ package github.saukiya.sxitem.data;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.helper.PlaceholderHelper;
 import github.saukiya.sxitem.util.Config;
-import github.saukiya.sxitem.util.LocalizationUtil;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -27,7 +26,7 @@ public class ScriptManager {
 
     private final JavaPlugin plugin;
 
-    private final String[] defaultFile;
+    private final File rootDirectory;
 
     private final File globalFile;
 
@@ -40,10 +39,10 @@ public class ScriptManager {
     @Getter
     private boolean enabled;
 
-    public ScriptManager(JavaPlugin plugin, String... defaultFile) {
+    public ScriptManager(JavaPlugin plugin) {
         this.plugin = plugin;
-        this.defaultFile = defaultFile;
-        this.globalFile = new File(plugin.getDataFolder(), "Scripts/Global.js");
+        this.rootDirectory = new File(plugin.getDataFolder(), "Scripts");
+        this.globalFile = new File(rootDirectory, "Global.js");
         reload();
     }
 
@@ -52,13 +51,13 @@ public class ScriptManager {
      */
     public void reload() {
         try {
-            File scriptFiles = new File(plugin.getDataFolder(), "Scripts");
-            if (!scriptFiles.exists() || scriptFiles.listFiles().length == 0) {
-                Arrays.stream(defaultFile).forEach(fileName -> LocalizationUtil.saveResource(plugin, fileName));
+            if (!rootDirectory.exists()) {
+                plugin.getLogger().warning("Directory is not exists: " + rootDirectory.getName());
+                return;
             }
             initEngine();
             enabled = true;
-            loadScriptFile(scriptFiles);
+            loadScriptFile(rootDirectory);
         } catch (Exception e) {
             if (e instanceof NullPointerException) {
                 plugin.getLogger().info("Scripts Disabled");

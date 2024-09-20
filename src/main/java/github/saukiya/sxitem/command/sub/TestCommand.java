@@ -2,6 +2,7 @@ package github.saukiya.sxitem.command.sub;
 
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.command.SubCommand;
+import github.saukiya.sxitem.data.item.IGenerator;
 import github.saukiya.sxitem.nbt.NBTItemWrapper;
 import github.saukiya.sxitem.nbt.TagCompound;
 import github.saukiya.sxitem.util.ComponentUtil;
@@ -17,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class TestCommand extends SubCommand {
     public TestCommand() {
@@ -50,33 +52,27 @@ public class TestCommand extends SubCommand {
         }
 //        NbtUtil.getInst().test(itemStack);
 
-        Object nmsCopyItem = ComponentUtil.getInst().getNMSCopyItem(itemStack);
         Map<String, Object> input = new HashMap<>();
         input.put("minecraft:item_name", "默认名称(无法被铁砧修改)");
         input.put("minecraft:custom_name", "带稀有度颜色的名称(可铁砧修改)§c红色");
         input.put("minecraft:rarity", "epic");
-        Object inputComponentMap = ComponentUtil.getInst().valueToMap(input);
-        ComponentUtil.getInst().setDataComponentMap(nmsCopyItem, inputComponentMap);
-        ComponentUtil.getInst().setBukkitItem(itemStack, nmsCopyItem);
+        Object nmsCopyItem = ComponentUtil.getInst().getNMSCopyItem(itemStack); // 获取nmsItem
+        Object inputComponentMap = ComponentUtil.getInst().valueToMap(input); // input转ComponentMap
+        ComponentUtil.getInst().setDataComponentMap(nmsCopyItem, inputComponentMap); // 写入nmsItem
+        ComponentUtil.getInst().setBukkitItem(itemStack, nmsCopyItem); // 写入bukkitItem
 
-        SXItem.getInst().getLogger().info(
-                "mapToJson: " +
-                ComponentUtil.getInst().mapToJson(
-                        ComponentUtil.getInst().getDataComponentMap(
-                                ComponentUtil.getInst().getNMSCopyItem(itemStack)
-                        )
-                )
-        );
-
-        long startTime = System.nanoTime();
-        for (String key : SXItem.getItemManager().getItemList()) {
+        Map<String, Long> timeConsuming = new TreeMap<>();
+        for (IGenerator generator : SXItem.getItemManager().getGeneratorList()) {
+            long startTime = System.nanoTime();
             try {
-                SXItem.getItemManager().getItem(key, player);
+                SXItem.getItemManager().getItem(generator, player);
+                timeConsuming.put(generator.getKey(), System.nanoTime() - startTime);
             } catch (Exception e) {
-                sender.sendMessage("物品: " + key + " 有问题");
+                sender.sendMessage("物品: " + generator.getKey() + " 有问题");
             }
         }
-        sender.sendMessage("获取SX物品通过-耗时: " + (startTime - System.nanoTime()) + " nano");
+        timeConsuming.forEach((k,v) -> sender.sendMessage("物品 " + k + " 耗时: " + (v / 1000000D) + " ms"));
+        sender.sendMessage("获取SX物品通过");
 
         NBTItemWrapper itemWrapper = NbtUtil.getInst().getItemTagWrapper(itemStack);
         itemWrapper.set("test.string", "2333");
