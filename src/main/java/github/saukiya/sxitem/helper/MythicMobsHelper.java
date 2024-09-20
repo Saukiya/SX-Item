@@ -43,11 +43,11 @@ public class MythicMobsHelper {
             String[] args = str.split(" ");
             IGenerator ig = SXItem.getItemManager().getGenerator(args[0]);
             // 概率
-            if (ig == null || args.length > 2 && args[2].length() > 0 && SXItem.getRandom().nextDouble() > Double.parseDouble(args[2]))
+            if (ig == null || args.length > 2 && !args[2].isEmpty() && SXItem.getRandom().nextDouble() > Double.parseDouble(args[2]))
                 continue;
             // 数量
             int amount = 1;
-            if (args.length > 1 && args[1].length() > 0) {
+            if (args.length > 1 && !args[1].isEmpty()) {
                 if (args[1].contains("-")) {
                     int[] ints = Arrays.stream(args[1].split("-")).mapToInt(Integer::parseInt).sorted().toArray();
                     amount = SXItem.getRandom().nextInt(1 + ints[1] - ints[0]) + ints[0];

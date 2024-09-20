@@ -27,13 +27,10 @@ public class SXItemMythicMobsGiveToInventoryEvent extends Event {
 
     private final String mobType;
 
+    @Getter
     private final ItemStack itemStack;
 
     private boolean cancelled;
-
-    public ItemStack getItemStack() {
-        return itemStack;
-    }
 
     public HandlerList getHandlers() {
         return handlers;

@@ -65,7 +65,7 @@ public class ItemManager implements Listener {
         loadItemData();
         Bukkit.getPluginManager().registerEvents(this, plugin);
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            if (checkPlayers.size() > 0) {
+            if (!checkPlayers.isEmpty()) {
                 List<Player> checkPlayers = new ArrayList<>(this.checkPlayers);
                 this.checkPlayers.clear();
                 for (Player player : checkPlayers) {
@@ -351,7 +351,7 @@ public class ItemManager implements Listener {
      */
     public void sendItemInfoToPlayer(CommandSender sender, String search) {
         sender.sendMessage("");
-        if (search != null && search.equals("")) {
+        if (search != null && search.isEmpty()) {
             // 文件夹
             MessageUtil.getInst().componentBuilder()
                     .add("§eDirectoryList§8 - §7ClickOpen")

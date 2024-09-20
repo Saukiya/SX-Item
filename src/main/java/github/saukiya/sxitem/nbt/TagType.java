@@ -2,10 +2,13 @@ package github.saukiya.sxitem.nbt;
 
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.util.NbtUtil;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.io.DataInput;
 import java.io.IOException;
 
+@RequiredArgsConstructor
 public enum TagType {
     END(TagEnd.typeMethod),
     BYTE(TagByte.typeMethod),
@@ -21,17 +24,10 @@ public enum TagType {
     INT_ARRAY(TagIntArray.typeMethod),
     LONG_ARRAY(TagLongArray.typeMethod);//v1_12_R1+
 
+    @Getter
     private final byte id = (byte) this.ordinal();
 
     private final Method methods;
-
-    TagType(Method function) {
-        this.methods = function;
-    }
-
-    public byte getId() {
-        return id;
-    }
 
     /**
      * 获取{@link Method#readTagBase(DataInput, int)} 和 {@link Method#toTag(Object)} 方法
