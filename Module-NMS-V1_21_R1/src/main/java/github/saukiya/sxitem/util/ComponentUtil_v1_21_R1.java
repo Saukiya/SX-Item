@@ -7,9 +7,6 @@ import com.mojang.serialization.JsonOps;
 import net.minecraft.core.IRegistryCustom;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.nbt.DynamicOpsNBT;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.craftbukkit.v1_21_R1.CraftRegistry;
 import org.bukkit.craftbukkit.v1_21_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
@@ -23,7 +20,6 @@ public class ComponentUtil_v1_21_R1 extends ComponentUtil {
 
     private final DynamicOps<JsonElement> jsonDynamic = registry.a(JsonOps.INSTANCE);
     private final DynamicOps<Object> javaDynamic = registry.a(JavaOps.INSTANCE);
-    private final DynamicOps<NBTBase> nbtDynamic = registry.a(DynamicOpsNBT.a);
 
     public void test(Object... args) {
         ItemStack itemStack = (ItemStack) args[0];
@@ -87,25 +83,6 @@ public class ComponentUtil_v1_21_R1 extends ComponentUtil {
         return DataComponentPatch.b.decode(jsonDynamic, jsonElement).getOrThrow().getFirst();
     }
 
-    @Override
-    public NBTBase mapToNBT(Object dataComponentMap) {
-        return DataComponentMap.b.encode((DataComponentMap) dataComponentMap, nbtDynamic, nbtDynamic.emptyMap()).getOrThrow();
-    }
-
-    @Override
-    public NBTBase patchToNBT(Object dataComponentPatch) {
-        return DataComponentPatch.b.encode((DataComponentPatch) dataComponentPatch, nbtDynamic, nbtDynamic.emptyMap()).getOrThrow();
-    }
-
-    @Override
-    public DataComponentMap nbtToMap(Object nbtTagCompound) {
-        return DataComponentMap.b.decode(nbtDynamic, (NBTTagCompound) nbtTagCompound).getOrThrow().getFirst();
-    }
-
-    @Override
-    public DataComponentPatch nbtToPatch(Object nbtTagCompound) {
-        return DataComponentPatch.b.decode(nbtDynamic, (NBTTagCompound) nbtTagCompound).getOrThrow().getFirst();
-    }
 
     @Override
     public Object mapToValue(Object dataComponentMap) {

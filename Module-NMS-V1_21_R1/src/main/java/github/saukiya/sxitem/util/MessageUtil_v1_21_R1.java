@@ -1,9 +1,6 @@
 package github.saukiya.sxitem.util;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.mojang.serialization.DynamicOps;
-import com.mojang.serialization.JsonOps;
 import github.saukiya.sxitem.SXItem;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import lombok.AllArgsConstructor;
@@ -20,7 +17,6 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import org.bukkit.craftbukkit.v1_21_R1.CraftRegistry;
-import org.bukkit.craftbukkit.v1_21_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -46,10 +42,10 @@ public class MessageUtil_v1_21_R1 extends MessageUtil {
 
         @Override
         public ComponentBuilder show(ItemStack item) {
-            net.minecraft.world.item.ItemStack nmsCopy = CraftItemStack.asNMSCopy(item);
-            DynamicOps<JsonElement> dynamicOps = CraftRegistry.getMinecraftRegistry().a(JsonOps.INSTANCE);
-            JsonObject data = (JsonObject) net.minecraft.world.item.ItemStack.b.encode(nmsCopy, dynamicOps, dynamicOps.emptyMap()).getOrThrow();
-            current.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new Item(item.getType().getKey().getKey(), item.getAmount(), data.get("components"))));
+            Object nmsCopy = NbtUtil.getInst().getNMSItem(item);
+            Object component = ComponentUtil.getInst().getDataComponentMap(nmsCopy);
+            JsonElement data = ComponentUtil.getInst().mapToJson(component);
+            current.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new Item(item.getType().getKey().getKey(), item.getAmount(), data)));
             return this;
         }
 
