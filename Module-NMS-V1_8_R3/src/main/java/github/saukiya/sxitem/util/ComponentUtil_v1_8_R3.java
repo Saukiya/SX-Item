@@ -1,10 +1,6 @@
 package github.saukiya.sxitem.util;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import github.saukiya.sxitem.nbt.TagCompound;
-
-import java.util.Collections;
 
 public class ComponentUtil_v1_8_R3 extends ComponentUtil {
 
@@ -30,12 +26,12 @@ public class ComponentUtil_v1_8_R3 extends ComponentUtil {
 
     @Override
     public JsonElement mapToJson(Object dataComponentMap) {
-        return new JsonObject();
+        return null;
     }
 
     @Override
     public JsonElement patchToJson(Object dataComponentPatch) {
-        return new JsonObject();
+        return null;
     }
 
     @Override
@@ -49,33 +45,13 @@ public class ComponentUtil_v1_8_R3 extends ComponentUtil {
     }
 
     @Override
-    public Object mapToNBT(Object dataComponentMap) {
-        return null;
-    }
-
-    @Override
-    public Object patchToNBT(Object dataComponentPatch) {
-        return NbtUtil.getInst().asNMSCompoundCopy(new TagCompound());
-    }
-
-    @Override
-    public Object nbtToMap(Object nbtTagCompound) {
-        return NbtUtil.getInst().asNMSCompoundCopy(new TagCompound());
-    }
-
-    @Override
-    public Object nbtToPatch(Object nbtTagCompound) {
-        return null;
-    }
-
-    @Override
     public Object mapToValue(Object dataComponentMap) {
-        return Collections.emptyMap();
+        return null;
     }
 
     @Override
     public Object patchToValue(Object dataComponentPatch) {
-        return Collections.emptyMap();
+        return null;
     }
 
     @Override

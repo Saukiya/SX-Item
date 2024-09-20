@@ -9,11 +9,11 @@ public abstract class ComponentUtil implements NMS {
     @Getter
     private final static ComponentUtil inst = NMS.getInst(ComponentUtil.class, "v1_21_R1", "v1_8_R3");
 
-    public Object getNMSCopyItem(ItemStack itemStack) {
+    public final Object getNMSItem(ItemStack itemStack) {
         return NbtUtil.getInst().getNMSItem(itemStack);
     }
 
-    public void setBukkitItem(ItemStack itemStack, Object nmsCopyItem) {
+    public final void setNMSItem(ItemStack itemStack, Object nmsCopyItem) {
         NbtUtil.getInst().setNMSItem(itemStack, nmsCopyItem);
     }
 
@@ -28,12 +28,6 @@ public abstract class ComponentUtil implements NMS {
 
     public abstract Object jsonToMap(JsonElement jsonElement);
     public abstract Object jsonToPatch(JsonElement jsonElement);
-
-    public abstract Object mapToNBT(Object dataComponentMap);
-    public abstract Object patchToNBT(Object dataComponentPatch);
-
-    public abstract Object nbtToMap(Object nbtTagCompound);
-    public abstract Object nbtToPatch(Object nbtTagCompound);
 
     public abstract Object mapToValue(Object dataComponentMap);
     public abstract Object patchToValue(Object dataComponentPatch);

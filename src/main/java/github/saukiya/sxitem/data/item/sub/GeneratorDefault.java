@@ -224,10 +224,10 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         if (config.isConfigurationSection("Components")) {
             Map<String, Object> components = new HashMap<>();
             converConfig(components, config.getConfigurationSection("Components"));
-            Object nmsCopyItem = ComponentUtil.getInst().getNMSCopyItem(item);
+            Object nmsCopyItem = ComponentUtil.getInst().getNMSItem(item);
             Object inputComponentMap = ComponentUtil.getInst().valueToMap(components);
             ComponentUtil.getInst().setDataComponentMap(nmsCopyItem, inputComponentMap);
-            ComponentUtil.getInst().setBukkitItem(item, nmsCopyItem);
+            ComponentUtil.getInst().setNMSItem(item, nmsCopyItem);
         }
 
         NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item);

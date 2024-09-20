@@ -56,10 +56,10 @@ public class TestCommand extends SubCommand {
         input.put("minecraft:item_name", "默认名称(无法被铁砧修改)");
         input.put("minecraft:custom_name", "带稀有度颜色的名称(可铁砧修改)§c红色");
         input.put("minecraft:rarity", "epic");
-        Object nmsCopyItem = ComponentUtil.getInst().getNMSCopyItem(itemStack); // 获取nmsItem
+        Object nmsCopyItem = ComponentUtil.getInst().getNMSItem(itemStack); // 获取nmsItem
         Object inputComponentMap = ComponentUtil.getInst().valueToMap(input); // input转ComponentMap
         ComponentUtil.getInst().setDataComponentMap(nmsCopyItem, inputComponentMap); // 写入nmsItem
-        ComponentUtil.getInst().setBukkitItem(itemStack, nmsCopyItem); // 写入bukkitItem
+        ComponentUtil.getInst().setNMSItem(itemStack, nmsCopyItem); // 写入bukkitItem
 
         Map<String, Long> timeConsuming = new TreeMap<>();
         for (IGenerator generator : SXItem.getItemManager().getGeneratorList()) {
