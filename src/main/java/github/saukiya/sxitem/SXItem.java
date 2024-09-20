@@ -13,6 +13,7 @@ import github.saukiya.sxitem.helper.PlaceholderHelper;
 import github.saukiya.sxitem.util.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
@@ -29,7 +30,7 @@ import java.util.Random;
 public class SXItem extends JavaPlugin {
 
     @Getter
-    private static final ThreadLocal<SimpleDateFormat> sdf = ThreadLocal.withInitial(() -> new SimpleDateFormat(Config.getConfig().getString(Config.TIME_FORMAT)));
+    private static final ThreadLocal<SimpleDateFormat> sdf = ThreadLocal.withInitial(() -> new SimpleDateFormat(Config.getConfig().getString(Config.TIME_FORMAT, "yyyy/MM/dd HH:mm")));
     @Getter
     private static final Random random = new Random();
     @Setter
@@ -48,11 +49,12 @@ public class SXItem extends JavaPlugin {
 
     private static LogUtil logUtil;
 
+    @SneakyThrows
     @Override
     public void onLoad() {
         inst = this;
         logUtil = new LogUtil(inst);
-        LocalizationUtil.saveResource(this);
+        LocalizationUtil.saveResource(this, "zh", "en");
         Config.loadConfig();
         Message.loadMessage();
         mainCommand = new MainCommand(this);
@@ -88,9 +90,9 @@ public class SXItem extends JavaPlugin {
         ItemUtil.getInst();
         MessageUtil.getInst();
 
-        scriptManager = new ScriptManager(this, "Scripts");
-        randomManager = new RandomManager(this, "RandomString");
-        itemManager = new ItemManager(this, "Item");
+        scriptManager = new ScriptManager(this);
+        randomManager = new RandomManager(this);
+        itemManager = new ItemManager(this);
 
         Config.setup();
         PlaceholderHelper.setup();

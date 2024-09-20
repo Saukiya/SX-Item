@@ -2,7 +2,6 @@ package github.saukiya.sxitem.data.random;
 
 import github.saukiya.sxitem.data.random.nodes.MultipleNode;
 import github.saukiya.sxitem.data.random.nodes.SingletonNode;
-import github.saukiya.sxitem.util.LocalizationUtil;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.configuration.ConfigurationSection;
@@ -22,14 +21,14 @@ public class RandomManager {
 
     private final JavaPlugin plugin;
 
-    private final String[] defaultFile;
+    private final File rootDirectory;
 
     @Getter
     private final Map<String, INode> map = new HashMap<>();
 
-    public RandomManager(JavaPlugin plugin, String... defaultFile) {
+    public RandomManager(JavaPlugin plugin) {
         this.plugin = plugin;
-        this.defaultFile = defaultFile;
+        this.rootDirectory = new File(plugin.getDataFolder(), "RandomString");
         loadData();
     }
 
@@ -38,11 +37,11 @@ public class RandomManager {
      */
     public void loadData() {
         map.clear();
-        File randomFiles = new File(plugin.getDataFolder(), "RandomString");
-        if (!randomFiles.exists() || randomFiles.listFiles().length == 0) {
-            Arrays.stream(defaultFile).forEach(fileName -> LocalizationUtil.saveResource(plugin, fileName));
+        if (!rootDirectory.exists()) {
+            plugin.getLogger().warning("Directory is not exists: " + rootDirectory.getName());
+            return;
         }
-        loadRandomFile(randomFiles);
+        loadRandomFile(rootDirectory);
         plugin.getLogger().info("Loaded " + map.size() + " RandomString");
     }
 

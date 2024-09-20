@@ -5,8 +5,10 @@ import github.saukiya.sxitem.command.SubCommand;
 import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.event.SXItemReloadEvent;
 import github.saukiya.sxitem.util.Config;
+import github.saukiya.sxitem.util.LocalizationUtil;
 import github.saukiya.sxitem.util.Message;
 import github.saukiya.sxitem.util.MessageUtil;
+import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
@@ -19,8 +21,10 @@ public class ReloadCommand extends SubCommand {
         super("reload", 10);
     }
 
+    @SneakyThrows
     @Override
     public void onCommand(CommandSender sender, String[] args) {
+        LocalizationUtil.saveResource(SXItem.getInst(), "zh", "en");
         Config.loadConfig();
         Config.setup();
         Message.loadMessage();
