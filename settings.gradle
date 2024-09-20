@@ -1,5 +1,5 @@
 rootProject.name = 'SX-Item'
-if (!System.env.JITPACK) {
+if (!System.env.JITPACK && !System.env.GITHUB_ACTIONS) {
     include 'Module-NMS-V1_8_R3'
     include 'Module-NMS-V1_11_R1'
     include 'Module-NMS-V1_12_R1'
