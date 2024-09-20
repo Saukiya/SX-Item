@@ -2,6 +2,7 @@ package github.saukiya.sxitem.data.random;
 
 import github.saukiya.sxitem.data.random.nodes.MultipleNode;
 import github.saukiya.sxitem.data.random.nodes.SingletonNode;
+import github.saukiya.sxitem.util.LocalizationUtil;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.configuration.ConfigurationSection;
@@ -39,7 +40,7 @@ public class RandomManager {
         map.clear();
         File randomFiles = new File(plugin.getDataFolder(), "RandomString");
         if (!randomFiles.exists() || randomFiles.listFiles().length == 0) {
-            Arrays.stream(defaultFile).forEach(fileName -> plugin.saveResource(fileName, true));
+            Arrays.stream(defaultFile).forEach(fileName -> LocalizationUtil.saveResource(plugin, fileName));
         }
         loadRandomFile(randomFiles);
         plugin.getLogger().info("Loaded " + map.size() + " RandomString");
