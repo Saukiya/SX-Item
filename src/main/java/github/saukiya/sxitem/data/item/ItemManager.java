@@ -70,7 +70,7 @@ public class ItemManager implements Listener {
                 this.checkPlayers.clear();
                 for (Player player : checkPlayers) {
                     if (player != null) {
-                        updateItem(player, player.getInventory().getContents());
+                        checkUpdateItem(player, player.getInventory().getContents());
                     }
                 }
             }
@@ -276,13 +276,16 @@ public class ItemManager implements Listener {
     }
 
     /**
-     * 更新物品
+     * 检查更新物品
      */
-    public void updateItem(Player player, ItemStack... itemStacks) {
-        updateItem(player, plugin.getName(), itemStacks);
+    public void checkUpdateItem(Player player, ItemStack... itemStacks) {
+        checkUpdateItem(player, plugin.getName(), itemStacks);
     }
 
-    public void updateItem(Player player, String prefix, ItemStack... itemStacks) {
+    /**
+     * 检查更新物品
+     */
+    public void checkUpdateItem(Player player, String prefix, ItemStack... itemStacks) {
         for (ItemStack item : itemStacks) {
             if (item == null) continue;
             NBTTagWrapper oldWrapper = NbtUtil.getInst().getItemTagWrapper(item);
@@ -291,29 +294,46 @@ public class ItemManager implements Listener {
                 IUpdate updateIg = (IUpdate) ig;
                 Integer hashCode = oldWrapper.getInt(prefix + ".HashCode");
                 if (!updateIg.isUpdate() || (hashCode != null && updateIg.updateCode() == hashCode)) continue;
-                ItemStack newItem = updateIg.update(item, oldWrapper, player);
-                NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(newItem);
-                wrapper.set(plugin.getName() + ".ItemKey", ig.getKey());
-                wrapper.set(plugin.getName() + ".HashCode", ((IUpdate) ig).updateCode());
-                HashSet<String> protectNBT = new HashSet<>(protectNbtList);
-                for (String nbt : ig.getConfig().getStringList("ProtectNBT")) {
-                    if (nbt.startsWith("!")) {
-                        protectNBT.remove(nbt.substring(1));
-                    } else {
-                        protectNBT.add(nbt);
-                    }
-                }
-                // 存在原始NBT -> 基础数据 -> 原始NBT的性能转换
-                protectNBT.forEach(nbt -> wrapper.set(nbt, oldWrapper.get(nbt)));
-                wrapper.save();
-
-                SXItemUpdateEvent event = new SXItemUpdateEvent(plugin, player, ig, newItem, item);
-                Bukkit.getPluginManager().callEvent(event);
-                if (event.isCancelled()) continue;
-                item.setType(event.getItem().getType());
-                item.setItemMeta(event.getItem().getItemMeta());
+                updateItem(player, item, updateIg, oldWrapper);
             }
         }
+    }
+
+    /**
+     * 强制更新物品
+     */
+    public void updateItem(Player player, ItemStack item) {
+        NBTTagWrapper oldWrapper = NbtUtil.getInst().getItemTagWrapper(item);
+        IGenerator ig = itemMap.get(oldWrapper.getString(plugin.getName() + ".ItemKey"));
+        if (!(ig instanceof IUpdate)) return;
+        updateItem(player, item, (IUpdate) ig, oldWrapper);
+    }
+
+    /**
+     * 强制更新物品
+     */
+    public void updateItem(Player player, ItemStack item, IUpdate updateIg, NBTTagWrapper oldWrapper) {
+        ItemStack newItem = updateIg.update(item, oldWrapper, player);
+        NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(newItem);
+        wrapper.set(plugin.getName() + ".ItemKey", updateIg.getKey());
+        wrapper.set(plugin.getName() + ".HashCode", updateIg.updateCode());
+        HashSet<String> protectNBT = new HashSet<>(protectNbtList);
+        updateIg.getConfig().getStringList("ProtectNBT").forEach(nbt -> {
+            if (nbt.startsWith("!")) {
+                protectNBT.remove(nbt.substring(1));
+                return;
+            }
+            protectNBT.add(nbt);
+        });
+        // 存在原始NBT -> 基础数据 -> 原始NBT的性能转换
+        protectNBT.forEach(nbt -> wrapper.set(nbt, oldWrapper.get(nbt)));
+        wrapper.save();
+
+        SXItemUpdateEvent event = new SXItemUpdateEvent(plugin, player, (IGenerator) updateIg, newItem, item);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+        item.setType(event.getItem().getType());
+        item.setItemMeta(event.getItem().getItemMeta());
     }
 
     /**
@@ -393,7 +413,7 @@ public class ItemManager implements Listener {
     @EventHandler
     void on(PlayerItemHeldEvent event) {
         Inventory inv = event.getPlayer().getInventory();
-        updateItem(event.getPlayer(), inv.getItem(event.getPreviousSlot()), inv.getItem(event.getNewSlot()));
+        checkUpdateItem(event.getPlayer(), inv.getItem(event.getPreviousSlot()), inv.getItem(event.getNewSlot()));
     }
 
     @EventHandler

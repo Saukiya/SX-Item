@@ -253,11 +253,8 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
     }
 
     @Override
-    public ItemStack update(ItemStack oldItem, NBTTagWrapper oldWrapper, Player player) {
-        RandomDocker randomDocker = new RandomDocker(randomMap, player);
-        Map<String, String> map = (Map<String, String>) oldWrapper.getMap(SXItem.getInst().getName() + ".Lock");
-        if (map != null) randomDocker.getOtherList().add(map);
-        return getItem(player, randomDocker);
+    public boolean isUpdate() {
+        return update;
     }
 
     @Override
@@ -266,8 +263,11 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
     }
 
     @Override
-    public boolean isUpdate() {
-        return update;
+    public ItemStack update(ItemStack oldItem, NBTTagWrapper oldWrapper, Player player) {
+        RandomDocker randomDocker = new RandomDocker(randomMap, player);
+        Map<String, String> map = (Map<String, String>) oldWrapper.getMap(SXItem.getInst().getName() + ".Lock");
+        if (map != null) randomDocker.getOtherList().add(map);
+        return getItem(player, randomDocker);
     }
 
     public static Saver saveFunc() {
