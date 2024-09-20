@@ -97,13 +97,13 @@ publishing {
     publications {
         maven(MavenPublication) {
             from components.java
-            artifactId = rootProject.name
         }
     }
     repositories {
+        mavenLocal()
         maven {
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/Saukiya/SX-Item")
+            url = uri("https://maven.pkg.github.com/saukiya/SX-Item")
             credentials {
                 username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
                 password = project.findProperty("gpr.token") ?: System.getenv("TOKEN")
