@@ -61,6 +61,11 @@ dependencies {
     testImplementation fileTree("Module-NMS-V1_21_R1/lib")
 }
 
+println "*** ENVIRONMENT VARIABLE DUMP ***"
+System.getenv().each { key, value ->
+    println "${key}=${value}"
+}
+
 shadowJar {
     // 过滤未使用的依赖
     minimize()
