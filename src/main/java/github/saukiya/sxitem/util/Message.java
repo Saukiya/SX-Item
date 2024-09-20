@@ -85,7 +85,7 @@ public enum Message {
 
     public static List<String> getListStatic(String loc, Object... args) {
         List<String> list = messages.getStringList(loc);
-        if (list.size() == 0) return Collections.singletonList("Null Message: " + loc);
+        if (list.isEmpty()) return Collections.singletonList("Null Message: " + loc);
         list.replaceAll(str -> MessageFormat.format(str, args).replace('&', '§'));
         return list;
     }

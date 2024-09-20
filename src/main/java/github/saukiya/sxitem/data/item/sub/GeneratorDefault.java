@@ -281,12 +281,12 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
                 config.set("Lore", itemMeta.getLore().stream().map(s -> s.replace('§', '&')).collect(Collectors.toList()));
             if (itemMeta.hasEnchants())
                 config.set("EnchantList", itemMeta.getEnchants().entrySet().stream().map(entry -> entry.getKey().getName() + ":" + entry.getValue()).collect(Collectors.toList()));
-            if (itemMeta.getItemFlags().size() > 0)
+            if (!itemMeta.getItemFlags().isEmpty())
                 config.set("ItemFlagList", itemMeta.getItemFlags().stream().map(Enum::name).collect(Collectors.toList()));
             if (ItemUtil.getInst().isUnbreakable(itemMeta))
                 config.set("Unbreakable", true);
             List<ItemUtil.AttributeData> attributeList = ItemUtil.getInst().getAttributes(item);
-            if (attributeList != null && attributeList.size() > 0)
+            if (attributeList != null && !attributeList.isEmpty())
                 config.set("Attributes", attributeList.stream().map(data -> data.getAttrName() + ":" + data.getAmount() + ":" + data.getOperation() + (data.getSlot() != null ? ":" + data.getSlot() : "")).collect(Collectors.toList()));
             if (itemMeta instanceof LeatherArmorMeta)
                 config.set("Color", Integer.toHexString(((LeatherArmorMeta) itemMeta).getColor().asRGB()));

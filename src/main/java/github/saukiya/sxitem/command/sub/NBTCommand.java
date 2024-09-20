@@ -45,7 +45,7 @@ public class NBTCommand extends SubCommand {
                         .show(Message.NBT__CLICK_COPY.get())
                         .suggestCommand(item.getType().name());
                 String keys = String.join("/", ItemManager.getMaterialString(item.getType()));
-                if (keys.length() != 0) cb.add("-").add(keys).show(Message.NBT__CLICK_COPY.get()).suggestCommand(keys);
+                if (!keys.isEmpty()) cb.add("-").add(keys).show(Message.NBT__CLICK_COPY.get()).suggestCommand(keys);
                 cb.add("] ");
                 if (tagCompound != null) cb.add("§cItem-NBT").show(tagCompound.toString());
                 cb.send(sender);
@@ -84,7 +84,7 @@ public class NBTCommand extends SubCommand {
             }
             if (tagBase.getTypeId() == TagType.LIST) {
                 TagList tagList = (TagList) tagBase;
-                if (tagList.size() != 0)
+                if (!tagList.isEmpty())
                     typeShow += "-" + tagList.get(0).getTypeId();
                 nbtShow = ((TagList) tagBase).stream().flatMap(tag -> Arrays.stream(tag.getValue().toString().split("\n"))).collect(Collectors.joining("\n"));
             } else {

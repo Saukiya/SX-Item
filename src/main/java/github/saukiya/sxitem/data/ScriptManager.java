@@ -11,11 +11,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.script.*;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -95,7 +95,7 @@ public class ScriptManager {
         invocable = (Invocable) engine;
         compiledScripts.clear();
         // 这玩意最好隔离出来单独搞个Global.js
-        InputStreamReader globalReader = new InputStreamReader(new FileInputStream(globalFile), StandardCharsets.UTF_8);
+        InputStreamReader globalReader = new InputStreamReader(Files.newInputStream(globalFile.toPath()), StandardCharsets.UTF_8);
         compilableEngine.compile(globalReader);
         globalReader.close();
     }
@@ -113,7 +113,7 @@ public class ScriptManager {
                 loadScriptFile(file);
                 // TODO 可选引擎后缀
             } else if (file.getName().endsWith(".js")) {
-                InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
+                InputStreamReader inputStreamReader = new InputStreamReader(Files.newInputStream(file.toPath()), StandardCharsets.UTF_8);
                 CompiledScript compiled = compilableEngine.compile(inputStreamReader);
                 compiledScripts.put(file.getName().replace(".js", ""), compiled);
                 inputStreamReader.close();

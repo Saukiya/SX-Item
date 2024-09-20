@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Locale;
+import java.util.stream.Stream;
 
 /**
  * 本地化工具
@@ -31,17 +32,20 @@ public class LocalizationUtil {
      * 如果文件已存在，则不会进行覆盖。
      * </pre>
      *
-     * @param plugin 当前插件
+     * @param plugin          当前插件
      * @param supportLanguage 受支持的语言 (zh..en..)
      */
     public static void saveResource(JavaPlugin plugin, String... supportLanguage) throws IOException, URISyntaxException {
-        YamlConfiguration pluginYml = YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("plugin.yml")));
-        String language = pluginYml.getString("language", systemLanguage);
-        if (supportLanguage.length != 0 && !Arrays.asList(supportLanguage).contains(language)) {
-            language = supportLanguage[0];
+        try (InputStreamReader reader = new InputStreamReader(plugin.getResource("plugin.yml"))) {
+            YamlConfiguration pluginYml = YamlConfiguration.loadConfiguration(reader);
+            String language = pluginYml.getString("language", systemLanguage);
+            if (supportLanguage.length != 0 && !Arrays.asList(supportLanguage).contains(language)) {
+                language = supportLanguage[0];
+            }
+            plugin.getLogger().info("Localization: " + language);
+            reader.close();
+            extractResourceFolder(plugin, language);
         }
-        plugin.getLogger().info("Localization: " + language);
-        extractResourceFolder(plugin, language);
     }
 
     private static void extractResourceFolder(JavaPlugin plugin, String language) throws IOException, URISyntaxException {
@@ -49,14 +53,16 @@ public class LocalizationUtil {
         URL sourceUri = plugin.getClass().getResource("");
         try (FileSystem fileSystem = FileSystems.newFileSystem(sourceUri.toURI(), Collections.emptyMap())) {
             Path sourcePath = fileSystem.getPath("/Localization/" + language);
-            for (Path source : Files.walk(sourcePath).toArray(Path[]::new)) {
-                Path targetPath = targetFolder.toPath().resolve(sourcePath.relativize(source).toString());
-                if (Files.exists(targetPath)) continue;
-                if (Files.isDirectory(source)) {
-                    Files.createDirectory(targetPath);
-                } else {
-                    plugin.getLogger().info("Copy: " + targetPath);
-                    Files.copy(source, targetPath);
+            try (Stream<Path> sourcePaths = Files.walk(sourcePath)) {
+                for (Path source : sourcePaths.toArray(Path[]::new)) {
+                    Path targetPath = targetFolder.toPath().resolve(sourcePath.relativize(source).toString());
+                    if (Files.exists(targetPath)) continue;
+                    if (Files.isDirectory(source)) {
+                        Files.createDirectory(targetPath);
+                    } else {
+                        plugin.getLogger().info("Copy: " + targetPath);
+                        Files.copy(source, targetPath);
+                    }
                 }
             }
         }
