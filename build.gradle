@@ -1,4 +1,5 @@
 plugins {
+    id 'maven-publish'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 // 全局设置
@@ -90,4 +91,12 @@ task buildDebugJar(type: Copy) {
 //需要对资源文件中含有的'$'进行转义: $ -> \$
 processResources {
     expand(version: version)
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
 }
