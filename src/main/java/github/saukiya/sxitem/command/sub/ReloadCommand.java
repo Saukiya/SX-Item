@@ -34,8 +34,8 @@ public class ReloadCommand extends SubCommand {
         SXItem.getItemManager().loadItemData();
         SXItem.getMainCommand().onReload();
         SXItem.getSdf().remove();
-        Bukkit.getOnlinePlayers().forEach(player -> SXItem.getItemManager().updateItem(player, player.getInventory().getContents()));
         Bukkit.getPluginManager().callEvent(SXItemReloadEvent.getInst());
         MessageUtil.send(sender, Message.ADMIN__PLUGIN_RELOAD.get());
+        Bukkit.getOnlinePlayers().forEach(player -> SXItem.getItemManager().checkUpdateItem(player, player.getInventory().getContents()));
     }
 }

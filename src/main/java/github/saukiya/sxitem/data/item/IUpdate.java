@@ -1,6 +1,7 @@
 package github.saukiya.sxitem.data.item;
 
 import github.saukiya.sxitem.nbt.NBTTagWrapper;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -11,9 +12,13 @@ import org.bukkit.inventory.ItemStack;
  */
 public interface IUpdate {
 
-    ItemStack update(ItemStack oldItem, NBTTagWrapper oldWrapper, Player player);
+    String getKey();
+
+    ConfigurationSection getConfig();
+
+    boolean isUpdate();
 
     int updateCode();
 
-    boolean isUpdate();
+    ItemStack update(ItemStack oldItem, NBTTagWrapper oldWrapper, Player player);
 }

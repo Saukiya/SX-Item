@@ -55,7 +55,8 @@ public interface NMS {
                     try {
                         temp = target.getClass().getDeclaredField(fieldName);
                         temp.setAccessible(true);
-                    } catch (NoSuchFieldException ignored) {
+                    } catch (NoSuchFieldException e) {
+                        e.printStackTrace();
                     }
                     return temp;
                 });
