@@ -18,7 +18,10 @@ import org.apache.commons.lang.text.StrMatcher;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -68,7 +71,7 @@ public class Test {
 //        yamlToTagTest();
 //        gsonTest();
 //        conversionNBT();
-        checkUpdate();
+//        checkUpdate();
     }
 
     public static JsonElement getJsonFromUrl(String url) {
@@ -189,12 +192,12 @@ public class Test {
         NBTTagCompound subTagCompound = new NBTTagCompound();
         NBTTagCompound qwqTagCompound = new NBTTagCompound();
         NBTTagCompound testTagCompound = new NBTTagCompound();
-        nbtTagCompound.set("sub", subTagCompound);
-        subTagCompound.set("qwq", qwqTagCompound);
-        qwqTagCompound.set("test", testTagCompound);
-        subTagCompound.set("float", NBTTagFloat.a(4f));
-        qwqTagCompound.set("string", NBTTagString.a("测试文本"));
-        testTagCompound.set("ints", new NBTTagIntArray(new int[]{5, 23, 7, 873, 4, 46, 3, 7, 34}));
+        nbtTagCompound.a("sub", subTagCompound);
+        subTagCompound.a("qwq", qwqTagCompound);
+        qwqTagCompound.a("test", testTagCompound);
+        subTagCompound.a("float", NBTTagFloat.a(4f));
+        qwqTagCompound.a("string", NBTTagString.a("测试文本"));
+        testTagCompound.a("ints", new NBTTagIntArray(new int[]{5, 23, 7, 873, 4, 46, 3, 7, 34}));
 
         NbtUtil nbtUtil = NbtUtil.getInst();
         TagCompound compound = nbtUtil.asTagCompoundCopy(nbtTagCompound);
@@ -264,9 +267,9 @@ public class Test {
         tagList.add(NBTTagByte.a(true));
         NBTTagByteArray bytes = new NBTTagByteArray(new byte[]{1, 3, 5, 6});
         NBTTagCompound nbtTagCompound = new NBTTagCompound();
-        nbtTagCompound.set("tagList", tagList);
-        nbtTagCompound.set("bytes", bytes);
-        nbtTagCompound.set("byte", NBTTagByte.a(false));
+        nbtTagCompound.a("tagList", tagList);
+        nbtTagCompound.a("bytes", bytes);
+        nbtTagCompound.a("byte", NBTTagByte.a(false));
         System.out.println(nbtTagCompound);
 //        NBTTagCompound compound = new NBTTagCompound();
 //        compound.set("tag.sub", NBTTagString.a("Test"));
@@ -379,22 +382,22 @@ public class Test {
         nbtTagLongArray.add(NBTTagLong.a(4000L));
         nbtTagLongArray.add(NBTTagLong.a(2000L));
         NBTTagCompound nbtSubCompound = new NBTTagCompound();
-        nbtSubCompound.set("test1", subTagList1);
-        nbtSubCompound.set("test2", subTagList2);
+        nbtSubCompound.a("test1", subTagList1);
+        nbtSubCompound.a("test2", subTagList2);
 
         NBTTagCompound nbtTagCompound = new NBTTagCompound();
 
-        nbtTagCompound.set("byteArray", nbtByteArray);
-        nbtTagCompound.set("tagIntArray", nbtTagIntArray);
-        nbtTagCompound.set("tagLongArray", nbtTagLongArray);
-        nbtTagCompound.set("sub", nbtSubCompound);
+        nbtTagCompound.a("byteArray", nbtByteArray);
+        nbtTagCompound.a("tagIntArray", nbtTagIntArray);
+        nbtTagCompound.a("tagLongArray", nbtTagLongArray);
+        nbtTagCompound.a("sub", nbtSubCompound);
 
-        nbtTagCompound.set("tagByte", NBTTagByte.a((byte) 6));
-        nbtTagCompound.set("tagInt", NBTTagInt.a(23));
-        nbtTagCompound.set("tagLong", NBTTagLong.a(40));
-        nbtTagCompound.set("tagFloat", NBTTagFloat.a(2.5f));
-        nbtTagCompound.set("tagShort", NBTTagShort.a((short) 4));
-        nbtTagCompound.set("tagDouble", NBTTagDouble.a(6.6));
+        nbtTagCompound.a("tagByte", NBTTagByte.a((byte) 6));
+        nbtTagCompound.a("tagInt", NBTTagInt.a(23));
+        nbtTagCompound.a("tagLong", NBTTagLong.a(40));
+        nbtTagCompound.a("tagFloat", NBTTagFloat.a(2.5f));
+        nbtTagCompound.a("tagShort", NBTTagShort.a((short) 4));
+        nbtTagCompound.a("tagDouble", NBTTagDouble.a(6.6));
 
         return nbtTagCompound;
     }
@@ -424,11 +427,11 @@ public class Test {
         System.out.println("[STREAM->SX] " + tagBase);
 
         //nmsStr转nmsNBT
-        NBTTagCompound parseTagCompound = MojangsonParser.parse(nbtTagCompound.toString());
+        NBTTagCompound parseTagCompound = MojangsonParser.a(nbtTagCompound.toString());
         System.out.println("[NMS_STR->NMS] " + parseTagCompound);
 
         //sxStr转nmsNBT
-        parseTagCompound = MojangsonParser.parse(tagBase.toString());
+        parseTagCompound = MojangsonParser.a(tagBase.toString());
         System.out.println("[SX_STR->NMS] " + parseTagCompound);
     }
 

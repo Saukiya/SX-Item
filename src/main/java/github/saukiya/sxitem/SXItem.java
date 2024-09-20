@@ -2,18 +2,18 @@ package github.saukiya.sxitem;
 
 import github.saukiya.sxitem.command.MainCommand;
 import github.saukiya.sxitem.command.sub.*;
+import github.saukiya.sxitem.data.ScriptManager;
 import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.data.item.sub.GeneratorDefault;
 import github.saukiya.sxitem.data.item.sub.GeneratorImport;
 import github.saukiya.sxitem.data.random.RandomManager;
-import github.saukiya.sxitem.data.ScriptManager;
 import github.saukiya.sxitem.data.random.randoms.*;
-import github.saukiya.sxitem.data.random.randoms.ScriptRandom;
 import github.saukiya.sxitem.helper.MythicMobsHelper;
 import github.saukiya.sxitem.helper.PlaceholderHelper;
 import github.saukiya.sxitem.util.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
@@ -30,7 +30,7 @@ import java.util.Random;
 public class SXItem extends JavaPlugin {
 
     @Getter
-    private static final ThreadLocal<SimpleDateFormat> sdf = ThreadLocal.withInitial(() -> new SimpleDateFormat(Config.getConfig().getString(Config.TIME_FORMAT)));
+    private static final ThreadLocal<SimpleDateFormat> sdf = ThreadLocal.withInitial(() -> new SimpleDateFormat(Config.getConfig().getString(Config.TIME_FORMAT, "yyyy/MM/dd HH:mm")));
     @Getter
     private static final Random random = new Random();
     @Setter
@@ -49,10 +49,12 @@ public class SXItem extends JavaPlugin {
 
     private static LogUtil logUtil;
 
+    @SneakyThrows
     @Override
     public void onLoad() {
         inst = this;
         logUtil = new LogUtil(inst);
+        LocalizationUtil.saveResource(this, "zh", "en");
         Config.loadConfig();
         Message.loadMessage();
         mainCommand = new MainCommand(this);
@@ -61,6 +63,7 @@ public class SXItem extends JavaPlugin {
         mainCommand.register(new NBTCommand());
         mainCommand.register(new ScriptCommand());
         mainCommand.register(new ReloadCommand());
+        mainCommand.register(new TestCommand());
 
         ItemManager.loadMaterialData();
         ItemManager.register("Default", GeneratorDefault::new, GeneratorDefault.saveFunc());
@@ -82,12 +85,14 @@ public class SXItem extends JavaPlugin {
         new Metrics(this, 11948);
         long oldTimes = System.currentTimeMillis();
         NbtUtil.getInst();
+        ComponentUtil.getInst();
+
         ItemUtil.getInst();
         MessageUtil.getInst();
 
-        scriptManager = new ScriptManager(this, "Scripts/Global.js", "Scripts/Default.js");
-        randomManager = new RandomManager(this, "RandomString/DefaultRandom.yml", "RandomString/10Level/Random.yml");
-        itemManager = new ItemManager(this, "Item/Default/Default.yml", "Item/NoLoad/Default.yml");
+        scriptManager = new ScriptManager(this);
+        randomManager = new RandomManager(this);
+        itemManager = new ItemManager(this);
 
         Config.setup();
         PlaceholderHelper.setup();

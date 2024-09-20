@@ -1,0 +1,322 @@
+#
+##################################################################
+##                        Default类型参数                        ##
+##################################################################
+#
+#物品名称 Name [Type:String] (支持随机)
+#
+#物品材质 ID [Type:String] (支持随机)
+# 格式-1:
+# - 276
+# 格式-2: 267
+#
+#物品耐久 Durability [Type:String] (支持随机)
+# 格式-1: 20    原版耐久，"20" 相当于 "该物品耐久只剩(该材质最大耐久-20)"
+# 格式-2: <20   反算耐久，"<20" 效果是 "该物品耐久只剩20"
+# 格式-3: 20%   百分比耐久，与耐久条相同
+# 也可以在ID节点下编写->
+# ID:
+# - 276:Durability格式
+#
+#物品数量 Amount [Type:String] (支持随机)
+#
+#物品描述 Lore [Type:List] (支持随机)
+# 格式:
+# - "..."
+#
+#附魔列表 EnchantList [Type:List] (支持随机)
+# 格式:
+# - "附魔名称:等级"
+# 参考WIKI: https://minecraft.fandom.com/zh/wiki/%E9%99%84%E9%AD%94
+# 参考API:  https://hub.spigotmc.org/javadocs/spigot/org/bukkit/enchantments/Enchantment.html
+#
+#隐藏选项 ItemFlagList [Type:List]
+# 描述: 用于隐藏属性、附魔、无限耐久、药水效果、染色等信息
+# 格式:
+# - "HIDE_ENCHANTS"
+# - "HIDE_ATTRIBUTES"
+# - "HIDE_UNBREAKABLE"
+# - "HIDE_POTION_EFFECTS"
+# 参考API: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemFlag.html
+#
+#物品染色 Color [Type:String] (支持随机)
+# 描述: 可以对该物品染色 (仅限皮革防具) ，需要用十六进制颜色码 (不需要带#)
+# 格式: "000000"
+#
+#物品属性 Attributes [Type:List] (支持随机)
+# 格式:
+# - "属性名:数字:模式:生效位置"    # 生效当前位置, 高版本推荐使用
+# - "属性名:数字:模式"           # 生效所有位置
+# 属性名:
+#   GENERIC_MAX_HEALTH               最大生命值
+#   GENERIC_FOLLOW_RANGE             生物追踪范围
+#   GENERIC_KNOCKBACK_RESISTANCE     抗擊退效果
+#   GENERIC_MOVEMENT_SPEED           移动速度
+#   GENERIC_FLYING_SPEED             飞行速度
+#   GENERIC_ATTACK_DAMAGE            攻击伤害
+#   GENERIC_ATTACK_KNOCKBACK         击退力度
+#   GENERIC_ATTACK_SPEED             攻击速度
+#   GENERIC_ARMOR                    盔甲防御点数
+#   GENERIC_ARMOR_TOUGHNESS          盔甲韧性
+#   GENERIC_LUCK                     幸运度 (例如原版的当打开箱子、运输矿车，钓鱼和杀怪)
+#   HORSE_JUMP_STRENGTH              马的弹跳力(只对马铠生效)
+#   ZOMBIE_SPAWN_REINFORCEMENTS      僵尸召唤系数(未测试)
+# 模式:
+#   0   ADD_NUMBER          属性增量    该模式直接在基值上进行加减法操作
+#   1   ADD_SCALAR          倍率增量    该模式将在Operation 0之后执行，并直接在属性值的作用倍率上进行加减法操作，也就是将当前的属性值进行倍率上的修改，而基础倍率为×1倍 (即不做改动)
+#   2   MULTIPLY_SCALAR_1   最终倍乘    该模式将会在其他所有修饰 (包括其他的Operation 2修饰) 完成后，在最终倍率上执行加减法操作，并执行最终的倍乘。基础倍率同样为×1倍
+# 生效位置: 不填写生效位置则生效在所有部位上
+#   HAND      主
+#   OFF_HAND  副
+#   HEAD      头
+#   CHEST     身
+#   LEGS      腿
+#   FEET      脚
+# 参考WIKI: https://minecraft.fandom.com/zh/wiki/%E5%B1%9E%E6%80%A7?variant=zh-cn
+# 参考API:  https://hub.spigotmc.org/javadocs/spigot/org/bukkit/attribute/package-summary.html
+#
+#自定义材质ID CustomModelData: 1000
+#
+#药水系统 Potion [Type:Map-?] (部分随机)
+# 说明: 药水类型/duration/amplifier支持随机, ambient/particles/icon默认值为ture
+#      默认和自定义我觉得没有同时存在的必要, 所以是二选一, 药水效果填错只会不生效
+# 格式-1:       默认药水参数
+#   Potion: 药水类型
+#   Potion: <s:JUMP:ABSORPTION>
+# 格式-2:       自定义药水
+#   Potion:
+#     药水类型:
+#       持续时间(duration): 20=1秒
+#       效果等级(amplifier): 1
+#       氛围(ambient): true
+#       粒子特效(particles): true
+#       是否显示图标(icon): true
+#   Potion:
+#     <s:SPEED:SLOW>:
+#       duration: <c:20 * <i:10_20>>
+#       amplifier: <i:1_2>
+#
+# 参考API: https://bukkit.windit.net/javadoc/org/bukkit/potion/PotionEffectType.html
+#
+#物品标签 NBT [Type:Map-?] (支持随机)
+# 描述: 自由的将NBT节点下的配置信息设置到物品NBT中，可输入/si nbt查看
+#
+#清除属性 ClearAttribute [Type:Boolean]
+# 描述: 让物品失去原有的默认属性 (代码实现为: ItemFlag.HIDE_ATTRIBUTE + Attributes.GENERIC_ATTACK_DAMAGE:0:0)
+#
+#保护标签 ProtectNBT [Type:List]
+# 描述: 自动更新时保护以下NBT不被更改，可输入/si nbt查看
+# 格式:
+# - "Enchantments" 保护附魔词条不被自动更新
+# - "!protect.data" 解除在全局保护[Config.yml]中的词条
+#
+#局部随机 Random [Type:Map-?]
+# 描述: 设置物品的局部随机变量
+# 格式: 与RandomString文件夹下的格式一样
+#
+#自动更新 Update [Type:Boolean]
+# 描述: 会自动更新该物品 (注意，随机文本除了<l:>以外也会重新生成)
+#
+
+Default-1:
+  Name: <s:DefaultPrefix>&c炎之洗礼<s:DefaultSuffix> <s:<l:品质>Color><l:品质>
+  ID: <l:<l:职业>ID>
+  Lore:
+    - '&6品质等级: <s:<l:品质>Color><l:品质>'
+    - '<b:<l:品质>:优秀:史诗>&6限制职业: <l:职业>'
+    - '&6物品类型: 主武器'
+    - '&6限制等级: <c:int 10 * <s:<l:品质>基数>>级'
+    - '&c攻击力: +<l:攻击力>'
+    - '<l:攻一-10>'
+    - '<l:攻二-10>'
+    - '<l:攻三-10>'
+    - '<l:材质>'
+    - '<s:<l:品质>宝石孔>'
+    #   - '&7耐久度: <c:int <r:300_350> * <s:<l:品质>基数>>/<c:int 400 * <s:<l:品质>基数>>'
+    - '&7耐久度: <c:int <d:0.6_0.9> * <l:耐久度>>/<l:耐久度>'
+    - '<b:<l:品质>:史诗>&c已绑定'
+    - '&a到期时间: <t:10m>'
+    #   - '&a到期时间: <t:600>'
+    - '<b:<l:品质>:优秀:史诗>                                    '
+    - '<b:<l:品质>:优秀:史诗><s:DefaultLore>'
+  EnchantList:
+    - <s:<l:职业>附魔>
+  ClearAttribute: true
+  Random:
+    攻击力: <c:20 * <s:<l:品质>基数>>
+    耐久度: <c:int <r:350_400> * <s:<l:品质>基数>>
+  NBT:
+    arg1.arg2: 测试NBT
+    sx:
+      attribute:
+        - '词条一'
+        - '词条二'
+        - '词条三'
+        - 'SX-Attribute预留属性接口'
+        - '如需使用随机则需学习高等随机'
+  ProtectNBT: #保护附魔NBT不被更新
+    - "Enchantments"
+
+Default-2:
+  Name: '&c机械轻羽之靴'
+  ID: 301
+  Lore:
+    - '&6物品类型: 靴子'
+    - '&c生命上限: +2000'
+    - '&d移速增幅: +50%'
+    - '&6限制等级: <r:50_100>级'
+    - '&r'
+    - '&8速度 II'
+    - '&c支持单项自动更新-(自动更新)'
+    - '&c支持单项关闭清除标签'
+    - '&r'
+    - '&e出售价格: 250'
+  EnchantList:
+    - DURABILITY:1
+  ItemFlagList:
+    - HIDE_ENCHANTS
+    - HIDE_UNBREAKABLE
+  Unbreakable: true
+  Color: <s:Color>
+  Random:
+    Color:
+      - 'ffffff'
+      - '000000'
+  Update: true
+
+Default-3:
+  Name: '&c&l随机字符串说明'
+  #设置耐久为0
+  ID: 359:<0
+  Lore:
+    - ''
+    - '&4&l!!! 以下内容以配置文件为主 !!!'
+    - ''
+    - "&e&l'&c&l<>&e&l' 非替换变量需用 '&c&l\$&e&l' 转义"
+    - '&7格式: \$<1:内容> 或 <内容>'
+    - '&7例如: \$<s:DefaultPrefix> 或 <DefaultPrefix>'
+    - ''
+    - '&e&l随机类型:'
+    - '&cb   - &7整行判断&r [<b:匹配名:匹配词1:匹配词2:匹配词3:匹配词4>] 这行因为没有匹配词和匹配名相同而被删除'
+    - '&cb   - &7整行判断&r [<b:<l:品质>:史诗:优秀:普通>]'
+    - '&ct   - &7时间格式&r [<t:1Y1M1D1h1m1s>]'
+    - '&cc   - &7计算器&r [<c:((2*3) + 2) * 1.4>] [<c:int ((2*3) + 2) * 1.4>]'
+    - '&cl   - &7锁定随机&r [<l:品质>] [<l:EASY#AAA:BBB:CCC>]'
+    - '&cs   - &7正常随机&r [<s:<s:品质>Color>♦&r] [<s:AAA:BBB:CCC>]'
+    - '&cd   - &7小数随机&r [<d:2.3_6>]'
+    - '&ci&7/&cr - &7整数随机&r [<i:1_7>]'
+    - '&cu   - &7UUID随机&r [<u:random>]'
+    - '&cj   - &7脚本处理&r [<j:Default.itemScript#QAQ,QWQ,???,!!!>]'
+    - ''
+    - "&e局部变量调用全局变量请用 ~"
+    - "&c ~ &7在 yml 中表示 &4null"
+    - '&7覆盖全局变量结果-> <s:DefaultPrefix>'
+    - '&7全局和局部混合结果-> <s:DefaultLore>'
+    - ''
+    - '不存在的变量则会删除该行: <s:不存在>'
+    - '&r↑这里有一行被吃了'
+  Random:
+    DefaultPrefix: "Prefix"
+    DefaultLore:
+      # 1/3的概率随机到Lore，2/3的概率随机到全局变量
+      - 1: "Lore"
+      - 2: ~
+
+Default-4:
+  Type: Import
+  Item:
+    ==: org.bukkit.inventory.ItemStack
+    type: APPLE
+    meta:
+      ==: ItemMeta
+      meta-type: UNSPECIFIC
+      display-name: §7Import类型的苹果
+      lore:
+        - §7一个Type类型为 Import 的物品
+        - ''
+        - §c如何保存这种类型的物品?§7
+        - ''
+        - §7/sx save 编号 Import
+        - ''
+        - §c它不支持自动更新§7
+
+Default-5:
+  Name: '&b慢剑'
+  # YML语法-设置锚点 仅当前文件内有效 还有啥自己百度
+  ID: &def5-ID
+    - 268
+    - 272
+    - 283
+    - 267
+    - 276
+  #设置耐久为最大值*20%
+  Durability: 20%
+  Lore:
+    - '&7使用Attributes设置原版攻速'
+    - ''
+    - "&c'GENERIC_ATTACK_SPEED:-1:2:HAND' - 工具将无法抬起"
+  Type: Default
+  Update: true
+  Attributes:
+    - "GENERIC_ATTACK_SPEED:-0.7:1:HAND"
+    # - "GENERIC_ATTACK_SPEED:-1:2:HAND"
+
+Default-6:
+  Name: "&d修脚剑"
+  # YML语法-引用锚点 仅当前文件内有效
+  ID: *def5-ID
+  #设置耐久为最大值-30
+  Durability: 30
+  Attributes:
+    - "GENERIC_ATTACK_DAMAGE:-0.99:2:HAND"
+
+Default-7:
+  ID: <l:ID#POTION:SPLASH_POTION:LINGERING_POTION>
+  Lore: [ "&c药水目前只实现了1.11.1及以上的版本" ]
+  #  Potion: <s:WATER:POTION:JUMP>
+  Potion:
+    ABSORPTION: &PotionData
+      duration: <c:int 20 * <i:1_10> * <s:<l:ID>>>
+      amplifier: <i:1_3>
+      ambient: true
+      particles: true
+      icon: true
+    <s:NIGHT_VISION:BLINDNESS>: *PotionData
+    <s:SPEED:SLOW>: *PotionData
+    <s:INVISIBILITY:GLOWING:???>: *PotionData
+  Random:
+    POTION: 1
+    SPLASH_POTION: 1
+    LINGERING_POTION: 4
+  Update: true
+
+Default-8:
+  ID: 419
+  EnchantList:
+    #绑定诅咒不对马生效
+    - BINDING_CURSE:1
+  Attributes:
+    # 已知1.17版本马可以从马铠中获得属性，1.12.2及以下版本无法使用，其他版本未测试
+    - "HORSE_JUMP_STRENGTH:2:0:CHEST"
+    - "GENERIC_MOVEMENT_SPEED:0.5:1:CHEST"
+
+#Default-9: Default-1
+Default-9:
+  Name: '&9可被替换的物品'
+  ID: '350'
+  Lore:
+    - ''
+    - '&7将此物品替换为Default-1'
+    - "&7使用: 'Default-9: Default-1'"
+    - ''
+    - '&c必须打开目标(Default-1)的Update才可替换'
+    - '&4&l替换是不可回溯的'
+
+#是个普通的SX物品，yml简写
+#不存在的ID会使物品无法give出来, 但是不会报错
+Default-10.ID: '不存在的物品'
+
+#前缀是"NoLoad"的物品不会被加载
+NoLoad_Item:
+  ID: 1
+  Name: "不会被加载到的物品"

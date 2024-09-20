@@ -46,9 +46,7 @@ public class ItemManager implements Listener {
 
     private final JavaPlugin plugin;
 
-    private final String[] defaultFile;
-
-    private final File itemDirectory;
+    private final File rootDirectory;
 
     private final List<Player> checkPlayers = new ArrayList<>();
 
@@ -60,20 +58,19 @@ public class ItemManager implements Listener {
 
     private final Map<String, List<Tuple<String, List<IGenerator>>>> informationMap = new HashMap<>();
 
-    public ItemManager(JavaPlugin plugin, String... defaultFile) {
+    public ItemManager(JavaPlugin plugin) {
         this.plugin = plugin;
-        this.defaultFile = defaultFile;
-        this.itemDirectory = new File(plugin.getDataFolder(), "Item");
+        this.rootDirectory = new File(plugin.getDataFolder(), "Item");
         plugin.getLogger().info("Loaded " + loadFunction.size() + " ItemGenerators");
         loadItemData();
         Bukkit.getPluginManager().registerEvents(this, plugin);
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            if (checkPlayers.size() > 0) {
+            if (!checkPlayers.isEmpty()) {
                 List<Player> checkPlayers = new ArrayList<>(this.checkPlayers);
                 this.checkPlayers.clear();
                 for (Player player : checkPlayers) {
                     if (player != null) {
-                        updateItem(player, player.getInventory().getContents());
+                        checkUpdateItem(player, player.getInventory().getContents());
                     }
                 }
             }
@@ -84,12 +81,12 @@ public class ItemManager implements Listener {
      * 读取物品数据
      */
     public void loadItemData() {
-        // 写入默认配置文件
-        if (!itemDirectory.exists() || itemDirectory.listFiles().length == 0) {
-            Arrays.stream(defaultFile).forEach(fileName -> plugin.saveResource(fileName, true));
+        if (!rootDirectory.exists()) {
+            plugin.getLogger().warning("Directory is not exists: " + rootDirectory.getName());
+            return;
         }
         // 加载物品
-        loadItem(plugin.getName(), itemDirectory);
+        loadItem(plugin.getName(), rootDirectory);
         plugin.getLogger().info("Loaded " + itemMap.size() + " Items");
         // 加载固定NBT
         protectNbtList.clear();
@@ -103,6 +100,15 @@ public class ItemManager implements Listener {
      */
     public Set<String> getItemList() {
         return itemMap.keySet();
+    }
+
+    /**
+     * 获取物品生成器列表
+     *
+     * @return Collection
+     */
+    public Collection<IGenerator> getGeneratorList() {
+        return itemMap.values();
     }
 
     /**
@@ -270,13 +276,16 @@ public class ItemManager implements Listener {
     }
 
     /**
-     * 更新物品
+     * 检查更新物品
      */
-    public void updateItem(Player player, ItemStack... itemStacks) {
-        updateItem(player, plugin.getName(), itemStacks);
+    public void checkUpdateItem(Player player, ItemStack... itemStacks) {
+        checkUpdateItem(player, plugin.getName(), itemStacks);
     }
 
-    public void updateItem(Player player, String prefix, ItemStack... itemStacks) {
+    /**
+     * 检查更新物品
+     */
+    public void checkUpdateItem(Player player, String prefix, ItemStack... itemStacks) {
         for (ItemStack item : itemStacks) {
             if (item == null) continue;
             NBTTagWrapper oldWrapper = NbtUtil.getInst().getItemTagWrapper(item);
@@ -285,29 +294,46 @@ public class ItemManager implements Listener {
                 IUpdate updateIg = (IUpdate) ig;
                 Integer hashCode = oldWrapper.getInt(prefix + ".HashCode");
                 if (!updateIg.isUpdate() || (hashCode != null && updateIg.updateCode() == hashCode)) continue;
-                ItemStack newItem = updateIg.update(item, oldWrapper, player);
-                NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(newItem);
-                wrapper.set(plugin.getName() + ".ItemKey", ig.getKey());
-                wrapper.set(plugin.getName() + ".HashCode", ((IUpdate) ig).updateCode());
-                HashSet<String> protectNBT = new HashSet<>(protectNbtList);
-                for (String nbt : ig.getConfig().getStringList("ProtectNBT")) {
-                    if (nbt.startsWith("!")) {
-                        protectNBT.remove(nbt.substring(1));
-                    } else {
-                        protectNBT.add(nbt);
-                    }
-                }
-                // 存在原始NBT -> 基础数据 -> 原始NBT的性能转换
-                protectNBT.forEach(nbt -> wrapper.set(nbt, oldWrapper.get(nbt)));
-                wrapper.save();
-
-                SXItemUpdateEvent event = new SXItemUpdateEvent(plugin, player, ig, newItem, item);
-                Bukkit.getPluginManager().callEvent(event);
-                if (event.isCancelled()) continue;
-                item.setType(event.getItem().getType());
-                item.setItemMeta(event.getItem().getItemMeta());
+                updateItem(player, item, updateIg, oldWrapper);
             }
         }
+    }
+
+    /**
+     * 强制更新物品
+     */
+    public void updateItem(Player player, ItemStack item) {
+        NBTTagWrapper oldWrapper = NbtUtil.getInst().getItemTagWrapper(item);
+        IGenerator ig = itemMap.get(oldWrapper.getString(plugin.getName() + ".ItemKey"));
+        if (!(ig instanceof IUpdate)) return;
+        updateItem(player, item, (IUpdate) ig, oldWrapper);
+    }
+
+    /**
+     * 强制更新物品
+     */
+    public void updateItem(Player player, ItemStack item, IUpdate updateIg, NBTTagWrapper oldWrapper) {
+        ItemStack newItem = updateIg.update(item, oldWrapper, player);
+        NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(newItem);
+        wrapper.set(plugin.getName() + ".ItemKey", updateIg.getKey());
+        wrapper.set(plugin.getName() + ".HashCode", updateIg.updateCode());
+        HashSet<String> protectNBT = new HashSet<>(protectNbtList);
+        updateIg.getConfig().getStringList("ProtectNBT").forEach(nbt -> {
+            if (nbt.startsWith("!")) {
+                protectNBT.remove(nbt.substring(1));
+                return;
+            }
+            protectNBT.add(nbt);
+        });
+        // 存在原始NBT -> 基础数据 -> 原始NBT的性能转换
+        protectNBT.forEach(nbt -> wrapper.set(nbt, oldWrapper.get(nbt)));
+        wrapper.save();
+
+        SXItemUpdateEvent event = new SXItemUpdateEvent(plugin, player, (IGenerator) updateIg, newItem, item);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+        item.setType(event.getItem().getType());
+        item.setItemMeta(event.getItem().getItemMeta());
     }
 
     /**
@@ -328,7 +354,7 @@ public class ItemManager implements Listener {
         function.apply(item, config);
         if (config.getKeys(false).size() == 1) return false;
         String filePath = "Type-" + type + File.separator + "Item.yml";
-        File file = new File(itemDirectory, filePath);
+        File file = new File(rootDirectory, filePath);
         YamlConfiguration yaml = file.exists() ? YamlConfiguration.loadConfiguration(file) : new YamlConfiguration();
         yaml.set(key, config);
         yaml.save(file);
@@ -345,7 +371,7 @@ public class ItemManager implements Listener {
      */
     public void sendItemInfoToPlayer(CommandSender sender, String search) {
         sender.sendMessage("");
-        if (search != null && search.equals("")) {
+        if (search != null && search.isEmpty()) {
             // 文件夹
             MessageUtil.getInst().componentBuilder()
                     .add("§eDirectoryList§8 - §7ClickOpen")
@@ -387,7 +413,7 @@ public class ItemManager implements Listener {
     @EventHandler
     void on(PlayerItemHeldEvent event) {
         Inventory inv = event.getPlayer().getInventory();
-        updateItem(event.getPlayer(), inv.getItem(event.getPreviousSlot()), inv.getItem(event.getNewSlot()));
+        checkUpdateItem(event.getPlayer(), inv.getItem(event.getPreviousSlot()), inv.getItem(event.getNewSlot()));
     }
 
     @EventHandler

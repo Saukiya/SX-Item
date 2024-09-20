@@ -32,14 +32,15 @@ public class Config {
     public static void loadConfig() {
         File file = new File(SXItem.getInst().getDataFolder(), "Config.yml");
         if (!file.exists()) {
-            SXItem.getInst().getLogger().info("Create Config.yml");
-            LocalizationUtil.saveResource("Config.yml");
+            SXItem.getInst().getLogger().warning("File is not exists: Config.yml");
+            config = new YamlConfiguration();
+            return;
         }
         config = YamlConfiguration.loadConfiguration(file);
     }
 
     public static void setup() {
         SXItem.getInst().getLogger().setLevel(Level.parse(config.getString(LOGGER_LEVEL, "ALL")));
-        SXItem.setDf(new DecimalFormat(config.getString(DECIMAL_FORMAT)));
+        SXItem.setDf(new DecimalFormat(config.getString(DECIMAL_FORMAT, "#.##")));
     }
 }

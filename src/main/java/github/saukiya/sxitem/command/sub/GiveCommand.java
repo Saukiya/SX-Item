@@ -90,7 +90,7 @@ public class GiveCommand extends SubCommand implements Listener {
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
         if (args.length == 2) {
-            return SXItem.getItemManager().getItemList().stream().filter(itemName -> itemName.contains(args[1])).collect(Collectors.toList());
+            return SXItem.getItemManager().getItemList().stream().filter(itemName -> itemName.toLowerCase().contains(args[1].toLowerCase())).collect(Collectors.toList());
         }
         if (args.length == 4) {
             return Collections.singletonList("1");
