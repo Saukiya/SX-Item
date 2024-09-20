@@ -86,7 +86,7 @@ public class ItemManager implements Listener {
     public void loadItemData() {
         // 写入默认配置文件
         if (!itemDirectory.exists() || itemDirectory.listFiles().length == 0) {
-            Arrays.stream(defaultFile).forEach(fileName -> plugin.saveResource(fileName, true));
+            Arrays.stream(defaultFile).forEach(fileName -> LocalizationUtil.saveResource(plugin, fileName));
         }
         // 加载物品
         loadItem(plugin.getName(), itemDirectory);

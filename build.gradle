@@ -59,7 +59,6 @@ dependencies {
     compileOnly 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
 
     testImplementation fileTree("Module-NMS-V1_21_R1/lib")
-    testImplementation 'com.google.guava:guava:31.0.1-jre'
 }
 
 shadowJar {

@@ -3,6 +3,7 @@ package github.saukiya.sxitem.data;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.helper.PlaceholderHelper;
 import github.saukiya.sxitem.util.Config;
+import github.saukiya.sxitem.util.LocalizationUtil;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -53,7 +54,7 @@ public class ScriptManager {
         try {
             File scriptFiles = new File(plugin.getDataFolder(), "Scripts");
             if (!scriptFiles.exists() || scriptFiles.listFiles().length == 0) {
-                Arrays.stream(defaultFile).forEach(fileName -> plugin.saveResource(fileName, true));
+                Arrays.stream(defaultFile).forEach(fileName -> LocalizationUtil.saveResource(plugin, fileName));
             }
             initEngine();
             enabled = true;
