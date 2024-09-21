@@ -7,7 +7,7 @@ allprojects {
     apply plugin: 'java'
 
     group 'io.github.saukiya'
-    version '4.0.0'
+    version '4.0.1'
 
     repositories {
         mavenCentral()
@@ -19,7 +19,6 @@ allprojects {
         maven { url 'https://repo.codemc.org/repository/maven-public' }
         //Paper Api
         maven { url 'https://repo.papermc.io/repository/maven-public/' }
-
     }
 
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -28,15 +27,21 @@ allprojects {
     dependencies {
         compileOnly 'org.projectlombok:lombok:1.18.34'
         annotationProcessor 'org.projectlombok:lombok:1.18.34'
-        testImplementation 'org.projectlombok:lombok:1.18.34'
-        testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
     }
+
+    tasks.build.finalizedBy shadowJar
 }
+
 // 子项目设置
 subprojects {
     dependencies {
         compileOnly fileTree('lib')
         compileOnly getRootProject()
+    }
+    tasks.forEach { task ->
+        if (task.name.contains('test') || task.name.contains('Test')) {
+            task.enabled = false
+        }
     }
 }
 
@@ -51,6 +56,8 @@ dependencies {
 
     testImplementation 'org.spigotmc:spigot-api:1.21.1-R0.1-SNAPSHOT'
     testImplementation 'commons-lang:commons-lang:2.6'
+    testImplementation 'org.projectlombok:lombok:1.18.34'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
 }
 
 shadowJar {
@@ -58,37 +65,38 @@ shadowJar {
     minimize()
     // bStats重定向
     relocate('org.bstats', 'github.saukiya.sxitem.bstats')
-    //执行所有子项目的 classes task
-    dependsOn getSubprojects().stream().map(sub -> sub.getPath() + ':classes').toList()
     // 获得子模块的classes文件
-    getSubprojects().forEach(sub -> {
-        from(sub.getBuildDir().toString() + '/classes/java/main')
+    getSubprojects().forEach(subProject -> {
+        from subProject.sourceSets.main.output
     })
 }
 
-//构建并拷贝
-task buildLastJar(type: Copy) {
-    dependsOn shadowJar
-    from shadowJar.archiveFile.get().asFile.path
-    into("$rootDir/build").rename { "${project.name}-Latest.jar" }
-
-}
-//本地测试服务器
-task buildDebugJar(type: Copy) {
-    dependsOn shadowJar
-    from shadowJar.archiveFile.get().asFile.path
-    into("$rootDir/run/plugins").rename { "${project.name}-Debug.jar" }
+// 打得出来但是不会发布捏
+var deprecated = project(":Module-Deprecated-v3")
+task SupportDeprecatedDependency(type: Jar) {
+    from deprecated.sourceSets.main.output
+    from rootProject.sourceSets.main.output
+    archiveClassifier = "api"
 }
 
-//需要对资源文件中含有的'$'进行转义: $ -> \$
-processResources {
-    expand(version: version)
+def createBuildTask(String taskName, String destinationDir, String jarSuffix) {
+    tasks.register(taskName, Copy) {
+        dependsOn build, shadowJar
+        from shadowJar.archiveFile.get().asFile.path
+        into(destinationDir).rename { "${project.name}-${jarSuffix}.jar" }
+    }
 }
 
-if (System.getenv("GITHUB_ACTIONS") != null) {
-    publishing {
-        repositories {
-            mavenLocal()
+// 创建copy任务
+createBuildTask('buildLastJar', "$rootDir/build", "Latest")
+createBuildTask('buildDebugJar', "$rootDir/run/plugins", "Debug")
+// 需要对资源文件中含有的'$'进行转义: $ -> \$
+processResources.expand(version: version)
+shadowJar.dependsOn SupportDeprecatedDependency
+
+publishing {
+    repositories {
+        if (System.getenv("GITHUB_ACTIONS") != null) {
             maven {
                 name = "GitHubPackages"
                 url = uri("https://maven.pkg.github.com/saukiya/SX-Item")
@@ -97,12 +105,14 @@ if (System.getenv("GITHUB_ACTIONS") != null) {
                     password = System.getenv("GITHUB_TOKEN")
                 }
             }
+        } else {
+            mavenLocal()
         }
-        publications {
-            mavenJava(MavenPublication) {
-                from components.java
-                artifactId = project.name.toLowerCase()
-            }
+    }
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifactId = project.name.toLowerCase()
         }
     }
 }
