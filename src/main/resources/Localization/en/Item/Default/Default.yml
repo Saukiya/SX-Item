@@ -24,14 +24,14 @@
 # 格式:
 # - "..."
 #
-#附魔列表 EnchantList [Type:List] (支持随机)
+#Enchant列表 EnchantList [Type:List] (支持随机)
 # 格式:
-# - "附魔名称:等级"
+# - "Enchant名称:Level"
 # 参考WIKI: https://minecraft.fandom.com/zh/wiki/%E9%99%84%E9%AD%94
 # 参考API:  https://hub.spigotmc.org/javadocs/spigot/org/bukkit/enchantments/Enchantment.html
 #
 #隐藏选项 ItemFlagList [Type:List]
-# 描述: 用于隐藏属性、附魔、无限耐久、药水效果、染色等信息
+# 描述: 用于隐藏属性、Enchant、无限耐久、药水效果、染色等信息
 # 格式:
 # - "HIDE_ENCHANTS"
 # - "HIDE_ATTRIBUTES"
@@ -39,8 +39,8 @@
 # - "HIDE_POTION_EFFECTS"
 # 参考API: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemFlag.html
 #
-#物品染色 Color [Type:String] (支持随机)
-# 描述: 可以对该物品染色 (仅限皮革防具) ，需要用十六进制颜色码 (不需要带#)
+#物品染色 NmColor [Type:String] (支持随机)
+# 描述: 可以对该物品染色 (仅限皮革防具) ，需要用十六进制AttrColor码 (不需要带#)
 # 格式: "000000"
 #
 #物品属性 Attributes [Type:List] (支持随机)
@@ -87,7 +87,7 @@
 #   Potion:
 #     药水类型:
 #       持续时间(duration): 20=1秒
-#       效果等级(amplifier): 1
+#       效果Level(amplifier): 1
 #       氛围(ambient): true
 #       粒子特效(particles): true
 #       是否显示图标(icon): true
@@ -107,7 +107,7 @@
 #保护标签 ProtectNBT [Type:List]
 # 描述: 自动更新时保护以下NBT不被更改，可输入/si nbt查看
 # 格式:
-# - "Enchantments" 保护附魔词条不被自动更新
+# - "Enchantments" 保护Enchant词条不被自动更新
 # - "!protect.data" 解除在全局保护[Config.yml]中的词条
 #
 #局部随机 Random [Type:Map-?]
@@ -119,49 +119,48 @@
 #
 
 Default-1:
-  Name: <s:DefaultPrefix>&c炎之洗礼<s:DefaultSuffix> <s:<l:品质>Color><l:品质>
-  ID: <l:<l:职业>ID>
+  Name: <l:DefaultPrefix> <l:DefaultName> <l:<l:Quality>NmColor><l:Quality>
+  ID: <l:<l:Occupation>ID>
   Lore:
-    - '&6品质等级: <s:<l:品质>Color><l:品质>'
-    - '<b:<l:品质>:优秀:史诗>&6限制职业: <l:职业>'
-    - '&6物品类型: 主武器'
-    - '&6限制等级: <c:int 10 * <s:<l:品质>基数>>级'
-    - '&c攻击力: +<l:攻击力>'
-    - '<l:攻一-10>'
-    - '<l:攻二-10>'
-    - '<l:攻三-10>'
-    - '<l:材质>'
-    - '<s:<l:品质>宝石孔>'
-    #   - '&7耐久度: <c:int <r:300_350> * <s:<l:品质>基数>>/<c:int 400 * <s:<l:品质>基数>>'
-    - '&7耐久度: <c:int <d:0.6_0.9> * <l:耐久度>>/<l:耐久度>'
-    - '<b:<l:品质>:史诗>&c已绑定'
-    - '&a到期时间: <t:10m>'
-    #   - '&a到期时间: <t:600>'
-    - '<b:<l:品质>:优秀:史诗>                                    '
-    - '<b:<l:品质>:优秀:史诗><s:DefaultLore>'
+    - '&6QualityLevel: <l:<l:Quality>NmColor><l:Quality>'
+    - '<b:<l:Quality>:Excellent:Epic>&6LimitOccupation: <l:Occupation>'
+    - '&6ItemType: MainWeapon'
+    - '&6LimitLevel: <c:int 10 * <s:<l:Quality>Base>> Level'
+    - '&cAttack: +<l:Attack>'
+    - '<l:ATK1-10>'
+    - '<l:ATK2-10>'
+    - '<l:ATK3-10>'
+    - '<l:Texture>'
+    - '<s:<l:Quality>GemSlot>'
+    #   - '&7Durability: <c:int <r:300_350> * <s:<l:Quality>Base>>/<c:int 400 * <s:<l:Quality>Base>>'
+    - '&7Durability: <c:int <d:0.6_0.9> * <l:Durability>>/<l:Durability>'
+    - '<b:<l:Quality>:Epic>&cBound'
+    - '&aExpiryTime: <t:10m>'
+    #   - '&aExpiryTime: <t:600>'
+    - '<b:<l:Quality>:Excellent:Epic>                                    '
+    - '<b:<l:Quality>:Excellent:Epic><s:DefaultLore>'
   EnchantList:
-    - <s:<l:职业>附魔>
+    - <s:<l:Occupation>Enchant>
   ClearAttribute: true
   Random:
-    攻击力: <c:20 * <s:<l:品质>基数>>
-    耐久度: <c:int <r:350_400> * <s:<l:品质>基数>>
+    Attack: <c:20 * <s:<l:Quality>Base>>
+    Durability: <c:int <r:350_400> * <s:<l:Quality>Base>>
   NBT:
-    arg1.arg2: 测试NBT
-    sx:
-      attribute:
-        - '词条一'
-        - '词条二'
-        - '词条三'
-        - 'SX-Attribute预留属性接口'
-        - '如需使用随机则需学习高等随机'
-  ProtectNBT: #保护附魔NBT不被更新
+    SX-Attribute.Attribute:
+      - 'Entry 1'
+      - 'Entry 2'
+      - 'Entry 3'
+      - 'SX-Attribute reserved attribute interface'
+      - 'If you need to use random, you need to learn advanced random.'
+  ProtectNBT: #PROTECT ENCHANT FROM BEING UPDATED
     - "Enchantments"
+  Update: true
 
 Default-2:
-  Name: '&c机械轻羽之靴'
+  Name: '&cLight Feather Boots'
   ID: 301
   Lore:
-    - '&6ItemType: 靴子'
+    - '&6ItemType: Boots'
     - '&cMaxHP: +2000'
     - '&dSpeed: +50%'
     - '&6LimitLevel: <r:50_100>级'
@@ -177,48 +176,48 @@ Default-2:
     - HIDE_ENCHANTS
     - HIDE_UNBREAKABLE
   Unbreakable: true
-  Color: <s:Color>
+  NmColor: <s:NmColor>
   Random:
-    Color:
+    NmColor:
       - 'ffffff'
       - '000000'
   Update: true
 
 Default-3:
   Name: '&c&lRandomStringDescription'
-  #设置耐久为0
+  # Set durability to 0
   ID: 359:<0
   Lore:
     - ''
     - '&4&l!!! The following content is mainly based on configuration files !!!'
     - ''
-    - "&e&l'&c&l<>&e&l' Non-Substitute Variables Required '&c&l\$&e&l' 转义"
-    - '&7格式: \$<1:内容> 或 <内容>'
-    - '&7例如: \$<s:DefaultPrefix> 或 <DefaultPrefix>'
+    - "&e&l'&c&l<>&e&l' Non-Substitute Variables Required '&c&l\$&e&l' Escape"
+    - '&7Format: \$<1:Content> 或 <Content>'
+    - '&7ForExample: \$<s:DefaultPrefix> 或 <DefaultPrefix>'
     - ''
-    - '&e&l随机类型:'
-    - '&cb   - &7整行判断&r [<b:匹配名:匹配词1:匹配词2:匹配词3:匹配词4>] 这行因为没有匹配词和匹配名相同而被删除'
-    - '&cb   - &7整行判断&r [<b:<l:品质>:史诗:优秀:普通>]'
-    - '&ct   - &7时间格式&r [<t:1Y1M1D1h1m1s>]'
-    - '&cc   - &7计算器&r [<c:((2*3) + 2) * 1.4>] [<c:int ((2*3) + 2) * 1.4>]'
-    - '&cl   - &7锁定随机&r [<l:品质>] [<l:EASY#AAA:BBB:CCC>]'
-    - '&cs   - &7正常随机&r [<s:<s:品质>Color>♦&r] [<s:AAA:BBB:CCC>]'
-    - '&cd   - &7小数随机&r [<d:2.3_6>]'
-    - '&ci&7/&cr - &7整数随机&r [<i:1_7>]'
-    - '&cu   - &7UUID随机&r [<u:random>]'
-    - '&cj   - &7脚本处理&r [<j:Default.itemScript#QAQ,QWQ,???,!!!>]'
+    - '&e&lRandomType:'
+    - '&cb   - &7WholeLineJudgment&r [<b:Match:String1:String2:String3:String4>] This line was deleted because no matching word is the same as the matching name'
+    - '&cb   - &7WholeLineJudgment&r [<b:<l:Quality>:Epic:Excellent:Ordinary>]'
+    - '&ct   - &7TimeFormat&r [<t:1Y1M1D1h1m1s>]'
+    - '&cc   - &7Calculator&r [<c:((2*3) + 2) * 1.4>] [<c:int ((2*3) + 2) * 1.4>]'
+    - '&cl   - &7LockRandom&r [<l:Quality>] [<l:EASY#AAA:BBB:CCC>]'
+    - '&cs   - &7NormalRandom&r [<s:<s:Quality>NmColor>♦&r] [<s:AAA:BBB:CCC>]'
+    - '&cd   - &7DecimalRandom&r [<d:2.3_6>]'
+    - '&ci&7/&cr - &7IntegerRandom&r [<i:1_7>]'
+    - '&cu   - &7UUIDRandom&r [<u:random>]'
+    - '&cj   - &7ScriptProcessing&r [<j:Default.itemScript#QAQ,QWQ,???,!!!>]'
     - ''
-    - "&e局部变量调用全局变量请用 ~"
-    - "&c ~ &7在 yml 中表示 &4null"
-    - '&7覆盖全局变量结果-> <s:DefaultPrefix>'
-    - '&7全局和局部混合结果-> <s:DefaultLore>'
+    - "&eLocal Variables call Global Variables ~"
+    - "&c ~ &7 represents &4null&7 in yml"
+    - '&7Override Global Result -> <s:DefaultPrefix>'
+    - '&7Global and Local mixed Result -> <s:DefaultLore>'
     - ''
-    - '不存在的变量则会删除该行: <s:不存在>'
-    - '&r↑这里有一行被吃了'
+    - 'Variables that do not exist delete the row: <s:DoesNotExist>'
+    - '&r↑here s a line that s been eaten'
   Random:
     DefaultPrefix: "Prefix"
     DefaultLore:
-      # 1/3的概率随机到Lore，2/3的概率随机到全局变量
+      # 33% probability random to Lore, 66% probability random to global variable
       - 1: "Lore"
       - 2: ~
 
@@ -230,7 +229,7 @@ Default-4:
     meta:
       ==: ItemMeta
       meta-type: UNSPECIFIC
-      display-name: §7Import类型的苹果
+      display-name: §7Import type of apple
       lore:
         - §7An item of type Import
         - ''
@@ -241,20 +240,20 @@ Default-4:
         - §cIt does not support automatic updates§7
 
 Default-5:
-  Name: '&b慢剑'
-  # YML语法-设置锚点 仅当前文件内有效 还有啥自己百度
+  Name: '&bSlow Sword'
+  # YML syntax-set the anchor point to be valid only in the current file and what else is Google
   ID: &def5-ID
     - 268
     - 272
     - 283
     - 267
     - 276
-  #设置耐久为最大值*20%
+  # Set durability to maximum * 20%
   Durability: 20%
   Lore:
-    - '&7使用Attributes设置原版攻速'
+    - '&7Use Attributes to set the original attack speed'
     - ''
-    - "&c'GENERIC_ATTACK_SPEED:-1:2:HAND' - 工具将无法抬起"
+    - "&c'GENERIC_ATTACK_SPEED:-1:2:HAND' - Tool will not lift"
   Type: Default
   Update: true
   Attributes:
@@ -262,18 +261,18 @@ Default-5:
     # - "GENERIC_ATTACK_SPEED:-1:2:HAND"
 
 Default-6:
-  Name: "&d修脚剑"
-  # YML语法-引用锚点 仅当前文件内有效
+  Name: "&dTickle Sword"
+  # YML Syntax-Reference anchor is valid only within the current file
   ID: *def5-ID
-  #设置耐久为最大值-30
+  # Set Endurance to a maximum of -30
   Durability: 30
   Attributes:
     - "GENERIC_ATTACK_DAMAGE:-0.99:2:HAND"
 
 Default-7:
   ID: <l:ID#POTION:SPLASH_POTION:LINGERING_POTION>
-  Lore: [ "&c药水目前只实现了1.11.1及以上的版本" ]
-  #  Potion: <s:WATER:POTION:JUMP>
+  Lore: [ "&cAt present, the potion has only implemented versions 1.11.1 and above." ]
+  #  Potion: <s:WATER:POTION:JUMP> DoNotUseThisModelAgain
   Potion:
     ABSORPTION: &PotionData
       duration: <c:int 20 * <i:1_10> * <s:<l:ID>>>
@@ -293,30 +292,30 @@ Default-7:
 Default-8:
   ID: 419
   EnchantList:
-    #绑定诅咒不对马生效
+    # Binding Curse does not take effect on horses
     - BINDING_CURSE:1
   Attributes:
-    # 已知1.17版本马可以从马铠中获得属性，1.12.2及以下版本无法使用，其他版本未测试
+    # It is known that 1.17 versions of horses can obtain attributes from horse armor, versions 1.12.2 and below cannot be used, and other versions have not been tested.
     - "HORSE_JUMP_STRENGTH:2:0:CHEST"
     - "GENERIC_MOVEMENT_SPEED:0.5:1:CHEST"
 
 #Default-9: Default-1
 Default-9:
-  Name: '&9可被替换的物品'
+  Name: '&9Items that can be replaced'
   ID: '350'
   Lore:
     - ''
-    - '&7将此物品替换为Default-1'
-    - "&7使用: 'Default-9: Default-1'"
+    - '&7If you want to replace this item with Default-1'
+    - "&7Please use: 'Default-9: Default-1'"
     - ''
-    - '&c必须打开目标(Default-1)的Update才可替换'
-    - '&4&l替换是不可回溯的'
+    - '&cUpdate for target (Default-1) must be turned on to replace'
+    - '&4&lSubstitution is not retroactive'
 
-#是个普通的SX物品，yml简写
-#不存在的ID会使物品无法give出来, 但是不会报错
-Default-10.ID: '不存在的物品'
+# Is a Ordinary SX item, yml shorthand
+# A non-existent ID will prevent the item from being give out, but it will not report an error.
+Default-10.ID: 'Non-existent items'
 
-#前缀是"NoLoad"的物品不会被加载
+# Items prefixed with "NoLoad" will not be loaded
 NoLoad_Item:
   ID: 1
-  Name: "不会被加载到的物品"
+  Name: "Items that will not be loaded"

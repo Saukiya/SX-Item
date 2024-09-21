@@ -9,16 +9,15 @@ import github.saukiya.sxitem.util.ComponentUtil;
 import github.saukiya.sxitem.util.MessageUtil;
 import github.saukiya.sxitem.util.NMS;
 import github.saukiya.sxitem.util.NbtUtil;
+import lombok.var;
 import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class TestCommand extends SubCommand {
     public TestCommand() {
@@ -28,7 +27,7 @@ public class TestCommand extends SubCommand {
 
     @Override
     public void onCommand(CommandSender sender, String[] args) {
-        ItemStack itemStack;
+        ItemStack itemStack = null;
         sender.sendMessage("*该指令用于测试插件运行是否正常*");
         Player player = null;
         if (sender instanceof Player) {
@@ -44,35 +43,20 @@ public class TestCommand extends SubCommand {
                         return;
                 }
             }
-            sender.sendMessage("调用此指令前，请保证手中持有任意物品，这个物品在测试结束后会删除");
             itemStack = player.getEquipment().getItemInHand();
-            sender.sendMessage("手持物品通过");
-        } else {
-            itemStack = SXItem.getItemManager().getItem(args.length > 1 ? args[1] : "Default-1", null);
         }
-//        NbtUtil.getInst().test(itemStack);
+        if (itemStack == null || itemStack.getType() == Material.AIR) {
+            itemStack = SXItem.getItemManager().getItem(args.length > 1 ? args[1] : "Default-1", player);
+        }
 
         Map<String, Object> input = new HashMap<>();
-        input.put("minecraft:item_name", "默认名称(无法被铁砧修改)");
-        input.put("minecraft:custom_name", "带稀有度颜色的名称(可铁砧修改)§c红色");
-        input.put("minecraft:rarity", "epic");
-        Object nmsCopyItem = ComponentUtil.getInst().getNMSItem(itemStack); // 获取nmsItem
-        Object inputComponentMap = ComponentUtil.getInst().valueToMap(input); // input转ComponentMap
-        ComponentUtil.getInst().setDataComponentMap(nmsCopyItem, inputComponentMap); // 写入nmsItem
-        ComponentUtil.getInst().setNMSItem(itemStack, nmsCopyItem); // 写入bukkitItem
-
-        Map<String, Long> timeConsuming = new TreeMap<>();
-        for (IGenerator generator : SXItem.getItemManager().getGeneratorList()) {
-            long startTime = System.nanoTime();
-            try {
-                SXItem.getItemManager().getItem(generator, player);
-                timeConsuming.put(generator.getKey(), System.nanoTime() - startTime);
-            } catch (Exception e) {
-                sender.sendMessage("物品: " + generator.getKey() + " 有问题");
-            }
-        }
-        timeConsuming.forEach((k,v) -> sender.sendMessage("物品 " + k + " 耗时: " + (v / 1000000D) + " ms"));
-        sender.sendMessage("获取SX物品通过");
+        input.put("minecraft:dyed_color", Collections.singletonMap("rgb", 16747238));
+        input.put("minecraft:enchantment_glint_override", true);
+        input.put("minecraft:food", ComponentUtil.getGson().fromJson("{can_always_eat:true,eat_seconds:5,nutrition:3,saturation:1}", Map.class));
+        var wrapper = ComponentUtil.getInst().getItemWrapper(itemStack);
+        wrapper.setAllValue(input).save();
+        SXItem.getInst().getLogger().warning("component: \n" + wrapper.toJsonString());
+        sender.sendMessage("组件功能通过");
 
         NBTItemWrapper itemWrapper = NbtUtil.getInst().getItemTagWrapper(itemStack);
         itemWrapper.set("test.string", "2333");
@@ -115,11 +99,26 @@ public class TestCommand extends SubCommand {
                 sender.sendMessage("Error: " + entry.getKey());
             }
         }
+        tagCompound.remove("test");
+        SXItem.getInst().getLogger().info("nbt: \n" + tagCompound.toJson());
         sender.sendMessage("调用NBT物品通过");
         Bukkit.dispatchCommand(sender, "sxi nbt all");
 
         MessageUtil.send(sender, "[TITLE]测试Title:fadein-20 stay-100 fadeOut-100:20:100:100");
         MessageUtil.send(sender, "[ACTIONBAR]测试ActionBar");
+
+        Map<String, Long> timeConsuming = new TreeMap<>();
+        for (IGenerator generator : SXItem.getItemManager().getGeneratorList()) {
+            long startTime = System.nanoTime();
+            try {
+                SXItem.getItemManager().getItem(generator, player);
+                timeConsuming.put(generator.getKey(), System.nanoTime() - startTime);
+            } catch (Exception e) {
+                sender.sendMessage("物品: " + generator.getKey() + " 有问题");
+            }
+        }
+        timeConsuming.forEach((k,v) -> sender.sendMessage("物品 " + k + " 耗时: " + (v / 1000000D) + " ms"));
+        sender.sendMessage("获取SX物品通过");
 
         // 1.11.2以下不支持在componentBuilder中带有long[]类型的nbt
         if (NMS.compareTo(1, 11, 2) < 0) {

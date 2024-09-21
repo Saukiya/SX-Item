@@ -1,5 +1,7 @@
 package github.saukiya.sxitem.util;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,6 +16,9 @@ public abstract class ComponentUtil implements NMS {
 
     @Getter
     private final static ComponentUtil inst = NMS.getInst(ComponentUtil.class, "v1_21_R1", "v1_8_R3");
+
+    @Getter
+    private final static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     /**
      * 返回一个ItemWrapper
@@ -54,6 +59,8 @@ public abstract class ComponentUtil implements NMS {
 
     public abstract Object valueToMap(Object javaObject);
 
+    public abstract void setComponentMapValue(Object dataComponentMap, String type, Object value);
+
     /**
      * 获取 nmsItem 中的 DataComponentPatch
      * <p/>
@@ -86,9 +93,19 @@ public abstract class ComponentUtil implements NMS {
         }
 
         /**
+         * 向dataMap中添加元素
+         */
+        public ItemWrapper set(String type, Object value) {
+            Object dataMap = getDataComponentMap(nmsItem);
+            setComponentMapValue(dataMap, type, value);
+            setDataComponentMap(nmsItem, dataMap);
+            return this;
+        }
+
+        /**
          * 设置Java值
          **/
-        public ItemWrapper setValue(Object javaObject) {
+        public ItemWrapper setAllValue(Object javaObject) {
             setDataComponentMap(nmsItem, valueToMap(javaObject));
             return this;
         }
@@ -96,7 +113,7 @@ public abstract class ComponentUtil implements NMS {
         /**
          * 设置Json值
          **/
-        public ItemWrapper setJson(JsonElement jsonElement) {
+        public ItemWrapper setAllJson(JsonElement jsonElement) {
             setDataComponentMap(nmsItem, jsonToMap(jsonElement));
             return this;
         }
@@ -120,6 +137,15 @@ public abstract class ComponentUtil implements NMS {
          **/
         public JsonElement toJson() {
             return mapToJson(getDataComponentMap(nmsItem));
+        }
+
+        /**
+         * 输出Json字符串
+         */
+        public String toJsonString() {
+            JsonElement json = toJson();
+            if (json == null) return null;
+            return gson.toJson(json);
         }
     }
 }

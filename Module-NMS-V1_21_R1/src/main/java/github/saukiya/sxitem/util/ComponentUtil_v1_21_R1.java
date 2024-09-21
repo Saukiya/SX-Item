@@ -7,12 +7,11 @@ import com.mojang.serialization.JsonOps;
 import net.minecraft.core.IRegistryCustom;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.PatchedDataComponentMap;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.MinecraftKey;
 import org.bukkit.craftbukkit.v1_21_R1.CraftRegistry;
-import org.bukkit.craftbukkit.v1_21_R1.inventory.CraftItemStack;
-import org.bukkit.inventory.ItemStack;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class ComponentUtil_v1_21_R1 extends ComponentUtil {
 
@@ -20,28 +19,6 @@ public class ComponentUtil_v1_21_R1 extends ComponentUtil {
 
     private final DynamicOps<JsonElement> jsonDynamic = registry.a(JsonOps.INSTANCE);
     private final DynamicOps<Object> javaDynamic = registry.a(JavaOps.INSTANCE);
-
-    public void test(Object... args) {
-        ItemStack itemStack = (ItemStack) args[0];
-        IRegistryCustom registry = CraftRegistry.getMinecraftRegistry();
-        DynamicOps<Object> dynamicOps = registry.a(JavaOps.INSTANCE);
-        net.minecraft.world.item.ItemStack nmsCopy = CraftItemStack.asNMSCopy(itemStack);
-//        Object encodeResult = DataComponentPatch.b.encode(dataComponentPatch, dynamicOps, dynamicOps.emptyMap()).getOrThrow();
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("minecraft:item_name", "默认名称(无法被铁砧修改)");
-        map.put("minecraft:custom_name", "带稀有度颜色的名称(可铁砧修改)§c红色");
-        map.put("minecraft:rarity", "epic");
-        DataComponentMap dataComponentMap = nmsCopy.a();
-//        Object encodeResult = DataComponentMap.b.encode(dataComponentMap, dynamicOps, dynamicOps.emptyMap()).getOrThrow();
-//        SXItem.getInst().getLogger().info("dataResult: " + encodeResult);
-        DataComponentMap decodeResult = DataComponentMap.b.decode(dynamicOps, map).getOrThrow().getFirst();
-//        SXItem.getInst().getLogger().warning("dataResult: " + decodeResult);
-
-        nmsCopy.b(decodeResult);
-//        SXItem.getInst().getLogger().info("nmsCopy.a: " + nmsCopy.a());
-        itemStack.setItemMeta(CraftItemStack.getItemMeta(nmsCopy));
-    }
 
     @Override
     public DataComponentMap getDataComponentMap(Object nmsItem) {
@@ -83,7 +60,6 @@ public class ComponentUtil_v1_21_R1 extends ComponentUtil {
         return DataComponentPatch.b.decode(jsonDynamic, jsonElement).getOrThrow().getFirst();
     }
 
-
     @Override
     public Object mapToValue(Object dataComponentMap) {
         return DataComponentMap.b.encode((DataComponentMap) dataComponentMap, javaDynamic, javaDynamic.emptyMap()).getOrThrow();
@@ -102,5 +78,12 @@ public class ComponentUtil_v1_21_R1 extends ComponentUtil {
     @Override
     public Object valueToPatch(Object javaObject) {
         return DataComponentPatch.b.decode(javaDynamic, javaObject).getOrThrow().getFirst();
+    }
+
+    @Override
+    public void setComponentMapValue(Object dataComponentMap, String type, Object value) {
+        DataComponentType dataComponentType = BuiltInRegistries.aq.a(MinecraftKey.c(type));
+        PatchedDataComponentMap map = (PatchedDataComponentMap) dataComponentMap;
+        map.b(dataComponentType, value);
     }
 }

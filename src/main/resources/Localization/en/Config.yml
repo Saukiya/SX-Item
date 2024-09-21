@@ -1,3 +1,5 @@
+#Log Level: [OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL]
+LoggerLevel: "INFO"
 # Floating-point number formatting
 DecimalFormat: "#.##"
 # Date formatting
