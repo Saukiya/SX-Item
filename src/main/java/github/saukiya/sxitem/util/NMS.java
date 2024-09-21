@@ -1,6 +1,5 @@
 package github.saukiya.sxitem.util;
 
-import github.saukiya.sxitem.SXItem;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
@@ -30,7 +29,6 @@ public interface NMS {
                         return (NMS) Class.forName(target.getName() + "_" + version).getDeclaredConstructor().newInstance();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        SXItem.getInst().getLogger().severe(target.getSimpleName() + " No Version : " + Data.VERSION);
                     }
                     return null;
                 });
