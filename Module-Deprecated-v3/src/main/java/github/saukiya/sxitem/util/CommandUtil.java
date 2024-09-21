@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 @Deprecated
 public class CommandUtil {
 
+    @Deprecated
     private static final Pattern PATTERN = Pattern.compile("^\\[(.*?)] *(.+)");
 
     /**
@@ -26,6 +27,7 @@ public class CommandUtil {
      * @param player      Player
      * @param commandList List
      */
+    @Deprecated
     public static void run(Player player, List<String> commandList) {
         int delay = 0;
         Runnable runnable;
@@ -51,6 +53,7 @@ public class CommandUtil {
      * @param player  Player
      * @param command Command
      */
+    @Deprecated
     public static void run(Player player, String command) {
         command = PlaceholderHelper.setPlaceholders(player, command).replace("%player%", player.getName()).replace('&', '§');
         Matcher matcher = PATTERN.matcher(command);

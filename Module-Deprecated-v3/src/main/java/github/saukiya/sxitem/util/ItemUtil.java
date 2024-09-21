@@ -22,10 +22,12 @@ public final class ItemUtil {
     @Delegate
     private github.saukiya.util.nms.ItemUtil target;
 
+    @Deprecated
     public List<AttributeData> getAttributes(ItemStack item) {
         return target.getAttributes(item).stream().map(AttributeData::new).collect(Collectors.toList());
     }
 
+    @Deprecated
     public void setAttributes(ItemStack item, @Nullable List<AttributeData> list) {
         if (list == null) {
             target.setAttributes(item, null);
@@ -34,21 +36,29 @@ public final class ItemUtil {
         target.setAttributes(item, list.stream().map(x -> x.target).collect(Collectors.toList()));
     }
 
+    @Deprecated
     public void addAttributes(ItemStack item, @Nonnull List<AttributeData> list) {
         target.addAttributes(item, list.stream().map(x -> x.target).collect(Collectors.toList()));
     }
 
+    @Deprecated
     public void addAttribute(ItemStack item, @Nonnull AttributeData data) {
         target.addAttribute(item, data.target);
     }
 
     @Deprecated
-    @AllArgsConstructor
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static class AttributeData {
 
         @Delegate
         github.saukiya.util.nms.ItemUtil.AttributeData target;
 
+        @Deprecated
+        public AttributeData() {
+            target = new github.saukiya.util.nms.ItemUtil.AttributeData();
+        }
+
+        @Deprecated
         public AttributeData(String attrName, UUID uniqueId, String name, double amount, int operation, String slot) {
             target = new github.saukiya.util.nms.ItemUtil.AttributeData(attrName, uniqueId, name, amount, operation, slot);
             target.setAttrName(attrName);
@@ -59,11 +69,13 @@ public final class ItemUtil {
             target.setSlot(slot);
         }
 
+        @Deprecated
         public AttributeData setAttrName(String attrName) {
             target.setAttrName(attrName);
             return this;
         }
 
+        @Deprecated
         public AttributeData setSlot(String slot) {
             target.setSlot(slot);
             return this;
