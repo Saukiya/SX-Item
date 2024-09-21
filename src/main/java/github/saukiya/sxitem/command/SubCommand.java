@@ -67,7 +67,7 @@ public abstract class SubCommand implements Comparable<SubCommand> {
 
     public final void sendIntroduction(CommandSender sender, String color, String label) {
         String clickCommand = MessageFormat.format("/{0} {1}", label, cmd);
-        MessageUtil.getInst().componentBuilder()
+        MessageUtil.getInst().builder()
                 .add(color + MessageFormat.format("/{0} {1}{2}§7 - §c" + getIntroduction(), label, cmd, arg))
                 .show(sender.isOp() ? "§8§oPermission: " + permission() : null)
                 .runCommand(clickCommand)

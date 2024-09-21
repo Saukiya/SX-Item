@@ -28,20 +28,20 @@ import java.util.stream.Collectors;
 public class MessageUtil_v1_21_R1 extends MessageUtil {
 
     @Override
-    public ComponentBuilder componentBuilder() {
-        return new ComponentBuilderImpl();
+    public Builder builder() {
+        return new BuilderImpl();
     }
 
-    class ComponentBuilderImpl extends ComponentBuilder {
+    static class BuilderImpl extends Builder {
 
         @Override
-        public ComponentBuilder show(String text) {
+        public Builder show(String text) {
             current.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§7" + text)));
             return this;
         }
 
         @Override
-        public ComponentBuilder show(ItemStack item) {
+        public Builder show(ItemStack item) {
             Object nmsCopy = NbtUtil.getInst().getNMSItem(item);
             Object component = ComponentUtil.getInst().getDataComponentMap(nmsCopy);
             JsonElement data = ComponentUtil.getInst().mapToJson(component);

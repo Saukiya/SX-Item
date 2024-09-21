@@ -1,7 +1,6 @@
 package github.saukiya.sxitem.util;
 
-import github.saukiya.sxitem.nbt.NBTItemWrapper;
-import github.saukiya.sxitem.nbt.NBTWrapper;
+import lombok.var;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -18,8 +17,8 @@ public class ItemUtil_v1_8_R3 extends ItemUtil {
         editAttribute(item, wrapper -> (List<Object>) wrapper.getList("AttributeModifiers", new ArrayList<>()), computeListFunction);
     }
 
-    public void editAttribute(ItemStack item, Function<NBTWrapper, List<Object>> toListFunction, Consumer<List<Object>> computeListFunction) {
-        NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item);
+    public void editAttribute(ItemStack item, Function<NbtUtil.Wrapper, List<Object>> toListFunction, Consumer<List<Object>> computeListFunction) {
+        var wrapper = NbtUtil.getInst().getItemTagWrapper(item);
         List<Object> modifiers = toListFunction.apply(wrapper);
         computeListFunction.accept(modifiers);
         wrapper.set("AttributeModifiers", modifiers == null || modifiers.isEmpty() ? null : modifiers);

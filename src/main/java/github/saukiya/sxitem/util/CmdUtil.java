@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  * @author Saukiya
  */
 
-public class CommandUtil {
+public class CmdUtil {
 
     private static final Pattern PATTERN = Pattern.compile("^\\[(.*?)] *(.+)");
 

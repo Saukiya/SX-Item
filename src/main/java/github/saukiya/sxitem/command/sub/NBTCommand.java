@@ -4,11 +4,14 @@ import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.command.SenderType;
 import github.saukiya.sxitem.command.SubCommand;
 import github.saukiya.sxitem.data.item.ItemManager;
-import github.saukiya.sxitem.nbt.*;
-import github.saukiya.sxitem.util.ComponentBuilder;
+import github.saukiya.sxitem.nbt.TagBase;
+import github.saukiya.sxitem.nbt.TagCompound;
+import github.saukiya.sxitem.nbt.TagList;
+import github.saukiya.sxitem.nbt.TagType;
 import github.saukiya.sxitem.util.Message;
 import github.saukiya.sxitem.util.MessageUtil;
 import github.saukiya.sxitem.util.NbtUtil;
+import lombok.var;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -39,7 +42,7 @@ public class NBTCommand extends SubCommand {
         if (item.getType() != Material.AIR) {
             if (args.length < 2 || args[1].equals("all")) {
                 TagCompound tagCompound = NbtUtil.getInst().getItemTag(item);
-                ComponentBuilder cb = MessageUtil.getInst().componentBuilder()
+                MessageUtil.Builder cb = MessageUtil.getInst().builder()
                         .add("§7[")
                         .add(item.getType().name())
                         .show(Message.NBT__CLICK_COPY.get())
@@ -53,7 +56,7 @@ public class NBTCommand extends SubCommand {
                 return;
             }
 
-            NBTItemWrapper tagWrapper = NbtUtil.getInst().getItemTagWrapper(item);
+            var tagWrapper = NbtUtil.getInst().getItemTagWrapper(item);
             String key = args.length > 2 ? args[2] : null;
             String value = args.length > 3 ? args[3] : null;
             if (args[1].equals("set") && value != null) {
@@ -90,7 +93,7 @@ public class NBTCommand extends SubCommand {
             } else {
                 nbtShow = entry.getValue().toString();
             }
-            MessageUtil.getInst().componentBuilder().add("§7- ").add("§c[Type-" + typeShow.charAt(0) + "]").show(typeShow).add(" ").add("§7" + path).suggestCommand(path).show(nbtShow).send(sender);
+            MessageUtil.getInst().builder().add("§7- ").add("§c[Type-" + typeShow.charAt(0) + "]").show(typeShow).add(" ").add("§7" + path).suggestCommand(path).show(nbtShow).send(sender);
         }
     }
 }

@@ -3,11 +3,10 @@ package github.saukiya.sxitem.data.item;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.event.SXItemSpawnEvent;
 import github.saukiya.sxitem.event.SXItemUpdateEvent;
-import github.saukiya.sxitem.nbt.NBTItemWrapper;
-import github.saukiya.sxitem.nbt.NBTWrapper;
 import github.saukiya.sxitem.util.*;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import lombok.var;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -288,7 +287,7 @@ public class ItemManager implements Listener {
     public void checkUpdateItem(Player player, String prefix, ItemStack... itemStacks) {
         for (ItemStack item : itemStacks) {
             if (item == null) continue;
-            NBTWrapper oldWrapper = NbtUtil.getInst().getItemTagWrapper(item);
+            var oldWrapper = NbtUtil.getInst().getItemTagWrapper(item);
             IGenerator ig = itemMap.get(oldWrapper.getString(prefix + ".ItemKey"));
             if (ig instanceof IUpdate) {
                 IUpdate updateIg = (IUpdate) ig;
@@ -303,7 +302,7 @@ public class ItemManager implements Listener {
      * 强制更新物品
      */
     public void updateItem(Player player, ItemStack item) {
-        NBTWrapper oldWrapper = NbtUtil.getInst().getItemTagWrapper(item);
+        var oldWrapper = NbtUtil.getInst().getItemTagWrapper(item);
         IGenerator ig = itemMap.get(oldWrapper.getString(plugin.getName() + ".ItemKey"));
         if (!(ig instanceof IUpdate)) return;
         updateItem(player, item, (IUpdate) ig, oldWrapper);
@@ -312,9 +311,9 @@ public class ItemManager implements Listener {
     /**
      * 强制更新物品
      */
-    public void updateItem(Player player, ItemStack item, IUpdate updateIg, NBTWrapper oldWrapper) {
+    public void updateItem(Player player, ItemStack item, IUpdate updateIg, NbtUtil.Wrapper oldWrapper) {
         ItemStack newItem = updateIg.update(item, oldWrapper, player);
-        NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(newItem);
+        var wrapper = NbtUtil.getInst().getItemTagWrapper(newItem);
         wrapper.set(plugin.getName() + ".ItemKey", updateIg.getKey());
         wrapper.set(plugin.getName() + ".HashCode", updateIg.updateCode());
         HashSet<String> protectNBT = new HashSet<>(protectNbtList);
@@ -373,29 +372,29 @@ public class ItemManager implements Listener {
         sender.sendMessage("");
         if (search != null && search.isEmpty()) {
             // 文件夹
-            MessageUtil.getInst().componentBuilder()
+            MessageUtil.getInst().builder()
                     .add("§eDirectoryList§8 - §7ClickOpen")
                     .show("§8§o§lTo ItemList")
                     .runCommand("/sxitem give |")
                     .send(sender);
             informationMap.forEach((group, information) -> {
-                MessageUtil.getInst().componentBuilder().runCommand("/sxitem give |" + group).add(" §c§l" + group + " §7§l>>").send(sender);
-                information.forEach(pathTuple -> MessageUtil.getInst().componentBuilder().runCommand("/sxitem give |" + group + "#" + pathTuple.a() + "<")
+                MessageUtil.getInst().builder().runCommand("/sxitem give |" + group).add(" §c§l" + group + " §7§l>>").send(sender);
+                information.forEach(pathTuple -> MessageUtil.getInst().builder().runCommand("/sxitem give |" + group + "#" + pathTuple.a() + "<")
                         .add("  §8[§a" + pathTuple.a() + "§8]§7 - Has §c" + pathTuple.b().size() + "§7 Item")
                         .show(pathTuple.b().stream().map(ig -> "§a" + ig.key + " §8[§7" + ig.getName() + "§8]§7 - §8[§cType:" + ig.getType() + "§8]").collect(Collectors.joining("\n")))
                         .send(sender));
             });
         } else {
             // 物品
-            MessageUtil.getInst().componentBuilder()
+            MessageUtil.getInst().builder()
                     .add("§eItemList§8 - §7ClickGet " + (search != null ? "§8[§c" + search.replaceAll("(^\\||<$)", "") + "§8]" : ""))
                     .show("§8§o§lTo DirectoryList")
                     .runCommand("/sxitem give")
                     .send(sender);
-            List<ComponentBuilder> items = new ArrayList<>();
+            List<MessageUtil.Builder> items = new ArrayList<>();
             informationMap.forEach((group, information) -> information.forEach(pathTuple -> pathTuple.b().forEach(ig -> {
                 if (search == null || (ig.key + ig.getName() + "|" + ig.group + "#" + ig.getConfig().getString("Path") + "<").contains(search)) {
-                    items.add(MessageUtil.getInst().componentBuilder()
+                    items.add(MessageUtil.getInst().builder()
                             .runCommand("/sxitem give " + ig.key)
                             .add(" §b" + (items.size() + 1) + " - §a" + ig.key + " §8[§7")
                             .add(ig.getNameComponent())

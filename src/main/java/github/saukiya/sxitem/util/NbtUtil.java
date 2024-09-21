@@ -1,10 +1,16 @@
 package github.saukiya.sxitem.util;
 
-import github.saukiya.sxitem.nbt.*;
+import github.saukiya.sxitem.nbt.TagBase;
+import github.saukiya.sxitem.nbt.TagCompound;
+import github.saukiya.sxitem.nbt.TagEnd;
+import github.saukiya.sxitem.nbt.TagType;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.DataInput;
 import java.io.DataOutput;
 
@@ -22,16 +28,16 @@ public abstract class NbtUtil implements NMS {
      * @param itemStack BukkitItem
      * @return NBTItemWrapper
      */
-    public abstract NBTItemWrapper getItemTagWrapper(ItemStack itemStack);
+    public abstract ItemWrapper getItemTagWrapper(ItemStack itemStack);
 
-    public abstract NBTItemWrapper getItemTagWrapper(ItemStack itemStack, Object nmsItem);
+    public abstract ItemWrapper getItemTagWrapper(ItemStack itemStack, Object nmsItem);
 
     /**
      * 创建一个空的 NBT 封装器
      *
      * @return NBTWrapper
      */
-    public final NBTWrapper createTagWrapper() {
+    public final Wrapper createTagWrapper() {
         return createTagWrapper(null);
     }
 
@@ -40,7 +46,7 @@ public abstract class NbtUtil implements NMS {
      *
      * @return NBTWrapper
      */
-    public abstract NBTWrapper createTagWrapper(Object nbtTagCompound);
+    public abstract Wrapper createTagWrapper(Object nbtTagCompound);
 
     /**
      * BukkitItem 转换 NMSItem
@@ -170,6 +176,77 @@ public abstract class NbtUtil implements NMS {
         } else {
             dataInput.readUTF();
             return TagType.getMethods(typeId).readTagBase(dataInput, 0);
+        }
+    }
+
+    /**
+     * 只对单一ItemStack进行操作的封装类
+     * 减少使用CraftItemStack.asNMSCopy
+     * <p>
+     * 写入\删除NBT后，需要save才能生效
+     */
+    public interface ItemWrapper extends Wrapper {
+
+        /**
+         * 保存到当前的ItemStack中
+         */
+        void save();
+
+        /**
+         * 链式操作器
+         *
+         * @return Builder
+         */
+        default Builder builder() {
+            return new Builder(this);
+        }
+
+        @AllArgsConstructor
+        class Builder {
+
+            ItemWrapper handler;
+
+            public Builder set(String key, Object value) {
+                handler.set(key, value);
+                return this;
+            }
+
+            public void save() {
+                handler.save();
+            }
+        }
+    }
+
+    /**
+     * NBTTagCompound的包装类
+     * 用来封装每个版本的数据交互
+     */
+    public interface Wrapper extends Base.Compound {
+
+        /**
+         * 获取包装好的NBTTagCompound
+         * 返回的对象与父TagCompound关联
+         *
+         * @param path 要获取TagCompound的路径
+         * @return 如果未找到路径，则返回null
+         */
+        @Nullable
+        Wrapper getWrapper(@Nonnull String path);
+
+
+        void save(@Nonnull ItemStack itemStack);
+
+        /**
+         * 获取所处理的NBTTagCompound
+         *
+         * @return NBTTagCompound
+         */
+        @Nonnull
+        Object getHandle();
+
+        @Nonnull
+        default String nbtToString() {
+            return getHandle().toString();
         }
     }
 }

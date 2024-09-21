@@ -3,7 +3,6 @@ package github.saukiya.sxitem.command.sub;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.command.SubCommand;
 import github.saukiya.sxitem.data.item.IGenerator;
-import github.saukiya.sxitem.nbt.NBTItemWrapper;
 import github.saukiya.sxitem.nbt.TagCompound;
 import github.saukiya.sxitem.util.ComponentUtil;
 import github.saukiya.sxitem.util.MessageUtil;
@@ -36,10 +35,10 @@ public class TestCommand extends SubCommand {
             if (args.length > 1) {
                 switch (args[1]) {
                     case "show":
-                        MessageUtil.getInst().componentBuilder().add(player.getEquipment().getItemInHand()).send(player);
+                        MessageUtil.getInst().builder().add(player.getEquipment().getItemInHand()).send(player);
                         return;
                     case "tran":
-                        MessageUtil.getInst().componentBuilder().add(new TranslatableComponent(args.length > 2 ? args[2] : "null")).send(player);
+                        MessageUtil.getInst().builder().add(new TranslatableComponent(args.length > 2 ? args[2] : "null")).send(player);
                         return;
                 }
             }
@@ -58,7 +57,7 @@ public class TestCommand extends SubCommand {
         SXItem.getInst().getLogger().warning("component: \n" + wrapper.toJsonString());
         sender.sendMessage("组件功能通过");
 
-        NBTItemWrapper itemWrapper = NbtUtil.getInst().getItemTagWrapper(itemStack);
+        var itemWrapper = NbtUtil.getInst().getItemTagWrapper(itemStack);
         itemWrapper.set("test.string", "2333");
         itemWrapper.set("test.byteArray", new byte[]{1, 5, 10, 50, 100});
         itemWrapper.set("test.intArray", new int[]{1, 50, 100, 5000, 10000});
@@ -126,7 +125,7 @@ public class TestCommand extends SubCommand {
             itemWrapper.save();
         }
 
-        MessageUtil.getInst().componentBuilder()
+        MessageUtil.getInst().builder()
                 .add("测试ComponentBuilder: ")
                 .show(" 显示1-打开百度 ")
                 .openURL("https://www.baidu.com/")

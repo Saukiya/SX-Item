@@ -1,7 +1,5 @@
 package github.saukiya.sxitem.util;
 
-import github.saukiya.sxitem.nbt.NBTItemWrapper;
-import github.saukiya.sxitem.nbt.NBTWrapper;
 import github.saukiya.sxitem.nbt.TagBase;
 import github.saukiya.sxitem.nbt.TagCompound;
 import io.netty.buffer.ByteBuf;
@@ -27,18 +25,18 @@ import java.util.stream.IntStream;
 public class NbtUtil_v1_19_R3 extends NbtUtil {
 
     @Override
-    public NBTItemWrapper getItemTagWrapper(ItemStack itemStack) {
-        return new NBTItemWrapperImpl(itemStack);
+    public ItemWrapper getItemTagWrapper(ItemStack itemStack) {
+        return new ItemWrapperImpl(itemStack);
     }
 
     @Override
-    public NBTItemWrapper getItemTagWrapper(ItemStack itemStack, Object nmsItem) {
-        return new NBTItemWrapperImpl(itemStack, (net.minecraft.world.item.ItemStack) nmsItem);
+    public ItemWrapper getItemTagWrapper(ItemStack itemStack, Object nmsItem) {
+        return new ItemWrapperImpl(itemStack, (net.minecraft.world.item.ItemStack) nmsItem);
     }
 
     @Override
-    public NBTWrapper createTagWrapper(Object nbtTagCompound) {
-        return new NBTWrapperImpl((NBTTagCompound) nbtTagCompound);
+    public Wrapper createTagWrapper(Object nbtTagCompound) {
+        return new WrapperImpl((NBTTagCompound) nbtTagCompound);
     }
 
     @Override
@@ -163,16 +161,16 @@ public class NbtUtil_v1_19_R3 extends NbtUtil {
         return null;
     }
 
-    public final class NBTItemWrapperImpl extends NBTWrapperImpl implements NBTItemWrapper {
+    public final class ItemWrapperImpl extends WrapperImpl implements ItemWrapper {
 
         final net.minecraft.world.item.ItemStack nmsItem;
         final ItemStack itemStack;
 
-        NBTItemWrapperImpl(ItemStack itemStack) {
+        ItemWrapperImpl(ItemStack itemStack) {
             this(itemStack, getNMSItem(itemStack));
         }
 
-        NBTItemWrapperImpl(ItemStack itemStack, net.minecraft.world.item.ItemStack nmsItem) {
+        ItemWrapperImpl(ItemStack itemStack, net.minecraft.world.item.ItemStack nmsItem) {
             super(nmsItem.v());
             if (nmsItem.b()) throw new NullPointerException();
             this.itemStack = itemStack;
@@ -185,11 +183,11 @@ public class NbtUtil_v1_19_R3 extends NbtUtil {
         }
     }
 
-    public class NBTWrapperImpl implements NBTWrapper {
+    public class WrapperImpl implements Wrapper {
 
         final NBTTagCompound handle;
 
-        NBTWrapperImpl(NBTTagCompound tagCompound) {
+        WrapperImpl(NBTTagCompound tagCompound) {
             handle = tagCompound != null ? tagCompound : new NBTTagCompound();
         }
 
@@ -245,11 +243,11 @@ public class NbtUtil_v1_19_R3 extends NbtUtil {
         }
 
         @Override
-        public NBTWrapper getWrapper(String path) {
+        public Wrapper getWrapper(String path) {
             Validate.notEmpty(path, "Cannot getWrapper to an empty path");
             NBTBase base = get(handle, path);
             if (base instanceof NBTTagCompound) {
-                return new NBTWrapperImpl((NBTTagCompound) base);
+                return new WrapperImpl((NBTTagCompound) base);
             }
             return null;
         }
