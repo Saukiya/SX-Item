@@ -1,6 +1,6 @@
 package github.saukiya.util.nms;
 
-import lombok.var;
+import lombok.val;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -18,7 +18,7 @@ public class ItemUtil_v1_8_R3 extends ItemUtil {
     }
 
     public void editAttribute(ItemStack item, Function<NbtUtil.Wrapper, List<Object>> toListFunction, Consumer<List<Object>> computeListFunction) {
-        var wrapper = NbtUtil.getInst().getItemTagWrapper(item);
+        val wrapper = NbtUtil.getInst().getItemTagWrapper(item);
         List<Object> modifiers = toListFunction.apply(wrapper);
         computeListFunction.accept(modifiers);
         wrapper.set("AttributeModifiers", modifiers == null || modifiers.isEmpty() ? null : modifiers);

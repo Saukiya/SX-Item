@@ -10,7 +10,7 @@ import github.saukiya.util.nms.NMS;
 import github.saukiya.util.nms.NbtUtil;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import lombok.var;
+import lombok.val;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -305,7 +305,7 @@ public class ItemManager implements Listener {
     public void checkUpdateItem(Player player, String prefix, ItemStack... itemStacks) {
         for (ItemStack item : itemStacks) {
             if (item == null) continue;
-            var oldWrapper = NbtUtil.getInst().getItemTagWrapper(item);
+            val oldWrapper = NbtUtil.getInst().getItemTagWrapper(item);
             IGenerator ig = itemMap.get(oldWrapper.getString(prefix + ".ItemKey"));
             if (ig instanceof IUpdate) {
                 IUpdate updateIg = (IUpdate) ig;
@@ -320,7 +320,7 @@ public class ItemManager implements Listener {
      * 强制更新物品
      */
     public void updateItem(Player player, ItemStack item) {
-        var oldWrapper = NbtUtil.getInst().getItemTagWrapper(item);
+        val oldWrapper = NbtUtil.getInst().getItemTagWrapper(item);
         IGenerator ig = itemMap.get(oldWrapper.getString(plugin.getName() + ".ItemKey"));
         if (!(ig instanceof IUpdate)) return;
         updateItem(player, item, (IUpdate) ig, oldWrapper);
@@ -331,7 +331,7 @@ public class ItemManager implements Listener {
      */
     public void updateItem(Player player, ItemStack item, IUpdate updateIg, NbtUtil.Wrapper oldWrapper) {
         ItemStack newItem = updateIg.update(item, oldWrapper, player);
-        var wrapper = NbtUtil.getInst().getItemTagWrapper(newItem);
+        val wrapper = NbtUtil.getInst().getItemTagWrapper(newItem);
         wrapper.set(plugin.getName() + ".ItemKey", updateIg.getKey());
         wrapper.set(plugin.getName() + ".HashCode", updateIg.updateCode());
         HashSet<String> protectNBT = new HashSet<>(protectNbtList);

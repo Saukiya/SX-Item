@@ -11,7 +11,7 @@ import github.saukiya.util.nbt.TagCompound;
 import github.saukiya.util.nbt.TagType;
 import github.saukiya.util.nms.*;
 import lombok.Getter;
-import lombok.var;
+import lombok.val;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Color;
@@ -47,19 +47,25 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
 
     TagCompound nbt;
 
+    Object component;
+
     int hashCode;
 
     boolean update;
 
+    @SuppressWarnings("DataFlowIssue")
     public GeneratorDefault(String key, ConfigurationSection config, String group) {
         super(key, config, group);
         this.displayName = config.getString("Name");
         this.ids = config.isList("ID") ? config.getStringList("ID") : Collections.singletonList(config.getString(".ID", "APPLE"));
-        if (config.contains("Random")) {
+        if (config.isConfigurationSection("Random")) {
             SXItem.getRandomManager().loadRandom(this.randomMap = new HashMap<>(), config.getConfigurationSection("Random"));
         }
-        if (config.contains("NBT")) {
+        if (config.isConfigurationSection("NBT")) {
             this.nbt = (TagCompound) TagType.toTag(config.getConfigurationSection("NBT"));
+        }
+        if (config.isConfigurationSection("Components")) {
+            component = ComponentUtil.getInst().valueToMap(convertConfig(config.getConfigurationSection("Components")));
         }
         this.hashCode = configString.hashCode();
         this.update = config.getBoolean("Update");
@@ -219,13 +225,11 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
 
         Object nmsItem = NbtUtil.getInst().getNMSItem(item);
 
-        if (config.isConfigurationSection("Components")) {
-            Map<String, Object> components = new HashMap<>();
-            convertConfig(components, config.getConfigurationSection("Components"));
-            ComponentUtil.getInst().getItemWrapper(item, nmsItem).setAllValue(components).save();
+        if (component != null) {
+            ComponentUtil.getInst().setDataComponentMap(nmsItem, component);
         }
 
-        var wrapper = NbtUtil.getInst().getItemTagWrapper(item, nmsItem);
+        val wrapper = NbtUtil.getInst().getItemTagWrapper(item, nmsItem);
         wrapper.setAll((Base.Compound) docker.replace(nbt));
 
         docker.getLockMap().forEach((key, value) -> wrapper.set(SXItem.getInst().getName() + ".Lock." + key, value));
@@ -233,18 +237,6 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         wrapper.save();
 
         return item;
-    }
-
-    public void convertConfig(Map<String, Object> map, ConfigurationSection config) {
-        config.getValues(false).forEach((k,v) -> {
-            if (v instanceof ConfigurationSection) {
-                Map<String,Object> subComponents = new HashMap<>();
-                convertConfig(subComponents, (ConfigurationSection) v);
-                map.put(k, subComponents);
-                return;
-            }
-            map.put(k, v);
-        });
     }
 
     @Override
@@ -287,5 +279,11 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
                 config.set("Color", Integer.toHexString(((LeatherArmorMeta) itemMeta).getColor().asRGB()));
             config.set("SkullName", ItemUtil.getInst().getSkull(itemMeta));
         };
+    }
+
+    public Map<String, Object> convertConfig(ConfigurationSection config) {
+        Map<String, Object> result = config.getValues(false);
+        result.entrySet().stream().filter(entry -> entry.getValue() instanceof ConfigurationSection).forEachOrdered(entry -> result.put(entry.getKey(), convertConfig((ConfigurationSection) entry.getValue())));
+        return result;
     }
 }
