@@ -1,8 +1,8 @@
 package github.saukiya.sxitem.data;
 
 import github.saukiya.sxitem.SXItem;
-import github.saukiya.sxitem.helper.PlaceholderHelper;
 import github.saukiya.sxitem.util.Config;
+import github.saukiya.util.helper.PlaceholderHelper;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

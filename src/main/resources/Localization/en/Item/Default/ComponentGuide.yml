@@ -48,6 +48,7 @@ ComponentGuide-2:
   Update: true
   Components:
     minecraft:item_name: 'FrenchFries'
+    minecraft:custom_name: 'FrenchFries'
     minecraft:max_stack_size: 50
     minecraft:rarity: 'rare'
     minecraft:food:

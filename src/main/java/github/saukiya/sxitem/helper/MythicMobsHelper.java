@@ -4,7 +4,7 @@ import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.item.IGenerator;
 import github.saukiya.sxitem.event.SXItemMythicMobsGiveToInventoryEvent;
 import github.saukiya.sxitem.util.Config;
-import github.saukiya.sxitem.util.NMS;
+import github.saukiya.util.nms.NMS;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;

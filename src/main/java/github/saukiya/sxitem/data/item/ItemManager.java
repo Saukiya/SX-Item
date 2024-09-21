@@ -3,7 +3,11 @@ package github.saukiya.sxitem.data.item;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.event.SXItemSpawnEvent;
 import github.saukiya.sxitem.event.SXItemUpdateEvent;
-import github.saukiya.sxitem.util.*;
+import github.saukiya.sxitem.util.Config;
+import github.saukiya.util.base.Tuple;
+import github.saukiya.util.nms.MessageUtil;
+import github.saukiya.util.nms.NMS;
+import github.saukiya.util.nms.NbtUtil;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.var;
@@ -236,10 +240,24 @@ public class ItemManager implements Listener {
     }
 
     /**
+     * 获取物品 - 不带玩家参数
+     */
+    public ItemStack getItem(String itemName, Object... args) {
+        return getItem(itemName, null, args);
+    }
+
+    /**
+     * 获取物品 - 不带玩家参数
+     */
+    public ItemStack getItem(IGenerator ig, Object... args) {
+        return getItem(ig, null, args);
+    }
+
+    /**
      * 获取物品
      */
     @Nullable
-    public ItemStack getItem(String itemName, @Nonnull Player player, Object... args) {
+    public ItemStack getItem(String itemName, Player player, Object... args) {
         IGenerator ig = itemMap.get(itemName);
         if (ig != null) {
             return getItem(ig, player, args);

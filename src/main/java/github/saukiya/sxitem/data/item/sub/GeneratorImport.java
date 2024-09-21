@@ -1,7 +1,7 @@
 package github.saukiya.sxitem.data.item.sub;
 
 import github.saukiya.sxitem.data.item.IGenerator;
-import github.saukiya.sxitem.util.MessageUtil;
+import github.saukiya.util.nms.MessageUtil;
 import lombok.Getter;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.configuration.ConfigurationSection;

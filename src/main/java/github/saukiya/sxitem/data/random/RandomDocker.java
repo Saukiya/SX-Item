@@ -1,11 +1,11 @@
 package github.saukiya.sxitem.data.random;
 
 import github.saukiya.sxitem.SXItem;
-import github.saukiya.sxitem.helper.PlaceholderHelper;
-import github.saukiya.sxitem.nbt.TagBase;
-import github.saukiya.sxitem.nbt.TagCompound;
-import github.saukiya.sxitem.nbt.TagList;
-import github.saukiya.sxitem.nbt.TagString;
+import github.saukiya.util.helper.PlaceholderHelper;
+import github.saukiya.util.nbt.TagBase;
+import github.saukiya.util.nbt.TagCompound;
+import github.saukiya.util.nbt.TagList;
+import github.saukiya.util.nbt.TagString;
 import lombok.Getter;
 import org.apache.commons.lang.text.StrLookup;
 import org.apache.commons.lang.text.StrMatcher;

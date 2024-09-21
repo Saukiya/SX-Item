@@ -2,7 +2,7 @@ package github.saukiya.sxitem.data.random.nodes;
 
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.INode;
-import github.saukiya.sxitem.util.Tuple;
+import github.saukiya.util.base.Tuple;
 import lombok.ToString;
 
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
 package github.saukiya.sxitem.data.item;
 
-import github.saukiya.sxitem.util.NbtUtil;
+import github.saukiya.util.nms.NbtUtil;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
