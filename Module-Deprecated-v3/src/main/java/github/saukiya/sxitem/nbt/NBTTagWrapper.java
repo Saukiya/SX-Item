@@ -1,0 +1,21 @@
+package github.saukiya.sxitem.nbt;
+
+import github.saukiya.util.nms.NbtUtil;
+import lombok.AllArgsConstructor;
+import lombok.experimental.Delegate;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+@Deprecated
+@AllArgsConstructor
+public class NBTTagWrapper {
+
+    @Delegate
+    NbtUtil.Wrapper target;
+
+    @Nullable
+    public NBTTagWrapper getWrapper(@Nonnull String path) {
+        return new NBTTagWrapper(target.getWrapper(path));
+    }
+}
