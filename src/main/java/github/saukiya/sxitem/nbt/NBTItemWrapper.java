@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
  * <p>
  * 写入\删除NBT后，需要save才能生效
  */
-public interface NBTItemWrapper extends NBTTagWrapper {
+public interface NBTItemWrapper extends NBTWrapper {
 
     /**
      * 保存到当前的ItemStack中

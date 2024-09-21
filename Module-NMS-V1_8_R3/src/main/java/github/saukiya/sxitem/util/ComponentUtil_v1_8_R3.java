@@ -5,22 +5,22 @@ import com.google.gson.JsonElement;
 public class ComponentUtil_v1_8_R3 extends ComponentUtil {
 
     @Override
-    public Object getDataComponentMap(Object nmsCopyItem) {
+    public Object getDataComponentMap(Object nmsItem) {
         return null;
     }
 
     @Override
-    public Object getDataComponentPatch(Object nmsCopyItem) {
+    public Object getDataComponentPatch(Object nmsItem) {
         return null;
     }
 
     @Override
-    public void setDataComponentMap(Object nmsCopyItem, Object dataComponentMap) {
+    public void setDataComponentMap(Object nmsItem, Object dataComponentMap) {
 
     }
 
     @Override
-    public void setDataComponentPatch(Object nmsCopyItem, Object dataComponentPatch) {
+    public void setDataComponentPatch(Object nmsItem, Object dataComponentPatch) {
 
     }
 
@@ -60,7 +60,7 @@ public class ComponentUtil_v1_8_R3 extends ComponentUtil {
     }
 
     @Override
-    public Object valueToPach(Object javaObject) {
+    public Object valueToPatch(Object javaObject) {
         return null;
     }
 }

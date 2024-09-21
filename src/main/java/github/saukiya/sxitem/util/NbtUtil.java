@@ -8,19 +8,13 @@ import org.bukkit.inventory.ItemStack;
 import java.io.DataInput;
 import java.io.DataOutput;
 
+/**
+ * NBT工具类
+ */
 public abstract class NbtUtil implements NMS {
 
     @Getter
     private final static NbtUtil inst = NMS.getInst(NbtUtil.class);
-
-    /**
-     * 创建一个空的 NBT 封装器
-     *
-     * @return NBTTagWrapper
-     */
-    public final NBTTagWrapper createTagWrapper() {
-        return createTagWrapper(null);
-    }
 
     /**
      * 获取 ITEM-NBT封装器
@@ -30,12 +24,23 @@ public abstract class NbtUtil implements NMS {
      */
     public abstract NBTItemWrapper getItemTagWrapper(ItemStack itemStack);
 
+    public abstract NBTItemWrapper getItemTagWrapper(ItemStack itemStack, Object nmsItem);
+
     /**
-     * 创建一个  NBT封装器
+     * 创建一个空的 NBT 封装器
      *
-     * @return NBTTagWrapper
+     * @return NBTWrapper
      */
-    public abstract NBTTagWrapper createTagWrapper(Object nbtTagCompound);
+    public final NBTWrapper createTagWrapper() {
+        return createTagWrapper(null);
+    }
+
+    /**
+     * 创建一个 NBT封装器
+     *
+     * @return NBTWrapper
+     */
+    public abstract NBTWrapper createTagWrapper(Object nbtTagCompound);
 
     /**
      * BukkitItem 转换 NMSItem
