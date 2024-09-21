@@ -1,7 +1,6 @@
 package github.saukiya.sxitem;
 
-import github.saukiya.sxitem.command.MainCommand;
-import github.saukiya.sxitem.command.sub.*;
+import github.saukiya.sxitem.command.*;
 import github.saukiya.sxitem.data.ScriptManager;
 import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.data.item.sub.GeneratorDefault;
@@ -10,8 +9,16 @@ import github.saukiya.sxitem.data.random.RandomDocker;
 import github.saukiya.sxitem.data.random.RandomManager;
 import github.saukiya.sxitem.data.random.randoms.*;
 import github.saukiya.sxitem.helper.MythicMobsHelper;
-import github.saukiya.sxitem.helper.PlaceholderHelper;
-import github.saukiya.sxitem.util.*;
+import github.saukiya.sxitem.util.Config;
+import github.saukiya.sxitem.util.Message;
+import github.saukiya.util.command.MainCommand;
+import github.saukiya.util.common.LocalizationUtil;
+import github.saukiya.util.common.LogUtil;
+import github.saukiya.util.helper.PlaceholderHelper;
+import github.saukiya.util.nms.ComponentUtil;
+import github.saukiya.util.nms.ItemUtil;
+import github.saukiya.util.nms.MessageUtil;
+import github.saukiya.util.nms.NbtUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -58,7 +65,7 @@ public class SXItem extends JavaPlugin {
         LocalizationUtil.saveResource(this, "zh", "en");
         Config.loadConfig();
         Message.loadMessage();
-        mainCommand = new MainCommand(this);
+        mainCommand = new MainCommand(this, Message::getStatic);
         mainCommand.register(new GiveCommand());
         mainCommand.register(new SaveCommand());
         mainCommand.register(new NBTCommand());
