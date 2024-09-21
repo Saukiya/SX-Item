@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 /**
- * NMS
+ * NMS 接口实现类 通过反射寻找对应版本(兼容版本)的文件
  */
 public interface NMS {
 
