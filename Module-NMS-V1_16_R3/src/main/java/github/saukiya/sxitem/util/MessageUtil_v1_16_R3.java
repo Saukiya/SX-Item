@@ -9,20 +9,20 @@ import org.bukkit.inventory.ItemStack;
 public class MessageUtil_v1_16_R3 extends MessageUtil {
 
     @Override
-    public ComponentBuilder componentBuilder() {
-        return new ComponentBuilderImpl();
+    public Builder builder() {
+        return new BuilderImpl();
     }
 
-    class ComponentBuilderImpl extends ComponentBuilder {
+    static class BuilderImpl extends Builder {
 
         @Override
-        public ComponentBuilder show(String text) {
+        public Builder show(String text) {
             current.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§7" + text)));
             return this;
         }
 
         @Override
-        public ComponentBuilder show(ItemStack item) {
+        public Builder show(ItemStack item) {
             Object nbt = NbtUtil.getInst().getItemNBT(item);
             current.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new Item(item.getType().getKey().getKey(), item.getAmount(), ItemTag.ofNbt(String.valueOf(nbt)))));
             return this;

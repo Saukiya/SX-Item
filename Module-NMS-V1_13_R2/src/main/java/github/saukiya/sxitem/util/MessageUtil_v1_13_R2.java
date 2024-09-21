@@ -1,6 +1,6 @@
 package github.saukiya.sxitem.util;
 
-import github.saukiya.sxitem.nbt.NBTWrapper;
+import lombok.var;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -9,21 +9,21 @@ import org.bukkit.inventory.ItemStack;
 public class MessageUtil_v1_13_R2 extends MessageUtil {
 
     @Override
-    public ComponentBuilder componentBuilder() {
-        return new ComponentBuilderImpl();
+    public Builder builder() {
+        return new BuilderImpl();
     }
 
-    class ComponentBuilderImpl extends ComponentBuilder {
+    static class BuilderImpl extends Builder {
 
         @Override
-        public ComponentBuilder show(String text) {
+        public Builder show(String text) {
             current.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[]{new TextComponent("§7" + text)}));
             return this;
         }
 
         @Override
-        public ComponentBuilder show(ItemStack item) {
-            NBTWrapper wrapper = NbtUtil.getInst().createTagWrapper();
+        public Builder show(ItemStack item) {
+            var wrapper = NbtUtil.getInst().createTagWrapper();
             wrapper.set("id", item.getType().getKey().getKey());
             wrapper.set("Count", (byte) item.getAmount());
             wrapper.set("tag", NbtUtil.getInst().getItemNBT(item));

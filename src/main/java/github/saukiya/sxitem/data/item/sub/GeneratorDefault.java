@@ -6,9 +6,11 @@ import github.saukiya.sxitem.data.item.IUpdate;
 import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.data.random.INode;
 import github.saukiya.sxitem.data.random.RandomDocker;
-import github.saukiya.sxitem.nbt.*;
+import github.saukiya.sxitem.nbt.TagCompound;
+import github.saukiya.sxitem.nbt.TagType;
 import github.saukiya.sxitem.util.*;
 import lombok.Getter;
+import lombok.var;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Color;
@@ -77,7 +79,7 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
     public BaseComponent getNameComponent() {
         if (displayName != null)
             return new TextComponent(RandomDocker.getInst().replace(displayName).replace('&', '§'));
-        ComponentBuilder cb = MessageUtil.getInst().componentBuilder().add("§r");
+        MessageUtil.Builder cb = MessageUtil.getInst().builder().add("§r");
         for (String id : ids) {
             if (cb.getHandle().getExtra().size() != 1) cb.add("§8|§r");
             Material material = ItemManager.getMaterial(id);
@@ -222,8 +224,8 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
             ComponentUtil.getInst().getItemWrapper(item, nmsItem).setAllValue(components).save();
         }
 
-        NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item, nmsItem);
-        wrapper.setAll((CompoundBase) docker.replace(nbt));
+        var wrapper = NbtUtil.getInst().getItemTagWrapper(item, nmsItem);
+        wrapper.setAll((Base.Compound) docker.replace(nbt));
 
         docker.getLockMap().forEach((key, value) -> wrapper.set(SXItem.getInst().getName() + ".Lock." + key, value));
 
@@ -255,7 +257,7 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
     }
 
     @Override
-    public ItemStack update(ItemStack oldItem, NBTWrapper oldWrapper, Player player) {
+    public ItemStack update(ItemStack oldItem, NbtUtil.Wrapper oldWrapper, Player player) {
         RandomDocker randomDocker = new RandomDocker(randomMap, player);
         Map<String, String> map = (Map<String, String>) oldWrapper.getMap(SXItem.getInst().getName() + ".Lock");
         if (map != null) randomDocker.getOtherList().add(map);

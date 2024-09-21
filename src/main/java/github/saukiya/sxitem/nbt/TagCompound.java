@@ -1,5 +1,6 @@
 package github.saukiya.sxitem.nbt;
 
+import github.saukiya.sxitem.util.Base;
 import lombok.NoArgsConstructor;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -11,7 +12,7 @@ import java.io.IOException;
 import java.util.*;
 
 @NoArgsConstructor
-public class TagCompound implements TagBase<HashMap<String, ?>>, CompoundBase {
+public class TagCompound implements TagBase<HashMap<String, ?>>, Base.Compound {
 
     protected static final TagType.Method typeMethod = new TagType.Method() {
         @Override
@@ -51,7 +52,7 @@ public class TagCompound implements TagBase<HashMap<String, ?>>, CompoundBase {
         });
     }
 
-    public TagCompound(CompoundBase compoundBase) {
+    public TagCompound(Base.Compound compoundBase) {
         compoundBase.keySet().forEach(key -> set(key, compoundBase.get(key)));
     }
 
