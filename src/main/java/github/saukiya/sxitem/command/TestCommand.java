@@ -8,7 +8,7 @@ import github.saukiya.util.nms.ComponentUtil;
 import github.saukiya.util.nms.MessageUtil;
 import github.saukiya.util.nms.NMS;
 import github.saukiya.util.nms.NbtUtil;
-import lombok.var;
+import lombok.val;
 import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -52,12 +52,12 @@ public class TestCommand extends SubCommand {
         input.put("minecraft:dyed_color", Collections.singletonMap("rgb", 16747238));
         input.put("minecraft:enchantment_glint_override", true);
         input.put("minecraft:food", ComponentUtil.getGson().fromJson("{can_always_eat:true,eat_seconds:5,nutrition:3,saturation:1}", Map.class));
-        var wrapper = ComponentUtil.getInst().getItemWrapper(itemStack);
-        wrapper.setAllValue(input).save();
+        val wrapper = ComponentUtil.getInst().getItemWrapper(itemStack);
+        wrapper.setFromValue(input).save();
         SXItem.getInst().getLogger().warning("component: \n" + wrapper.toJsonString());
         sender.sendMessage("组件功能通过");
 
-        var itemWrapper = NbtUtil.getInst().getItemTagWrapper(itemStack);
+        val itemWrapper = NbtUtil.getInst().getItemTagWrapper(itemStack);
         itemWrapper.set("test.string", "2333");
         itemWrapper.set("test.byteArray", new byte[]{1, 5, 10, 50, 100});
         itemWrapper.set("test.intArray", new int[]{1, 50, 100, 5000, 10000});
@@ -77,7 +77,6 @@ public class TestCommand extends SubCommand {
         itemWrapper.save();
         sender.sendMessage("设置NBT物品通过");
 
-        itemWrapper = NbtUtil.getInst().getItemTagWrapper(itemStack);
         TagCompound tagCompound = NbtUtil.getInst().toTag(itemWrapper);
         Map<String, Object> map = new HashMap<>();
         map.put("test.string", tagCompound.getString("test.string"));

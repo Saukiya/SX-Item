@@ -11,7 +11,6 @@ import github.saukiya.util.nbt.TagList;
 import github.saukiya.util.nbt.TagType;
 import github.saukiya.util.nms.MessageUtil;
 import github.saukiya.util.nms.NbtUtil;
-import lombok.var;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -56,7 +55,7 @@ public class NBTCommand extends SubCommand {
                 return;
             }
 
-            var tagWrapper = NbtUtil.getInst().getItemTagWrapper(item);
+            NbtUtil.ItemWrapper tagWrapper = NbtUtil.getInst().getItemTagWrapper(item);
             String key = args.length > 2 ? args[2] : null;
             String value = args.length > 3 ? args[3] : null;
             if (args[1].equals("set") && value != null) {

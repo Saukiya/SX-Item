@@ -1,6 +1,6 @@
 package github.saukiya.util.nms;
 
-import lombok.var;
+import lombok.val;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -64,7 +64,7 @@ public class MessageUtil_v1_8_R3 extends MessageUtil {
 
         @Override
         public Builder show(ItemStack item) {
-            var wrapper = NbtUtil.getInst().createTagWrapper();
+            val wrapper = NbtUtil.getInst().createTagWrapper();
             wrapper.set("id", "minecraft:" + item.getType().name().toLowerCase(Locale.ROOT));
             wrapper.set("Count", (byte) item.getAmount());
             wrapper.set("Damage", item.getDurability());

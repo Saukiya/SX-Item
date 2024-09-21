@@ -8,9 +8,14 @@ import lombok.Getter;
 import org.bukkit.inventory.ItemStack;
 
 /**
+ * <pre>
  * 组件工具类 (v1_20_R4+)
- * <p/>
+ *
+ * 组件结构:
+ * DataComponentMap->Component
+ *
  * 参考链接: <a href="https://zh.minecraft.wiki/w/%E7%89%A9%E5%93%81%E5%A0%86%E5%8F%A0%E7%BB%84%E4%BB%B6">WIKI</a>
+ * </pre>
  */
 public abstract class ComponentUtil implements NMS {
 
@@ -41,7 +46,6 @@ public abstract class ComponentUtil implements NMS {
 
     /**
      * 获取 nmsItem 中的 DataComponentMap
-     * <p/>
      * 覆盖类型 DataComponentPatch 主要用这个
      *
      * @param nmsItem NMSItem
@@ -63,7 +67,6 @@ public abstract class ComponentUtil implements NMS {
 
     /**
      * 获取 nmsItem 中的 DataComponentPatch
-     * <p/>
      * 替代类型 DataComponentPatch 目前作用不明显
      *
      * @param nmsItem NMSItem
@@ -93,7 +96,7 @@ public abstract class ComponentUtil implements NMS {
         }
 
         /**
-         * 向dataMap中添加元素
+         * 向dataMap中添加组件元素
          */
         public ItemWrapper set(String type, Object value) {
             Object dataMap = getDataComponentMap(nmsItem);
@@ -103,19 +106,25 @@ public abstract class ComponentUtil implements NMS {
         }
 
         /**
-         * 设置Java值
-         **/
-        public ItemWrapper setAllValue(Object javaObject) {
-            setDataComponentMap(nmsItem, valueToMap(javaObject));
+         * 设置相关组件
+         */
+        public ItemWrapper setMap(Object dataComponentMap) {
+            setDataComponentMap(nmsItem, dataComponentMap);
             return this;
         }
 
         /**
-         * 设置Json值
+         * 从Java对象中设置相关组件
          **/
-        public ItemWrapper setAllJson(JsonElement jsonElement) {
-            setDataComponentMap(nmsItem, jsonToMap(jsonElement));
-            return this;
+        public ItemWrapper setFromValue(Object javaObject) {
+            return setMap(valueToMap(javaObject));
+        }
+
+        /**
+         * 从Json对象中设置相关组件
+         **/
+        public ItemWrapper setFromJson(JsonElement jsonElement) {
+            return setMap(jsonToMap(jsonElement));
         }
 
         /**
