@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
  */
 public class RandomDocker extends StrLookup {
 
-
     static final StrMatcher PRE_MATCHER = StrMatcher.charMatcher('<');
     static final StrMatcher SUF_MATCHER = StrMatcher.charMatcher('>');
 

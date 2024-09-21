@@ -6,6 +6,7 @@ import github.saukiya.sxitem.data.ScriptManager;
 import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.data.item.sub.GeneratorDefault;
 import github.saukiya.sxitem.data.item.sub.GeneratorImport;
+import github.saukiya.sxitem.data.random.RandomDocker;
 import github.saukiya.sxitem.data.random.RandomManager;
 import github.saukiya.sxitem.data.random.randoms.*;
 import github.saukiya.sxitem.helper.MythicMobsHelper;
@@ -95,7 +96,7 @@ public class SXItem extends JavaPlugin {
         itemManager = new ItemManager(this);
 
         Config.setup();
-        PlaceholderHelper.setup();
+        PlaceholderHelper.setup(this, (player, params) -> RandomDocker.getInst().replace(params));
         MythicMobsHelper.setup();
         mainCommand.onEnable("SxItem");
         getLogger().info("Loading Time: " + (System.currentTimeMillis() - oldTimes) + " ms");
