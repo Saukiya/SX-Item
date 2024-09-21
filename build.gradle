@@ -7,7 +7,10 @@ allprojects {
     apply plugin: 'java'
 
     group 'io.github.saukiya'
-    version '4.0.1'
+    version '4.0.0'
+
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 
     repositories {
         mavenCentral()
@@ -21,12 +24,15 @@ allprojects {
         maven { url 'https://repo.papermc.io/repository/maven-public/' }
     }
 
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-
     dependencies {
         compileOnly 'org.projectlombok:lombok:1.18.34'
         annotationProcessor 'org.projectlombok:lombok:1.18.34'
+    }
+
+    javadoc {
+        options.encoding = 'UTF-8'
+        options.charSet = 'UTF-8'
+        options.addStringOption('Xdoclint:none', '-quiet')
     }
 
     tasks.build.finalizedBy shadowJar
@@ -60,6 +66,8 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
 }
 
+jar.archiveClassifier = "base"
+
 shadowJar {
     // 过滤未使用的依赖
     minimize()
@@ -73,10 +81,9 @@ shadowJar {
 
 // 打得出来但是不会发布捏
 var deprecated = project(":Module-Deprecated-v3")
-task SupportDeprecatedDependency(type: Jar) {
+task buildJar(type: Jar) {
     from deprecated.sourceSets.main.output
     from rootProject.sourceSets.main.output
-    archiveClassifier = "api"
 }
 
 def createBuildTask(String taskName, String destinationDir, String jarSuffix) {
@@ -92,9 +99,18 @@ createBuildTask('buildLastJar', "$rootDir/build", "Latest")
 createBuildTask('buildDebugJar', "$rootDir/run/plugins", "Debug")
 // 需要对资源文件中含有的'$'进行转义: $ -> \$
 processResources.expand(version: version)
-shadowJar.dependsOn SupportDeprecatedDependency
+shadowJar.dependsOn buildJar
 
 publishing {
+    publications {
+        maven(MavenPublication) {
+//            from components.java
+//            artifact jar
+            artifact shadowJar
+            artifact buildJar
+            artifactId = project.name.toLowerCase()
+        }
+    }
     repositories {
         if (System.getenv("GITHUB_ACTIONS") != null) {
             maven {
@@ -107,12 +123,6 @@ publishing {
             }
         } else {
             mavenLocal()
-        }
-    }
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            artifactId = project.name.toLowerCase()
         }
     }
 }

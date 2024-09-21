@@ -20,10 +20,12 @@ public class NbtUtil {
     private github.saukiya.util.nms.NbtUtil target;
 
 
+    @Deprecated
     public NBTItemWrapper getItemTagWrapper(ItemStack itemStack) {
         return new NBTItemWrapper(target.getItemTagWrapper(itemStack));
     }
 
+    @Deprecated
     public NBTTagWrapper createTagWrapper(Object nbtTagCompound) {
         return new NBTTagWrapper(target.createTagWrapper(nbtTagCompound));
     }
