@@ -1,7 +1,7 @@
 package github.saukiya.sxitem.util;
 
 import github.saukiya.sxitem.nbt.NBTItemWrapper;
-import github.saukiya.sxitem.nbt.NBTTagWrapper;
+import github.saukiya.sxitem.nbt.NBTWrapper;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -18,7 +18,7 @@ public class ItemUtil_v1_8_R3 extends ItemUtil {
         editAttribute(item, wrapper -> (List<Object>) wrapper.getList("AttributeModifiers", new ArrayList<>()), computeListFunction);
     }
 
-    public void editAttribute(ItemStack item, Function<NBTTagWrapper, List<Object>> toListFunction, Consumer<List<Object>> computeListFunction) {
+    public void editAttribute(ItemStack item, Function<NBTWrapper, List<Object>> toListFunction, Consumer<List<Object>> computeListFunction) {
         NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item);
         List<Object> modifiers = toListFunction.apply(wrapper);
         computeListFunction.accept(modifiers);

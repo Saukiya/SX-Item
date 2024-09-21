@@ -4,7 +4,7 @@ import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.event.SXItemSpawnEvent;
 import github.saukiya.sxitem.event.SXItemUpdateEvent;
 import github.saukiya.sxitem.nbt.NBTItemWrapper;
-import github.saukiya.sxitem.nbt.NBTTagWrapper;
+import github.saukiya.sxitem.nbt.NBTWrapper;
 import github.saukiya.sxitem.util.*;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -288,7 +288,7 @@ public class ItemManager implements Listener {
     public void checkUpdateItem(Player player, String prefix, ItemStack... itemStacks) {
         for (ItemStack item : itemStacks) {
             if (item == null) continue;
-            NBTTagWrapper oldWrapper = NbtUtil.getInst().getItemTagWrapper(item);
+            NBTWrapper oldWrapper = NbtUtil.getInst().getItemTagWrapper(item);
             IGenerator ig = itemMap.get(oldWrapper.getString(prefix + ".ItemKey"));
             if (ig instanceof IUpdate) {
                 IUpdate updateIg = (IUpdate) ig;
@@ -303,7 +303,7 @@ public class ItemManager implements Listener {
      * 强制更新物品
      */
     public void updateItem(Player player, ItemStack item) {
-        NBTTagWrapper oldWrapper = NbtUtil.getInst().getItemTagWrapper(item);
+        NBTWrapper oldWrapper = NbtUtil.getInst().getItemTagWrapper(item);
         IGenerator ig = itemMap.get(oldWrapper.getString(plugin.getName() + ".ItemKey"));
         if (!(ig instanceof IUpdate)) return;
         updateItem(player, item, (IUpdate) ig, oldWrapper);
@@ -312,7 +312,7 @@ public class ItemManager implements Listener {
     /**
      * 强制更新物品
      */
-    public void updateItem(Player player, ItemStack item, IUpdate updateIg, NBTTagWrapper oldWrapper) {
+    public void updateItem(Player player, ItemStack item, IUpdate updateIg, NBTWrapper oldWrapper) {
         ItemStack newItem = updateIg.update(item, oldWrapper, player);
         NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(newItem);
         wrapper.set(plugin.getName() + ".ItemKey", updateIg.getKey());

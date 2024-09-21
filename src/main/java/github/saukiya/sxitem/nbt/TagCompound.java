@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.*;
 
 @NoArgsConstructor
-public class TagCompound implements TagBase<HashMap<String, ?>>, TagCompoundBase {
+public class TagCompound implements TagBase<HashMap<String, ?>>, CompoundBase {
 
     protected static final TagType.Method typeMethod = new TagType.Method() {
         @Override
@@ -51,7 +51,7 @@ public class TagCompound implements TagBase<HashMap<String, ?>>, TagCompoundBase
         });
     }
 
-    public TagCompound(TagCompoundBase compoundBase) {
+    public TagCompound(CompoundBase compoundBase) {
         compoundBase.keySet().forEach(key -> set(key, compoundBase.get(key)));
     }
 

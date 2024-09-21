@@ -11,7 +11,7 @@ import java.util.Set;
  * 归并Compound类的使用方法
  * path特性如同{@link org.bukkit.configuration.file.YamlConfiguration}
  */
-public interface TagCompoundBase {
+public interface CompoundBase {
 
     /**
      * 按路径获取对象
@@ -44,9 +44,9 @@ public interface TagCompoundBase {
     /**
      * 用一个TagCompoundBase添加/覆盖到此处
      *
-     * @param value TagCompound、NBTTagWrapper、NBTItemWrapper
+     * @param value TagCompound、NBTWrapper、NBTItemWrapper
      */
-    default void setAll(TagCompoundBase value) {
+    default void setAll(CompoundBase value) {
         if (value != null) value.keySet().forEach(key -> set(key, value.get(key)));
     }
 

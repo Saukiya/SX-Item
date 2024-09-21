@@ -6,7 +6,7 @@ plugins {
 allprojects {
     apply plugin: 'java'
 
-    group 'github.saukiya'
+    group 'io.github.saukiya'
     version '3.2.6'
 
     repositories {
@@ -93,20 +93,23 @@ processResources {
     expand(version: version)
 }
 
-publishing {
-    publications {
-        maven(MavenPublication) {
-            from components.java
+if (System.getenv("GITHUB_ACTIONS") != null) {
+    publishing {
+        repositories {
+            mavenLocal()
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/saukiya/SX-Item")
+                credentials {
+                    username = System.getenv("GITHUB_NAME")
+                    password = System.getenv("GITHUB_TOKEN")
+                }
+            }
         }
-    }
-    repositories {
-        mavenLocal()
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/saukiya/SX-Item")
-            credentials {
-                username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
-                password = project.findProperty("gpr.token") ?: System.getenv("TOKEN")
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+                artifactId = project.name.toLowerCase()
             }
         }
     }

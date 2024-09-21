@@ -1,6 +1,6 @@
 package github.saukiya.sxitem.util;
 
-import github.saukiya.sxitem.nbt.NBTTagWrapper;
+import github.saukiya.sxitem.nbt.NBTWrapper;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -38,7 +38,7 @@ public class MessageUtil_v1_11_R1 extends MessageUtil {
 
         @Override
         public ComponentBuilder show(ItemStack item) {
-            NBTTagWrapper wrapper = NbtUtil.getInst().createTagWrapper();
+            NBTWrapper wrapper = NbtUtil.getInst().createTagWrapper();
             wrapper.set("id", "minecraft:" + item.getType().name().toLowerCase(Locale.ROOT));
             wrapper.set("Count", (byte) item.getAmount());
             wrapper.set("Damage", item.getDurability());

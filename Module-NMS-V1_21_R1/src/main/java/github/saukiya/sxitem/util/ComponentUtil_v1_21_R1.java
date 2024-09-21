@@ -26,41 +26,41 @@ public class ComponentUtil_v1_21_R1 extends ComponentUtil {
         IRegistryCustom registry = CraftRegistry.getMinecraftRegistry();
         DynamicOps<Object> dynamicOps = registry.a(JavaOps.INSTANCE);
         net.minecraft.world.item.ItemStack nmsCopy = CraftItemStack.asNMSCopy(itemStack);
-        DataComponentPatch dataComponentPatch = nmsCopy.d();
 //        Object encodeResult = DataComponentPatch.b.encode(dataComponentPatch, dynamicOps, dynamicOps.emptyMap()).getOrThrow();
 
         Map<String, Object> map = new HashMap<>();
         map.put("minecraft:item_name", "默认名称(无法被铁砧修改)");
         map.put("minecraft:custom_name", "带稀有度颜色的名称(可铁砧修改)§c红色");
         map.put("minecraft:rarity", "epic");
-//        DataComponentMap dataComponentMap = nmsCopy.a();
+        DataComponentMap dataComponentMap = nmsCopy.a();
 //        Object encodeResult = DataComponentMap.b.encode(dataComponentMap, dynamicOps, dynamicOps.emptyMap()).getOrThrow();
 //        SXItem.getInst().getLogger().info("dataResult: " + encodeResult);
         DataComponentMap decodeResult = DataComponentMap.b.decode(dynamicOps, map).getOrThrow().getFirst();
 //        SXItem.getInst().getLogger().warning("dataResult: " + decodeResult);
+
         nmsCopy.b(decodeResult);
 //        SXItem.getInst().getLogger().info("nmsCopy.a: " + nmsCopy.a());
         itemStack.setItemMeta(CraftItemStack.getItemMeta(nmsCopy));
     }
 
     @Override
-    public DataComponentMap getDataComponentMap(Object nmsCopyItem) {
-        return ((net.minecraft.world.item.ItemStack) nmsCopyItem).a();
+    public DataComponentMap getDataComponentMap(Object nmsItem) {
+        return ((net.minecraft.world.item.ItemStack) nmsItem).a();
     }
 
     @Override
-    public DataComponentPatch getDataComponentPatch(Object nmsCopyItem) {
-        return ((net.minecraft.world.item.ItemStack) nmsCopyItem).d();
+    public DataComponentPatch getDataComponentPatch(Object nmsItem) {
+        return ((net.minecraft.world.item.ItemStack) nmsItem).d();
     }
 
     @Override
-    public void setDataComponentMap(Object nmsCopyItem, Object dataComponentMap) {
-        ((net.minecraft.world.item.ItemStack) nmsCopyItem).b((DataComponentMap) dataComponentMap);
+    public void setDataComponentMap(Object nmsItem, Object dataComponentMap) {
+        ((net.minecraft.world.item.ItemStack) nmsItem).b((DataComponentMap) dataComponentMap);
     }
 
     @Override
-    public void setDataComponentPatch(Object nmsCopyItem, Object dataComponentPatch) {
-        ((net.minecraft.world.item.ItemStack) nmsCopyItem).b((DataComponentPatch) dataComponentPatch);
+    public void setDataComponentPatch(Object nmsItem, Object dataComponentPatch) {
+        ((net.minecraft.world.item.ItemStack) nmsItem).b((DataComponentPatch) dataComponentPatch);
     }
 
     @Override
@@ -100,7 +100,7 @@ public class ComponentUtil_v1_21_R1 extends ComponentUtil {
     }
 
     @Override
-    public Object valueToPach(Object javaObject) {
+    public Object valueToPatch(Object javaObject) {
         return DataComponentPatch.b.decode(javaDynamic, javaObject).getOrThrow().getFirst();
     }
 }

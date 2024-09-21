@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
  * NBTTagCompound的包装类
  * 用来封装每个版本的数据交互
  */
-public interface NBTTagWrapper extends TagCompoundBase {
+public interface NBTWrapper extends CompoundBase {
 
     /**
      * 获取包装好的NBTTagCompound
@@ -19,7 +19,7 @@ public interface NBTTagWrapper extends TagCompoundBase {
      * @return 如果未找到路径，则返回null
      */
     @Nullable
-    NBTTagWrapper getWrapper(@Nonnull String path);
+    NBTWrapper getWrapper(@Nonnull String path);
 
 
     void save(@Nonnull ItemStack itemStack);

@@ -54,7 +54,7 @@ public enum TagType {
     public static TagBase toTag(Object object) {
         if (object == null) return TagEnd.getInst();
         if (object instanceof TagBase) return (TagBase) object;
-        if (object instanceof NBTTagWrapper) return NbtUtil.getInst().toTag(((NBTTagWrapper) object).getHandle());
+        if (object instanceof NBTWrapper) return NbtUtil.getInst().toTag(((NBTWrapper) object).getHandle());
         TagBase tagBase;
         for (TagType type : TagType.values()) {
             if ((tagBase = type.methods.toTag(object)) != null) {

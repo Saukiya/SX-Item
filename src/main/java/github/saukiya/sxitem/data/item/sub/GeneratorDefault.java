@@ -221,17 +221,15 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
             }
         }
 
+        Object nmsItem = NbtUtil.getInst().getNMSItem(item);
         if (config.isConfigurationSection("Components")) {
             Map<String, Object> components = new HashMap<>();
-            converConfig(components, config.getConfigurationSection("Components"));
-            Object nmsCopyItem = ComponentUtil.getInst().getNMSItem(item);
-            Object inputComponentMap = ComponentUtil.getInst().valueToMap(components);
-            ComponentUtil.getInst().setDataComponentMap(nmsCopyItem, inputComponentMap);
-            ComponentUtil.getInst().setNMSItem(item, nmsCopyItem);
+            convertConfig(components, config.getConfigurationSection("Components"));
+            ComponentUtil.getInst().getItemWrapper(item, nmsItem).setValue(components).save();
         }
 
-        NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item);
-        wrapper.setAll((TagCompoundBase) docker.replace(nbt));
+        NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item, nmsItem);
+        wrapper.setAll((CompoundBase) docker.replace(nbt));
 
         docker.getLockMap().forEach((key, value) -> wrapper.set(SXItem.getInst().getName() + ".Lock." + key, value));
 
@@ -240,11 +238,11 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         return item;
     }
 
-    public void converConfig(Map<String,Object> map, ConfigurationSection config) {
+    public void convertConfig(Map<String, Object> map, ConfigurationSection config) {
         config.getValues(false).forEach((k,v) -> {
             if (v instanceof ConfigurationSection) {
                 Map<String,Object> subComponents = new HashMap<>();
-                converConfig(subComponents, (ConfigurationSection) v);
+                convertConfig(subComponents, (ConfigurationSection) v);
                 map.put(k, subComponents);
                 return;
             }
@@ -263,7 +261,7 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
     }
 
     @Override
-    public ItemStack update(ItemStack oldItem, NBTTagWrapper oldWrapper, Player player) {
+    public ItemStack update(ItemStack oldItem, NBTWrapper oldWrapper, Player player) {
         RandomDocker randomDocker = new RandomDocker(randomMap, player);
         Map<String, String> map = (Map<String, String>) oldWrapper.getMap(SXItem.getInst().getName() + ".Lock");
         if (map != null) randomDocker.getOtherList().add(map);
