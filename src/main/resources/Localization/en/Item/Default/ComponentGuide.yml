@@ -11,19 +11,18 @@
 #
 ComponentGuide-1:
   ID: DIAMOND
-  Name: "组件教程"
+  Name: "Component Guide"
   Amount: 99
   Lore:
-    - "&c该功能为 1.21.1 新增"
-    - "&c看到这段文本"
-    - "&c代表不支持组件功能"
+    - "&cThis function is new for 1.21.1"
+    - "&cSeeing this text means that the component function is not supported."
   #组件
   Components:
-    minecraft:item_name: '默认名称(无法被铁砧修改)'
-    minecraft:custom_name: '带稀有度颜色的名称(可铁砧修改)§c红色'
-    #稀有度，染色优先级低于名称
+    minecraft:item_name: "DefaultName§8_(CannotBeModifiedByAnvil)"
+    minecraft:custom_name: '{"text":"Name Of Color With Rarity §c(ModifiableByAnvil)"}'
+    # Rarity, dye priority lower than name
     minecraft:rarity: 'epic'
-    #最大堆叠
+    # Maximum Stacking
     minecraft:max_stack_size: 99
     minecraft:food:
       can_always_eat: true
@@ -34,10 +33,10 @@ ComponentGuide-1:
     minecraft:lore:
       - '{"text":"§aHello World lores"}'
       - '{"text":"§bThis is the second line"}'
-      - '{"text":"§c这是第三行lore"}'
-      - '{"text":"§e§l这个物品可以吃"}'
-      - '{"text":"§e§l这个物品可以采集石头"}'
-      - '{"text":"§a§l这个物品可以堆叠99个"}'
+      - '{"text":"§cThis is the third line of lore"}'
+      - '{"text":"§e§lThis item can be eaten"}'
+      - '{"text":"§e§lThis item can collect stones"}'
+      - '{"text":"§a§lThis item can be stacked 99"}'
     minecraft:tool:
       rules:
         - blocks:
@@ -48,7 +47,7 @@ ComponentGuide-2:
   Amount: 50
   Update: true
   Components:
-    minecraft:item_name: '薯条'
+    minecraft:item_name: 'FrenchFries'
     minecraft:max_stack_size: 50
     minecraft:rarity: 'rare'
     minecraft:food:

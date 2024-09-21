@@ -164,35 +164,30 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         ItemUtil.getInst().setSkull(meta, docker.replace(config.getString("SkullName")));
 
         // TODO 这玩意最好整合到ItemUtil里做NMS
-        if (NMS.compareTo(1, 11, 1) >= 0 && meta instanceof PotionMeta) {
+        if (config.isConfigurationSection("Potion") && NMS.compareTo(1, 11, 1) >= 0 && meta instanceof PotionMeta) {
+            ConfigurationSection potionConfig = config.getConfigurationSection("Potion");
             PotionEffectType[] potionEffectTypes = PotionEffectType.values();
-            if (config.isString("Potion")) {
-                //TODO 临时禁用
-//                ((PotionMeta) meta).setBasePotionData(new PotionData(PotionType.valueOf(docker.replace(config.getString("Potion", "UNCRAFTABLE")))));
-            } else {
-                ConfigurationSection potionConfig = config.getConfigurationSection("Potion");
-                if (potionConfig != null) {
-                    for (String effectId : potionConfig.getKeys(false)) {
-                        ConfigurationSection potionEffectConfig = potionConfig.getConfigurationSection(effectId);
-                        effectId = docker.replace(effectId);
-                        PotionEffectType effect = null;
-                        for (PotionEffectType potionEffectType : potionEffectTypes) {
-                            if (!potionEffectType.getName().equals(effectId)) continue;
-                            effect = potionEffectType;
+            if (potionConfig != null) {
+                for (String effectId : potionConfig.getKeys(false)) {
+                    ConfigurationSection potionEffectConfig = potionConfig.getConfigurationSection(effectId);
+                    effectId = docker.replace(effectId);
+                    PotionEffectType effect = null;
+                    for (PotionEffectType potionEffectType : potionEffectTypes) {
+                        if (!potionEffectType.getName().equals(effectId)) continue;
+                        effect = potionEffectType;
+                    }
+                    if (effect != null) {
+                        int duration = Integer.parseInt(docker.replace(potionEffectConfig.getString("duration", "1")));
+                        int amplifier = Integer.parseInt(docker.replace(potionEffectConfig.getString("amplifier", "1")));
+                        boolean ambient = potionEffectConfig.getBoolean("ambient", true);
+                        boolean particles = potionEffectConfig.getBoolean("particles", true);
+                        PotionEffect potionEffect;
+                        if (NMS.compareTo(1, 13, 2) >= 0) {
+                            potionEffect = new PotionEffect(effect, duration, amplifier, ambient, particles, potionEffectConfig.getBoolean("icon", true));
+                        } else {
+                            potionEffect = new PotionEffect(effect, duration, amplifier, ambient, particles);
                         }
-                        if (effect != null) {
-                            int duration = Integer.parseInt(docker.replace(potionEffectConfig.getString("duration", "1")));
-                            int amplifier = Integer.parseInt(docker.replace(potionEffectConfig.getString("amplifier", "1")));
-                            boolean ambient = potionEffectConfig.getBoolean("ambient", true);
-                            boolean particles = potionEffectConfig.getBoolean("particles", true);
-                            PotionEffect potionEffect;
-                            if (NMS.compareTo(1, 13, 2) >= 0) {
-                                potionEffect = new PotionEffect(effect, duration, amplifier, ambient, particles, potionEffectConfig.getBoolean("icon", true));
-                            } else {
-                                potionEffect = new PotionEffect(effect, duration, amplifier, ambient, particles);
-                            }
-                            ((PotionMeta) meta).addCustomEffect(potionEffect, true);
-                        }
+                        ((PotionMeta) meta).addCustomEffect(potionEffect, true);
                     }
                 }
             }
@@ -202,12 +197,10 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
             ((LeatherArmorMeta) meta).setColor(Color.fromRGB(Integer.parseInt(docker.replace(config.getString("Color")), 16)));
         }
 
+        item.setItemMeta(meta);
         if (config.getBoolean("ClearAttribute")) {
-            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-            item.setItemMeta(meta);
-            ItemUtil.getInst().addAttribute(item, new ItemUtil.AttributeData().setAttrName("GENERIC_ATTACK_DAMAGE").setAmount(0));
+            ItemUtil.getInst().clearAttribute(item, meta);
         } else {
-            item.setItemMeta(meta);
             if (config.isList("Attributes")) {
                 ItemUtil.getInst().addAttributes(item, docker.replace(config.getStringList("Attributes")).stream()
                         .map(data -> data.split(":")).filter(split -> split.length >= 3)
@@ -222,10 +215,11 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         }
 
         Object nmsItem = NbtUtil.getInst().getNMSItem(item);
+
         if (config.isConfigurationSection("Components")) {
             Map<String, Object> components = new HashMap<>();
             convertConfig(components, config.getConfigurationSection("Components"));
-            ComponentUtil.getInst().getItemWrapper(item, nmsItem).setValue(components).save();
+            ComponentUtil.getInst().getItemWrapper(item, nmsItem).setAllValue(components).save();
         }
 
         NBTItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item, nmsItem);

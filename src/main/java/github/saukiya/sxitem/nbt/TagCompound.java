@@ -119,7 +119,7 @@ public class TagCompound implements TagBase<HashMap<String, ?>>, CompoundBase {
 
     @Override
     public Object set(String path, Object value) {
-        TagBase tagBase = setTagBase(path, TagType.toTag(value));
+        TagBase tagBase = setTagBase(path, value == null ? null : TagType.toTag(value));
         return tagBase != null ? tagBase.getValue() : null;
     }
 

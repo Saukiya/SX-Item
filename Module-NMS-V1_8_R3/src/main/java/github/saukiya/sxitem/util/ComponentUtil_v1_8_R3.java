@@ -63,4 +63,9 @@ public class ComponentUtil_v1_8_R3 extends ComponentUtil {
     public Object valueToPatch(Object javaObject) {
         return null;
     }
+
+    @Override
+    public void setComponentMapValue(Object dataComponentMap, String type, Object value) {
+
+    }
 }

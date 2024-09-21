@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -18,7 +19,7 @@ import java.util.UUID;
 public abstract class ItemUtil implements NMS {
 
     @Getter
-    private static final ItemUtil inst = NMS.getInst(ItemUtil.class, "v1_13_R2", "v1_12_R1", "v1_11_R1", "v1_8_R3");
+    private static final ItemUtil inst = NMS.getInst(ItemUtil.class, "v1_21_R1", "v1_13_R2", "v1_12_R1", "v1_11_R1", "v1_8_R3");
 
     /**
      * 获取物品是否为无限耐久
@@ -87,6 +88,27 @@ public abstract class ItemUtil implements NMS {
      * @param data AttributeData
      */
     public abstract void addAttribute(ItemStack item, @Nonnull AttributeData data);
+
+    /**
+     * 清除Attribute属性
+     *
+     * @param item ItemStack
+     */
+    public void clearAttribute(ItemStack item) {
+        clearAttribute(item, item.getItemMeta());
+    }
+
+    /**
+     * 清除Attribute属性
+     *
+     * @param item ItemStack
+     * @param meta ItemMeta
+     */
+    public void clearAttribute(ItemStack item, ItemMeta meta) {
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        addAttribute(item, new ItemUtil.AttributeData().setAttrName("GENERIC_ATTACK_DAMAGE").setAmount(0));
+        item.setItemMeta(meta);
+    }
 
     @NoArgsConstructor
     @Accessors(chain = true)

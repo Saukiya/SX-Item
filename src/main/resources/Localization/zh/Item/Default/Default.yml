@@ -119,10 +119,10 @@
 #
 
 Default-1:
-  Name: <s:DefaultPrefix>&c炎之洗礼<s:DefaultSuffix> <s:<l:品质>Color><l:品质>
+  Name: <l:DefaultPrefix>&c炎之洗礼<l:DefaultSuffix> <l:<l:品质>Color><l:品质>
   ID: <l:<l:职业>ID>
   Lore:
-    - '&6品质等级: <s:<l:品质>Color><l:品质>'
+    - '&6品质等级: <l:<l:品质>Color><l:品质>'
     - '<b:<l:品质>:优秀:史诗>&6限制职业: <l:职业>'
     - '&6物品类型: 主武器'
     - '&6限制等级: <c:int 10 * <s:<l:品质>基数>>级'
@@ -130,7 +130,7 @@ Default-1:
     - '<l:攻一-10>'
     - '<l:攻二-10>'
     - '<l:攻三-10>'
-    - '<l:材质>'
+    - '<l:纹理>'
     - '<s:<l:品质>宝石孔>'
     #   - '&7耐久度: <c:int <r:300_350> * <s:<l:品质>基数>>/<c:int 400 * <s:<l:品质>基数>>'
     - '&7耐久度: <c:int <d:0.6_0.9> * <l:耐久度>>/<l:耐久度>'
@@ -146,16 +146,15 @@ Default-1:
     攻击力: <c:20 * <s:<l:品质>基数>>
     耐久度: <c:int <r:350_400> * <s:<l:品质>基数>>
   NBT:
-    arg1.arg2: 测试NBT
-    sx:
-      attribute:
-        - '词条一'
-        - '词条二'
-        - '词条三'
-        - 'SX-Attribute预留属性接口'
-        - '如需使用随机则需学习高等随机'
+    SX-Attribute.Attribute:
+      - '词条一'
+      - '词条二'
+      - '词条三'
+      - 'SX-Attribute预留属性接口'
+      - '如需使用随机则需学习高等随机'
   ProtectNBT: #保护附魔NBT不被更新
     - "Enchantments"
+  Update: true
 
 Default-2:
   Name: '&c机械轻羽之靴'
@@ -273,7 +272,7 @@ Default-6:
 Default-7:
   ID: <l:ID#POTION:SPLASH_POTION:LINGERING_POTION>
   Lore: [ "&c药水目前只实现了1.11.1及以上的版本" ]
-  #  Potion: <s:WATER:POTION:JUMP>
+  #  Potion: <s:WATER:POTION:JUMP> 不要再使用这个模式
   Potion:
     ABSORPTION: &PotionData
       duration: <c:int 20 * <i:1_10> * <s:<l:ID>>>
