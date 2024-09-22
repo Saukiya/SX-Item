@@ -74,7 +74,7 @@ tasks.register('mergeJar', Jar) {
     from rootProject.sourceSets.main.output
     from baseProject.sourceSets.main.output
     from depProject.sourceSets.main.output
-//    include '**/*.class'
+    include '**/*.class'
     archiveClassifier = 'api'
 }
 
