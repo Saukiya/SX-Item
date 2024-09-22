@@ -1,13 +1,5 @@
 # SX-Item
 
-<!-- TOC -->
-
-* [SX-Item](#sx-item)
-    * [支持服务端:(未在列表内则未经过测试)](#支持服务端未在列表内则未经过测试)
-    * [支持版本:](#支持版本)
-        * [有需求就发issue，被动更新](#有需求就发issue被动更新)
-
-<!-- TOC -->
 [Minecraft-Plugin] 物品管理插件
 
 [下载](https://github.com/Saukiya/SX-Item/releases/download/4.0.0/SX-Item-4.0.0-all.jar) ·
