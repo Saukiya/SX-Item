@@ -1,18 +1,22 @@
 rootProject.name = 'SX-Item'
 include 'Module-Deprecated-v3'
-if (System.env.JITPACK || System.env.GITHUB_ACTIONS) return;
-include 'Module-NMS-V1_8_R3'
-include 'Module-NMS-V1_11_R1'
-include 'Module-NMS-V1_12_R1'
-include 'Module-NMS-V1_13_R2'
-include 'Module-NMS-V1_14_R1'
-include 'Module-NMS-V1_15_R1'
-include 'Module-NMS-V1_16_R3'
-include 'Module-NMS-V1_17_R1'
-include 'Module-NMS-V1_18_R2'
-include 'Module-NMS-V1_19_R1'
-include 'Module-NMS-V1_19_R3'
-include 'Module-NMS-V1_20_R1'
-include 'Module-NMS-V1_20_R2'
-include 'Module-NMS-V1_20_R3'
-include 'Module-NMS-V1_21_R1'
+includeModule 'Module-NMS-V1_8_R3'
+includeModule 'Module-NMS-V1_11_R1'
+includeModule 'Module-NMS-V1_12_R1'
+includeModule 'Module-NMS-V1_13_R2'
+includeModule 'Module-NMS-V1_14_R1'
+includeModule 'Module-NMS-V1_15_R1'
+includeModule 'Module-NMS-V1_16_R3'
+includeModule 'Module-NMS-V1_17_R1'
+includeModule 'Module-NMS-V1_18_R2'
+includeModule 'Module-NMS-V1_19_R1'
+includeModule 'Module-NMS-V1_19_R3'
+includeModule 'Module-NMS-V1_20_R1'
+includeModule 'Module-NMS-V1_20_R2'
+includeModule 'Module-NMS-V1_20_R3'
+includeModule 'Module-NMS-V1_21_R1'
+
+def includeModule(String moduleName) {
+    if (!file(moduleName).exists()) return
+    include moduleName
+}
