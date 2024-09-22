@@ -74,6 +74,8 @@ tasks.register('mergeJar', Jar) {
     from rootProject.sourceSets.main.output
     from baseProject.sourceSets.main.output
     from depProject.sourceSets.main.output
+    include '**/*.class'
+    archiveClassifier = 'api'
 }
 
 tasks.register('javadocJar', Jar) {
@@ -98,15 +100,33 @@ shadowJar {
 jar.archiveClassifier = "base"
 buildTask('buildLatestJar', "$rootDir/build", "Latest")
 buildTask('buildDebugJar', "$rootDir/run/plugins", "Debug")
-processResources.expand(version: version)
+processResources.expand(version: version, language: "~")
+
+['en', 'zh'].each { language ->
+    tasks.register("processResources($language)", Copy) {
+        from 'src/main/resources'
+        into "$buildDir/resources/main"
+        expand(version: version, language: language)
+    }
+
+    tasks.register("build($language)", Jar) {
+        dependsOn "processResources($language)"
+        from rootProject.sourceSets.main.output
+        from baseProject.sourceSets.main.output
+        from depProject.sourceSets.main.output
+        archiveClassifier = language
+    }
+    processResources.onlyIf {
+        return !gradle.taskGraph.hasTask(":processResources($language)")
+    }
+}
 
 publishing {
     publications {
         maven(MavenPublication) {
-//            from components.java
+            artifact(mergeJar.archivePath).builtBy mergeJar
             artifact javadocJar
             artifact shadowJar
-            artifact mergeJar
             artifactId = project.name.toLowerCase()
         }
     }
