@@ -1,11 +1,11 @@
 package github.saukiya.sxitem.util;
 
-import github.saukiya.sxitem.SXItem;
 import github.saukiya.util.helper.PlaceholderHelper;
 import github.saukiya.util.nms.MessageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -18,8 +18,9 @@ import java.util.regex.Pattern;
 @Deprecated
 public class CommandUtil {
 
-    @Deprecated
     private static final Pattern PATTERN = Pattern.compile("^\\[(.*?)] *(.+)");
+
+    private static final Plugin plugin = Bukkit.getPluginManager().getPlugin("SX-Item");
 
     /**
      * 快速执行指令列表
@@ -43,7 +44,7 @@ public class CommandUtil {
             } else {
                 runnable = () -> Bukkit.dispatchCommand(player, command);
             }
-            Bukkit.getScheduler().runTaskLater(SXItem.getInst(), runnable, delay);
+            Bukkit.getScheduler().runTaskLater(plugin, runnable, delay);
         }
     }
 
@@ -96,7 +97,7 @@ public class CommandUtil {
                 MessageUtil.getInst().sendTitle(player, args[0], args.length > 1 ? args[1] : null, fadeIn, stay, fadeOut);
                 break;
             default:
-                SXItem.getInst().getLogger().warning("No Command To Type: " + type + " -> " + command);
+                plugin.getLogger().warning("No Command To Type: " + type + " -> " + command);
                 break;
         }
     }

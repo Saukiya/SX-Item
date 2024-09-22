@@ -2,8 +2,10 @@ plugins {
     id 'maven-publish'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
+var baseProject = project(":Module-Base")
+var deprecatedProject = project(":Module-Deprecated-v3")
 // 全局设置
-allprojects {
+allprojects { project ->
     apply plugin: 'java'
 
     group 'io.github.saukiya'
@@ -12,7 +14,10 @@ allprojects {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 
+    tasks.build.finalizedBy shadowJar
+
     repositories {
+        mavenLocal()
         mavenCentral()
         //Github Project
         maven { url 'https://jitpack.io' }
@@ -25,29 +30,17 @@ allprojects {
     }
 
     dependencies {
+        implementation fileTree('lib')
         compileOnly 'org.projectlombok:lombok:1.18.34'
         annotationProcessor 'org.projectlombok:lombok:1.18.34'
+        if (project != baseProject) {
+            implementation baseProject
+        }
     }
 
     javadoc {
-        options.encoding = 'UTF-8'
         options.charSet = 'UTF-8'
         options.addStringOption('Xdoclint:none', '-quiet')
-    }
-
-    tasks.build.finalizedBy shadowJar
-}
-
-// 子项目设置
-subprojects {
-    dependencies {
-        compileOnly fileTree('lib')
-        compileOnly getRootProject()
-    }
-    tasks.forEach { task ->
-        if (task.name.contains('test') || task.name.contains('Test')) {
-            task.enabled = false
-        }
     }
 }
 
@@ -60,15 +53,26 @@ dependencies {
     compileOnly 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
     implementation 'org.bstats:bstats-bukkit:2.2.1'
 
-    testImplementation 'org.spigotmc:spigot-api:1.21.1-R0.1-SNAPSHOT'
-    testImplementation 'commons-lang:commons-lang:2.6'
-    testImplementation 'org.projectlombok:lombok:1.18.34'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
+//    testImplementation project(':Module-NMS-V1_17_R1')
+    rootProject.configurations.compileOnly.dependencies.each { dependency ->
+        testImplementation "$dependency.group:$dependency.name:$dependency.version"
+        baseProject.dependencies.add('compileOnly', dependency)
+    }
+}
+
+tasks.register('buildJar', Jar) {
+    from deprecatedProject.sourceSets.main.output
+    from baseProject.sourceSets.main.output
+    from rootProject.sourceSets.main.output
 }
 
 jar.archiveClassifier = "base"
+processResources.expand(version: version)
+buildTask('buildLastJar', "$rootDir/build", "Latest")
+buildTask('buildDebugJar', "$rootDir/run/plugins", "Debug")
 
 shadowJar {
+    dependsOn buildJar
     // 过滤未使用的依赖
     minimize()
     // bStats重定向
@@ -78,28 +82,6 @@ shadowJar {
         from subProject.sourceSets.main.output
     })
 }
-
-// 打得出来但是不会发布捏
-var deprecated = project(":Module-Deprecated-v3")
-task buildJar(type: Jar) {
-    from deprecated.sourceSets.main.output
-    from rootProject.sourceSets.main.output
-}
-
-def createBuildTask(String taskName, String destinationDir, String jarSuffix) {
-    tasks.register(taskName, Copy) {
-        dependsOn build, shadowJar
-        from shadowJar.archiveFile.get().asFile.path
-        into(destinationDir).rename { "${project.name}-${jarSuffix}.jar" }
-    }
-}
-
-// 创建copy任务
-createBuildTask('buildLastJar', "$rootDir/build", "Latest")
-createBuildTask('buildDebugJar', "$rootDir/run/plugins", "Debug")
-// 需要对资源文件中含有的'$'进行转义: $ -> \$
-processResources.expand(version: version)
-shadowJar.dependsOn buildJar
 
 publishing {
     publications {
@@ -124,5 +106,19 @@ publishing {
         } else {
             mavenLocal()
         }
+    }
+}
+
+javadoc {
+    destinationDir = file("${buildDir}/docs/javadoc")
+    source = files(rootProject.sourceSets.main.allJava, baseProject.sourceSets.main.allJava, baseProject.sourceSets.main.allJava)
+    classpath = files(rootProject.sourceSets.main.compileClasspath, baseProject.sourceSets.main.compileClasspath, baseProject.sourceSets.main.compileClasspath)
+}
+
+def buildTask(String taskName, String destinationDir, String jarSuffix) {
+    tasks.register(taskName, Copy) {
+        dependsOn build, shadowJar
+        from shadowJar.archiveFile.get().asFile.path
+        into(destinationDir).rename { "${project.name}-${jarSuffix}.jar" }
     }
 }

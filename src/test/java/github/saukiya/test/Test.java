@@ -7,9 +7,9 @@ import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.RandomDocker;
 import github.saukiya.util.base.Tuple;
 import github.saukiya.util.nbt.TagBase;
+import github.saukiya.util.nbt.TagCompound;
 import github.saukiya.util.nbt.TagType;
 import github.saukiya.util.nms.NMS;
-import github.saukiya.util.nms.NbtUtil;
 import org.apache.commons.lang.text.StrLookup;
 import org.apache.commons.lang.text.StrMatcher;
 import org.apache.commons.lang.text.StrSubstitutor;
@@ -43,6 +43,8 @@ public class Test {
                     "test.sub.remove";
 
     public static void main(String[] args) throws Exception {
+        System.out.println("咋又乱码了");
+        if (true) return;
         List<String> list = new ArrayList<>();
         list.add("1");
         list.add("%DeleteLore%");
@@ -51,24 +53,21 @@ public class Test {
         list.add("4");
         list = list.stream().flatMap(str -> Arrays.stream(str.split("\n"))).filter(s -> !s.contains("%DeleteLore") && !s.contains("%deletelore")).collect(Collectors.toList());
         System.out.println(list);
-//        TagCompound tagCompound = new TagCompound();
-//        tagCompound.set("233.233", 2333L);
-//        tagCompound.set("base", "qwq");
-//        tagCompound.set("array1", new int[]{1, 2, 3, 4, 5});
-//        tagCompound.set("array2", Arrays.asList(1, 2, 3, 4));
-//        tagCompound.set("array3", Arrays.asList(1L, 24L, 523L, 634L));
-//        tagCompound.set("boolean", true);
-//        System.out.println(tagCompound);
-//        System.out.println(tagCompound.getBoolean("boolean"));
+        TagCompound tagCompound = new TagCompound();
+        tagCompound.set("233.233", 2333L);
+        tagCompound.set("base", "qwq");
+        tagCompound.set("array1", new int[]{1, 2, 3, 4, 5});
+        tagCompound.set("array2", Arrays.asList(1, 2, 3, 4));
+        tagCompound.set("array3", Arrays.asList(1L, 24L, 523L, 634L));
+        tagCompound.set("boolean", true);
+        System.out.println(tagCompound);
+        System.out.println(tagCompound.getBoolean("boolean"));
 
-//        YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(new File("Z:\\Dev\\Java\\Minecraft\\服务端\\Minecraft - 1.12\\plugins\\SX-Item\\Item\\Default\\Default.yml"));
-//        TagCompound tagCompound = (TagCompound) TagType.toTag(yamlConfiguration);
+        YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(new File("Z:\\Dev\\Java\\Minecraft\\服务端\\Minecraft - 1.12\\plugins\\SX-Item\\Item\\Default\\Default.yml"));
+        TagType.toTag(yamlConfiguration);
 
-//        getAndSetPathToCompound();
-//        yamlToTagTest();
-//        gsonTest();
-//        conversionNBT();
-//        checkUpdate();
+        yamlToTagTest();
+        checkUpdate();
     }
 
     public static JsonElement getJsonFromUrl(String url) {
@@ -221,8 +220,8 @@ public class Test {
 
         TagBase tagBase = TagType.toTag(loadYaml);
         System.out.println("sxNBT: \t\t" + tagBase);
-        System.out.println("nmsNBT: \t" + NbtUtil.getInst().parseNMSCompound(tagBase.toString()));
-        System.out.println("sxNBT-json: \n" + tagBase.toJson());
+//        System.out.println("nmsNBT: \t" + NbtUtil.getInst().parseNMSCompound(tagBase.toString()));
+//        System.out.println("sxNBT-json: \n" + tagBase.toJson());
     }
 
     public static void testVersion(String version) {

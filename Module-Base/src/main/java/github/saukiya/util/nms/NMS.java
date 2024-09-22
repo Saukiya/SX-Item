@@ -146,13 +146,12 @@ class Data {
 
 
     /**
-     * @see <a href="https://forums.papermc.io/threads/important-dev-psa-future-removal-of-cb-package-relocation.1106/">PaperMC: Important dev PSA: Future removal of CB package relocation</a></br>
-     * After Minecraft Version 1.20.5 PapaerMC removed the CraftBukkit package relocation (e.g. v1_20_R3)</br>
-     * So we have to use a method to detect and solve this problem
-     *
      * @return {@code int[]}
      * @author Lounode
      * @date 2024/09/14
+     * @see <a href="https://forums.papermc.io/threads/important-dev-psa-future-removal-of-cb-package-relocation.1106/">PaperMC: Important dev PSA: Future removal of CB package relocation</a></br>
+     * After Minecraft Version 1.20.5 PapaerMC removed the CraftBukkit package relocation (e.g. v1_20_R3)</br>
+     * So we have to use a method to detect and solve this problem
      */
     private static int[] getVersion() {
         String versionSource = Bukkit.getServer() != null ? Bukkit.getServer().getClass().getPackage().getName().split("^.+\\.")[1] : "v1_17_R1";

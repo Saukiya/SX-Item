@@ -1,7 +1,6 @@
 package github.saukiya.util.nms;
 
 import com.google.gson.JsonElement;
-import github.saukiya.sxitem.SXItem;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -116,10 +115,10 @@ public class MessageUtil_v1_21_R1 extends MessageUtil {
                         break;
                 }
                 if (data == null) {
-                    SXItem.getInst().getLogger().warning(key + "\t" + value);
+//                    SXItem.getInst().getLogger().warning(key + "\t" + value);
                     continue;
                 } else {
-                    SXItem.getInst().getLogger().info(key + "\t" + data);
+//                    SXItem.getInst().getLogger().info(key + "\t" + data);
                 }
                 map.put(key.toString(), data);
             }

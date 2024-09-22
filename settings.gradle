@@ -1,4 +1,5 @@
 rootProject.name = 'SX-Item'
+include 'Module-Base'
 include 'Module-Deprecated-v3'
 includeModule 'Module-NMS-V1_8_R3'
 includeModule 'Module-NMS-V1_11_R1'
