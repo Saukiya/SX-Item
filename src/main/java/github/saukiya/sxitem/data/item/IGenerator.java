@@ -26,7 +26,7 @@ public abstract class IGenerator {
         this.config = config;
         YamlConfiguration yaml = new YamlConfiguration();
         config.getValues(false).forEach(yaml::set);
-        this.configString = (configString = yaml.saveToString()).substring(0, configString.length() - 1);
+        this.configString = yaml.saveToString().trim();
         this.group = group;
     }
 

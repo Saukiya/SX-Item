@@ -13,13 +13,17 @@ import github.saukiya.util.nms.NMS;
 import org.apache.commons.lang.text.StrLookup;
 import org.apache.commons.lang.text.StrMatcher;
 import org.apache.commons.lang.text.StrSubstitutor;
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.management.ManagementFactory;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -28,6 +32,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Test {
+    static File projectPath = new File(System.getProperty("user.dir"));
+    static File currentPath = new File(projectPath, "src/main/resources");
     static SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");
     static Map<String, List<Tuple<Double, String>>> dataMap = new HashMap();
     static Pattern pattern = Pattern.compile("v(\\d+)_(\\d+)_R(\\d+)");
@@ -36,15 +42,42 @@ public class Test {
     static JsonParser JSON_PARSER = new JsonParser();
     static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    static String keyString =
-            "test.test\n" +
-                    "test.double\n" +
-                    "test.sub.add\n" +
-                    "test.sub.remove";
+
+    @SuppressWarnings({"SystemGetProperty", "Since15"})
+    public static void Environment() throws Exception {
+        System.out.println("file.encoding: " + System.getProperty("file.encoding"));
+        System.out.println("defaultCharset: " + Charset.defaultCharset());
+        System.out.println("system.out: " + System.out.charset());
+        ManagementFactory.getRuntimeMXBean().getInputArguments().forEach(arg -> System.out.println("jvm.arg: " + arg));
+//        System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
+    }
 
     public static void main(String[] args) throws Exception {
-        System.out.println("咋又乱码了");
-        if (true) return;
+        MemorySection globalConfig = (MemorySection) loadYml("Localization/zh/Config.yml").getConfigurationSection("GlobalItem");
+        YamlConfiguration itemConfig = loadYml("Localization/zh/Item/Test.yml");
+
+        itemConfig.addDefault("Test-1", globalConfig);
+
+        MemorySection subConfig = (MemorySection) itemConfig.getConfigurationSection("Test-1");
+        System.out.println("globalConfig: " + globalConfig.getClass().getSimpleName());
+        System.out.println("subConfig: " + subConfig.getClass().getSimpleName());
+
+        System.out.println(subConfig.contains("Test"));
+        System.out.println(subConfig.getString("Test"));
+        System.out.println(new ArrayList<>(subConfig.getKeys(false)));
+//        yamlToTagTest();
+//        checkUpdate();
+    }
+
+    public static YamlConfiguration loadYml(String path) throws IOException {
+        return YamlConfiguration.loadConfiguration(getResourceAsStream(path));
+    }
+
+    public static InputStreamReader getResourceAsStream(String path) throws IOException {
+        return new InputStreamReader(Files.newInputStream(new File(currentPath, path).toPath()));
+    }
+
+    public static void LoreTest() {
         List<String> list = new ArrayList<>();
         list.add("1");
         list.add("%DeleteLore%");
@@ -65,9 +98,6 @@ public class Test {
 
         YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(new File("Z:\\Dev\\Java\\Minecraft\\服务端\\Minecraft - 1.12\\plugins\\SX-Item\\Item\\Default\\Default.yml"));
         TagType.toTag(yamlConfiguration);
-
-        yamlToTagTest();
-        checkUpdate();
     }
 
     public static JsonElement getJsonFromUrl(String url) {
@@ -113,6 +143,11 @@ public class Test {
     }
 
     public static Set<String> keySet(String path) {
+        String keyString =
+                "test.test\n" +
+                        "test.double\n" +
+                        "test.sub.add\n" +
+                        "test.sub.remove";
         if (path == null) path = "";
         Set<String> keys = new HashSet<>();
         if (keyString == null) return keys;

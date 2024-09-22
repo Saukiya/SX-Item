@@ -22,8 +22,8 @@ allprojects { project ->
         mavenCentral()
         // Spigot Api
         maven { url 'https://hub.spigotmc.org/nexus/content/repositories/releases/' }
-//        // Paper Api
-//        maven { url 'https://repo.papermc.io/repository/maven-public/' }
+        // Paper Api
+        maven { url 'https://repo.papermc.io/repository/maven-public/' }
         // MythicMobs
         maven { url "https://mvn.lumine.io/repository/maven-public/" }
         // bStats-bukkit
@@ -36,7 +36,7 @@ allprojects { project ->
         if (project != baseProject) {
             implementation baseProject
         }
-        implementation fileTree('lib')
+        compileOnly fileTree('lib')
         compileOnly 'org.projectlombok:lombok:1.18.34'
         annotationProcessor 'org.projectlombok:lombok:1.18.34'
     }
@@ -53,9 +53,10 @@ configure([rootProject, baseProject, depProject]) {
         implementation 'org.bstats:bstats-bukkit:2.2.1'
 
         //testImplementation project(':Module-NMS-V1_17_R1')
+        testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
         rootProject.configurations.compileOnly.dependencies.each { dependency ->
+            if (dependency.name == "unspecified") return
             testImplementation "$dependency.group:$dependency.name:$dependency.version"
-            baseProject.dependencies.add('compileOnly', dependency)
         }
     }
     javadoc {
@@ -68,10 +69,18 @@ configure([rootProject, baseProject, depProject]) {
         classpath = files(rootProject.sourceSets.main.compileClasspath, baseProject.sourceSets.main.compileClasspath, depProject.sourceSets.main.compileClasspath)
     }
 }
+
 tasks.register('mergeJar', Jar) {
     from rootProject.sourceSets.main.output
     from baseProject.sourceSets.main.output
     from depProject.sourceSets.main.output
+}
+
+tasks.register('javadocJar', Jar) {
+    dependsOn javadoc
+    from javadoc.destinationDir
+    from zipTree(mergeJar.archiveFile)
+    archiveClassifier = 'javadoc'
 }
 
 shadowJar {
@@ -95,7 +104,7 @@ publishing {
     publications {
         maven(MavenPublication) {
 //            from components.java
-//            artifact jar
+            artifact javadocJar
             artifact shadowJar
             artifact mergeJar
             artifactId = project.name.toLowerCase()
