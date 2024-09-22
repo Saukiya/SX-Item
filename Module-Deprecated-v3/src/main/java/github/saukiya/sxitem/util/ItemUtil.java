@@ -12,7 +12,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Deprecated
+/**
+ * @see github.saukiya.util.nms.ItemUtil
+ * @deprecated
+ */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ItemUtil {
 

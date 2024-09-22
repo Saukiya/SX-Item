@@ -90,9 +90,9 @@ shadowJar {
     // bStats重定向
     relocate('org.bstats', 'github.saukiya.sxitem.bstats')
     // 获得子模块的classes文件
-    getSubprojects().forEach(subProject -> {
+    subprojects.each { subProject ->
         from subProject.sourceSets.main.output
-    })
+    }
 }
 
 jar.archiveClassifier = "base"

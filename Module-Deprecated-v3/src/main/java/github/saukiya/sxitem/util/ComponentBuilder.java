@@ -9,7 +9,10 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-@Deprecated
+/**
+ * @see github.saukiya.util.nms.MessageUtil.Builder
+ * @deprecated
+ */
 @AllArgsConstructor
 public class ComponentBuilder {
 
