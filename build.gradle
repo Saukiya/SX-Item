@@ -74,7 +74,7 @@ tasks.register('mergeJar', Jar) {
     from rootProject.sourceSets.main.output
     from baseProject.sourceSets.main.output
     from depProject.sourceSets.main.output
-    include '**/*.class'
+//    include '**/*.class'
     archiveClassifier = 'api'
 }
 
@@ -102,22 +102,26 @@ buildTask('buildLatestJar', "$rootDir/build", "Latest")
 buildTask('buildDebugJar', "$rootDir/run/plugins", "Debug")
 processResources.expand(version: version, language: "~")
 
-['en', 'zh'].each { language ->
-    tasks.register("processResources($language)", Copy) {
+['en', 'zh'].each { lang ->
+    // 要在shadowJar之前处理资源文件
+    tasks.register("processResources($lang)", Copy) {
+        dependsOn shadowJar
         from 'src/main/resources'
         into "$buildDir/resources/main"
-        expand(version: version, language: language)
+        expand(version: version, language: lang)
     }
 
-    tasks.register("build($language)", Jar) {
-        dependsOn "processResources($language)"
-        from rootProject.sourceSets.main.output
-        from baseProject.sourceSets.main.output
-        from depProject.sourceSets.main.output
-        archiveClassifier = language
+    // 要在processResources之后处理build任务
+    tasks.register("build($lang)", Jar) {
+        dependsOn "processResources($lang)"
+        from "$buildDir/resources/main"
+        from zipTree(shadowJar.archiveFile.get().asFile.path)
+        archiveClassifier = lang
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
     }
     processResources.onlyIf {
-        return !gradle.taskGraph.hasTask(":processResources($language)")
+        return !gradle.taskGraph.hasTask(":processResources($lang)")
     }
 }
 
