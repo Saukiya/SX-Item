@@ -116,7 +116,7 @@ processResources.expand(version: version, language: "~")
         dependsOn "processResources($lang)"
         from "$buildDir/resources/main"
         from zipTree(shadowJar.archiveFile.get().asFile.path)
-        archiveClassifier = lang
+        archiveClassifier = "all-$lang"
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     }
