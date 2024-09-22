@@ -3,7 +3,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 var baseProject = project(":Module-Base")
-var deprecatedProject = project(":Module-Deprecated-v3")
+var depProject = project(":Module-Deprecated-v3")
 // 全局设置
 allprojects { project ->
     apply plugin: 'java'
@@ -15,64 +15,67 @@ allprojects { project ->
     targetCompatibility = JavaVersion.VERSION_1_8
 
     tasks.build.finalizedBy shadowJar
+    javadoc.enabled = false
 
     repositories {
         mavenLocal()
         mavenCentral()
-        //Github Project
-        maven { url 'https://jitpack.io' }
-        //MythicMobs
+        // Spigot Api
+        maven { url 'https://hub.spigotmc.org/nexus/content/repositories/releases/' }
+//        // Paper Api
+//        maven { url 'https://repo.papermc.io/repository/maven-public/' }
+        // MythicMobs
         maven { url "https://mvn.lumine.io/repository/maven-public/" }
-        //bStats-bukkit
+        // bStats-bukkit
         maven { url 'https://repo.codemc.org/repository/maven-public' }
-        //Paper Api
-        maven { url 'https://repo.papermc.io/repository/maven-public/' }
+        // Github Project
+        maven { url 'https://jitpack.io' }
     }
 
     dependencies {
-        implementation fileTree('lib')
-        compileOnly 'org.projectlombok:lombok:1.18.34'
-        annotationProcessor 'org.projectlombok:lombok:1.18.34'
         if (project != baseProject) {
             implementation baseProject
         }
+        implementation fileTree('lib')
+        compileOnly 'org.projectlombok:lombok:1.18.34'
+        annotationProcessor 'org.projectlombok:lombok:1.18.34'
     }
+}
 
+configure([rootProject, baseProject, depProject]) {
+    dependencies {
+        compileOnly 'org.spigotmc:spigot-api:1.21.1-R0.1-SNAPSHOT'
+        compileOnly 'org.openjdk.nashorn:nashorn-core:15.4'
+        compileOnly 'commons-lang:commons-lang:2.6'
+        compileOnly 'io.lumine.xikage:MythicMobs:4.12.0'
+        compileOnly 'io.lumine:Mythic-Dist:5.2.1'
+        compileOnly 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
+        implementation 'org.bstats:bstats-bukkit:2.2.1'
+
+        //testImplementation project(':Module-NMS-V1_17_R1')
+        rootProject.configurations.compileOnly.dependencies.each { dependency ->
+            testImplementation "$dependency.group:$dependency.name:$dependency.version"
+            baseProject.dependencies.add('compileOnly', dependency)
+        }
+    }
     javadoc {
+        enabled = true
         options.charSet = 'UTF-8'
         options.addStringOption('Xdoclint:none', '-quiet')
+        options.links 'https://hub.spigotmc.org/javadocs/spigot/'
+        destinationDir = file("${buildDir}/docs/javadoc")
+        source = files(rootProject.sourceSets.main.allJava, baseProject.sourceSets.main.allJava, depProject.sourceSets.main.allJava)
+        classpath = files(rootProject.sourceSets.main.compileClasspath, baseProject.sourceSets.main.compileClasspath, depProject.sourceSets.main.compileClasspath)
     }
 }
-
-dependencies {
-    compileOnly 'org.spigotmc:spigot-api:1.21.1-R0.1-SNAPSHOT'
-    compileOnly 'org.openjdk.nashorn:nashorn-core:15.4'
-    compileOnly 'commons-lang:commons-lang:2.6'
-    compileOnly 'io.lumine.xikage:MythicMobs:4.12.0'
-    compileOnly 'io.lumine:Mythic-Dist:5.2.1'
-    compileOnly 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
-    implementation 'org.bstats:bstats-bukkit:2.2.1'
-
-//    testImplementation project(':Module-NMS-V1_17_R1')
-    rootProject.configurations.compileOnly.dependencies.each { dependency ->
-        testImplementation "$dependency.group:$dependency.name:$dependency.version"
-        baseProject.dependencies.add('compileOnly', dependency)
-    }
-}
-
-tasks.register('buildJar', Jar) {
-    from deprecatedProject.sourceSets.main.output
-    from baseProject.sourceSets.main.output
+tasks.register('mergeJar', Jar) {
     from rootProject.sourceSets.main.output
+    from baseProject.sourceSets.main.output
+    from depProject.sourceSets.main.output
 }
-
-jar.archiveClassifier = "base"
-processResources.expand(version: version)
-buildTask('buildLastJar', "$rootDir/build", "Latest")
-buildTask('buildDebugJar', "$rootDir/run/plugins", "Debug")
 
 shadowJar {
-    dependsOn buildJar
+    dependsOn mergeJar
     // 过滤未使用的依赖
     minimize()
     // bStats重定向
@@ -83,13 +86,18 @@ shadowJar {
     })
 }
 
+jar.archiveClassifier = "base"
+buildTask('buildLatestJar', "$rootDir/build", "Latest")
+buildTask('buildDebugJar', "$rootDir/run/plugins", "Debug")
+processResources.expand(version: version)
+
 publishing {
     publications {
         maven(MavenPublication) {
 //            from components.java
 //            artifact jar
             artifact shadowJar
-            artifact buildJar
+            artifact mergeJar
             artifactId = project.name.toLowerCase()
         }
     }
@@ -107,12 +115,6 @@ publishing {
             mavenLocal()
         }
     }
-}
-
-javadoc {
-    destinationDir = file("${buildDir}/docs/javadoc")
-    source = files(rootProject.sourceSets.main.allJava, baseProject.sourceSets.main.allJava, baseProject.sourceSets.main.allJava)
-    classpath = files(rootProject.sourceSets.main.compileClasspath, baseProject.sourceSets.main.compileClasspath, baseProject.sourceSets.main.compileClasspath)
 }
 
 def buildTask(String taskName, String destinationDir, String jarSuffix) {
