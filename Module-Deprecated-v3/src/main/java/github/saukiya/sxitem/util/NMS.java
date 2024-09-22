@@ -1,6 +1,9 @@
 package github.saukiya.sxitem.util;
 
-@Deprecated
+/**
+ * @see github.saukiya.util.nms.NMS
+ * @deprecated
+ */
 public interface NMS extends github.saukiya.util.nms.NMS {
 
     @Deprecated

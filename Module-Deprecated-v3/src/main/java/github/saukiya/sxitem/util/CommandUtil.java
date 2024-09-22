@@ -12,22 +12,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author Saukiya
+ * @deprecated
  */
-
-@Deprecated
 public class CommandUtil {
 
     private static final Pattern PATTERN = Pattern.compile("^\\[(.*?)] *(.+)");
 
     private static final Plugin plugin = Bukkit.getPluginManager().getPlugin("SX-Item");
 
-    /**
-     * 快速执行指令列表
-     *
-     * @param player      Player
-     * @param commandList List
-     */
     @Deprecated
     public static void run(Player player, List<String> commandList) {
         int delay = 0;
@@ -48,12 +40,6 @@ public class CommandUtil {
         }
     }
 
-    /**
-     * 快速执行指令
-     *
-     * @param player  Player
-     * @param command Command
-     */
     @Deprecated
     public static void run(Player player, String command) {
         command = PlaceholderHelper.setPlaceholders(player, command).replace("%player%", player.getName()).replace('&', '§');

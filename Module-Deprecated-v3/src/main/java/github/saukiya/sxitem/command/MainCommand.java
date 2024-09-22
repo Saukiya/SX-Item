@@ -1,6 +1,9 @@
 package github.saukiya.sxitem.command;
 
-@Deprecated
+/**
+ * @see github.saukiya.util.command.MainCommand
+ * @deprecated
+ */
 public class MainCommand extends github.saukiya.util.command.MainCommand {
 
     @Deprecated

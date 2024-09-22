@@ -4,7 +4,10 @@ import org.bukkit.command.CommandSender;
 
 import java.util.Arrays;
 
-@Deprecated
+/**
+ * @see github.saukiya.util.command.SubCommand
+ * @deprecated
+ */
 public abstract class SubCommand extends github.saukiya.util.command.SubCommand {
 
     @Deprecated

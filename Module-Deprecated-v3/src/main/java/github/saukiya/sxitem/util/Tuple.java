@@ -1,6 +1,9 @@
 package github.saukiya.sxitem.util;
 
-@Deprecated
+/**
+ * @see github.saukiya.util.base.Tuple
+ * @deprecated
+ */
 public class Tuple<A, B> extends github.saukiya.util.base.Tuple<A, B> {
 
     @Deprecated

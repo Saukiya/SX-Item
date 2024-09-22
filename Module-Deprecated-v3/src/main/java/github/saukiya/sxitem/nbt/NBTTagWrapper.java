@@ -7,7 +7,10 @@ import lombok.experimental.Delegate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@Deprecated
+/**
+ * @see github.saukiya.util.nms.NbtUtil.Wrapper
+ * @deprecated
+ */
 @AllArgsConstructor
 public class NBTTagWrapper {
 

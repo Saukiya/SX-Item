@@ -6,7 +6,10 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-@Deprecated
+/**
+ * @see github.saukiya.util.helper.PlaceholderHelper
+ * @deprecated
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PlaceholderHelper {
 

@@ -6,7 +6,10 @@ import lombok.Getter;
 import lombok.experimental.Delegate;
 import org.bukkit.command.CommandSender;
 
-@Deprecated
+/**
+ * @see github.saukiya.util.nms.MessageUtil
+ * @deprecated
+ */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class MessageUtil {
 

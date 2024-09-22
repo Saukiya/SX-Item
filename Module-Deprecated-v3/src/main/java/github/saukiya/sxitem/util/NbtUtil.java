@@ -9,7 +9,10 @@ import lombok.Getter;
 import lombok.experimental.Delegate;
 import org.bukkit.inventory.ItemStack;
 
-@Deprecated
+/**
+ * @see github.saukiya.util.nms.NbtUtil
+ * @deprecated
+ */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class NbtUtil {
 

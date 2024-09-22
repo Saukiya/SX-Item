@@ -5,7 +5,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-@Deprecated
+/**
+ * @see github.saukiya.util.common.LocalizationUtil
+ * @deprecated
+ */
 public class LocalizationUtil {
 
     @Deprecated
