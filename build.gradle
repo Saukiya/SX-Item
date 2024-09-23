@@ -70,22 +70,29 @@ configure([rootProject, baseProject, depProject]) {
     }
 }
 
-tasks.register('mergeJar', Jar) {
+tasks.register('dependencyJar', Jar) {
     from rootProject.sourceSets.main.output.classesDirs
     from baseProject.sourceSets.main.output
     from depProject.sourceSets.main.output
     archiveClassifier = 'api'
 }
 
+tasks.register('sourcesJar', Jar) {
+    from rootProject.sourceSets.main.allJava
+    from baseProject.sourceSets.main.allJava
+    from depProject.sourceSets.main.allJava
+    archiveClassifier = 'sources'
+}
+
 tasks.register('javadocJar', Jar) {
     dependsOn javadoc
     from javadoc.destinationDir
-    from zipTree(mergeJar.archiveFile)
+    from zipTree(dependencyJar.archiveFile)
     archiveClassifier = 'javadoc'
 }
 
 shadowJar {
-    dependsOn mergeJar
+    dependsOn dependencyJar
     // 过滤未使用的依赖
     minimize()
     // bStats重定向
@@ -96,10 +103,10 @@ shadowJar {
     }
 }
 
-jar.archiveClassifier = "base"
-buildTask('buildLatestJar', "$rootDir/build", "Latest")
-buildTask('buildDebugJar', "$rootDir/run/plugins", "Debug")
+jar.archiveClassifier = "core"
 processResources.expand(version: version, language: "~")
+buildCopyTask('buildLatestJar', "$rootDir/build", "Latest")
+buildCopyTask('buildDebugJar', "$rootDir/run/plugins", "Debug")
 
 ['en', 'zh'].each { lang ->
     // 要在shadowJar之前处理资源文件
@@ -123,9 +130,10 @@ processResources.expand(version: version, language: "~")
 publishing {
     publications {
         maven(MavenPublication) {
-            artifact(mergeJar.archivePath).builtBy mergeJar
+            artifact(dependencyJar.archivePath).builtBy dependencyJar
             artifact javadocJar
             artifact shadowJar
+            artifact sourcesJar
             artifactId = project.name.toLowerCase()
         }
     }
@@ -145,9 +153,9 @@ publishing {
     }
 }
 
-def buildTask(String taskName, String destinationDir, String jarSuffix) {
+def buildCopyTask(String taskName, String destinationDir, String jarSuffix) {
     tasks.register(taskName, Copy) {
-        dependsOn build, shadowJar
+        dependsOn shadowJar
         from shadowJar.archiveFile.get().asFile.path
         into(destinationDir).rename { "${project.name}-${jarSuffix}.jar" }
     }
