@@ -24,7 +24,7 @@ public class ReloadCommand extends SubCommand {
     @SneakyThrows
     @Override
     public void onCommand(CommandSender sender, String[] args) {
-        LocalizationUtil.saveResource(SXItem.getInst(), "zh", "en");
+        LocalizationUtil.saveResource(SXItem.getInst());
         Config.loadConfig();
         Config.setup();
         Message.loadMessage();

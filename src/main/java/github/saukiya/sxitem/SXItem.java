@@ -62,7 +62,7 @@ public class SXItem extends JavaPlugin {
     public void onLoad() {
         inst = this;
         logUtil = new LogUtil(inst);
-        LocalizationUtil.saveResource(this, "zh", "en");
+        LocalizationUtil.saveResource(this);
         Config.loadConfig();
         Message.loadMessage();
         mainCommand = new MainCommand(this, Message::getStatic);
