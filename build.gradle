@@ -71,10 +71,9 @@ configure([rootProject, baseProject, depProject]) {
 }
 
 tasks.register('mergeJar', Jar) {
-    from rootProject.sourceSets.main.output
+    from rootProject.sourceSets.main.output.classesDirs
     from baseProject.sourceSets.main.output
     from depProject.sourceSets.main.output
-    include '**/*.class'
     archiveClassifier = 'api'
 }
 
@@ -107,21 +106,17 @@ processResources.expand(version: version, language: "~")
     tasks.register("processResources($lang)", Copy) {
         dependsOn shadowJar
         from 'src/main/resources'
-        into "$buildDir/resources/main"
+        into "$buildDir/resources/main.$lang/"
         expand(version: version, language: lang)
     }
 
     // 要在processResources之后处理build任务
     tasks.register("build($lang)", Jar) {
         dependsOn "processResources($lang)"
-        from "$buildDir/resources/main"
+        from "$buildDir/resources/main.$lang/"
         from zipTree(shadowJar.archiveFile.get().asFile.path)
         archiveClassifier = "all-$lang"
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-    }
-    processResources.onlyIf {
-        return !gradle.taskGraph.hasTask(":processResources($lang)")
     }
 }
 
