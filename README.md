@@ -6,6 +6,7 @@
 [文档](https://www.maplex.top/archives/sxitem) ·
 [统计](https://bstats.org/plugin/bukkit/SX-Item) ·
 [MineBBS](https://www.minebbs.com/resources/sx-item-1-8-1-20-x.7252/) ·
+[Spigot](https://www.spigotmc.org/resources/sx-item.119751) ·
 [~~MCBBS~~](https://www.mcbbs.net/thread-1471655-1-1.html)
 
 ## 支持服务端:(未在列表内则未经过测试)
