@@ -12,7 +12,7 @@ import java.net.URISyntaxException;
 public class LocalizationUtil {
 
     @Deprecated
-    public static void saveResource(JavaPlugin plugin, String... supportLanguage) throws IOException, URISyntaxException {
-        github.saukiya.util.common.LocalizationUtil.saveResource(plugin, supportLanguage);
+    public static void saveResource(JavaPlugin plugin) throws IOException, URISyntaxException {
+        github.saukiya.util.common.LocalizationUtil.saveResource(plugin);
     }
 }
