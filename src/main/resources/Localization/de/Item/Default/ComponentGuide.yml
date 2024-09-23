@@ -1,0 +1,58 @@
+#
+##################################################################
+##                       Component类型参数                        ##
+##################################################################
+#
+#堆叠组件: Components [Type:Map]
+# 描述: 高度自定义物品 仅1.20.6+支持 (插件为1.21.1+)
+# 格式:
+#   minecraft:item_name: '默认名称(无法被铁砧修改)'
+# 参考WIKI: https://zh.minecraft.wiki/w/%E7%89%A9%E5%93%81%E5%A0%86%E5%8F%A0%E7%BB%84%E4%BB%B6
+#
+ComponentGuide-1:
+  ID: DIAMOND
+  Name: "Component Guide"
+  Amount: 99
+  Lore:
+    - "&cThis function is new for 1.21.1"
+    - "&cSeeing this text means that the component function is not supported."
+  #组件
+  Components:
+    minecraft:item_name: "DefaultName§8_(CannotBeModifiedByAnvil)"
+    minecraft:custom_name: '{"text":"Name Of Color With Rarity §c(ModifiableByAnvil)"}'
+    # Rarity, dye priority lower than name
+    minecraft:rarity: 'epic'
+    # Maximum Stacking
+    minecraft:max_stack_size: 99
+    minecraft:food:
+      can_always_eat: true
+      eat_seconds: 1.6
+      effects: [ ]
+      nutrition: 5
+      saturation: 10
+    minecraft:lore:
+      - '{"text":"§aHello World lores"}'
+      - '{"text":"§bThis is the second line"}'
+      - '{"text":"§cThis is the third line of lore"}'
+      - '{"text":"§e§lThis item can be eaten"}'
+      - '{"text":"§e§lThis item can collect stones"}'
+      - '{"text":"§a§lThis item can be stacked 99"}'
+    minecraft:tool:
+      rules:
+        - blocks:
+            - minecraft:stone
+          correct_for_drops: true
+ComponentGuide-2:
+  ID: 369
+  Amount: 50
+  Update: true
+  Components:
+    minecraft:item_name: 'FrenchFries'
+    minecraft:custom_name: 'FrenchFries'
+    minecraft:max_stack_size: 50
+    minecraft:rarity: 'rare'
+    minecraft:food:
+      eat_seconds: 0.1
+      nutrition: 1
+      saturation: 1
+      can_always_eat: true
