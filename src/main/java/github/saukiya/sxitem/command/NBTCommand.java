@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 public class NBTCommand extends SubCommand {
 
     public NBTCommand() {
-        super("nbt", 6);
+        super("nbt", 40);
         setArg("<set/remove/all> <key> <value>");
         setType(SenderType.PLAYER);
     }

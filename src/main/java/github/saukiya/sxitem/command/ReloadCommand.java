@@ -18,7 +18,7 @@ import org.bukkit.command.CommandSender;
 public class ReloadCommand extends SubCommand {
 
     public ReloadCommand() {
-        super("reload", 10);
+        super("reload", 100);
     }
 
     @SneakyThrows

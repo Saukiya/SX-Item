@@ -70,6 +70,11 @@ configure([rootProject, baseProject, depProject]) {
     }
 }
 
+jar.archiveClassifier = "core"
+processResources.expand(version: version, language: "~")
+buildCopyTask('buildLatestJar', "$rootDir/build", "Latest")
+buildCopyTask('buildDebugJar', "$rootDir/run/plugins", "Debug")
+
 tasks.register('dependencyJar', Jar) {
     from rootProject.sourceSets.main.output.classesDirs
     from baseProject.sourceSets.main.output
@@ -102,11 +107,6 @@ shadowJar {
         from subProject.sourceSets.main.output
     }
 }
-
-jar.archiveClassifier = "core"
-processResources.expand(version: version, language: "~")
-buildCopyTask('buildLatestJar', "$rootDir/build", "Latest")
-buildCopyTask('buildDebugJar', "$rootDir/run/plugins", "Debug")
 
 ['en', 'zh'].each { lang ->
     // 要在shadowJar之前处理资源文件

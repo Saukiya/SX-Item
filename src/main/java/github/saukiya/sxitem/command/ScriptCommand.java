@@ -18,7 +18,7 @@ import java.util.List;
 public class ScriptCommand extends SubCommand implements Listener {
 
     public ScriptCommand() {
-        super("script", 0);
+        super("script", 80);
         setArg("<scriptName> <functionName> [args]");
     }
 

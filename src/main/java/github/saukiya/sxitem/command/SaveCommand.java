@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class SaveCommand extends SubCommand {
     public SaveCommand() {
-        super("save", 3);
+        super("save", 20);
         setArg("<ItemName> [Type]");
         setType(SenderType.PLAYER);
     }
