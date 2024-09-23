@@ -14,9 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * @Author 格洛
- */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PlaceholderHelper {
 

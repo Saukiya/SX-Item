@@ -1,7 +1,8 @@
 package github.saukiya.util.common;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.val;
-import lombok.var;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -11,7 +12,6 @@ import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.*;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.stream.Stream;
@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 /**
  * 本地化工具
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class LocalizationUtil {
 
     private static final String systemLanguage = Locale.getDefault().getLanguage();
