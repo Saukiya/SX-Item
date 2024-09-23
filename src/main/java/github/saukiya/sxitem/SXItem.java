@@ -15,10 +15,7 @@ import github.saukiya.util.command.MainCommand;
 import github.saukiya.util.common.LocalizationUtil;
 import github.saukiya.util.common.LogUtil;
 import github.saukiya.util.helper.PlaceholderHelper;
-import github.saukiya.util.nms.ComponentUtil;
-import github.saukiya.util.nms.ItemUtil;
-import github.saukiya.util.nms.MessageUtil;
-import github.saukiya.util.nms.NbtUtil;
+import github.saukiya.util.nms.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -69,6 +66,9 @@ public class SXItem extends JavaPlugin {
         mainCommand.register(new GiveCommand());
         mainCommand.register(new SaveCommand());
         mainCommand.register(new NBTCommand());
+        if (NMS.compareTo(1,20,5) >= 0) {
+            mainCommand.register(new ComponentCommand());
+        }
         mainCommand.register(new ScriptCommand());
         mainCommand.register(new ReloadCommand());
         mainCommand.register(new TestCommand());
