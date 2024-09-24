@@ -30,7 +30,7 @@ public class NBTCommand extends SubCommand {
 
     public NBTCommand() {
         super("nbt", 40);
-        setArg("<set/remove/all> <key> <value>");
+        setArg("<get/set/remove> <key> <value>");
         setType(SenderType.PLAYER);
     }
 

@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class ComponentCommand extends SubCommand {
     public ComponentCommand() {
         super("component", 60);
-        setArg("[get] [sx-item]");
+        setArg("<get> <itemName>");
         setType(SenderType.PLAYER);
     }
     @Override

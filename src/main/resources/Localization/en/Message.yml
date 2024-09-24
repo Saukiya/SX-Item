@@ -1,7 +1,7 @@
 GIVE:
-  NO_ITEM: '&8[SX-Item] &cThe item does not exist'
-  GIVE_ITEM: '&8[SX-Item] &cGiven &6{0} &a{1}&c pieces of &6{2}&c item'
-  GIVE_ITEM_ERROR: '&8[&4SX-Item&8] &4Dropped &6{0}&4 item due to full inventory'
+  NO_ITEM: '&8[SX-Item] &cItem does not exist'
+  GIVE_ITEM: '&8[SX-Item] &cGiven &6{0} &a{1}&c &6{2}&c item'
+  GIVE_ITEM_ERROR: '&8[&4SX-Item&8] &4Failed to get &6{0}&4 item because backpack is full'
 SAVE:
   HAS_ITEM: '&8[SX-Item] &aItem ID &6{0} &aalready exists'
   SAVE_ITEM: '&8[SX-Item] &aItem ID &6{0} &asuccessfully saved'
@@ -15,13 +15,14 @@ SCRIPT:
   INVOKE_FAIL: 'Script invocation failed: {0}'
 ADMIN:
   NO_PERMISSION_CMD: '&8[&cError&8] &cYou do not have permission to execute this command'
-  NO_CMD: '&8[&cError&8] &cSubcommand not found:{0}'
+  NO_CMD: '&8[&cError&8] &cSubcommand not found: {0}'
   NO_FORMAT: '&8[&cError&8] &cFormat error'
   NO_ONLINE: '&8[&cError&8] &cPlayer not online or player does not exist'
   PLUGIN_RELOAD: '&8[SX-Item] §cPlugin reloaded'
 COMMAND:
   GIVE: Give an item to a player
   SAVE: Save the current item to the configuration file
-  NBT: View and modify item NBT data
+  NBT: View and modify item nbt data
+  COMPONENT: View item component data
   SCRIPT: Invoke a script function
   RELOAD: Reload the configuration of this plugin
