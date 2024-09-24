@@ -77,7 +77,7 @@ public class TestCommand extends SubCommand {
         itemWrapper.save();
         sender.sendMessage("设置NBT物品通过");
 
-        TagCompound tagCompound = NbtUtil.getInst().toTag(itemWrapper);
+        TagCompound tagCompound = (TagCompound) NbtUtil.getInst().toTag(itemWrapper);
         Map<String, Object> map = new HashMap<>();
         map.put("test.string", tagCompound.getString("test.string"));
         map.put("test.byteArray", tagCompound.getByteArray("test.byteArray"));

@@ -15,7 +15,7 @@ SCRIPT:
   INVOKE_FAIL: '脚本调用失败: {0}'
 ADMIN:
   NO_PERMISSION_CMD: '&8[&c错误&8] &c你没有权限执行此指令'
-  NO_CMD: '&8[&c错误&8] &c未找到此子指令: {0}'
+  NO_CMD: '&8[&c错误&8] &c未找到此子指令'
   NO_FORMAT: '&8[&c错误&8] &c格式错误'
   NO_ONLINE: '&8[&c错误&8] &c玩家不在线或玩家不存在'
   PLUGIN_RELOAD: '&8[SX-Item] §c插件已重载'

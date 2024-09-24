@@ -15,7 +15,7 @@ SCRIPT:
   INVOKE_FAIL: 'Script invocation failed: {0}'
 ADMIN:
   NO_PERMISSION_CMD: '&8[&cError&8] &cYou do not have permission to execute this command'
-  NO_CMD: '&8[&cError&8] &cSubcommand not found: {0}'
+  NO_CMD: '&8[&cError&8] &cSubcommand not found'
   NO_FORMAT: '&8[&cError&8] &cFormat error'
   NO_ONLINE: '&8[&cError&8] &cPlayer not online or player does not exist'
   PLUGIN_RELOAD: '&8[SX-Item] §cPlugin reloaded'
