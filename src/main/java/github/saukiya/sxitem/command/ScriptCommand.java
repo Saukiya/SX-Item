@@ -19,7 +19,7 @@ public class ScriptCommand extends SubCommand implements Listener {
 
     public ScriptCommand() {
         super("script", 80);
-        setArg("<script> <func> [args]");
+        setArg("[script] [func] <args>");
     }
 
     @Override
