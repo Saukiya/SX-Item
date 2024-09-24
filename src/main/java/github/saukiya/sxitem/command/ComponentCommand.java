@@ -6,7 +6,6 @@ import com.google.gson.JsonElement;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.util.Message;
-import github.saukiya.util.command.SenderType;
 import github.saukiya.util.command.SubCommand;
 import github.saukiya.util.nms.ComponentUtil;
 import github.saukiya.util.nms.MessageUtil;
@@ -25,14 +24,13 @@ import java.util.stream.Collectors;
 public class ComponentCommand extends SubCommand {
     public ComponentCommand() {
         super("component", 60);
-        setArg("<get> <itemName>");
-        setType(SenderType.PLAYER);
+        setArg("<get> <item>");
     }
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         Player player = (Player) sender;
         if (!checkArgument(args)) {
-            MessageUtil.send(player, "IllegalArgument");
+            MessageUtil.send(player, Message.ADMIN__NO_FORMAT.get());
             return;
         }
         String operate = args.length < 2 ? "get" : args[1];

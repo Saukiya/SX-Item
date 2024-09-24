@@ -246,6 +246,11 @@ public class NbtUtil_v1_11_R1 extends NbtUtil {
         }
 
         @Override
+        public int size() {
+            return handle.d();
+        }
+
+        @Override
         public Wrapper getWrapper(String path) {
             Validate.notEmpty(path, "Cannot getWrapper to an empty path");
             NBTBase base = get(handle, path);

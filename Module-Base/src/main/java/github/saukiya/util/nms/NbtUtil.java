@@ -122,8 +122,8 @@ public abstract class NbtUtil implements NMS {
      * @param tagBase TagBase
      * @return Map、List、Arrays 等基础类型
      */
-    public final <V> V getTagValue(TagBase tagBase) {
-        return (V) tagBase.getValue();
+    public final <V> V getTagValue(TagBase<V> tagBase) {
+        return tagBase.getValue();
     }
 
     /**
@@ -132,8 +132,8 @@ public abstract class NbtUtil implements NMS {
      * @param obj NBTBase、Map、List、Arrays 等基础类型
      * @return TagBase
      */
-    public final <V extends TagBase> V toTag(Object obj) {
-        return (V) TagType.toTag(getNMSValue(obj));
+    public final TagBase<?> toTag(Object obj) {
+        return TagType.toTag(getNMSValue(obj));
     }
 
     /**
@@ -212,6 +212,11 @@ public abstract class NbtUtil implements NMS {
                 return this;
             }
 
+            public Builder remove(String key) {
+                set(key, null);
+                return this;
+            }
+
             public void save() {
                 handler.save();
             }
@@ -235,6 +240,11 @@ public abstract class NbtUtil implements NMS {
         Wrapper getWrapper(@Nonnull String path);
 
 
+        /**
+         * 将nbt保存到指定物品上
+         *
+         * @param itemStack
+         */
         void save(@Nonnull ItemStack itemStack);
 
         /**
@@ -244,6 +254,11 @@ public abstract class NbtUtil implements NMS {
          */
         @Nonnull
         Object getHandle();
+
+        default int size() {
+            // TODO 改实现
+            return keySet().size();
+        }
 
         @Nonnull
         default String nbtToString() {

@@ -83,17 +83,17 @@ tasks.register('dependencyJar', Jar) {
 }
 
 tasks.register('sourcesJar', Jar) {
+    archiveClassifier = 'sources'
     from rootProject.sourceSets.main.allJava
     from baseProject.sourceSets.main.allJava
     from depProject.sourceSets.main.allJava
-    archiveClassifier = 'sources'
 }
 
 tasks.register('javadocJar', Jar) {
+    archiveClassifier = 'javadoc'
     dependsOn javadoc
     from javadoc.destinationDir
     from zipTree(dependencyJar.archiveFile)
-    archiveClassifier = 'javadoc'
 }
 
 shadowJar {
@@ -119,11 +119,12 @@ shadowJar {
 
     // 要在processResources之后处理build任务
     tasks.register("build($lang)", Jar) {
+        group = "build"
+        archiveClassifier = "all-$lang"
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         dependsOn "processResources($lang)"
         from "$buildDir/resources/main.$lang/"
         from zipTree(shadowJar.archiveFile.get().asFile.path)
-        archiveClassifier = "all-$lang"
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 }
 
@@ -153,8 +154,11 @@ publishing {
     }
 }
 
+assemble.group = buildDependents.group = buildNeeded.group = jar.group = classes.group = testClasses.group = "build other"
+
 def buildCopyTask(String taskName, String destinationDir, String jarSuffix) {
     tasks.register(taskName, Copy) {
+        group = "build"
         dependsOn shadowJar
         from shadowJar.archiveFile.get().asFile.path
         into(destinationDir).rename { "${project.name}-${jarSuffix}.jar" }

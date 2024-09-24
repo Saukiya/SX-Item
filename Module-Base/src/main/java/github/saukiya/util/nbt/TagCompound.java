@@ -25,7 +25,7 @@ public class TagCompound implements TagBase<HashMap<String, ?>>, Base.Compound {
                 byte typeId;
                 while ((typeId = dataInput.readByte()) != 0) {
                     String key = dataInput.readUTF();
-                    TagBase tagBase = TagType.getMethods(typeId).readTagBase(dataInput, depth + 1);
+                    TagBase<?> tagBase = TagType.getMethods(typeId).readTagBase(dataInput, depth + 1);
                     tagCompound.handle.put(key, tagBase);
                 }
                 return tagCompound;
@@ -44,7 +44,7 @@ public class TagCompound implements TagBase<HashMap<String, ?>>, Base.Compound {
         }
     };
 
-    private final Map<String, TagBase> handle = new HashMap<>();
+    private final Map<String, TagBase<?>> handle = new HashMap<>();
 
     public TagCompound(Map<?, ?> tagBaseMap) {
         tagBaseMap.forEach((key, value) -> {
@@ -56,10 +56,10 @@ public class TagCompound implements TagBase<HashMap<String, ?>>, Base.Compound {
         compoundBase.keySet().forEach(key -> set(key, compoundBase.get(key)));
     }
 
-    public TagBase getTagBase(String path) {
+    public TagBase<?> getTagBase(String path) {
         int index = path.indexOf('.');
         if (index == -1) return handle.get(path);
-        TagBase tagBase = handle.get(path.substring(0, index));
+        TagBase<?> tagBase = handle.get(path.substring(0, index));
         if (tagBase instanceof TagCompound) {
             return ((TagCompound) tagBase).getTagBase(path.substring(index + 1));
         }
@@ -83,14 +83,14 @@ public class TagCompound implements TagBase<HashMap<String, ?>>, Base.Compound {
     }
 
     @Nonnull
-    public Set<Map.Entry<String, TagBase>> entrySet() {
+    public Set<Map.Entry<String, TagBase<?>>> entrySet() {
         return handle.entrySet();
     }
 
     @Override
     public void write(DataOutput dataOutput) throws IOException {
-        for (Map.Entry<String, TagBase> entry : entrySet()) {
-            TagBase tagBase = entry.getValue();
+        for (Map.Entry<String, TagBase<?>> entry : entrySet()) {
+            TagBase<?> tagBase = entry.getValue();
             dataOutput.writeByte(tagBase.getTypeId().getId());
             if (tagBase.getTypeId().getId() != 0) {
                 dataOutput.writeUTF(entry.getKey());
@@ -114,19 +114,24 @@ public class TagCompound implements TagBase<HashMap<String, ?>>, Base.Compound {
 
     @Override
     public Object get(String path) {
-        TagBase tagBase = getTagBase(path);
+        TagBase<?> tagBase = getTagBase(path);
         return tagBase != null ? tagBase.getValue() : null;
     }
 
     @Override
     public Object set(String path, Object value) {
-        TagBase tagBase = setTagBase(path, value == null ? null : TagType.toTag(value));
+        TagBase<?> tagBase = setTagBase(path, value == null ? null : TagType.toTag(value));
         return tagBase != null ? tagBase.getValue() : null;
     }
 
     @Override
     public Set<String> keySet(@Nullable String path) {
         return handle.keySet();
+    }
+
+    @Override
+    public int size() {
+        return handle.size();
     }
 
     @Override
