@@ -37,7 +37,7 @@ public interface TagBase<T> extends Cloneable {
     }
 
     @Deprecated
-    static TagBase toTag(Object object) {
+    static TagBase<?> toTag(Object object) {
         return TagType.toTag(object);
     }
 }

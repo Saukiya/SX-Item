@@ -50,11 +50,11 @@ public enum TagType {
      * @param object 基础数据
      * @return TagBase
      */
-    public static TagBase toTag(Object object) {
+    public static TagBase<?> toTag(Object object) {
         if (object == null) return TagEnd.getInst();
-        if (object instanceof TagBase) return (TagBase) object;
+        if (object instanceof TagBase) return (TagBase<?>) object;
         if (object instanceof NbtUtil.Wrapper) return NbtUtil.getInst().toTag(((NbtUtil.Wrapper) object).getHandle());
-        TagBase tagBase;
+        TagBase<?> tagBase;
         for (TagType type : TagType.values()) {
             if ((tagBase = type.methods.toTag(object)) != null) {
                 return tagBase;
@@ -75,7 +75,7 @@ public enum TagType {
          * @return TagBase
          * @throws IOException 不可能出现的IO报错
          */
-        TagBase readTagBase(DataInput dataInput, int depth) throws IOException;
+        TagBase<?> readTagBase(DataInput dataInput, int depth) throws IOException;
 
         /**
          * {@link TagType#toTag(Object)}
@@ -83,7 +83,7 @@ public enum TagType {
          * @param object 基础数据
          * @return TagBase
          */
-        TagBase toTag(Object object);
+        TagBase<?> toTag(Object object);
 
     }
 }

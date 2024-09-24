@@ -31,7 +31,7 @@ public class GiveCommand extends SubCommand implements Listener {
 
     public GiveCommand() {
         super("give", 0);
-        setArg("[itemName] <player> <count> <key:value...>");
+        setArg("[item] <player> <count> <key:value...>");
     }
 
     @Override

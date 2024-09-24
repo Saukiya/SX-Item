@@ -47,6 +47,22 @@ public class Base {
         Set<String> keySet(@Nullable String path);
 
         /**
+         * 返回此集合中元素的数量
+         *
+         * @return 数量
+         */
+        int size();
+
+        /**
+         * 判断集合是否为空
+         *
+         * @return 是否为空
+         */
+        default boolean isEmpty() {
+            return size() == 0;
+        }
+
+        /**
          * 用一个TagCompoundBase添加/覆盖到此处
          *
          * @param value TagCompound、NBTWrapper、NBTItemWrapper
