@@ -1,7 +1,7 @@
 GIVE:
   NO_ITEM: '&8[SX-Item] &c物品不存在'
   GIVE_ITEM: '&8[SX-Item] &c给予 &6{0} &a{1}&c 个 &6{2}&c 物品'
-  GIVE_ITEM_ERROR: '&8[&4SX-Item&8] &4获得 &6{0}&4 物品时因为背包满而遗弃'
+  GIVE_ITEM_ERROR: '&8[&4SX-Item&8] &4背包已满, 导致 &6{0}&4 物品获取失败'
 SAVE:
   HAS_ITEM: '&8[SX-Item] &a物品编号 &6{0} &a已经存在'
   SAVE_ITEM: '&8[SX-Item] &a物品编号 &6{0} &a成功保存'
@@ -10,12 +10,12 @@ SAVE:
 NBT:
   CLICK_COPY: '点击复制'
 SCRIPT:
-  NULL_FILE: '找不到该脚本文件： {0}'
+  NULL_FILE: '找不到该脚本文件: {0}'
   INVOKE_RESULT: '脚本调用回调: {0}, 回调类型: {1}'
-  INVOKE_FAIL: '脚本调用失败： {0}'
+  INVOKE_FAIL: '脚本调用失败: {0}'
 ADMIN:
   NO_PERMISSION_CMD: '&8[&c错误&8] &c你没有权限执行此指令'
-  NO_CMD: '&8[&c错误&8] &c未找到此子指令:{0}'
+  NO_CMD: '&8[&c错误&8] &c未找到此子指令: {0}'
   NO_FORMAT: '&8[&c错误&8] &c格式错误'
   NO_ONLINE: '&8[&c错误&8] &c玩家不在线或玩家不存在'
   PLUGIN_RELOAD: '&8[SX-Item] §c插件已重载'
@@ -23,5 +23,6 @@ COMMAND:
   GIVE: 给予玩家物品
   SAVE: 保存当前的物品到配置文件
   NBT: 查看和修改物品NBT数据
+  COMPONENT: 查看物品组件数据
   SCRIPT: 调用脚本函数
   RELOAD: 重新加载这个插件的配置

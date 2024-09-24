@@ -1,6 +1,5 @@
 package github.saukiya.sxitem.data;
 
-import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.util.Config;
 import github.saukiya.util.helper.PlaceholderHelper;
 import lombok.Getter;
@@ -19,18 +18,21 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class ScriptManager {
+
+    private static final Random random = new Random();
+
+    private final ConcurrentHashMap<String, CompiledScript> compiledScripts = new ConcurrentHashMap<>();
 
     private final JavaPlugin plugin;
 
     private final File rootDirectory;
 
     private final File globalFile;
-
-    private final ConcurrentHashMap<String, CompiledScript> compiledScripts = new ConcurrentHashMap<>();
 
     private Compilable compilableEngine;
 
@@ -88,7 +90,7 @@ public class ScriptManager {
         Method method = clazz.getMethod("forClass", Class.class);
         // 如果要脱离组织架构的话需要清除SXItem.class 懒了
         engine.put("Bukkit", method.invoke(null, Bukkit.class));
-        engine.put("SXItem", method.invoke(null, SXItem.class));
+        engine.put(plugin.getName().replaceAll("[^a-zA-Z]", ""), method.invoke(null, plugin.getClass()));
         engine.put("Arrays", method.invoke(null, Arrays.class));
         engine.put("Utils", method.invoke(null, Utils.class));
         compilableEngine = (Compilable) engine;
@@ -176,7 +178,7 @@ public class ScriptManager {
         }
 
         public static int randomInt(Integer first, Integer last) {
-            return SXItem.getRandom().nextInt(1 + last - first) + first;
+            return random.nextInt(1 + last - first) + first;
         }
 
         public static double randomDouble(double min, double max) {
