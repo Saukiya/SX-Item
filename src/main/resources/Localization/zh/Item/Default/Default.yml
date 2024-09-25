@@ -315,7 +315,68 @@ Default-9:
 #不存在的ID会使物品无法give出来, 但是不会报错
 Default-10.ID: '不存在的物品'
 
-#前缀是"NoLoad"的物品不会被加载
+#
+##################################################################
+##                       Component类型参数                        ##
+##################################################################
+#
+#堆叠组件: Components [Type:Map]
+# 描述: 高度自定义物品 仅1.20.6+支持 (插件为1.21.1+)
+# 格式:
+#   minecraft:item_name: '默认名称(无法被铁砧修改)'
+# 参考WIKI: https://zh.minecraft.wiki/w/%E7%89%A9%E5%93%81%E5%A0%86%E5%8F%A0%E7%BB%84%E4%BB%B6
+#
+Component-1:
+  ID: DIAMOND
+  Name: "组件教程"
+  Amount: 99
+  Lore:
+    - "&c该功能为 1.21.1 新增"
+    - "&c看到这段文本"
+    - "&c代表不支持组件功能"
+  #组件
+  Components:
+    minecraft:item_name: '默认名称(无法被铁砧修改)'
+    minecraft:custom_name: '带稀有度颜色的名称(可铁砧修改)§c红色'
+    #稀有度，染色优先级低于名称
+    minecraft:rarity: 'epic'
+    #最大堆叠
+    minecraft:max_stack_size: 99
+    minecraft:food:
+      can_always_eat: true
+      eat_seconds: 1.6
+      effects: [ ]
+      nutrition: 5
+      saturation: 10
+    minecraft:lore:
+      - '{"text":"§aHello World lores"}'
+      - '{"text":"§bThis is the second line"}'
+      - '{"text":"§c这是第三行lore"}'
+      - '{"text":"§e§l这个物品可以吃"}'
+      - '{"text":"§e§l这个物品可以采集石头"}'
+      - '{"text":"§a§l这个物品可以堆叠99个"}'
+    minecraft:tool:
+      rules:
+        - blocks:
+            - minecraft:stone
+          correct_for_drops: true
+
+Component-2:
+  ID: 369
+  Amount: 50
+  Update: true
+  Components:
+    minecraft:item_name: '薯条'
+    minecraft:custom_name: '薯条'
+    minecraft:max_stack_size: 50
+    minecraft:rarity: 'rare'
+    minecraft:food:
+      eat_seconds: 0.1
+      nutrition: 1
+      saturation: 1
+      can_always_eat: true
+
+#前缀是"NoLoad"的物品或文件不会被加载
 NoLoad_Item:
   ID: 1
   Name: "不会被加载到的物品"

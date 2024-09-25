@@ -1,16 +1,4 @@
-Test-1:
-  ID:
-    - 'STONE_SWORD'
-    - 'STONE_SHOVEL'
-    - 'STONE_PICKAXE'
-    - 'STONE_AXE'
+NoLoad_Test:
   Lore:
-    - "<s:Test>"
-    - "<s:Test4>"
-    - |-
-      33333333333
-      4444444444
-  Random:
-    Test:
-      - 0.3: "233"
-      - 0.6: "喵喵喵"
+    - "支持加载子文件夹, NoLoad前缀的文件/文件夹不会被加载"
+    - "默认配置文件将会被保留, 不需要的可以将文件内容删除"
