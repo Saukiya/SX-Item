@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * NBT显示指令
@@ -33,7 +34,7 @@ public class NBTCommand extends SubCommand {
 
     public NBTCommand() {
         super("nbt", 40);
-        setArg("<set/remove> <key> <value>");
+        setArg("<all/set> <key> <value>");
     }
 
     @Override
@@ -51,7 +52,7 @@ public class NBTCommand extends SubCommand {
         if (item.getType() == Material.AIR) {
             MessageUtil.send(sender, Message.GIVE__NO_ITEM.get());
             if (sender instanceof ConsoleCommandSender) {
-                sender.sendMessage("Can Use: /si nbt [item] <player>");
+                sender.sendMessage("Console Use: /si nbt [item] <player>");
             }
             return;
         }
@@ -64,6 +65,7 @@ public class NBTCommand extends SubCommand {
                 NbtUtil.getInst().getItemTagWrapper(item).builder()
                         .set(args[2], args[3])
                         .save();
+                sender.sendMessage("§7Set: " + args[2]);
                 break;
             case "remove":
                 if (args.length < 3) {
@@ -73,6 +75,7 @@ public class NBTCommand extends SubCommand {
                 NbtUtil.getInst().getItemTagWrapper(item).builder()
                         .remove(args[2])
                         .save();
+                sender.sendMessage("§cRemove: " + args[2]);
                 break;
             default:
                 val tag = NbtUtil.getInst().getItemTag(item);
@@ -94,7 +97,7 @@ public class NBTCommand extends SubCommand {
     public List<String> onTabComplete(CommandSender sender, String[] args) {
         if (args.length == 2) {
             if (sender instanceof Player) {
-                return Arrays.asList("all", "set", "remove");
+                return Stream.of("all", "set", "remove").filter(Key -> Key.contains(args[1])).collect(Collectors.toList());
             }
             return SXItem.getItemManager().getItemList().stream().filter(itemName -> itemName.contains(args[1])).collect(Collectors.toList());
         }
@@ -121,11 +124,13 @@ public class NBTCommand extends SubCommand {
             } else {
                 nbtShow = tagBase.getValue().toString();
             }
-            val messageBuilder = MessageUtil.getInst().builder().suggestCommand(path);
+            val messageBuilder = MessageUtil.getInst().builder();
             if (sender instanceof Player) {
                 messageBuilder
-                        .add("§7-§c[Type-" + typeShow.charAt(0) + "]").show(typeShow)
-                        .add("§7 " + path).show(nbtShow).send(sender);
+                        .add("§4[X]").show("§cRemove " + path).runCommand("/si nbt remove " + path)
+                        .add("§8-§c[Type-" + typeShow.charAt(0) + "]").show(typeShow).suggestCommand(path)
+                        .add("§7 " + path).show(nbtShow).suggestCommand(nbtShow)
+                        .send(sender);
             } else {
                 messageBuilder
                         .add("§c " + String.format("%-30s", path))

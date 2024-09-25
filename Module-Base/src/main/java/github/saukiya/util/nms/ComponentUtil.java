@@ -4,9 +4,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
 
 /**
  * <pre>
@@ -16,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
  * DataComponentMap->Component
  *
  * 参考链接: <a href="https://zh.minecraft.wiki/w/%E7%89%A9%E5%93%81%E5%A0%86%E5%8F%A0%E7%BB%84%E4%BB%B6">WIKI</a>
+ * WIKI: <a href="https://minecraft.wiki/w/Data_component_format#food">WIKI</a>
  * </pre>
  */
 public abstract class ComponentUtil implements NMS {
@@ -27,12 +30,15 @@ public abstract class ComponentUtil implements NMS {
     private final static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     /**
-     * 返回一个ItemWrapper
+     * 返回一个 ItemComponent 封装器
      **/
     public final ItemWrapper getItemWrapper(ItemStack itemStack) {
         return new ItemWrapper(itemStack);
     }
 
+    /**
+     * 返回一个 ItemComponent 封装器 (多一个nmsItem参数, 节约一次Copy资源)
+     **/
     public final ItemWrapper getItemWrapper(ItemStack itemStack, Object nmsItem) {
         return new ItemWrapper(itemStack, nmsItem);
     }
@@ -85,12 +91,15 @@ public abstract class ComponentUtil implements NMS {
 
     public abstract Object valueToPatch(Object javaObject);
 
+    public abstract List<String> getItemKeys();
+
     @Getter
-    @AllArgsConstructor
+    @RequiredArgsConstructor
     public class ItemWrapper {
 
-        ItemStack bukkitItem;
-        Object nmsItem;
+        final ItemStack bukkitItem;
+        final Object nmsItem;
+        Object handle;
 
         public ItemWrapper(ItemStack item) {
             this(item, getNMSItem(item));

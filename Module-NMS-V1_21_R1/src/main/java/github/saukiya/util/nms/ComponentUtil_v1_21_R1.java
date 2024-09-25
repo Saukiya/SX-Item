@@ -13,6 +13,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.MinecraftKey;
 import org.bukkit.craftbukkit.v1_21_R1.CraftRegistry;
 
+import java.util.List;
+
 public class ComponentUtil_v1_21_R1 extends ComponentUtil {
 
     private final IRegistryCustom registry = CraftRegistry.getMinecraftRegistry();
@@ -85,5 +87,10 @@ public class ComponentUtil_v1_21_R1 extends ComponentUtil {
         DataComponentType dataComponentType = BuiltInRegistries.aq.a(MinecraftKey.c(type));
         PatchedDataComponentMap map = (PatchedDataComponentMap) dataComponentMap;
         map.b(dataComponentType, value);
+    }
+
+    @Override
+    public List<String> getItemKeys() {
+        return BuiltInRegistries.aq.f().stream().map(MinecraftKey::toString).toList();
     }
 }
