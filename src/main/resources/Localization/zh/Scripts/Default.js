@@ -2,7 +2,7 @@
 /**
  * /si script Default testFunction
  * @param args 参数
- * @returns 字符串拼接
+ * @returns string
  */
 function testFunction(args) {
     return args + " is " + (args != null);
@@ -25,7 +25,7 @@ function testPlayer(player, args) {
  * 物品内随机<j:Default.itemScript#QAQ,QWQ>是这个格式
  * @param docker 固定参数，具体参考RandomDocker.java
  * @param args 输入字符串数组, 在线的'玩家名'自动转成'玩家对象', 自动转化功能后续考虑是否砍掉或保留
- * @returns 返回输入参数长度以内的随机数值
+ * @returns string
  */
 function itemScript(docker, args) {
     if (docker.getPlayer() != null) {
