@@ -103,6 +103,12 @@
 #物品标签 NBT [Type:Map-?] (支持随机)
 # 描述: 自由的将NBT节点下的配置信息设置到物品NBT中，可输入/si nbt查看
 #
+#堆叠组件: Components [Type:Map]
+# 描述: 高度自定义物品 仅1.20.6+支持 (插件为1.21.1+)
+# 格式:
+#   minecraft:item_name: '默认名称(无法被铁砧修改)'
+# 参考WIKI: https://zh.minecraft.wiki/w/%E7%89%A9%E5%93%81%E5%A0%86%E5%8F%A0%E7%BB%84%E4%BB%B6
+#
 #清除属性 ClearAttribute [Type:Boolean]
 # 描述: 让物品失去原有的默认属性 (代码实现为: ItemFlag.HIDE_ATTRIBUTE + Attributes.GENERIC_ATTACK_DAMAGE:0:0)
 #
@@ -321,12 +327,6 @@ Default-10.ID: '不存在的物品'
 ##################################################################
 ##                       Component类型参数                        ##
 ##################################################################
-#
-#堆叠组件: Components [Type:Map]
-# 描述: 高度自定义物品 仅1.20.6+支持 (插件为1.21.1+)
-# 格式:
-#   minecraft:item_name: '默认名称(无法被铁砧修改)'
-# 参考WIKI: https://zh.minecraft.wiki/w/%E7%89%A9%E5%93%81%E5%A0%86%E5%8F%A0%E7%BB%84%E4%BB%B6
 #
 Component-1:
   ID: DIAMOND

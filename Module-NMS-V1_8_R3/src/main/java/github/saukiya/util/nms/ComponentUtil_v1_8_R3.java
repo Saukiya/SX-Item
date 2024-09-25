@@ -2,6 +2,9 @@ package github.saukiya.util.nms;
 
 import com.google.gson.JsonElement;
 
+import java.util.Collections;
+import java.util.List;
+
 public class ComponentUtil_v1_8_R3 extends ComponentUtil {
 
     @Override
@@ -62,6 +65,11 @@ public class ComponentUtil_v1_8_R3 extends ComponentUtil {
     @Override
     public Object valueToPatch(Object javaObject) {
         return null;
+    }
+
+    @Override
+    public List<String> getItemKeys() {
+        return Collections.emptyList();
     }
 
     @Override

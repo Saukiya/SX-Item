@@ -23,6 +23,6 @@ COMMAND:
   GIVE: Give an item to a player
   SAVE: Save the current item to the configuration file
   NBT: View and modify item nbt data
-  COMPONENT: View item component data
+  COMPONENT: View and modify item component data
   SCRIPT: Invoke a script function
   RELOAD: Reload the configuration of this plugin
