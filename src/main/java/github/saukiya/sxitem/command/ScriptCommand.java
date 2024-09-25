@@ -9,7 +9,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -49,7 +48,6 @@ public class ScriptCommand extends SubCommand implements Listener {
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
         if (args.length == 2) return SXItem.getScriptManager().getFileNames();
-        if (args.length == 3) return Collections.singletonList("I don't know you function. :)");
         return null;
     }
 }

@@ -13,12 +13,15 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * @author Saukiya
  */
 public class SaveCommand extends SubCommand {
+
     public SaveCommand() {
         super("save", 20);
         setArg("[item] <type>");
@@ -56,9 +59,10 @@ public class SaveCommand extends SubCommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
+        if (args.length == 2) return Arrays.asList("$itemName", args[1]);
         if (args.length == 3) {
             return new ArrayList<>(ItemManager.getLoadFunction().keySet());
         }
-        return null;
+        return Collections.emptyList();
     }
 }

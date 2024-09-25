@@ -95,7 +95,7 @@ public class GiveCommand extends SubCommand implements Listener {
         if (args.length == 4) {
             return Collections.singletonList("1");
         }
-        return null;
+        return args.length == 3 ? null : Collections.emptyList();
     }
 
     @EventHandler
