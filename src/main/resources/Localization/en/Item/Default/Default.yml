@@ -1,121 +1,122 @@
 #
 ##################################################################
-##                        Default类型参数                        ##
+##                           Default                            ##
 ##################################################################
 #
-#物品名称 Name [Type:String] (支持随机)
+#Name [Type:String] (Support Random)
 #
-#物品材质 ID [Type:String] (支持随机)
-# 格式-1:
+#ID [Type:String] (Support Random)
+# Format-1:
 # - 276
-# 格式-2: 267
+# Format-2: 267
 #
-#物品耐久 Durability [Type:String] (支持随机)
-# 格式-1: 20    原版耐久，"20" 相当于 "该物品耐久只剩(该材质最大耐久-20)"
-# 格式-2: <20   反算耐久，"<20" 效果是 "该物品耐久只剩20"
-# 格式-3: 20%   百分比耐久，与耐久条相同
+#Durability [Type:String] (Support Random)
+# Format-1: 20    Default， Equivalent "The material maximum durability - 20"
+# Format-2: <20   Reverse， Equivalent "Only 20"
+# Format-3: 20%   Percentage， Equivalent "The material maximum durability * 20%"
 # 也可以在ID节点下编写->
 # ID:
-# - 276:Durability格式
+# - 276:Durability
 #
-#物品数量 Amount [Type:String] (支持随机)
+#Amount [Type:String] (Support Random)
 #
-#物品描述 Lore [Type:List] (支持随机)
-# 格式:
+#Lore [Type:List] (Support Random)
+# Format:
 # - "..."
 #
-#Enchant列表 EnchantList [Type:List] (支持随机)
-# 格式:
-# - "Enchant名称:Level"
-# 参考WIKI: https://minecraft.fandom.com/zh/wiki/%E9%99%84%E9%AD%94
-# 参考API:  https://hub.spigotmc.org/javadocs/spigot/org/bukkit/enchantments/Enchantment.html
+#=EnchantList [Type:List] (Support Random)
+# Format:
+# - "EnchantName:Level"
+# WIKI: https://minecraft.wiki/w/Enchanting#Summary_of_enchantments
+# API:  https://hub.spigotmc.org/javadocs/spigot/org/bukkit/enchantments/Enchantment.html
 #
-#隐藏选项 ItemFlagList [Type:List]
-# 描述: 用于隐藏属性、Enchant、无限耐久、药水效果、染色等信息
-# 格式:
+#ItemFlagList [Type:List]
+# Description: Used to hide attributes、enchant、unbreakable、effect、color and more.
+# Format:
 # - "HIDE_ENCHANTS"
 # - "HIDE_ATTRIBUTES"
 # - "HIDE_UNBREAKABLE"
 # - "HIDE_POTION_EFFECTS"
-# 参考API: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemFlag.html
+# API: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemFlag.html
 #
-#物品染色 NmColor [Type:String] (支持随机)
-# 描述: 可以对该物品染色 (仅限皮革防具) ，需要用十六进制AttrColor码 (不需要带#)
-# 格式: "000000"
+#Color [Type:String] (Support Random)
+# Description: can be dyed (leather armor only) ，需要用十六进制AttrColor码 (不需要带#)
+# Format: "000000"
 #
-#物品属性 Attributes [Type:List] (支持随机)
-# 格式:
-# - "属性名:数字:模式:生效位置"    # 生效当前位置, 高版本推荐使用
-# - "属性名:数字:模式"           # 生效所有位置
-# 属性名:
-#   GENERIC_MAX_HEALTH               最大生命值
-#   GENERIC_FOLLOW_RANGE             生物追踪范围
-#   GENERIC_KNOCKBACK_RESISTANCE     抗擊退效果
-#   GENERIC_MOVEMENT_SPEED           移动速度
-#   GENERIC_FLYING_SPEED             飞行速度
-#   GENERIC_ATTACK_DAMAGE            攻击伤害
-#   GENERIC_ATTACK_KNOCKBACK         击退力度
-#   GENERIC_ATTACK_SPEED             攻击速度
-#   GENERIC_ARMOR                    盔甲防御点数
-#   GENERIC_ARMOR_TOUGHNESS          盔甲韧性
-#   GENERIC_LUCK                     幸运度 (例如原版的当打开箱子、运输矿车，钓鱼和杀怪)
-#   HORSE_JUMP_STRENGTH              马的弹跳力(只对马铠生效)
-#   ZOMBIE_SPAWN_REINFORCEMENTS      僵尸召唤系数(未测试)
-# 模式:
-#   0   ADD_NUMBER          属性增量    该模式直接在基值上进行加减法操作
-#   1   ADD_SCALAR          倍率增量    该模式将在Operation 0之后执行，并直接在属性值的作用倍率上进行加减法操作，也就是将当前的属性值进行倍率上的修改，而基础倍率为×1倍 (即不做改动)
-#   2   MULTIPLY_SCALAR_1   最终倍乘    该模式将会在其他所有修饰 (包括其他的Operation 2修饰) 完成后，在最终倍率上执行加减法操作，并执行最终的倍乘。基础倍率同样为×1倍
-# 生效位置: 不填写生效位置则生效在所有部位上
-#   HAND      主
-#   OFF_HAND  副
-#   HEAD      头
-#   CHEST     身
-#   LEGS      腿
-#   FEET      脚
-# 参考WIKI: https://minecraft.fandom.com/zh/wiki/%E5%B1%9E%E6%80%A7?variant=zh-cn
-# 参考API:  https://hub.spigotmc.org/javadocs/spigot/org/bukkit/attribute/package-summary.html
+#Attributes [Type:List] (Support Random)
+# Format:
+# - "AttributeName:Amount:Operation:Slot"    # Effective current location, higher version recommend use
+# - "AttributeName:Amount:Operation"         # Effective all locations
+# AttributeName:
+#   GENERIC_MAX_HEALTH               
+#   GENERIC_FOLLOW_RANGE             
+#   GENERIC_KNOCKBACK_RESISTANCE     
+#   GENERIC_MOVEMENT_SPEED           
+#   GENERIC_FLYING_SPEED             
+#   GENERIC_ATTACK_DAMAGE            
+#   GENERIC_ATTACK_KNOCKBACK         
+#   GENERIC_ATTACK_SPEED             
+#   GENERIC_ARMOR                    
+#   GENERIC_ARMOR_TOUGHNESS          
+#   GENERIC_LUCK                     
+#   HORSE_JUMP_STRENGTH              
+#   ZOMBIE_SPAWN_REINFORCEMENTS      
+# Operation:
+#   0   ADD_NUMBER              该模式直接在基值上进行加减法操作
+#   1   ADD_SCALAR              该模式将在Operation 0之后执行，并直接在属性值的作用倍率上进行加减法操作，也就是将当前的属性值进行倍率上的修改，而基础倍率为×1倍 (即不做改动)
+#   2   MULTIPLY_SCALAR_1       该模式将会在其他所有修饰 (包括其他的Operation 2修饰) 完成后，在最终倍率上执行加减法操作，并执行最终的倍乘。基础倍率同样为×1倍
+# Slot: If the effective position is not filled in, it will take effect on all parts.
+#   HAND      
+#   OFF_HAND  
+#   HEAD      
+#   CHEST     
+#   LEGS      
+#   FEET      
+# WIKI: https://minecraft.wiki/w/Attribute
+# API:  https://hub.spigotmc.org/javadocs/spigot/org/bukkit/attribute/package-summary.html
 #
-#自定义材质ID CustomModelData: 1000
+#CustomModelData: 1000
 #
-#药水系统 Potion [Type:Map-?] (部分随机)
-# 说明: 药水类型/duration/amplifier支持随机, ambient/particles/icon默认值为ture
-#      默认和自定义我觉得没有同时存在的必要, 所以是二选一, 药水效果填错只会不生效
-# 格式-1:       默认药水参数
-#   Potion: 药水类型
-#   Potion: <s:JUMP:ABSORPTION>
-# 格式-2:       自定义药水
+#Potion [Type:Map-?] (Support Random)
+# Format:
 #   Potion:
-#     药水类型:
-#       持续时间(duration): 20=1秒
-#       效果Level(amplifier): 1
-#       氛围(ambient): true
-#       粒子特效(particles): true
-#       是否显示图标(icon): true
+#     PotionEffectType:
+#       duration: 20 # 1 Seconds
+#       amplifier: 1
+#       ambient: true
+#       particles: true
+#       icon: true
 #   Potion:
 #     <s:SPEED:SLOW>:
 #       duration: <c:20 * <i:10_20>>
 #       amplifier: <i:1_2>
+# WIKI: https://minecraft.wiki/w/Item_format#Potion_Effects
+# API: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionEffectType.html
 #
-# 参考API: https://bukkit.windit.net/javadoc/org/bukkit/potion/PotionEffectType.html
+#NBT [Type:Map-?] (Support Random)
+# Description: Set NBT to item， can use /si nbt
+# WIKI: https://minecraft.wiki/w/Item_format#Potion_Effects
 #
-#物品标签 NBT [Type:Map-?] (支持随机)
-# 描述: 自由的将NBT节点下的配置信息设置到物品NBT中，可输入/si nbt查看
+#ItemComponents: Components [Type:Map-?]
+# Support: 1.21.1+
+# Description: Highly custom items
+# WIKI: https://minecraft.wiki/w/Data_component_format#food
 #
-#清除属性 ClearAttribute [Type:Boolean]
-# 描述: 让物品失去原有的默认属性 (代码实现为: ItemFlag.HIDE_ATTRIBUTE + Attributes.GENERIC_ATTACK_DAMAGE:0:0)
+#ClearAttribute [Type:Boolean]
+# Description: Make items lose their original default attributes (代码实现为: ItemFlag.HIDE_ATTRIBUTE + Attributes.GENERIC_ATTACK_DAMAGE:0:0)
 #
-#保护标签 ProtectNBT [Type:List]
-# 描述: 自动更新时保护以下NBT不被更改，可输入/si nbt查看
-# 格式:
+#ProtectNBT [Type:List]
+# Description: Protect the following NBT from being changed during automatic update， can use /si nbt
+# Format:
 # - "Enchantments" 保护Enchant词条不被自动更新
 # - "!protect.data" 解除在全局保护[Config.yml]中的词条
 #
-#局部随机 Random [Type:Map-?]
-# 描述: 设置物品的局部随机变量
-# 格式: 与RandomString文件夹下的格式一样
+#Random [Type:Map-?]
+# Description: Set the local random variable of the item.
+# Format: 与RandomString文件夹下的Format一样
 #
-#自动更新 Update [Type:Boolean]
-# 描述: 会自动更新该物品 (注意，随机文本除了<l:>以外也会重新生成)
+#Update [Type:Boolean]
+# Description: The item is auto-update (注意，随机文本除了<l:>以外也会重新生成)
 #
 
 Default-1:
@@ -314,6 +315,59 @@ Default-9:
 # Is a Ordinary SX item, yml shorthand
 # A non-existent ID will prevent the item from being give out, but it will not report an error.
 Default-10.ID: 'Non-existent items'
+
+#
+##################################################################
+##                          Component                           ##
+##################################################################
+#
+Component-1:
+  ID: DIAMOND
+  Name: "Component Guide"
+  Amount: 99
+  Lore:
+    - "&cThis function is new for 1.21.1"
+    - "&cSeeing this text means that the component function is not supported."
+  #组件
+  Components:
+    minecraft:item_name: "DefaultName§8_(CannotBeModifiedByAnvil)"
+    minecraft:custom_name: '{"text":"Name Of Color With Rarity §c(ModifiableByAnvil)"}'
+    # Rarity, dye priority lower than name
+    minecraft:rarity: 'epic'
+    # Maximum Stacking
+    minecraft:max_stack_size: 99
+    minecraft:food:
+      can_always_eat: true
+      eat_seconds: 1.6
+      effects: [ ]
+      nutrition: 5
+      saturation: 10
+    minecraft:lore:
+      - '{"text":"§aHello World lores"}'
+      - '{"text":"§bThis is the second line"}'
+      - '{"text":"§cThis is the third line of lore"}'
+      - '{"text":"§e§lThis item can be eaten"}'
+      - '{"text":"§e§lThis item can collect stones"}'
+      - '{"text":"§a§lThis item can be stacked 99"}'
+    minecraft:tool:
+      rules:
+        - blocks:
+            - minecraft:stone
+          correct_for_drops: true
+Component-2:
+  ID: 369
+  Amount: 50
+  Update: true
+  Components:
+    minecraft:item_name: 'FrenchFries'
+    minecraft:custom_name: 'FrenchFries'
+    minecraft:max_stack_size: 50
+    minecraft:rarity: 'rare'
+    minecraft:food:
+      eat_seconds: 0.1
+      nutrition: 1
+      saturation: 1
+      can_always_eat: true
 
 # Items prefixed with "NoLoad" will not be loaded
 NoLoad_Item:
