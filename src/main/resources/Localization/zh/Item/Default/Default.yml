@@ -6,6 +6,7 @@
 #物品名称 Name [Type:String] (支持随机)
 #
 #物品材质 ID [Type:String] (支持随机)
+# 描述: 你可以使用老版数字Id, 也可以使用英文ID
 # 格式-1:
 # - 276
 # 格式-2: 267
@@ -21,6 +22,7 @@
 #物品数量 Amount [Type:String] (支持随机)
 #
 #物品描述 Lore [Type:List] (支持随机)
+# 描述: 您可以使用 /n 换行符
 # 格式:
 # - "..."
 #
@@ -86,7 +88,7 @@
 # 格式-2:       自定义药水
 #   Potion:
 #     药水类型:
-#       持续时间(duration): 20=1秒
+#       持续时间(duration): 20 # 20=1秒
 #       效果等级(amplifier): 1
 #       氛围(ambient): true
 #       粒子特效(particles): true
@@ -107,15 +109,15 @@
 #保护标签 ProtectNBT [Type:List]
 # 描述: 自动更新时保护以下NBT不被更改，可输入/si nbt查看
 # 格式:
-# - "Enchantments" 保护附魔词条不被自动更新
-# - "!protect.data" 解除在全局保护[Config.yml]中的词条
+# - "Enchantments" # 保护附魔词条不被自动更新
+# - "!protect.data" # 解除在全局保护[Config.yml]中的词条
 #
 #局部随机 Random [Type:Map-?]
 # 描述: 设置物品的局部随机变量
 # 格式: 与RandomString文件夹下的格式一样
 #
 #自动更新 Update [Type:Boolean]
-# 描述: 会自动更新该物品 (注意，随机文本除了<l:>以外也会重新生成)
+# 描述: 会自动更新该物品 (会保留<l:>原本的值)
 #
 
 Default-1:

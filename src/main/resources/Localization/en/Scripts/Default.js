@@ -1,9 +1,18 @@
-// 指令: /si script Default testFunction
+/*global SXItem, Bukkit, Arrays, Utils*/
+/**
+ * /si script Default testFunction
+ * @param args
+ * @returns string
+ */
 function testFunction(args) {
     return args + " is " + (args != null);
 }
 
-// 指令: /si script Default testPlayer <玩家名> <参数>
+/**
+ * /si script Default testPlayer <player> <args>
+ * @param player playerName
+ * @param args args
+ */
 function testPlayer(player, args) {
     if (player != null) {
         player.sendMessage("received a message: " + args);
@@ -12,10 +21,12 @@ function testPlayer(player, args) {
     }
 }
 
-// item random <j:Default.itemScript#QAQ,QWQ> is in this format
-// docker is a fixed parameter. For more information, see RandomDocker.java
-// args is an array of input strings. The online "player name" is automatically converted to "player object".
-// The automatic conversion function will consider whether to cut or keep it later.
+/**
+ * item random <j:Default.itemScript#QAQ,QWQ> is in this format
+ * @param docker fixed parameter. For more information, see RandomDocker.java
+ * @param args array of input strings. The online "playerName" is automatically converted to "Player".
+ * @returns string
+ */
 function itemScript(docker, args) {
     docker.getPlayer().sendMessage("Send parameters to players: " + args[0] + args[1]);
     return args[SXItem.getRandom().nextInt(args.length)];
