@@ -23,6 +23,6 @@ COMMAND:
   GIVE: 给予玩家物品
   SAVE: 保存当前的物品到配置文件
   NBT: 查看和修改物品NBT数据
-  COMPONENT: 查看物品组件数据
+  COMPONENT: 查看和修改物品组件数据
   SCRIPT: 调用脚本函数
   RELOAD: 重新加载这个插件的配置
