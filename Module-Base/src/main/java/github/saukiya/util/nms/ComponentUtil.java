@@ -3,6 +3,7 @@ package github.saukiya.util.nms;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.inventory.ItemStack;
@@ -125,6 +126,13 @@ public abstract class ComponentUtil implements NMS {
          **/
         public ItemWrapper setFromJson(JsonElement jsonElement) {
             return setMap(jsonToMap(jsonElement));
+        }
+
+        /**
+         * 从Json字符串中设置相关组件
+         **/
+        public ItemWrapper setFromJson(String jsonString) {
+            return setMap(jsonToMap(JsonParser.parseString(jsonString)));
         }
 
         /**

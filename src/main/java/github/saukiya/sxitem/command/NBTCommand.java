@@ -11,6 +11,7 @@ import github.saukiya.util.nbt.TagType;
 import github.saukiya.util.nms.MessageUtil;
 import github.saukiya.util.nms.NbtUtil;
 import lombok.val;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -38,16 +39,20 @@ public class NBTCommand extends SubCommand {
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         ItemStack item;
-        String operation = "get";
+        String operation = "all";
         if (sender instanceof Player) {
             Player player = (Player) sender;
             item = player.getEquipment().getItemInHand();
             operation = args.length > 1 ? args[1] : operation;
         } else {
-            item = SXItem.getItemManager().getItem(args.length > 1 ? args[1] : "Default-1");
+            Player player = args.length > 2 ? Bukkit.getPlayerExact(args[2]) : null;
+            item = SXItem.getItemManager().getItem(args.length > 1 ? args[1] : null, player);
         }
         if (item.getType() == Material.AIR) {
             MessageUtil.send(sender, Message.GIVE__NO_ITEM.get());
+            if (sender instanceof ConsoleCommandSender) {
+                sender.sendMessage("Can Use: /si nbt [item] <player>");
+            }
             return;
         }
         switch (operation) {
@@ -72,15 +77,14 @@ public class NBTCommand extends SubCommand {
             default:
                 val tag = NbtUtil.getInst().getItemTag(item);
                 val cb = MessageUtil.getInst().builder()
+                        .show(item)
                         .add("§7[")
                         .add(item.getType().name())
                         .show(Message.NBT__CLICK_COPY.get())
                         .suggestCommand(item.getType().name());
                 String keys = String.join("/", ItemManager.getMaterialString(item.getType()));
                 if (!keys.isEmpty()) cb.add("-").add(keys).show(Message.NBT__CLICK_COPY.get()).suggestCommand(keys);
-                cb.add("] ");
-                if (tag != null) cb.add("§cItem-NBT").show(item);
-                cb.send(sender);
+                cb.add("] §cItem-NBT:").send(sender);
                 sendNBT("", tag, sender);
                 break;
         }
@@ -90,11 +94,11 @@ public class NBTCommand extends SubCommand {
     public List<String> onTabComplete(CommandSender sender, String[] args) {
         if (args.length == 2) {
             if (sender instanceof Player) {
-                return Arrays.asList("set", "remove");
+                return Arrays.asList("all", "set", "remove");
             }
             return SXItem.getItemManager().getItemList().stream().filter(itemName -> itemName.contains(args[1])).collect(Collectors.toList());
         }
-        return Collections.emptyList();
+        return sender instanceof Player ? Collections.emptyList() : null;
     }
 
     public static void sendNBT(String prefix, TagCompound tagCompound, CommandSender sender) {
@@ -117,11 +121,16 @@ public class NBTCommand extends SubCommand {
             } else {
                 nbtShow = tagBase.getValue().toString();
             }
-            val messageBuilder = MessageUtil.getInst().builder();
-            if (sender instanceof ConsoleCommandSender) {
-                messageBuilder.add("§c " + String.format("%-30s", path)).add("\t" + nbtShow.replace("\n", "§c\\n§f")).send(sender);
+            val messageBuilder = MessageUtil.getInst().builder().suggestCommand(path);
+            if (sender instanceof Player) {
+                messageBuilder
+                        .add("§7-§c[Type-" + typeShow.charAt(0) + "]").show(typeShow)
+                        .add("§7 " + path).show(nbtShow).send(sender);
             } else {
-                messageBuilder.add("§7-§c[Type-" + typeShow.charAt(0) + "]").show(typeShow).add("§7 " + path).suggestCommand(path).show(nbtShow).send(sender);
+                messageBuilder
+                        .add("§c " + String.format("%-30s", path))
+                        .add("\t" + nbtShow.replace("\n", "§c\\n§f"))
+                        .send(sender);
             }
         }
     }
