@@ -19,7 +19,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ComponentCommand extends SubCommand {
 
@@ -29,7 +28,7 @@ public class ComponentCommand extends SubCommand {
 
     public ComponentCommand() {
         super("component", 60);
-        setArg("<all/set> <key> <json>");
+        setArg("<set/remove> <key> <json>");
         preInput.put("minecraft:item_name", Collections.singletonList("\"defaultName\""));
         preInput.put("minecraft:max_damage", Collections.singletonList("1"));
         preInput.put("minecraft:max_stack_size", Collections.singletonList("10"));
@@ -101,7 +100,7 @@ public class ComponentCommand extends SubCommand {
         if (sender instanceof Player) {
             switch (args.length) {
                 case 2:
-                    return Stream.of("all", "set", "remove").filter(Key -> Key.contains(args[1])).collect(Collectors.toList());
+                    return !args[1].isEmpty() ? Arrays.asList("set", "remove") : Collections.emptyList();
                 case 3:
                     if ("set|remove".contains(args[1])) {
                         if (args[2].isEmpty()) {

@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * NBT显示指令
@@ -34,7 +33,7 @@ public class NBTCommand extends SubCommand {
 
     public NBTCommand() {
         super("nbt", 40);
-        setArg("<all/set> <key> <value>");
+        setArg("<set/remove> <key> <value>");
     }
 
     @Override
@@ -97,7 +96,7 @@ public class NBTCommand extends SubCommand {
     public List<String> onTabComplete(CommandSender sender, String[] args) {
         if (args.length == 2) {
             if (sender instanceof Player) {
-                return Stream.of("all", "set", "remove").filter(Key -> Key.contains(args[1])).collect(Collectors.toList());
+                return !args[1].isEmpty() ? Arrays.asList("set", "remove") : Collections.emptyList();
             }
             return SXItem.getItemManager().getItemList().stream().filter(itemName -> itemName.contains(args[1])).collect(Collectors.toList());
         }
