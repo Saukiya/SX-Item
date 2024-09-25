@@ -6,6 +6,7 @@
 #Name [Type:String] (Support Random)
 #
 #ID [Type:String] (Support Random)
+# Description: You can use the previous digital ID, or you can use the new ID.
 # Format-1:
 # - 276
 # Format-2: 267
@@ -14,13 +15,14 @@
 # Format-1: 20    Default， Equivalent "The material maximum durability - 20"
 # Format-2: <20   Reverse， Equivalent "Only 20"
 # Format-3: 20%   Percentage， Equivalent "The material maximum durability * 20%"
-# 也可以在ID节点下编写->
+# YouCanAlsoWriteUnderTheIDNode ->
 # ID:
 # - 276:Durability
 #
 #Amount [Type:String] (Support Random)
 #
 #Lore [Type:List] (Support Random)
+# Description: You can use /n line breaks
 # Format:
 # - "..."
 #
@@ -81,7 +83,7 @@
 # Format:
 #   Potion:
 #     PotionEffectType:
-#       duration: 20 # 1 Seconds
+#       duration: 20 # 20=1Seconds
 #       amplifier: 1
 #       ambient: true
 #       particles: true
@@ -108,15 +110,15 @@
 #ProtectNBT [Type:List]
 # Description: Protect the following NBT from being changed during automatic update， can use /si nbt
 # Format:
-# - "Enchantments" 保护Enchant词条不被自动更新
-# - "!protect.data" 解除在全局保护[Config.yml]中的词条
+# - "Enchantments" # Protect 'Enchantments' entries from being automatically updated
+# - "!protect.data" # Unprotect entries in global protection 'Config.yml'
 #
 #Random [Type:Map-?]
 # Description: Set the local random variable of the item.
-# Format: 与RandomString文件夹下的Format一样
+# Format: Same as Format under `RandomString` folder
 #
 #Update [Type:Boolean]
-# Description: The item is auto-update (注意，随机文本除了<l:>以外也会重新生成)
+# Description: The item is auto-update (will retain the original value of <l:>)
 #
 
 Default-1:
@@ -177,7 +179,7 @@ Default-2:
     - HIDE_ENCHANTS
     - HIDE_UNBREAKABLE
   Unbreakable: true
-  NmColor: <s:NmColor>
+  Color: <s:NmColor>
   Random:
     NmColor:
       - 'ffffff'
