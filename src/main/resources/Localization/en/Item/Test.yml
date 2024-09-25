@@ -1,0 +1,7 @@
+NoLoad_Test:
+  Lore:
+    - "Support for loading subfolders"
+    - "files/folders prefixed by NoLoad will not be loaded"
+    - ""
+    - "The default profile will be preserved"
+    - "You can delete the contents of the file if you don't need it."

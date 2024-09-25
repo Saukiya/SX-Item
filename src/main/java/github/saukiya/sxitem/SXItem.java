@@ -92,9 +92,9 @@ public class SXItem extends JavaPlugin {
     public void onEnable() {
         new Metrics(this, 11948);
         long oldTimes = System.currentTimeMillis();
-        NbtUtil.getInst();
-        ComponentUtil.getInst();
 
+        ComponentUtil.getInst();
+        NbtUtil.getInst();
         ItemUtil.getInst();
         MessageUtil.getInst();
 
