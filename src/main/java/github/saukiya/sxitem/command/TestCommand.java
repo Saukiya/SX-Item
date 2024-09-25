@@ -53,7 +53,7 @@ public class TestCommand extends SubCommand {
         }
 
         ItemMeta meta = itemStack.getItemMeta();
-        if (meta != null) {
+        if (NMS.compareTo(1, 13, 2) >= 0 && meta != null) {
             try {
                 if (meta.hasAttributeModifiers()) {
                     meta.getAttributeModifiers().forEach((attribute, modifier) -> {
@@ -161,7 +161,8 @@ public class TestCommand extends SubCommand {
 //        itemStack.setAmount(0);
 
         sender.sendMessage("基本测试完毕");
-        JsonParser.parseString("{attributes:[{id:\"generic.follow_range\", base:100.0}]}");
+        // 低版本无法使用JsonParser.parseString
+        new JsonParser().parse("{attributes:[{id:\"generic.follow_range\", base:100.0}]}");
     }
 
     @Override
