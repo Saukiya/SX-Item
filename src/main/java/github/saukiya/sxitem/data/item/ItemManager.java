@@ -26,6 +26,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -242,6 +243,7 @@ public class ItemManager implements Listener {
     /**
      * 获取物品 - 不带玩家参数
      */
+    @NotNull
     public ItemStack getItem(String itemName, Object... args) {
         return getItem(itemName, null, args);
     }
@@ -249,6 +251,7 @@ public class ItemManager implements Listener {
     /**
      * 获取物品 - 不带玩家参数
      */
+    @NotNull
     public ItemStack getItem(IGenerator ig, Object... args) {
         return getItem(ig, null, args);
     }
@@ -256,8 +259,9 @@ public class ItemManager implements Listener {
     /**
      * 获取物品
      */
-    @Nullable
+    @NotNull
     public ItemStack getItem(String itemName, Player player, Object... args) {
+        if (itemName == null) return emptyItem;
         IGenerator ig = itemMap.get(itemName);
         if (ig != null) {
             return getItem(ig, player, args);
@@ -271,8 +275,9 @@ public class ItemManager implements Listener {
     /**
      * 获取物品
      */
-    @Nullable
+    @NotNull
     public ItemStack getItem(IGenerator ig, Player player, Object... args) {
+        if (ig == null) return emptyItem;
         ItemStack item = ig.getItem(player, args);
         if (item != emptyItem && item != null && ig instanceof IUpdate) {
             NbtUtil.getInst().getItemTagWrapper(item).builder()
@@ -416,10 +421,9 @@ public class ItemManager implements Listener {
                             .runCommand("/sxitem give " + ig.key)
                             .add(" §b" + (items.size() + 1) + " - §a" + ig.key + " §8[§7")
                             .add(ig.getNameComponent())
-                            .add("§8]§7 - §8[")
-                            .add("§cType:" + ig.getType())
-                            .show("§7" + ig.getConfigString())
-                            .add("§8]"));
+                            .add("§8]§7 - ")
+                            .add("§8[§cT:" + ig.getType() + "§8]")
+                            .show("§7" + ig.getConfigString()));
                 }
             })));
             items.forEach(s -> s.send(sender));

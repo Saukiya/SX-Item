@@ -12,6 +12,9 @@ import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * @author Saukiya
  */
@@ -37,5 +40,10 @@ public class ReloadCommand extends SubCommand {
         Bukkit.getPluginManager().callEvent(SXItemReloadEvent.getInst());
         MessageUtil.send(sender, Message.ADMIN__PLUGIN_RELOAD.get());
         Bukkit.getOnlinePlayers().forEach(player -> SXItem.getItemManager().checkUpdateItem(player, player.getInventory().getContents()));
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
+        return Collections.emptyList();
     }
 }

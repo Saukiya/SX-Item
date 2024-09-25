@@ -1,5 +1,7 @@
 package github.saukiya.sxitem.command;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.gson.JsonParser;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.item.IGenerator;
 import github.saukiya.util.command.SubCommand;
@@ -15,7 +17,9 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
+import java.text.MessageFormat;
 import java.util.*;
 
 public class TestCommand extends SubCommand {
@@ -46,6 +50,22 @@ public class TestCommand extends SubCommand {
         }
         if (itemStack == null || itemStack.getType() == Material.AIR) {
             itemStack = SXItem.getItemManager().getItem(args.length > 1 ? args[1] : "Default-1", player);
+        }
+
+        ItemMeta meta = itemStack.getItemMeta();
+        if (meta != null) {
+            try {
+                if (meta.hasAttributeModifiers()) {
+                    meta.getAttributeModifiers().forEach((attribute, modifier) -> {
+                        SXItem.getInst().getLogger().info(MessageFormat.format("{0}:{1}:{2}:{3}", attribute.name(), modifier.getAmount(), modifier.getOperation(), modifier.getSlot()));
+                    });
+                }
+                // TODO 好像是个好方案?
+                meta.setAttributeModifiers(ArrayListMultimap.create());
+                itemStack.setItemMeta(meta);
+            } catch (Exception e) {
+                SXItem.getInst().getLogger().warning(e.getMessage());
+            }
         }
 
         Map<String, Object> input = new HashMap<>();
@@ -141,5 +161,21 @@ public class TestCommand extends SubCommand {
 //        itemStack.setAmount(0);
 
         sender.sendMessage("基本测试完毕");
+        JsonParser.parseString("{attributes:[{id:\"generic.follow_range\", base:100.0}]}");
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
+        switch (args.length) {
+            case 2:
+                return Collections.singletonList("[<arg>]");
+            case 3:
+                return Collections.singletonList("[arg]");
+            case 4:
+                return Collections.singletonList("<arg>");
+            case 5:
+                return Collections.singletonList("$arg");
+        }
+        return null;
     }
 }

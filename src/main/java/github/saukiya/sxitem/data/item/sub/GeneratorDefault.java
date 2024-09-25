@@ -87,12 +87,10 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         if (displayName != null)
             return new TextComponent(RandomDocker.getInst().replace(displayName).replace('&', '§'));
         MessageUtil.Builder cb = MessageUtil.getInst().builder().add("§r");
-        for (String id : ids) {
-            if (cb.getHandle().getExtra().size() != 1) cb.add("§8|§r");
-            Material material = ItemManager.getMaterial(id);
-            if (material != null) cb.add(material);
-            else cb.add(id);
-        }
+        Material material = ItemManager.getMaterial(RandomDocker.getInst().replace(ids.getFirst()));
+        if (material != null) cb.add(material);
+        else cb.add(ids.getFirst());
+        if (ids.size() > 1) cb.add("..");
         return cb.getHandle();
     }
 
@@ -115,14 +113,14 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
 
     // TODO 干脆都整到ItemUtil里
     private ItemStack getItem(Player player, RandomDocker docker) {
-        String[] materAndDur = docker.replace(ids.get(SXItem.getRandom().nextInt(ids.size()))).split(":");
-        Material material = ItemManager.getMaterial(materAndDur[0]);
+        String[] materialAndDurability = docker.replace(ids.get(SXItem.getRandom().nextInt(ids.size()))).split(":");
+        Material material = ItemManager.getMaterial(materialAndDurability[0]);
         if (material == null) {
-            SXItem.getInst().getLogger().warning("Item-" + getKey() + " ID ERROR: " + materAndDur[0]);
+            SXItem.getInst().getLogger().warning("Item-" + getKey() + " ID ERROR: " + materialAndDurability[0]);
             return ItemManager.getEmptyItem();
         }
         ItemStack item = new ItemStack(material, Integer.parseInt(docker.replace(config.getString("Amount", "1"))));
-        String durability = materAndDur.length > 1 ? materAndDur[1] : docker.replace(config.getString("Durability"));
+        String durability = materialAndDurability.length > 1 ? materialAndDurability[1] : docker.replace(config.getString("Durability"));
         if (durability != null) {
             if (durability.endsWith("%")) {
                 item.setDurability((short) (material.getMaxDurability() * (1 - Double.parseDouble(durability.substring(0, durability.length() - 1)) / 100)));

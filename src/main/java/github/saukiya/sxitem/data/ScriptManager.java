@@ -135,11 +135,11 @@ public class ScriptManager {
     /**
      * 判断是否存在该脚本
      *
-     * @param fileName 脚本文件名
+     * @param scriptName 脚本名
      * @return boolean
      */
-    public boolean containsFile(String fileName) {
-        return compiledScripts.containsKey(fileName);
+    public boolean containsFile(String scriptName) {
+        return compiledScripts.containsKey(scriptName);
     }
 
     /**
