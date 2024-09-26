@@ -69,7 +69,7 @@ public abstract class ItemUtil implements NMS {
     }
 
     /**
-     * 清除Attribute属性 (当前实现为完整清除，1.12.1以下通过NBT清除)
+     * 清除Attribute属性 (当前实现为完整清除，1.12.1以下通过NBT清除) TODO 需验证
      *
      * @param item ItemStack
      * @param meta ItemMeta
@@ -96,7 +96,7 @@ public abstract class ItemUtil implements NMS {
     public abstract void setAttributes(ItemStack item, @Nullable List<AttributeData> list);
 
     /**
-     * 添加Attribute属性
+     * 添加Attribute属性 TODO 优化1.21.1
      *
      * @param item ItemStack
      * @param list List[AttributeData]
