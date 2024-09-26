@@ -105,7 +105,7 @@
 # WIKI: https://minecraft.wiki/w/Data_component_format#food
 #
 #ClearAttribute [Type:Boolean]
-# Description: Make items lose their original default attributes (代码实现为: ItemFlag.HIDE_ATTRIBUTE + Attributes.GENERIC_ATTACK_DAMAGE:0:0)
+# Description: Make items lose their original default attributes
 #
 #ProtectNBT [Type:List]
 # Description: Protect the following NBT from being changed during automatic update， can use /si nbt

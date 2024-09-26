@@ -1,18 +1,12 @@
 package github.saukiya.util.nbt;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParser;
+import github.saukiya.util.nms.ComponentUtil;
 
 import java.io.DataOutput;
 import java.io.IOException;
 
 
 public interface TagBase<T> extends Cloneable {
-
-    JsonParser JSON_PARSER = new JsonParser();
-
-    Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     void write(DataOutput dataOutput) throws IOException;
 
@@ -32,8 +26,8 @@ public interface TagBase<T> extends Cloneable {
      *
      * @return String
      */
-    default String toJson() {
-        return GSON.toJson(JSON_PARSER.parse(toString()));
+    default String toJsonString() {
+        return ComponentUtil.getGson().toJson(getValue());
     }
 
     @Deprecated
