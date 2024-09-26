@@ -48,8 +48,12 @@ public class ScriptCommand extends SubCommand implements Listener {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
-        if (args.length == 2)
-            return SXItem.getScriptManager().getFileNames().stream().filter(name -> name.contains(args[1])).collect(Collectors.toList());
+        switch (args.length) {
+            case 2:
+                return SXItem.getScriptManager().getScriptNames().stream().filter(name -> name.contains(args[1])).collect(Collectors.toList());
+            case 3:
+                return SXItem.getScriptManager().getScriptFunc(args[1]).stream().filter(name -> name.contains(args[2])).collect(Collectors.toList());
+        }
         return null;
     }
 }

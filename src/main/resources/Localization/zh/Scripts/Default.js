@@ -33,3 +33,7 @@ function itemScript(docker, args) {
     }
     return args[SXItem.getRandom().nextInt(args.length)];
 }
+
+function test() {
+    print("调用Global: " + globalFunc(globalValue) + " - " + Other.test())
+}
