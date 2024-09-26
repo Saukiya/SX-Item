@@ -3,6 +3,7 @@ package github.saukiya.sxitem.command;
 import com.google.gson.JsonParser;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.item.IGenerator;
+import github.saukiya.sxitem.util.Message;
 import github.saukiya.util.command.SubCommand;
 import github.saukiya.util.nbt.TagCompound;
 import github.saukiya.util.nms.*;
@@ -24,41 +25,44 @@ public class TestCommand extends SubCommand {
 
     @Override
     public void onCommand(CommandSender sender, String[] args) {
-        ItemStack itemStack = null;
+        ItemStack item;
+        String operation = "all";
+        Player player;
         sender.sendMessage("*该指令用于测试插件运行是否正常*");
-        Player player = null;
         if (sender instanceof Player) {
             player = (Player) sender;
-            sender.sendMessage(Arrays.toString(args));
-            itemStack = player.getEquipment().getItemInHand();
-            if (args.length > 1) {
-                switch (args[1]) {
-                    case "show":
-                        MessageUtil.getInst().builder().add(player.getEquipment().getItemInHand()).send(player);
-                        return;
-                    case "tran":
-                        MessageUtil.getInst().builder().add(new TranslatableComponent(args.length > 2 ? args[2] : "null")).send(player);
-                        return;
-                    case "clear":
-                        ItemUtil.getInst().clearAttribute(itemStack);
-                        return;
-                }
-            }
+            item = player.getEquipment().getItemInHand();
+            operation = args.length > 1 ? args[1] : operation;
+        } else {
+            player = args.length > 2 ? Bukkit.getPlayerExact(args[2]) : null;
+            item = SXItem.getItemManager().getItem(args.length > 1 ? args[1] : "Default-1", player);
         }
-        if (itemStack == null || itemStack.getType() == Material.AIR) {
-            itemStack = SXItem.getItemManager().getItem(args.length > 1 ? args[1] : "Default-1", player);
+        if (item.getType() == Material.AIR) {
+            MessageUtil.send(sender, Message.GIVE__NO_ITEM.get());
+            return;
+        }
+        switch (operation) {
+            case "show":
+                MessageUtil.getInst().builder().add(player.getEquipment().getItemInHand()).send(player);
+                return;
+            case "tran":
+                MessageUtil.getInst().builder().add(new TranslatableComponent(args.length > 2 ? args[2] : "null")).send(player);
+                return;
+            case "clear":
+                ItemUtil.getInst().clearAttribute(item);
+                return;
         }
 
         Map<String, Object> input = new HashMap<>();
         input.put("minecraft:dyed_color", Collections.singletonMap("rgb", 16747238));
         input.put("minecraft:enchantment_glint_override", true);
         input.put("minecraft:food", ComponentUtil.getGson().fromJson("{can_always_eat:true,eat_seconds:5,nutrition:3,saturation:1}", Map.class));
-        val wrapper = ComponentUtil.getInst().getItemWrapper(itemStack);
+        val wrapper = ComponentUtil.getInst().getItemWrapper(item);
         wrapper.setFromValue(input).save();
         SXItem.getInst().getLogger().warning("component: \n" + wrapper.toJsonString());
         sender.sendMessage("组件功能通过");
 
-        val itemWrapper = NbtUtil.getInst().getItemTagWrapper(itemStack);
+        val itemWrapper = NbtUtil.getInst().getItemTagWrapper(item);
         itemWrapper.set("test.string", "2333");
         itemWrapper.set("test.byteArray", new byte[]{1, 5, 10, 50, 100});
         itemWrapper.set("test.intArray", new int[]{1, 50, 100, 5000, 10000});
@@ -99,7 +103,8 @@ public class TestCommand extends SubCommand {
             }
         }
         tagCompound.remove("test");
-        SXItem.getInst().getLogger().info("nbt: \n" + tagCompound.toJson());
+        SXItem.getInst().getLogger().info("tag-toString: \n" + tagCompound);
+        SXItem.getInst().getLogger().info("tag: \n" + tagCompound.toJson()); // TODO 有问题
         sender.sendMessage("调用NBT物品通过");
         Bukkit.dispatchCommand(sender, "sxi nbt all");
 
@@ -132,9 +137,9 @@ public class TestCommand extends SubCommand {
                 .add(" 文本2 ")
                 .show(Arrays.asList("显示2-执行指令", "显示2-/list"))
                 .runCommand("/list")
-                .add(itemStack)
+                .add(item)
                 .add(" ")
-                .add(itemStack.getType())
+                .add(item.getType())
                 .show("显示4-显示物品默认名\n显示4-喵喵喵")
                 .suggestCommand("喵喵喵")
                 .send(sender);
