@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Saukiya
@@ -47,7 +48,8 @@ public class ScriptCommand extends SubCommand implements Listener {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
-        if (args.length == 2) return SXItem.getScriptManager().getFileNames();
+        if (args.length == 2)
+            return SXItem.getScriptManager().getFileNames().stream().filter(name -> name.contains(args[1])).collect(Collectors.toList());
         return null;
     }
 }
