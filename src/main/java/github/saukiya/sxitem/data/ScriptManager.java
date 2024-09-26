@@ -3,6 +3,7 @@ package github.saukiya.sxitem.data;
 import github.saukiya.sxitem.util.Config;
 import github.saukiya.util.helper.PlaceholderHelper;
 import lombok.Getter;
+import lombok.val;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -10,16 +11,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.script.*;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class ScriptManager {
@@ -28,13 +26,17 @@ public class ScriptManager {
 
     private final ConcurrentHashMap<String, CompiledScript> compiledScripts = new ConcurrentHashMap<>();
 
+    private final Function<File, String> getScriptName;
+
     private final JavaPlugin plugin;
 
     private final File rootDirectory;
 
     private final File globalFile;
 
-    private Compilable compilableEngine;
+    private ScriptEngine engine;
+
+    private Compilable compilable;
 
     private Invocable invocable;
 
@@ -42,9 +44,21 @@ public class ScriptManager {
     private boolean enabled;
 
     public ScriptManager(JavaPlugin plugin) {
+        this(plugin, "Global.js");
+    }
+
+    /**
+     * 初始化引擎模块 插件名会作为静态类调用
+     *
+     * @param plugin
+     * @param globalFileName
+     */
+    public ScriptManager(JavaPlugin plugin, String globalFileName) {
         this.plugin = plugin;
         this.rootDirectory = new File(plugin.getDataFolder(), "Scripts");
-        this.globalFile = new File(rootDirectory, "Global.js");
+        this.globalFile = new File(rootDirectory, globalFileName);
+        val regex = Pattern.compile("\\..+$");
+        getScriptName = file -> regex.matcher(file.getName()).replaceAll("");
         reload();
     }
 
@@ -52,6 +66,7 @@ public class ScriptManager {
      * 重新加载
      */
     public void reload() {
+        compiledScripts.clear();
         try {
             if (!rootDirectory.exists()) {
                 plugin.getLogger().warning("Directory is not exists: " + rootDirectory.getName());
@@ -62,7 +77,7 @@ public class ScriptManager {
             loadScriptFile(rootDirectory);
         } catch (Exception e) {
             if (e instanceof NullPointerException) {
-                plugin.getLogger().info("Scripts Disabled");
+                plugin.getLogger().info(e.getMessage());
             } else {
                 plugin.getLogger().warning("Load scripts error: " + e.getMessage());
             }
@@ -77,29 +92,31 @@ public class ScriptManager {
      * 初始化引擎
      */
     private void initEngine() throws Exception {
-        // TODO 遍历可选引擎
         String engineName = Config.getConfig().getString(Config.SCRIPT_ENGINE, "js");
-        if (engineName.isEmpty()) throw null;
+        if (engineName.isEmpty()) throw new NullPointerException("Scripts Disabled");
         System.setProperty("nashorn.args", "--language=es6");
-        ScriptEngine engine = new ScriptEngineManager().getEngineByName(engineName);
-        if (engine == null) throw new ScriptException("No Find ScriptEngine: " + engineName);
+        val engineManager = new ScriptEngineManager();
+        engine = engineManager.getEngineByName(engineName);
+        if (engine == null) {
+            val engineNames = engineManager.getEngineFactories().stream().map(ScriptEngineFactory::getEngineName).collect(Collectors.joining(", "));
+            throw new ScriptException("No Find ScriptEngine: " + engineName + ", Can Use: " + engineNames);
+        }
         // class路径在jdk8中不一致
         Class<?> clazz = Class.forName(System.getProperty("java.class.version").startsWith("52") ?
                 "jdk.internal.dynalink.beans.StaticClass" :
                 "jdk.dynalink.beans.StaticClass");
         Method method = clazz.getMethod("forClass", Class.class);
-        // 如果要脱离组织架构的话需要清除SXItem.class 懒了
         engine.put("Bukkit", method.invoke(null, Bukkit.class));
-        engine.put(plugin.getName().replaceAll("[^a-zA-Z]", ""), method.invoke(null, plugin.getClass()));
         engine.put("Arrays", method.invoke(null, Arrays.class));
         engine.put("Utils", method.invoke(null, Utils.class));
-        compilableEngine = (Compilable) engine;
+        engine.put(plugin.getName().replaceAll("[^a-zA-Z]", ""), method.invoke(null, plugin.getClass()));
+        compilable = (Compilable) engine;
         invocable = (Invocable) engine;
-        compiledScripts.clear();
-        // 这玩意最好隔离出来单独搞个Global.js
-        InputStreamReader globalReader = new InputStreamReader(Files.newInputStream(globalFile.toPath()), StandardCharsets.UTF_8);
-        compilableEngine.compile(globalReader);
-        globalReader.close();
+        try (val globalReader = new FileReader(globalFile)) {
+            val global = compilable.compile(globalReader);
+            global.eval();
+            compiledScripts.put(getScriptName.apply(globalFile), global);
+        }
     }
 
     /**
@@ -109,16 +126,21 @@ public class ScriptManager {
      */
     private void loadScriptFile(File files) throws IOException, ScriptException {
         if (!enabled) return;
+        val bindings = engine.getBindings(ScriptContext.ENGINE_SCOPE);
         for (File file : files.listFiles()) {
             if (file.getName().startsWith("NoLoad") || file.equals(globalFile)) continue;
             if (file.isDirectory()) {
                 loadScriptFile(file);
-                // TODO 可选引擎后缀
-            } else if (file.getName().endsWith(".js")) {
-                InputStreamReader inputStreamReader = new InputStreamReader(Files.newInputStream(file.toPath()), StandardCharsets.UTF_8);
-                CompiledScript compiled = compilableEngine.compile(inputStreamReader);
-                compiledScripts.put(file.getName().replace(".js", ""), compiled);
-                inputStreamReader.close();
+            } else {
+                String scriptName = getScriptName.apply(file);
+                try (val reader = new FileReader(file)) {
+                    CompiledScript compiled = compilable.compile(reader);
+                    val simpleBindings = new SimpleBindings(new HashMap<>(bindings));
+                    compiled.eval(simpleBindings);
+//                    val property = simpleBindings.keySet().stream().filter(x -> !bindings.containsKey(x)).collect(Collectors.toList());
+//                    plugin.getLogger().info(scriptName + ": " + String.join(", ", property));
+                    compiledScripts.put(scriptName, compiled);
+                }
             }
         }
     }

@@ -1,1 +1,2 @@
-// Global文件暂时不起作用.
+/*global SXItem, Bukkit, Arrays, Utils*/
+globalValue = "globalField" // const 也可以
