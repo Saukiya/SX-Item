@@ -4,8 +4,12 @@ LoggerLevel: "INFO"
 DecimalFormat: "#.##"
 # 日期格式化
 TimeFormat: yyyy/MM/dd HH:mm
-# 引擎选择:默认采用JS引擎,该插件不自带引擎模块,如果要禁用可以删除此行
+# 引擎选择:默认采用JS引擎,该插件不自带引擎模块, 以下链接未经验证, 仅供参考
+# JS: https://github.com/eldoriarpg/NashornJS
+# Python: https://github.com/magicmq/PySpigot
 ScriptEngine: js
+# 如果要禁用引擎功能
+#ScriptEngine: ~
 # 全局保护NBT列表 [自动更新时保护以下NBT不被更改]
 ProtectNBT:
   - "protect.data"

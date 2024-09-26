@@ -5,7 +5,7 @@
  * @returns string
  */
 function testFunction(args) {
-    return args + " is " + (args != null);
+    return args + " is " + (args != null)
 }
 
 /**
@@ -15,7 +15,7 @@ function testFunction(args) {
  */
 function testPlayer(player, args) {
     if (player != null) {
-        player.sendMessage("收到了一条信息: " + args);
+        player.sendMessage("收到了一条信息: " + args)
     } else {
         SXItem.getInst().getLogger().info("可以将在线成员作为实际参数运行在/si script 方法内")
     }
@@ -29,7 +29,7 @@ function testPlayer(player, args) {
  */
 function itemScript(docker, args) {
     if (docker.getPlayer() != null) {
-        docker.getPlayer().sendMessage("把参数发给玩家: " + args[0] + args[1]);
+        docker.getPlayer().sendMessage("把参数发给玩家: " + args[0] + args[1])
     }
     return args[SXItem.getRandom().nextInt(args.length)];
 }
