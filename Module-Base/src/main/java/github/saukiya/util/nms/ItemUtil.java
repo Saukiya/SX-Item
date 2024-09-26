@@ -64,7 +64,6 @@ public abstract class ItemUtil implements NMS {
      * @param item ItemStack
      */
     public void clearAttribute(ItemStack item) {
-        if (!item.hasItemMeta()) return;
         clearAttribute(item, item.getItemMeta());
     }
 
@@ -75,6 +74,7 @@ public abstract class ItemUtil implements NMS {
      * @param meta ItemMeta
      */
     public void clearAttribute(ItemStack item, ItemMeta meta) {
+        if (meta == null) return;
         meta.setAttributeModifiers(ArrayListMultimap.create());
         item.setItemMeta(meta);
     }
