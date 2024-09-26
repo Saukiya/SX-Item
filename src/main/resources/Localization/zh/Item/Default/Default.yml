@@ -110,7 +110,7 @@
 # 参考WIKI: https://zh.minecraft.wiki/w/%E7%89%A9%E5%93%81%E5%A0%86%E5%8F%A0%E7%BB%84%E4%BB%B6
 #
 #清除属性 ClearAttribute [Type:Boolean]
-# 描述: 让物品失去原有的默认属性 (代码实现为: ItemFlag.HIDE_ATTRIBUTE + Attributes.GENERIC_ATTACK_DAMAGE:0:0)
+# 描述: 让物品失去原有的默认属性
 #
 #保护标签 ProtectNBT [Type:List]
 # 描述: 自动更新时保护以下NBT不被更改，可输入/si nbt查看

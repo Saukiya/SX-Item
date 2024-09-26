@@ -103,8 +103,7 @@ public class TestCommand extends SubCommand {
             }
         }
         tagCompound.remove("test");
-        SXItem.getInst().getLogger().info("tag-toString: \n" + tagCompound);
-        SXItem.getInst().getLogger().info("tag: \n" + tagCompound.toJson()); // TODO 有问题
+        SXItem.getInst().getLogger().info("tag: \n" + tagCompound.toJsonString());
         sender.sendMessage("调用NBT物品通过");
         Bukkit.dispatchCommand(sender, "sxi nbt all");
 
