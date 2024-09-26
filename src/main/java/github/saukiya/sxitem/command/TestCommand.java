@@ -1,15 +1,11 @@
 package github.saukiya.sxitem.command;
 
-import com.google.common.collect.ArrayListMultimap;
 import com.google.gson.JsonParser;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.item.IGenerator;
 import github.saukiya.util.command.SubCommand;
 import github.saukiya.util.nbt.TagCompound;
-import github.saukiya.util.nms.ComponentUtil;
-import github.saukiya.util.nms.MessageUtil;
-import github.saukiya.util.nms.NMS;
-import github.saukiya.util.nms.NbtUtil;
+import github.saukiya.util.nms.*;
 import lombok.val;
 import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.bukkit.Bukkit;
@@ -17,9 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import java.text.MessageFormat;
 import java.util.*;
 
 public class TestCommand extends SubCommand {
@@ -36,6 +30,7 @@ public class TestCommand extends SubCommand {
         if (sender instanceof Player) {
             player = (Player) sender;
             sender.sendMessage(Arrays.toString(args));
+            itemStack = player.getEquipment().getItemInHand();
             if (args.length > 1) {
                 switch (args[1]) {
                     case "show":
@@ -44,28 +39,14 @@ public class TestCommand extends SubCommand {
                     case "tran":
                         MessageUtil.getInst().builder().add(new TranslatableComponent(args.length > 2 ? args[2] : "null")).send(player);
                         return;
+                    case "clear":
+                        ItemUtil.getInst().clearAttribute(itemStack);
+                        return;
                 }
             }
-            itemStack = player.getEquipment().getItemInHand();
         }
         if (itemStack == null || itemStack.getType() == Material.AIR) {
             itemStack = SXItem.getItemManager().getItem(args.length > 1 ? args[1] : "Default-1", player);
-        }
-
-        ItemMeta meta = itemStack.getItemMeta();
-        if (NMS.compareTo(1, 13, 2) >= 0 && meta != null) {
-            try {
-                if (meta.hasAttributeModifiers()) {
-                    meta.getAttributeModifiers().forEach((attribute, modifier) -> {
-                        SXItem.getInst().getLogger().info(MessageFormat.format("{0}:{1}:{2}:{3}", attribute.name(), modifier.getAmount(), modifier.getOperation(), modifier.getSlot()));
-                    });
-                }
-                // TODO 好像是个好方案?
-                meta.setAttributeModifiers(ArrayListMultimap.create());
-                itemStack.setItemMeta(meta);
-            } catch (Exception e) {
-                SXItem.getInst().getLogger().warning(e.getMessage());
-            }
         }
 
         Map<String, Object> input = new HashMap<>();
@@ -167,16 +148,6 @@ public class TestCommand extends SubCommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
-        switch (args.length) {
-            case 2:
-                return Collections.singletonList("[<arg>]");
-            case 3:
-                return Collections.singletonList("[arg]");
-            case 4:
-                return Collections.singletonList("<arg>");
-            case 5:
-                return Collections.singletonList("$arg");
-        }
-        return null;
+        return args.length == 2 && args[1].isEmpty() ? Arrays.asList("show", "trans", "clear") : Collections.emptyList();
     }
 }

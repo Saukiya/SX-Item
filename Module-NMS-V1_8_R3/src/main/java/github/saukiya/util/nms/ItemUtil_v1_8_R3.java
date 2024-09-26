@@ -13,31 +13,6 @@ import java.util.stream.Collectors;
 
 public class ItemUtil_v1_8_R3 extends ItemUtil {
 
-    public void editAttribute(ItemStack item, Consumer<List<Object>> computeListFunction) {
-        editAttribute(item, wrapper -> (List<Object>) wrapper.getList("AttributeModifiers", new ArrayList<>()), computeListFunction);
-    }
-
-    public void editAttribute(ItemStack item, Function<NbtUtil.Wrapper, List<Object>> toListFunction, Consumer<List<Object>> computeListFunction) {
-        val wrapper = NbtUtil.getInst().getItemTagWrapper(item);
-        List<Object> modifiers = toListFunction.apply(wrapper);
-        computeListFunction.accept(modifiers);
-        wrapper.set("AttributeModifiers", modifiers == null || modifiers.isEmpty() ? null : modifiers);
-        wrapper.save();
-    }
-
-    public void addAttribute(List<Object> list, AttributeData data) {
-        if (data.getAttrNameNBT() == null) return;
-        Map<String, Object> map = new HashMap<>();
-        map.put("AttributeName", data.getAttrNameNBT());
-        map.put("UUIDMost", data.getUniqueId().getMostSignificantBits());
-        map.put("UUIDLeast", data.getUniqueId().getLeastSignificantBits());
-        map.put("Name", data.getName());
-        map.put("Amount", data.getAmount());
-        map.put("Operation", data.getOperation());
-        map.put("Slot", data.getSlotNBT());
-        list.add(map);
-    }
-
     @Override
     public boolean isUnbreakable(@Nonnull ItemMeta meta) {
         return meta.spigot().isUnbreakable();
@@ -57,6 +32,11 @@ public class ItemUtil_v1_8_R3 extends ItemUtil {
     @Override
     public void setSkull(ItemMeta meta, String value) {
         if (meta instanceof SkullMeta) ((SkullMeta) meta).setOwner(value);
+    }
+
+    @Override
+    public void clearAttribute(ItemStack item, ItemMeta meta) {
+        NbtUtil.getInst().getItemTagWrapper(item).builder().set("AttributeModifiers", Collections.emptyList()).save();
     }
 
     @Override
@@ -90,5 +70,35 @@ public class ItemUtil_v1_8_R3 extends ItemUtil {
     @Override
     public void addAttribute(ItemStack item, AttributeData data) {
         editAttribute(item, modifiers -> addAttribute(modifiers, data));
+    }
+
+    public void editAttribute(ItemStack item, Consumer<List<Object>> computeListFunction) {
+        editAttribute(item, wrapper -> (List<Object>) wrapper.getList("AttributeModifiers", new ArrayList<>()), computeListFunction);
+    }
+
+    /**
+     * @param item                物品
+     * @param toListFunction      当前属性
+     * @param computeListFunction 需要添加的属性
+     */
+    public void editAttribute(ItemStack item, Function<NbtUtil.Wrapper, List<Object>> toListFunction, Consumer<List<Object>> computeListFunction) {
+        val wrapper = NbtUtil.getInst().getItemTagWrapper(item);
+        List<Object> modifiers = toListFunction.apply(wrapper);
+        computeListFunction.accept(modifiers);
+        wrapper.set("AttributeModifiers", modifiers == null || modifiers.isEmpty() ? null : modifiers);
+        wrapper.save();
+    }
+
+    public void addAttribute(List<Object> list, AttributeData data) {
+        if (data.getAttrNameNBT() == null) return;
+        Map<String, Object> map = new HashMap<>();
+        map.put("AttributeName", data.getAttrNameNBT());
+        map.put("UUIDMost", data.getUniqueId().getMostSignificantBits());
+        map.put("UUIDLeast", data.getUniqueId().getLeastSignificantBits());
+        map.put("Name", data.getName());
+        map.put("Amount", data.getAmount());
+        map.put("Operation", data.getOperation());
+        map.put("Slot", data.getSlotNBT());
+        list.add(map);
     }
 }

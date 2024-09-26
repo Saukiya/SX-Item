@@ -87,9 +87,9 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         if (displayName != null)
             return new TextComponent(RandomDocker.getInst().replace(displayName).replace('&', '§'));
         MessageUtil.Builder cb = MessageUtil.getInst().builder().add("§r");
-        Material material = ItemManager.getMaterial(RandomDocker.getInst().replace(ids.getFirst()));
+        Material material = ItemManager.getMaterial(RandomDocker.getInst().replace(ids.get(0)));
         if (material != null) cb.add(material);
-        else cb.add(ids.getFirst());
+        else cb.add(ids.get(0));
         if (ids.size() > 1) cb.add("..");
         return cb.getHandle();
     }

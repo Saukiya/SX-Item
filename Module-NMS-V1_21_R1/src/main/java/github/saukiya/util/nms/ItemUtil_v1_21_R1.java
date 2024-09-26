@@ -2,7 +2,6 @@ package github.saukiya.util.nms;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -101,13 +100,6 @@ public class ItemUtil_v1_21_R1 extends ItemUtil {
         ItemMeta meta = item.getItemMeta();
         addAttribute(meta, data);
         item.setItemMeta(meta);
-    }
-
-    @Override
-    public void clearAttribute(ItemStack item, ItemMeta meta) {
-//        ComponentUtil.getInst().getItemWrapper(item).set("attribute_modifiers", null).save();
-        ComponentUtil.getInst().getItemWrapper(item).set("attribute_modifiers", ItemAttributeModifiers.a).save();
-//        dataMap.b(DataComponents.n, null);
     }
 
     public void addAttribute(ItemMeta meta, AttributeData data) {

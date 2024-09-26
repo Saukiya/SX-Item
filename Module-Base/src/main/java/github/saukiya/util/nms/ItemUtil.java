@@ -1,12 +1,12 @@
 package github.saukiya.util.nms;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -15,6 +15,9 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Item扩展类，保证API全版本覆盖
+ */
 public abstract class ItemUtil implements NMS {
 
     @Getter
@@ -56,6 +59,27 @@ public abstract class ItemUtil implements NMS {
     public abstract void setSkull(ItemMeta meta, @Nullable String value);
 
     /**
+     * 清除Attribute属性
+     *
+     * @param item ItemStack
+     */
+    public void clearAttribute(ItemStack item) {
+        if (!item.hasItemMeta()) return;
+        clearAttribute(item, item.getItemMeta());
+    }
+
+    /**
+     * 清除Attribute属性 (当前实现为完整清除，1.12.1以下通过NBT清除)
+     *
+     * @param item ItemStack
+     * @param meta ItemMeta
+     */
+    public void clearAttribute(ItemStack item, ItemMeta meta) {
+        meta.setAttributeModifiers(ArrayListMultimap.create());
+        item.setItemMeta(meta);
+    }
+
+    /**
      * 获取Attribute属性
      *
      * @param item ItemStack
@@ -87,27 +111,6 @@ public abstract class ItemUtil implements NMS {
      * @param data AttributeData
      */
     public abstract void addAttribute(ItemStack item, @Nonnull AttributeData data);
-
-    /**
-     * 清除Attribute属性
-     *
-     * @param item ItemStack
-     */
-    public void clearAttribute(ItemStack item) {
-        clearAttribute(item, item.getItemMeta());
-    }
-
-    /**
-     * 清除Attribute属性
-     *
-     * @param item ItemStack
-     * @param meta ItemMeta
-     */
-    public void clearAttribute(ItemStack item, ItemMeta meta) {
-        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-        addAttribute(item, new ItemUtil.AttributeData().setAttrName("GENERIC_ATTACK_DAMAGE").setAmount(0));
-        item.setItemMeta(meta);
-    }
 
     @NoArgsConstructor
     @Accessors(chain = true)
