@@ -15,7 +15,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -24,7 +23,9 @@ public class ScriptManager {
 
     private static final Random random = new Random();
 
-    private final ConcurrentHashMap<String, CompiledScript> compiledScripts = new ConcurrentHashMap<>();
+//    private final ConcurrentHashMap<String, CompiledScript> compiledScripts = new ConcurrentHashMap<>();
+
+    private final Map<String, Bindings> bindingsMap = new HashMap<>();
 
     private final Function<File, String> getScriptName;
 
@@ -39,6 +40,8 @@ public class ScriptManager {
     private Compilable compilable;
 
     private Invocable invocable;
+
+    private Bindings globalBindings;
 
     @Getter
     private boolean enabled;
@@ -66,7 +69,7 @@ public class ScriptManager {
      * 重新加载
      */
     public void reload() {
-        compiledScripts.clear();
+//        compiledScripts.clear();
         try {
             if (!rootDirectory.exists()) {
                 plugin.getLogger().warning("Directory is not exists: " + rootDirectory.getName());
@@ -81,11 +84,15 @@ public class ScriptManager {
             } else {
                 plugin.getLogger().warning("Load scripts error: " + e.getMessage());
             }
-            compiledScripts.clear();
+//            compiledScripts.clear();
             enabled = false;
             return;
         }
-        plugin.getLogger().info("Loaded " + compiledScripts.size() + " Scripts");
+        engine.getBindings(ScriptContext.ENGINE_SCOPE).forEach((k1, v1) -> {
+            plugin.getLogger().info(String.format("%-15s", "key-" + k1 + ":") + "\t" + v1.getClass().getCanonicalName());
+        });
+        bindingsMap.forEach((key, bindings) -> plugin.getLogger().info("\t" + key + ": " + String.join(",", bindings.keySet())));
+        plugin.getLogger().info("Loaded " + bindingsMap.size() + " Scripts");
     }
 
     /**
@@ -94,28 +101,32 @@ public class ScriptManager {
     private void initEngine() throws Exception {
         String engineName = Config.getConfig().getString(Config.SCRIPT_ENGINE, "js");
         if (engineName.isEmpty()) throw new NullPointerException("Scripts Disabled");
-        System.setProperty("nashorn.args", "--language=es6");
+        System.setProperty("nashorn.args", "--language=es6 -Dnashorn.args=--no-deprecation-warning");
         val engineManager = new ScriptEngineManager();
         engine = engineManager.getEngineByName(engineName);
         if (engine == null) {
             val engineNames = engineManager.getEngineFactories().stream().map(ScriptEngineFactory::getEngineName).collect(Collectors.joining(", "));
             throw new ScriptException("No Find ScriptEngine: " + engineName + ", Can Use: " + engineNames);
         }
+        globalBindings = engine.createBindings();
         // class路径在jdk8中不一致
         Class<?> clazz = Class.forName(System.getProperty("java.class.version").startsWith("52") ?
                 "jdk.internal.dynalink.beans.StaticClass" :
                 "jdk.dynalink.beans.StaticClass");
         Method method = clazz.getMethod("forClass", Class.class);
-        engine.put("Bukkit", method.invoke(null, Bukkit.class));
-        engine.put("Arrays", method.invoke(null, Arrays.class));
-        engine.put("Utils", method.invoke(null, Utils.class));
-        engine.put(plugin.getName().replaceAll("[^a-zA-Z]", ""), method.invoke(null, plugin.getClass()));
+        globalBindings.put("Bukkit", method.invoke(null, Bukkit.class));
+        globalBindings.put("Arrays", method.invoke(null, Arrays.class));
+        globalBindings.put("Utils", method.invoke(null, Utils.class));
+        globalBindings.put(plugin.getName().replaceAll("[^a-zA-Z]", ""), method.invoke(null, plugin.getClass()));
         compilable = (Compilable) engine;
         invocable = (Invocable) engine;
         try (val globalReader = new FileReader(globalFile)) {
-            val global = compilable.compile(globalReader);
-            global.eval();
-            compiledScripts.put(getScriptName.apply(globalFile), global);
+            val globalScript = compilable.compile(globalReader);
+            globalScript.eval(globalBindings);
+            engine.setBindings(globalBindings, ScriptContext.GLOBAL_SCOPE);
+            bindingsMap.put(getScriptName.apply(globalFile), globalBindings);
+
+//            compiledScripts.put(getScriptName.apply(globalFile), globalScript);
         }
     }
 
@@ -126,7 +137,6 @@ public class ScriptManager {
      */
     private void loadScriptFile(File files) throws IOException, ScriptException {
         if (!enabled) return;
-        val bindings = engine.getBindings(ScriptContext.ENGINE_SCOPE);
         for (File file : files.listFiles()) {
             if (file.getName().startsWith("NoLoad") || file.equals(globalFile)) continue;
             if (file.isDirectory()) {
@@ -135,11 +145,22 @@ public class ScriptManager {
                 String scriptName = getScriptName.apply(file);
                 try (val reader = new FileReader(file)) {
                     CompiledScript compiled = compilable.compile(reader);
-                    val simpleBindings = new SimpleBindings(new HashMap<>(bindings));
-                    compiled.eval(simpleBindings);
-//                    val property = simpleBindings.keySet().stream().filter(x -> !bindings.containsKey(x)).collect(Collectors.toList());
-//                    plugin.getLogger().info(scriptName + ": " + String.join(", ", property));
-                    compiledScripts.put(scriptName, compiled);
+
+//                    // 默认写法: 不需要eval
+
+//                    // content解法
+//                    val content = new SimpleScriptContext();
+//                    content.getBindings(ScriptContext.ENGINE_SCOPE).putAll(bindings);
+//                    compiled.eval(content);
+//                    contentMap.put(scriptName, content);
+
+                    // binding解法
+                    val bindings = engine.createBindings();
+                    compiled.eval(bindings);
+                    bindingsMap.put(scriptName, bindings);
+                    globalBindings.put(scriptName, bindings);
+
+//                    compiledScripts.put(scriptName, compiled);
                 }
             }
         }
@@ -151,7 +172,17 @@ public class ScriptManager {
      * @return 脚本文件列表
      */
     public List<String> getFileNames() {
-        return Collections.list(compiledScripts.keys());
+        return new ArrayList<>(getScriptNames());
+    }
+
+    public Set<String> getScriptNames() {
+        return bindingsMap.keySet();
+    }
+
+    public Set<String> getScriptFunc(String scriptName) {
+        val bindings = bindingsMap.get(scriptName);
+        if (bindings == null) return Collections.emptySet();
+        return bindings.keySet();
     }
 
     /**
@@ -161,7 +192,7 @@ public class ScriptManager {
      * @return boolean
      */
     public boolean containsFile(String scriptName) {
-        return compiledScripts.containsKey(scriptName);
+        return bindingsMap.containsKey(scriptName);
     }
 
     /**
@@ -174,11 +205,21 @@ public class ScriptManager {
      */
     public Object callFunction(String scriptName, String functionName, Object... args) throws Exception {
         if (!enabled) return null;
-        CompiledScript compiled = compiledScripts.get(scriptName);
-        if (compiled == null) {
+        val bindings = bindingsMap.get(scriptName);
+//        CompiledScript compiled = compiledScripts.get(scriptName);
+        if (bindings == null) {
             throw new Exception("Script not found: " + scriptName);
         }
-        compiled.eval();
+//        // 之前写法
+//        compiled.eval();
+
+//        // content 解法
+//        engine.setContext(contentMap.get(scriptName));
+
+        // bindings 解法
+        engine.setBindings(bindings, ScriptContext.ENGINE_SCOPE);
+        
+        
         return invocable.invokeFunction(functionName, args);
     }
 
