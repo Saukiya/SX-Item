@@ -3,10 +3,11 @@ package github.saukiya.sxitem.data.random.randoms;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.IRandom;
 import github.saukiya.sxitem.data.random.RandomDocker;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
+import javax.script.Bindings;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,15 +34,9 @@ public class ScriptRandom implements IRandom {
                 return e.getMessage();
             }
             if (result instanceof List) return String.join("\n", (List<String>) result);
-            // TODO 这玩意只支持class版本 55.0 , jdk8的版本是52.0 System.getProperty("java.class.version")
-            if (result.getClass().getSimpleName().equals("ScriptObjectMirror")) {
-                org.openjdk.nashorn.api.scripting.ScriptObjectMirror som = (org.openjdk.nashorn.api.scripting.ScriptObjectMirror) result;
-                List<String> list = new ArrayList<>();
-                int i = 0;
-                while (som.get(String.valueOf(i)) != null) {
-                    list.add(som.get(String.valueOf(i++)).toString());
-                }
-                return String.join("\n", list);
+            if (result instanceof Bindings) {
+                // ScriptObjectMirror 本质是 Bindings
+                return StringUtils.join(((Bindings) result).values(), "\n");
             }
             return result.toString();
         }

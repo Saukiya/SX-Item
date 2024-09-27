@@ -45,7 +45,6 @@ allprojects { project ->
 configure([rootProject, baseProject, depProject]) {
     dependencies {
         compileOnly 'org.spigotmc:spigot-api:1.21.1-R0.1-SNAPSHOT'
-        compileOnly 'org.openjdk.nashorn:nashorn-core:15.4'
         compileOnly 'commons-lang:commons-lang:2.6'
         compileOnly 'io.lumine.xikage:MythicMobs:4.12.0'
         compileOnly 'io.lumine:Mythic-Dist:5.2.1'

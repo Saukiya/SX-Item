@@ -9,6 +9,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
+import javax.script.Bindings;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,7 +42,15 @@ public class ScriptCommand extends SubCommand implements Listener {
         }
         try {
             Object result = SXItem.getScriptManager().callFunction(args[1], args[2], scriptArgs.length != 0 ? scriptArgs : null);
-            MessageUtil.send(sender, Message.SCRIPT__INVOKE_RESULT.get(result, result != null ? result.getClass().getSimpleName() : "N/A"));
+            String[] resultPrint = new String[2];
+            if (result instanceof Bindings) {
+                resultPrint[0] = Arrays.toString(((Bindings) result).entrySet().stream().map(entry -> entry.getKey() + "=" + entry.getValue()).toArray(String[]::new));
+                resultPrint[1] = "Bindings";
+            } else {
+                resultPrint[0] = String.valueOf(result);
+                resultPrint[1] = result != null ? result.getClass().getSimpleName() : "N/A";
+            }
+            MessageUtil.send(sender, Message.SCRIPT__INVOKE_RESULT.get(resultPrint[0], resultPrint[1]));
         } catch (Exception e) {
             MessageUtil.send(sender, Message.SCRIPT__INVOKE_FAIL.get(e.getMessage()));
         }
