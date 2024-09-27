@@ -10,6 +10,7 @@ import github.saukiya.util.nbt.TagBase;
 import github.saukiya.util.nbt.TagCompound;
 import github.saukiya.util.nbt.TagType;
 import github.saukiya.util.nms.NMS;
+import lombok.val;
 import org.apache.commons.lang.text.StrLookup;
 import org.apache.commons.lang.text.StrMatcher;
 import org.apache.commons.lang.text.StrSubstitutor;
@@ -52,7 +53,13 @@ public class Test {
 //        System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
+        System.out.println("num: " + getNum("WQRWQR1658.492112 121312nm", 0));
+        ;
+    }
+
+    public static void defaultConfig() throws Exception {
+        
         MemorySection globalConfig = (MemorySection) loadYml("Localization/zh/Config.yml").getConfigurationSection("GlobalItem");
         YamlConfiguration itemConfig = loadYml("Localization/zh/Item/Test.yml");
 
@@ -67,6 +74,43 @@ public class Test {
         System.out.println(new ArrayList<>(subConfig.getKeys(false)));
 //        yamlToTagTest();
 //        checkUpdate();
+    }
+
+    public static double getNum(String str, int index) {
+        double result = 0D;
+        int isDecimal = 0;
+        forTag:
+        for (int i = index, length = str.length(); i < length; i++) {
+            val charAt = str.charAt(i);
+            switch (charAt) {
+                case '&':
+                case '§':
+                    i++;
+                    continue;
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                case '0':
+                    if (isDecimal == 0) {
+                        result = result * 10 + charAt - 48;
+                        continue;
+                    }
+                    result += (charAt - 48) * Math.pow(10, isDecimal--);
+                    continue;
+                case '.':
+                    isDecimal--;
+                    continue;
+                default:
+                    if (result != 0) break forTag;
+            }
+        }
+        return result;
     }
 
     public static YamlConfiguration loadYml(String path) throws IOException {
