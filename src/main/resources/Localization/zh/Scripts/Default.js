@@ -35,5 +35,5 @@ function itemScript(docker, args) {
 }
 
 function test() {
-    print("调用Global: " + globalFunc(globalValue) + " - " + Other.test())
+    print("调用Other-Global: " + Other.test() + " - " + globalFunc(globalValue))
 }
