@@ -34,6 +34,40 @@ function itemScript(docker, args) {
     return args[SXItem.getRandom().nextInt(args.length)];
 }
 
-function test() {
-    print("调用Other-Global: " + Other.test() + " - " + globalFunc(globalValue))
+function test1() {
+    return Utils.mutableList("TEST1", "123", "234", "345")
+}
+
+// ArrayList = Java.type("java.util.ArrayList")
+function test2() {
+    let list = new ArrayList()
+    list.add("TEST2")
+    list.add("ABC")
+    list.add("BCD")
+    list.add("CDE")
+    return list
+}
+
+function test3() {
+    return Arrays.asList("TEST3", "QAZ", "WSX", "EDC")
+}
+
+function test4() {
+    return new Array("TEST4", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11")
+}
+
+function test5() {
+    let result = [];
+    result[-1] = "TEST5"
+    result[-3] = "TEST5"
+    result[-2] = "TEST5"
+    result[0] = "TEST5"
+    result[2] = "SDF"
+    result[1] = "WER"
+    result[3] = "XCV"
+    return result
+}
+
+function test6() {
+    return ["TEST6", "ERT", "DFG", "CVB"]
 }

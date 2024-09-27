@@ -92,6 +92,7 @@ public class ScriptManager {
     private void initEngine() throws Exception {
         String engineName = Config.getConfig().getString(Config.SCRIPT_ENGINE, "js");
         if (engineName.isEmpty()) throw new NullPointerException("Scripts Disabled");
+        // nashorn 参数
         System.setProperty("nashorn.args", "--language=es6 -Dnashorn.args=--no-deprecation-warning");
         val engineManager = new ScriptEngineManager();
         engine = engineManager.getEngineByName(engineName);
@@ -112,15 +113,15 @@ public class ScriptManager {
         engine.setBindings(globalBindings, ScriptContext.GLOBAL_SCOPE);
         compilable = (Compilable) engine;
         invocable = (Invocable) engine;
-        loadGlobal(globalDirectory);
+        loadGlobalFile(globalDirectory);
         bindingsMap.put("Global", globalBindings);
     }
 
-    private void loadGlobal(File files) throws IOException, ScriptException {
+    private void loadGlobalFile(File files) throws IOException, ScriptException {
         for (File file : files.listFiles()) {
             if (file.getName().startsWith("NoLoad")) continue;
             if (file.isDirectory()) {
-                loadGlobal(file);
+                loadGlobalFile(file);
             } else {
                 try (val globalReader = new FileReader(file)) {
                     val globalScript = compilable.compile(globalReader);
@@ -164,6 +165,7 @@ public class ScriptManager {
      *
      * @return 脚本文件列表
      */
+    @Deprecated
     public List<String> getFileNames() {
         return new ArrayList<>(getScriptNames());
     }
@@ -194,7 +196,7 @@ public class ScriptManager {
      * @param scriptName   脚本名
      * @param functionName 方法名
      * @param args         参数
-     * @return script回参
+     * @return 基础类型 或 Bindings {{@link Map}}
      */
     public Object callFunction(String scriptName, String functionName, Object... args) throws Exception {
         if (!enabled) return null;
@@ -205,11 +207,16 @@ public class ScriptManager {
         }
 
         // bindings 解法+ 跳过setBindings处理
-        return invocable.invokeMethod(bindings, functionName, args);
+        return callFunction(bindings, functionName, args);
 
 //        // 之前写法 eval 后 invokeFunction
 //        compiled.eval();
 //        return invocable.invokeFunction(functionName, args);
+    }
+
+    public Object callFunction(Bindings bindings, String functionName, Object... args) throws Exception {
+        if (!enabled) return null;
+        return invocable.invokeMethod(bindings, functionName, args);
     }
 
     /**
