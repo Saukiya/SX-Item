@@ -33,7 +33,7 @@ public class ScriptManager {
 
     private final File rootDirectory;
 
-    private final File globalFile;
+    private final File globalDirectory;
 
     private ScriptEngine engine;
 
@@ -46,20 +46,15 @@ public class ScriptManager {
     @Getter
     private boolean enabled;
 
-    public ScriptManager(JavaPlugin plugin) {
-        this(plugin, "Global.js");
-    }
-
     /**
      * 初始化引擎模块 插件名会作为静态类调用
      *
      * @param plugin
-     * @param globalFileName
      */
-    public ScriptManager(JavaPlugin plugin, String globalFileName) {
+    public ScriptManager(JavaPlugin plugin) {
         this.plugin = plugin;
         this.rootDirectory = new File(plugin.getDataFolder(), "Scripts");
-        this.globalFile = new File(rootDirectory, globalFileName);
+        this.globalDirectory = new File(rootDirectory, "Global");
         val regex = Pattern.compile("\\..+$");
         getScriptName = file -> regex.matcher(file.getName()).replaceAll("");
         reload();
@@ -70,13 +65,13 @@ public class ScriptManager {
      */
     public void reload() {
 //        compiledScripts.clear();
+        bindingsMap.clear();
         try {
             if (!rootDirectory.exists()) {
                 plugin.getLogger().warning("Directory is not exists: " + rootDirectory.getName());
                 return;
             }
             initEngine();
-            enabled = true;
             loadScriptFile(rootDirectory);
         } catch (Exception e) {
             if (e instanceof NullPointerException) {
@@ -84,14 +79,10 @@ public class ScriptManager {
             } else {
                 plugin.getLogger().warning("Load scripts error: " + e.getMessage());
             }
-//            compiledScripts.clear();
             enabled = false;
             return;
         }
-        engine.getBindings(ScriptContext.ENGINE_SCOPE).forEach((k1, v1) -> {
-            plugin.getLogger().info(String.format("%-15s", "key-" + k1 + ":") + "\t" + v1.getClass().getCanonicalName());
-        });
-        bindingsMap.forEach((key, bindings) -> plugin.getLogger().info("\t" + key + ": " + String.join(",", bindings.keySet())));
+        enabled = true;
         plugin.getLogger().info("Loaded " + bindingsMap.size() + " Scripts");
     }
 
@@ -118,16 +109,26 @@ public class ScriptManager {
         globalBindings.put("Arrays", method.invoke(null, Arrays.class));
         globalBindings.put("Utils", method.invoke(null, Utils.class));
         globalBindings.put(plugin.getName().replaceAll("[^a-zA-Z]", ""), method.invoke(null, plugin.getClass()));
+        engine.setBindings(globalBindings, ScriptContext.GLOBAL_SCOPE);
         compilable = (Compilable) engine;
         invocable = (Invocable) engine;
-        try (val globalReader = new FileReader(globalFile)) {
-            val globalScript = compilable.compile(globalReader);
-            globalScript.eval(globalBindings);
-            engine.setBindings(globalBindings, ScriptContext.GLOBAL_SCOPE);
-            bindingsMap.put(getScriptName.apply(globalFile), globalBindings);
+        loadGlobal(globalDirectory);
+        bindingsMap.put("Global", globalBindings);
+    }
 
-//            compiledScripts.put(getScriptName.apply(globalFile), globalScript);
+    private void loadGlobal(File files) throws IOException, ScriptException {
+        for (File file : files.listFiles()) {
+            if (file.getName().startsWith("NoLoad")) continue;
+            if (file.isDirectory()) {
+                loadGlobal(file);
+            } else {
+                try (val globalReader = new FileReader(file)) {
+                    val globalScript = compilable.compile(globalReader);
+                    globalScript.eval(globalBindings);
+                }
+            }
         }
+
     }
 
     /**
@@ -136,9 +137,8 @@ public class ScriptManager {
      * @param files File
      */
     private void loadScriptFile(File files) throws IOException, ScriptException {
-        if (!enabled) return;
         for (File file : files.listFiles()) {
-            if (file.getName().startsWith("NoLoad") || file.equals(globalFile)) continue;
+            if (file.getName().startsWith("NoLoad") || file.equals(globalDirectory)) continue;
             if (file.isDirectory()) {
                 loadScriptFile(file);
             } else {
@@ -146,20 +146,13 @@ public class ScriptManager {
                 try (val reader = new FileReader(file)) {
                     CompiledScript compiled = compilable.compile(reader);
 
-//                    // 默认写法: 不需要eval
-
-//                    // content解法
-//                    val content = new SimpleScriptContext();
-//                    content.getBindings(ScriptContext.ENGINE_SCOPE).putAll(bindings);
-//                    compiled.eval(content);
-//                    contentMap.put(scriptName, content);
-
                     // binding解法
                     val bindings = engine.createBindings();
                     compiled.eval(bindings);
                     bindingsMap.put(scriptName, bindings);
                     globalBindings.put(scriptName, bindings);
 
+//                    // 之前写法 把compiled存起来, 执行的时候再eval
 //                    compiledScripts.put(scriptName, compiled);
                 }
             }
@@ -210,17 +203,13 @@ public class ScriptManager {
         if (bindings == null) {
             throw new Exception("Script not found: " + scriptName);
         }
-//        // 之前写法
+
+        // bindings 解法+ 跳过setBindings处理
+        return invocable.invokeMethod(bindings, functionName, args);
+
+//        // 之前写法 eval 后 invokeFunction
 //        compiled.eval();
-
-//        // content 解法
-//        engine.setContext(contentMap.get(scriptName));
-
-        // bindings 解法
-        engine.setBindings(bindings, ScriptContext.ENGINE_SCOPE);
-        
-        
-        return invocable.invokeFunction(functionName, args);
+//        return invocable.invokeFunction(functionName, args);
     }
 
     /**
