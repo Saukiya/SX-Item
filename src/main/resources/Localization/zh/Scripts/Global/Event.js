@@ -13,9 +13,9 @@ let createExecutor = function (eventFunction) {
 }
 
 /**
- * 注册Bukkit事件
+ * 注册指定的Bukkit事件
  *
- * @example 代码示例
+ * @example 代码示例 - 将代码放在函数外, 可以在加载/重载后直接调用
  * registerNormalEvent("org.bukkit.event.player.PlayerItemHeldEvent", function (event) {
  *     let player = event.getPlayer();
  *     SXItem.getInst().getLogger().info("JS-" + event.getEventName() + ": " + player.getName())

@@ -1,17 +1,15 @@
 /*global SXItem, Bukkit, Arrays, Utils*/
-/**
- * /si script Default testFunction
- * @param args 参数
- * @returns string
- */
-function testFunction(args) {
-    return args + " is " + (args != null)
-}
+
+// 
+
 
 /**
  * 指令: /si script Default testPlayer <玩家名> <参数>
+ * <p/>
+ * 所有参数里为在线的'玩家名', 则自动转成'玩家对象', 自动转化功能后续考虑是否砍掉或保留
  * @param player 玩家名
  * @param args 参数
+ * @see [Bukkit API](https://bukkit.windit.net/javadoc/org/bukkit/event/player/package-summary.html)
  */
 function testPlayer(player, args) {
     if (player != null) {
@@ -23,8 +21,8 @@ function testPlayer(player, args) {
 
 /**
  * 物品内随机<j:Default.itemScript#QAQ,QWQ>是这个格式
- * @param docker 固定参数，具体参考RandomDocker.java
- * @param args 输入字符串数组, 在线的'玩家名'自动转成'玩家对象', 自动转化功能后续考虑是否砍掉或保留
+ * @param docker JS随机当前的RandomDocker，具体参考 [RandomDocker](https://github.com/Saukiya/SX-Item/blob/master/src/main/java/github/saukiya/sxitem/data/random/RandomDocker)
+ * @param args JS随机所带的字符串数组 例如['QAQ', 'QWQ']
  * @returns string
  */
 function itemScript(docker, args) {
@@ -34,40 +32,33 @@ function itemScript(docker, args) {
     return args[SXItem.getRandom().nextInt(args.length)];
 }
 
-function test1() {
-    return Utils.mutableList("TEST1", "123", "234", "345")
-}
+// 代码示例
+//
+// 可实现列表方法
+// function newList1() {
+//     return new Array("TEST4", "WER", "SDF", "SCV");
+// }
+//
+// function newList2() {
+//     return Arrays.asList("TEST3", "QAZ", "WSX", "EDC");
+// }
+//
+// function newList3() {
+//     return ["TEST6", "ERT", "DFG", "CVB"];
+// }
+//
+// // ArrayList 在 Global.js文件夹中声明, 但是不推荐使用, 尽可能调用js自有函数, 尽量减少与java之间的交互.
+// function newList4() {
+//     let list = new ArrayList();
+//     list.add("TEST2");
+//     list.add("ABC");
+//     list.add("BCD");
+//     list.add("CDE");
+//     return list
+// }
 
-// ArrayList = Java.type("java.util.ArrayList")
-function test2() {
-    let list = new ArrayList()
-    list.add("TEST2")
-    list.add("ABC")
-    list.add("BCD")
-    list.add("CDE")
-    return list
-}
-
-function test3() {
-    return Arrays.asList("TEST3", "QAZ", "WSX", "EDC")
-}
-
-function test4() {
-    return new Array("TEST4", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11")
-}
-
-function test5() {
-    let result = [];
-    result[-1] = "TEST5"
-    result[-3] = "TEST5"
-    result[-2] = "TEST5"
-    result[0] = "TEST5"
-    result[2] = "SDF"
-    result[1] = "WER"
-    result[3] = "XCV"
-    return result
-}
-
-function test6() {
-    return ["TEST6", "ERT", "DFG", "CVB"]
-}
+// 脚本加载后 注册Bukkit事件 具体查阅Event.js
+// registerNormalEvent("org.bukkit.event.player.PlayerItemHeldEvent", function (event) {
+//     let player = event.getPlayer();
+//     SXItem.getInst().getLogger().info("JS-" + event.getEventName() + ": " + player.getName())
+// });
