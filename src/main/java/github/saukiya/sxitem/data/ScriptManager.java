@@ -7,6 +7,8 @@ import lombok.val;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.script.*;
@@ -19,7 +21,7 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class ScriptManager {
+public class ScriptManager implements Listener {
 
     private static final Random random = new Random();
 
@@ -64,6 +66,7 @@ public class ScriptManager {
      * 重新加载
      */
     public void reload() {
+        HandlerList.unregisterAll(this);
 //        compiledScripts.clear();
         bindingsMap.clear();
         try {
@@ -106,6 +109,7 @@ public class ScriptManager {
                 "jdk.internal.dynalink.beans.StaticClass" :
                 "jdk.dynalink.beans.StaticClass");
         Method method = clazz.getMethod("forClass", Class.class);
+        globalBindings.put("listener", this);
         globalBindings.put("Bukkit", method.invoke(null, Bukkit.class));
         globalBindings.put("Arrays", method.invoke(null, Arrays.class));
         globalBindings.put("Utils", method.invoke(null, Utils.class));
