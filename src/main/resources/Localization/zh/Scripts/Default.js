@@ -6,10 +6,10 @@
 /**
  * 指令: /si script Default testPlayer <玩家名> <参数>
  * <p/>
- * 所有参数里为在线的'玩家名', 则自动转成'玩家对象', 自动转化功能后续考虑是否砍掉或保留
+ * 所有参数里为在线的'玩家名', 则自动转成'玩家对象'
  * @param player 玩家名
  * @param args 参数
- * @see [Bukkit API](https://bukkit.windit.net/javadoc/org/bukkit/event/player/package-summary.html)
+ * @see [Player](https://bukkit.windit.net/javadoc/org/bukkit/entity/Player.html)
  */
 function testPlayer(player, args) {
     if (player != null) {
@@ -20,8 +20,8 @@ function testPlayer(player, args) {
 }
 
 /**
- * 物品内随机<j:Default.itemScript#QAQ,QWQ>是这个格式
- * @param docker JS随机当前的RandomDocker，具体参考 [RandomDocker](https://github.com/Saukiya/SX-Item/blob/master/src/main/java/github/saukiya/sxitem/data/random/RandomDocker)
+ * JS随机格式: <j:Default.itemScript#QAQ,QWQ>
+ * @param docker JS随机当前的RandomDocker，具体参考 [RandomDocker](https://github.com/Saukiya/SX-Item/blob/master/src/main/java/github/saukiya/sxitem/data/random/RandomDocker.java)
  * @param args JS随机所带的字符串数组 例如['QAQ', 'QWQ']
  * @returns string
  */
@@ -31,6 +31,12 @@ function itemScript(docker, args) {
     }
     return args[SXItem.getRandom().nextInt(args.length)];
 }
+
+// 脚本加载后 注册Bukkit事件 具体查阅Event.js
+// registerNormalEvent("org.bukkit.event.player.PlayerItemHeldEvent", function (event) {
+//     let player = event.getPlayer();
+//     SXItem.getInst().getLogger().info("JS-" + event.getEventName() + ": " + player.getName())
+// });
 
 // 代码示例
 //
@@ -56,9 +62,3 @@ function itemScript(docker, args) {
 //     list.add("CDE");
 //     return list
 // }
-
-// 脚本加载后 注册Bukkit事件 具体查阅Event.js
-// registerNormalEvent("org.bukkit.event.player.PlayerItemHeldEvent", function (event) {
-//     let player = event.getPlayer();
-//     SXItem.getInst().getLogger().info("JS-" + event.getEventName() + ": " + player.getName())
-// });

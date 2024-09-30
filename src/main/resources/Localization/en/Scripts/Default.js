@@ -1,17 +1,12 @@
 /*global SXItem, Bukkit, Arrays, Utils*/
-/**
- * /si script Default testFunction
- * @param args
- * @returns string
- */
-function testFunction(args) {
-    return args + " is " + (args != null);
-}
 
 /**
- * /si script Default testPlayer <player> <args>
+ * Command: /si script Default testPlayer <player> <args>
+ * <p/>
+ * If all parameters are online 'player name', it will be automatically converted to 'player object',
  * @param player playerName
  * @param args args
+ * @see [Player](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/Player.html)
  */
 function testPlayer(player, args) {
     if (player != null) {
@@ -22,12 +17,43 @@ function testPlayer(player, args) {
 }
 
 /**
- * item random <j:Default.itemScript#QAQ,QWQ> is in this format
- * @param docker fixed parameter. For more information, see RandomDocker.java
- * @param args array of input strings. The online "playerName" is automatically converted to "Player".
+ * JS random format: <j:Default.itemScript#QAQ,QWQ>
+ * @param docker JS random current RandomDocker, specific reference [RandomDocker](https://github.com/Saukiya/SX-Item/blob/master/src/main/java/github/saukiya/sxitem/data/random/RandomDocker.java)
+ * @param args JS random string array such as ['QAQ', 'QWQ']
  * @returns string
  */
 function itemScript(docker, args) {
     docker.getPlayer().sendMessage("Send parameters to players: " + args[0] + args[1]);
     return args[SXItem.getRandom().nextInt(args.length)];
 }
+
+// After the script is loaded, register the Bukkit event. See Event.js for details.
+// registerNormalEvent("org.bukkit.event.player.PlayerItemHeldEvent", function (event) {
+//     let player = event.getPlayer();
+//     SXItem.getInst().getLogger().info("JS-" + event.getEventName() + ": " + player.getName())
+// });
+
+// Code Sample
+//
+// List methods can be implemented
+// function newList1() {
+//     return new Array("TEST4", "WER", "SDF", "SCV");
+// }
+//
+// function newList2() {
+//     return Arrays.asList("TEST3", "QAZ", "WSX", "EDC");
+// }
+//
+// function newList3() {
+//     return ["TEST6", "ERT", "DFG", "CVB"];
+// }
+//
+// // The ArrayList is declared in the Global.js folder, but it is not recommend to use, to minimize the interaction with Java.
+// function newList4() {
+//     let list = new ArrayList();
+//     list.add("TEST2");
+//     list.add("ABC");
+//     list.add("BCD");
+//     list.add("CDE");
+//     return list
+// }
