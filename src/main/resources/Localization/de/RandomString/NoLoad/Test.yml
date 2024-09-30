@@ -1,0 +1,6 @@
+Test:
+  - 'Unterstützt das Laden von Unterordnern'
+  - 'Dateien/Ordner mit dem Präfix "NoLoad" werden nicht geladen'
+  - ''
+  - 'Die Standardkonfigurationsdateien werden beibehalten'
+  - 'unnötige Dateien können durch Löschen des Inhalts entfernt werden'

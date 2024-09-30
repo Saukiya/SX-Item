@@ -101,32 +101,6 @@ Attribute2:
   - Thunder Probability
   - ArmorBreak Probability
   - Tear probability
-DefaultLore:
-  - '&7&oForged in a dying star, this blade burns with fury.'
-  - '&7&oInfused with dragon essence, its power is majestic and terrifying.'
-  - '&7&oCursed by a fallen deity, this weapon thirsts for souls.'
-  - '&7&oBlessed by celestial light, it banishes darkness.'
-DefaultPrefix:
-  - '&cAncient ◆'
-  - '&cMystic ◆'
-  - '&eEnchanted ◆'
-  - '&eCursed ◆'
-  - '&eDivine ◆'
-  - '&eShadow ◆'
-  - '&eInfernal ◆'
-  - '&eCelestial ◆'
-  - '&eVengeful ◆'
-  - '&eEternal ◆'
-DefaultName:
-  - '&eShadowbane'
-  - '&eStormbringer'
-  - '&eFrostbite'
-  - '&eDoomcaller'
-  - '&eLight’s Wrath'
-  - '&eNightfall'
-  - '&eSoulreaper'
-  - '&eThunderstrike'
-  - '&eBloodmoon'
 OrdinaryGemSlot: '&a&l『&7GemSlot&a&l』'
 ExcellentGemSlot: '&a&l『&7GemSlot&a&l』&a&l『&7GemSlot&a&l』'
 EpicGemSlot: '&a&l『&7GemSlot&a&l』&a&l『&7GemSlot&a&l』&a&l『&7GemSlot&a&l』'

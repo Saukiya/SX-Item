@@ -1,27 +1,28 @@
 GIVE:
-  NO_ITEM: '&8[SX-Item] &cThe item does not exist'
-  GIVE_ITEM: '&8[SX-Item] &cGiven &6{0} &a{1}&c pieces of &6{2}&c item'
-  GIVE_ITEM_ERROR: '&8[&4SX-Item&8] &4Dropped &6{0}&4 item due to full inventory'
+  NO_ITEM: '&8[SX-Item] &cGegenstand existiert nicht'
+  GIVE_ITEM: '&8[SX-Item] &cGibt &6{0} &a{1}&c Stück &6{2}&c Gegenstand'
+  GIVE_ITEM_ERROR: '&8[&4SX-Item&8] &4Inventar ist voll, daher konnte der Gegenstand &6{0}&4 nicht erhalten werden'
 SAVE:
-  HAS_ITEM: '&8[SX-Item] &aItem ID &6{0} &aalready exists'
-  SAVE_ITEM: '&8[SX-Item] &aItem ID &6{0} &asuccessfully saved'
-  SAVE_NO_TYPE: '&8[SX-Item] &cFailed to save item ID &4{0}&c, please check if the generator exists and supports saving items'
-  SAVE_ITEM_ERROR: '&8[SX-Item] &cUnpredictable error occurred while saving item &4{0}'
+  HAS_ITEM: '&8[SX-Item] &aGegenstand-ID &6{0} &aexistiert bereits'
+  SAVE_ITEM: '&8[SX-Item] &aGegenstand-ID &6{0} &awurde erfolgreich gespeichert'
+  SAVE_NO_TYPE: '&8[SX-Item] &cGegenstand-ID &4{0} &cspeichern fehlgeschlagen, bitte prüfen, ob dieser Generator existiert und das Speichern unterstützt'
+  SAVE_ITEM_ERROR: '&8[SX-Item] &cUnvorhergesehener Fehler beim Speichern des Gegenstands &4{0}&c'
 NBT:
-  CLICK_COPY: 'Click to copy'
+  CLICK_COPY: 'Klicken zum Kopieren'
 SCRIPT:
-  NULL_FILE: 'Script file not found: {0}'
-  INVOKE_RESULT: 'Script invocation callback: {0}, Callback type: {1}'
-  INVOKE_FAIL: 'Script invocation failed: {0}'
+  NULL_FILE: 'Skriptdatei nicht gefunden: {0}'
+  INVOKE_RESULT: 'Skriptaufruf Ergebnis: {0}, Rückgabetyp: {1}'
+  INVOKE_FAIL: 'Skriptaufruf fehlgeschlagen: {0}'
 ADMIN:
-  NO_PERMISSION_CMD: '&8[&cError&8] &cYou do not have permission to execute this command'
-  NO_CMD: '&8[&cError&8] &cSubcommand not found:{0}'
-  NO_FORMAT: '&8[&cError&8] &cFormat error'
-  NO_ONLINE: '&8[&cError&8] &cPlayer not online or player does not exist'
-  PLUGIN_RELOAD: '&8[SX-Item] §cPlugin reloaded'
+  NO_PERMISSION_CMD: '&8[&cFehler&8] &cDu hast keine Berechtigung, diesen Befehl auszuführen'
+  NO_CMD: '&8[&cFehler&8] &cUnterbefehl nicht gefunden'
+  NO_FORMAT: '&8[&cFehler&8] &cFormatfehler'
+  NO_ONLINE: '&8[&cFehler&8] &cSpieler ist nicht online oder existiert nicht'
+  PLUGIN_RELOAD: '&8[SX-Item] §cPlugin wurde neu geladen'
 COMMAND:
-  GIVE: Give an item to a player
-  SAVE: Save the current item to the configuration file
-  NBT: View and modify item NBT data
-  SCRIPT: Invoke a script function
-  RELOAD: Reload the configuration of this plugin
+  GIVE: 'Gibt dem Spieler einen Gegenstand'
+  SAVE: 'Speichert den aktuellen Gegenstand in der Konfigurationsdatei'
+  NBT: 'Zeigt und bearbeitet die NBT-Daten eines Gegenstands'
+  COMPONENT: 'Zeigt und bearbeitet die Komponenten-Daten eines Gegenstands'
+  SCRIPT: 'Ruft Skript-Funktionen auf'
+  RELOAD: 'Lädt die Konfiguration dieses Plugins neu'

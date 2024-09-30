@@ -280,7 +280,6 @@ Default-6:
 Default-7:
   ID: <l:ID#POTION:SPLASH_POTION:LINGERING_POTION>
   Lore: [ "&c药水目前只实现了1.11.1及以上的版本" ]
-  #  Potion: <s:WATER:POTION:JUMP> 不要再使用这个模式
   Potion:
     ABSORPTION: &PotionData
       duration: <c:int 20 * <i:1_10> * <s:<l:ID>>>
@@ -353,7 +352,6 @@ Component-1:
     minecraft:lore:
       - '{"text":"§aHello World lores"}'
       - '{"text":"§bThis is the second line"}'
-      - '{"text":"§c这是第三行lore"}'
       - '{"text":"§e§l这个物品可以吃"}'
       - '{"text":"§e§l这个物品可以采集石头"}'
       - '{"text":"§a§l这个物品可以堆叠99个"}'
