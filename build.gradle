@@ -107,7 +107,7 @@ shadowJar {
     }
 }
 
-['en', 'zh'].each { lang ->
+['de', 'en', 'zh'].each { lang ->
     // 要在shadowJar之前处理资源文件
     tasks.register("processResources($lang)", Copy) {
         dependsOn shadowJar

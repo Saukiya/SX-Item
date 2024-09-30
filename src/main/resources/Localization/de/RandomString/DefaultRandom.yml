@@ -1,61 +1,61 @@
-Quality:
-  - Ordinary
-  - Ordinary
-  - Ordinary
-  - Ordinary
-  - Ordinary
-  - Ordinary
-  - Ordinary
-  - Excellent
-  - Excellent
-  - Epic
-Occupation:
-  - Shooter
-  - Warrior
-  - Swordsman
-Texture: '&0<i:1_11>'
-OrdinaryBase: <d:1_1.1>
-ExcellentBase: <d:1.3_1.4>
-EpicBase: <d:1.7_1.8>
-ShooterID: '261'
-WarriorID: <s:Warrior<l:Quality>ID>
-SwordsmanID: <s:Swordsman<l:Quality>ID>
-OrdinaryJudgment: # 75% Probability Delete this row
+Qualität:
+  - Gewöhnlich
+  - Gewöhnlich
+  - Gewöhnlich
+  - Gewöhnlich
+  - Gewöhnlich
+  - Gewöhnlich
+  - Gewöhnlich
+  - Hervorragend
+  - Hervorragend
+  - Episch
+Beruf:
+  - Schütze
+  - Krieger
+  - Schwertkämpfer
+Textur: '&0<i:1_11>'
+GewöhnlichBasis: <d:1_1.1>
+HervorragendBasis: <d:1.3_1.4>
+EpischBasis: <d:1.7_1.8>
+SchützeID: '261'
+KriegerID: <s:Krieger<l:Qualität>ID>
+SchwertkämpferID: <s:Schwertkämpfer<l:Qualität>ID>
+GewöhnlichEntscheidung: # 75% Zeile mit Wahrscheinlichkeit löschen
   - '%DeleteLore%'
   - '%DeleteLore%'
   - '%DeleteLore%'
   - ''
-ExcellentJudgment: # 50% Probability Delete this row
+HervorragendEntscheidung: # 50% Zeile mit Wahrscheinlichkeit löschen
   - '%DeleteLore%'
   - ''
-EpicJudgment: # 25% Probability Delete this row
+EpischEntscheidung: # 25% Zeile mit Wahrscheinlichkeit löschen
   - '%DeleteLore%'
   - ''
   - ''
   - ''
-WarriorOrdinaryID: '258'
-WarriorExcellentID: '286'
-WarriorEpicID: '279'
-SwordsmanOrdinaryID: '267'
-SwordsmanExcellentID: '283'
-SwordsmanEpicID: '276'
-OrdinaryNmColor: '&7'
-ExcellentNmColor: '&a'
-EpicNmColor: '&5'
-OrdinaryAttrColor:
-  - <s:UnderColor>
-  - <s:UnderColor>
-  - <s:UnderColor>
-  - <s:HighColor>
-ExcellentAttrColor:
-  - <s:UnderColor>
-  - <s:HighColor>
-EpicAttrColor:
-  - <s:UnderColor>
-  - <s:HighColor>
-  - <s:HighColor>
-  - <s:HighColor>
-HighColor:
+KriegerGewöhnlichID: '258'
+KriegerHervorragendID: '286'
+KriegerEpischID: '279'
+SchwertkämpferGewöhnlichID: '267'
+SchwertkämpferHervorragendID: '283'
+SchwertkämpferEpischID: '276'
+GewöhnlichColor: '&7'
+HervorragendColor: '&a'
+EpischColor: '&5'
+GewöhnlichFarbe:
+  - <s:Unterfarbe>
+  - <s:Unterfarbe>
+  - <s:Unterfarbe>
+  - <s:Hochfarbe>
+HervorragendFarbe:
+  - <s:Unterfarbe>
+  - <s:Hochfarbe>
+EpischFarbe:
+  - <s:Unterfarbe>
+  - <s:Hochfarbe>
+  - <s:Hochfarbe>
+  - <s:Hochfarbe>
+Hochfarbe:
   - '&a'
   - '&b'
   - '&c'
@@ -64,69 +64,81 @@ HighColor:
   - '&1'
   - '&3'
   - '&9'
-UnderColor:
+Unterfarbe:
   - '&1'
   - '&8'
   - '&7'
   - '&5'
   - '&3'
   - '&2'
-ShooterEnchant:
+SchützeVerzauberung:
   - - ARROW_DAMAGE:<r:0_2>
     - ARROW_INFINITE:<r:0_1>
   - - ARROW_DAMAGE:<r:0_2>
     - ARROW_FIRE:<r:0_2>
   - - ARROW_DAMAGE:<r:0_2>
     - DURABILITY:<r:0_1>
-WarriorEnchant:
+KriegerVerzauberung:
   - - DAMAGE_ALL:<r:0_2>
     - FIRE_ASPECT:<r:0_1>
   - - DAMAGE_ARTHROPODS:<r:0_2>
     - KNOCKBACK:<r:0_1>
   - - DAMAGE_UNDEAD:<r:0_2>
     - LOOT_BONUS_MOBS:<r:0_1>
-SwordsmanEnchant:
+SchwertkämpferVerzauberung:
   - - DAMAGE_ALL:<r:0_2>
     - FIRE_ASPECT:<r:0_1>
   - - DAMAGE_ALL:<r:0_2>
     - KNOCKBACK:<r:0_1>
   - - DAMAGE_ALL:<r:0_2>
     - LOOT_BONUS_MOBS:<r:0_1>
-Attribute1:
-  - Hit Probability
-  - Blind Probability
-  - Slow Probability
-  - Wither Probability
-Attribute2:
-  - Thunder Probability
-  - ArmorBreak Probability
-  - Tear probability
-DefaultLore:
-  - '&7&oForged in a dying star, this blade burns with fury.'
-  - '&7&oInfused with dragon essence, its power is majestic and terrifying.'
-  - '&7&oCursed by a fallen deity, this weapon thirsts for souls.'
-  - '&7&oBlessed by celestial light, it banishes darkness.'
-DefaultPrefix:
-  - '&cAncient ◆'
-  - '&cMystic ◆'
-  - '&eEnchanted ◆'
-  - '&eCursed ◆'
-  - '&eDivine ◆'
-  - '&eShadow ◆'
-  - '&eInfernal ◆'
-  - '&eCelestial ◆'
-  - '&eVengeful ◆'
-  - '&eEternal ◆'
-DefaultName:
-  - '&eShadowbane'
-  - '&eStormbringer'
-  - '&eFrostbite'
-  - '&eDoomcaller'
-  - '&eLight’s Wrath'
-  - '&eNightfall'
-  - '&eSoulreaper'
-  - '&eThunderstrike'
-  - '&eBloodmoon'
-OrdinaryGemSlot: '&a&l『&7GemSlot&a&l』'
-ExcellentGemSlot: '&a&l『&7GemSlot&a&l』&a&l『&7GemSlot&a&l』'
-EpicGemSlot: '&a&l『&7GemSlot&a&l』&a&l『&7GemSlot&a&l』&a&l『&7GemSlot&a&l』'
+Attribut-1:
+  - Trefferchance
+  - Blendungschance
+  - Verlangsamungschance
+  - Verwelkungschance
+Attribut-2:
+  - Blitzchance
+  - Durchbruchchance
+  - Zerreißchance
+Standard-Lore:
+  - '&7&oGeschmiedet in einem sterbenden Stern,\n brennt diese Klinge vor Wut.'
+  - '&7&oDurchdrungen von Drachenessenz,\n ist ihre Macht majestätisch und furchterregend.'
+  - '&7&oVerflucht von einer gefallenen Gottheit,\n dürstet diese Waffe nach Seelen.'
+  - '&7&oGesegnet vom himmlischen Licht,\n vertreibt sie die Dunkelheit.'
+Standardpräfix:
+  - '&cAntik ◆'
+  - '&cMystisch ◆'
+  - '&eVerzaubert ◆'
+  - '&eVerflucht ◆'
+  - '&eGöttlich ◆'
+  - '&eSchatten ◆'
+  - '&eInfernalisch ◆'
+  - '&eHimmlisch ◆'
+  - '&eRachsüchtig ◆'
+  - '&eEwig ◆'
+Standard-Name:
+  - '&eSchattenbann'
+  - '&eSturmbringer'
+  - '&eFrostbeiß'
+  - '&eUnheilsrufer'
+  - '&eZorn des Lichts'
+  - '&eNachtfall'
+  - '&eSeelenernter'
+  - '&eDonnerschlag'
+  - '&eBlutmond'
+GewöhnlichEdelsteinloch: '&a&l『&7Edelsteinloch&a&l』'
+HervorragendEdelsteinloch: '&a&l『&7Edelsteinloch&a&l』&a&l『&7Edelsteinloch&a&l』'
+EpischEdelsteinloch: '&a&l『&7Edelsteinloch&a&l』&a&l『&7Edelsteinloch&a&l』&a&l『&7Edelsteinloch&a&l』'
+
+Angriff1-10:
+  - - '<s:<l:Qualität>Farbe>KritischeTrefferchance: +<c:<r:20_30> * <s:<l:Qualität>Basis>>%'
+    - '<s:<l:Qualität>Farbe>KritischerSchaden: +<c:<r:20_30> * <s:<l:Qualität>Basis>>%'
+  - - '<s:<l:Qualität>Farbe>Angriffsgeschwindigkeit: +<c:<r:20_30> * <s:<l:Qualität>Basis>>%'
+    - '<s:<l:Qualität>Farbe>Feuerwahrscheinlichkeit: +<c:<r:20_30> * <s:<l:Qualität>Basis>>%'
+  - - '<s:<l:Qualität>Farbe>Lebensraubchance: +<c:<r:20_30> * <s:<l:Qualität>Basis>>%'
+    - '<s:<l:Qualität>Farbe>Lebensraubmultiplikator: +<c:<r:20_30> * <s:<l:Qualität>Basis>>%'
+Angriff2-10:
+  - '<s:<l:Qualität>Entscheidung><s:<l:Qualität>Farbe><s:Attribut-1>: +<c:<d:8_9> * <s:<l:Qualität>Basis>>%'
+Angriff3-10:
+  - '<s:<l:Qualität>Entscheidung><s:<l:Qualität>Farbe><s:Attribut-2>: +<c:<d:4_5> * <s:<l:Qualität>Basis>>%'

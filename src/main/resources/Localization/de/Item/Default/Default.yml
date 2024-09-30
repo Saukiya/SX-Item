@@ -1,50 +1,52 @@
 #
 ##################################################################
-##                        Default类型参数                        ##
+##                           Standard                           ##
 ##################################################################
 #
-#物品名称 Name [Type:String] (支持随机)
+#Name Name [Type:String] (Unterstützung zufällig)
 #
-#物品材质 ID [Type:String] (支持随机)
-# 格式-1:
+#Material ID [Type:String] (Unterstützung zufällig)
+# Beschreibung: 你可以使用老版数字Id, 也可以使用英文ID
+# Format-1:
 # - 276
-# 格式-2: 267
+# Format-2: 267
 #
-#物品耐久 Durability [Type:String] (支持随机)
-# 格式-1: 20    原版耐久，"20" 相当于 "该物品耐久只剩(该材质最大耐久-20)"
-# 格式-2: <20   反算耐久，"<20" 效果是 "该物品耐久只剩20"
-# 格式-3: 20%   百分比耐久，与耐久条相同
+#Haltbarkeit Durability [Type:String] (Unterstützung zufällig)
+# Format-1: 20    原版耐久，"20" 相当于 "该物品耐久只剩(该材质最大耐久-20)"
+# Format-2: <20   反算耐久，"<20" 效果是 "该物品耐久只剩20"
+# Format-3: 20%   百分比耐久，与耐久条相同
 # 也可以在ID节点下编写->
 # ID:
-# - 276:Durability格式
+# - 276:DurabilityFormat
 #
-#物品数量 Amount [Type:String] (支持随机)
+#Anzahl Amount [Type:String] (Unterstützung zufällig)
 #
-#物品描述 Lore [Type:List] (支持随机)
-# 格式:
+#Beschreibung Lore [Type:List] (Unterstützung zufällig)
+# Beschreibung: 您可以使用 /n 换行符
+# Format:
 # - "..."
 #
-#Enchant列表 EnchantList [Type:List] (支持随机)
-# 格式:
-# - "Enchant名称:Level"
-# 参考WIKI: https://minecraft.fandom.com/zh/wiki/%E9%99%84%E9%AD%94
-# 参考API:  https://hub.spigotmc.org/javadocs/spigot/org/bukkit/enchantments/Enchantment.html
+#Verzauberungsliste EnchantList [Type:List] (Unterstützung zufällig)
+# Format:
+# - "Verzauberung-Name:等级"
+# WIKI: https://de.minecraft.wiki/w/Verzauberung#Verzauberungen
+# API:  https://hub.spigotmc.org/javadocs/spigot/org/bukkit/enchantments/Enchantment.html
 #
-#隐藏选项 ItemFlagList [Type:List]
-# 描述: 用于隐藏属性、Enchant、无限耐久、药水效果、染色等信息
-# 格式:
+#Versteckte-Optionen ItemFlagList [Type:List]
+# Beschreibung: 用于隐藏属性、Verzauberung、无限耐久、药水效果、染色等信息
+# Format:
 # - "HIDE_ENCHANTS"
 # - "HIDE_ATTRIBUTES"
 # - "HIDE_UNBREAKABLE"
 # - "HIDE_POTION_EFFECTS"
-# 参考API: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemFlag.html
+# API: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemFlag.html
 #
-#物品染色 NmColor [Type:String] (支持随机)
-# 描述: 可以对该物品染色 (仅限皮革防具) ，需要用十六进制AttrColor码 (不需要带#)
-# 格式: "000000"
+#Gegenstand-färben Color [Type:String] (Unterstützung zufällig)
+# Beschreibung: 可以对该物品染色 (仅限皮革防具) ，需要用十六进制Farbe码 (不需要带#)
+# Format: "000000"
 #
-#物品属性 Attributes [Type:List] (支持随机)
-# 格式:
+#Attribut Attributes [Type:List] (Unterstützung zufällig)
+# Format:
 # - "属性名:数字:模式:生效位置"    # 生效当前位置, 高版本推荐使用
 # - "属性名:数字:模式"           # 生效所有位置
 # 属性名:
@@ -72,22 +74,22 @@
 #   CHEST     身
 #   LEGS      腿
 #   FEET      脚
-# 参考WIKI: https://minecraft.fandom.com/zh/wiki/%E5%B1%9E%E6%80%A7?variant=zh-cn
-# 参考API:  https://hub.spigotmc.org/javadocs/spigot/org/bukkit/attribute/package-summary.html
+# WIKI: https://de.minecraft.wiki/w/Attribut
+# API:  https://hub.spigotmc.org/javadocs/spigot/org/bukkit/attribute/package-summary.html
 #
-#自定义材质ID CustomModelData: 1000
+#Benutzerdefinierte Material-ID CustomModelData: 1000
 #
-#药水系统 Potion [Type:Map-?] (部分随机)
-# 说明: 药水类型/duration/amplifier支持随机, ambient/particles/icon默认值为ture
+#Trank Potion [Type:Map-?] (部分随机)
+# 说明: 药水类型/duration/amplifierUnterstützung zufällig, ambient/particles/icon默认值为ture
 #      默认和自定义我觉得没有同时存在的必要, 所以是二选一, 药水效果填错只会不生效
-# 格式-1:       默认药水参数
+# Format-1:       默认药水参数
 #   Potion: 药水类型
 #   Potion: <s:JUMP:ABSORPTION>
-# 格式-2:       自定义药水
+# Format-2:       自定义药水
 #   Potion:
-#     药水类型:
-#       持续时间(duration): 20=1秒
-#       效果Level(amplifier): 1
+#     Statuseffekt-ID:
+#       Wirkdauer(duration): 20 # 20=1秒
+#       Stärkestufe(amplifier): 1
 #       氛围(ambient): true
 #       粒子特效(particles): true
 #       是否显示图标(icon): true
@@ -96,128 +98,134 @@
 #       duration: <c:20 * <i:10_20>>
 #       amplifier: <i:1_2>
 #
-# 参考API: https://bukkit.windit.net/javadoc/org/bukkit/potion/PotionEffectType.html
+# WIKI: https://de.minecraft.wiki/w/Statuseffekt#Liste_der_Statuseffekte
+# API: https://bukkit.windit.net/javadoc/org/bukkit/potion/PotionEffectType.html
 #
-#物品标签 NBT [Type:Map-?] (支持随机)
-# 描述: 自由的将NBT节点下的配置信息设置到物品NBT中，可输入/si nbt查看
+#Gegenstandsetikett NBT [Type:Map-?] (Unterstützung zufällig)
+# Beschreibung: 自由的将NBT节点下的配置信息设置到物品NBT中，可输入/si nbt查看
 #
-#清除属性 ClearAttribute [Type:Boolean]
-# 描述: 让物品失去原有的默认属性 (代码实现为: ItemFlag.HIDE_ATTRIBUTE + Attributes.GENERIC_ATTACK_DAMAGE:0:0)
+#Gegenstandsdaten: Components [Type:Map]
+# Beschreibung: 高度自定义物品 仅1.20.6+支持 (插件为1.21.1+)
+# Format:
+#   minecraft:item_name: '默认名称(无法被铁砧修改)'
+# WIKI: https://de.minecraft.wiki/w/Gegenstandsdaten
 #
-#保护标签 ProtectNBT [Type:List]
-# 描述: 自动更新时保护以下NBT不被更改，可输入/si nbt查看
-# 格式:
-# - "Enchantments" 保护Enchant词条不被自动更新
-# - "!protect.data" 解除在全局保护[Config.yml]中的词条
+#Attribute-löschen ClearAttribute [Type:Boolean]
+# Beschreibung: 让物品失去原有的默认属性
 #
-#局部随机 Random [Type:Map-?]
-# 描述: 设置物品的局部随机变量
-# 格式: 与RandomString文件夹下的格式一样
+#Schutzetikett ProtectNBT [Type:List]
+# Beschreibung: 自动更新时保护以下NBT不被更改，可输入/si nbt查看
+# Format:
+# - "Enchantments" # 保护Verzauberung词条不被自动更新
+# - "!protect.data" # 解除在全局保护[Config.yml]中的词条
 #
-#自动更新 Update [Type:Boolean]
-# 描述: 会自动更新该物品 (注意，随机文本除了<l:>以外也会重新生成)
+#Lokale-Zufälligkeit Random [Type:Map-?]
+# Beschreibung: 设置物品的局部随机变量
+# Format: 与RandomString文件夹下的Format一样
+#
+#Automatische-Aktualisierung Update [Type:Boolean]
+# Beschreibung: 会自动更新该物品 (会保留<l:>原本的值)
 #
 
 Default-1:
-  Name: <l:DefaultPrefix> <l:DefaultName> <l:<l:Quality>NmColor><l:Quality>
-  ID: <l:<l:Occupation>ID>
+  Name: <l:Standardpräfix> <l:Standard-Name> <l:<l:Qualität>Color><l:Qualität>
+  ID: <l:<l:Beruf>ID>
   Lore:
-    - '&6QualityLevel: <l:<l:Quality>NmColor><l:Quality>'
-    - '<b:<l:Quality>:Excellent:Epic>&6LimitOccupation: <l:Occupation>'
-    - '&6ItemType: MainWeapon'
-    - '&6LimitLevel: <c:int 10 * <s:<l:Quality>Base>> Level'
-    - '&cAttack: +<l:Attack>'
-    - '<l:ATK1-10>'
-    - '<l:ATK2-10>'
-    - '<l:ATK3-10>'
-    - '<l:Texture>'
-    - '<s:<l:Quality>GemSlot>'
-    #   - '&7Durability: <c:int <r:300_350> * <s:<l:Quality>Base>>/<c:int 400 * <s:<l:Quality>Base>>'
-    - '&7Durability: <c:int <d:0.6_0.9> * <l:Durability>>/<l:Durability>'
-    - '<b:<l:Quality>:Epic>&cBound'
-    - '&aExpiryTime: <t:10m>'
-    #   - '&aExpiryTime: <t:600>'
-    - '<b:<l:Quality>:Excellent:Epic>                                    '
-    - '<b:<l:Quality>:Excellent:Epic><s:DefaultLore>'
+    - '&6Qualitätsstufe: <l:<l:Qualität>Color><l:Qualität>'
+    - '<b:<l:Qualität>:Hervorragend:Episch>&6Berufsbeschränkung: <l:Beruf>'
+    - '&6Gegenstandstyp: Hauptwaffe'
+    - '&6Einschränkungsstufe: <c:int 10 * <s:<l:Qualität>Basis>>'
+    - '&cAngriffskraft: +<l:Angriffskraft>'
+    - '<l:Angriff1-10>'
+    - '<l:Angriff2-10>'
+    - '<l:Angriff3-10>'
+    - '<l:Textur>'
+    - '<s:<l:Qualität>Edelsteinloch>'
+    #   - '&7Haltbarkeit: <c:int <r:300_350> * <s:<l:Qualität>Basis>>/<c:int 400 * <s:<l:Qualität>Basis>>'
+    - '&7Haltbarkeit: <c:int <d:0.6_0.9> * <l:Haltbarkeit>>/<l:Haltbarkeit>'
+    - '<b:<l:Qualität>:Episch>&cGebunden'
+    - '&aAblaufzeit: <t:10m>'
+    #   - '&aAblaufzeit: <t:600>'
+    - '<b:<l:Qualität>:Hervorragend:Episch>                                    '
+    - '<b:<l:Qualität>:Hervorragend:Episch><s:Standard-Lore>'
   EnchantList:
-    - <s:<l:Occupation>Enchant>
+    - <s:<l:Beruf>Verzauberung>
   ClearAttribute: true
   Random:
-    Attack: <c:20 * <s:<l:Quality>Base>>
-    Durability: <c:int <r:350_400> * <s:<l:Quality>Base>>
+    Angriffskraft: <c:20 * <s:<l:Qualität>Basis>>
+    Haltbarkeit: <c:int <r:350_400> * <s:<l:Qualität>Basis>>
   NBT:
     SX-Attribute.Attribute:
-      - 'Entry 1'
-      - 'Entry 2'
-      - 'Entry 3'
-      - 'SX-Attribute reserved attribute interface'
-      - 'If you need to use random, you need to learn advanced random.'
-  ProtectNBT: #PROTECT ENCHANT FROM BEING UPDATED
+      - 'Eintrag 1'
+      - 'Eintrag 2'
+      - 'Eintrag 3'
+      - 'SX-Attribute Reservierte Attributschnittstelle'
+  ProtectNBT: #Schützt VerzauberungNBT vor Aktualisierungen
     - "Enchantments"
   Update: true
 
 Default-2:
-  Name: '&cLight Feather Boots'
+  Name: '&cLeichte Federstiefel'
   ID: 301
   Lore:
-    - '&6ItemType: Boots'
-    - '&cMaxHP: +2000'
-    - '&dSpeed: +50%'
-    - '&6LimitLevel: <r:50_100>级'
+    - '&6Gegenstandstyp: Stiefel'
+    - '&cLebensobergrenze: +2000'
+    - '&dGeschwindigkeit: +50%'
+    - '&6Einschränkungsstufe: <r:50_100>'
     - '&r'
-    - '&8Speed II'
-    - '&cSupport single automatic update-(AutoUpdate)'
-    - '&cSupport Single Close Clear Labels'
+    - '&8Geschwindigkeit II'
+    - '&cUnterstützt Einzelaktualisierung - (Automatische Aktualisierung)'
+    - '&cUnterstützt Einzelabschaltung der Löschmarkierung'
     - '&r'
-    - '&eSalePrice: 250'
+    - '&eVerkaufspreis: 250'
   EnchantList:
     - DURABILITY:1
   ItemFlagList:
     - HIDE_ENCHANTS
     - HIDE_UNBREAKABLE
   Unbreakable: true
-  NmColor: <s:NmColor>
+  Color: <s:Color>
   Random:
-    NmColor:
+    Color:
       - 'ffffff'
       - '000000'
   Update: true
 
 Default-3:
-  Name: '&c&lRandomStringDescription'
-  # Set durability to 0
+  Name: '&c&lZufällige Zeichenfolgen Erklärung'
+  #Haltbarkeit auf 0 setzen
   ID: 359:<0
   Lore:
     - ''
-    - '&4&l!!! The following content is mainly based on configuration files !!!'
+    - '&4&l!!! Der folgende Inhalt basiert auf Konfiguration dateien !!!'
     - ''
-    - "&e&l'&c&l<>&e&l' Non-Substitute Variables Required '&c&l\$&e&l' Escape"
-    - '&7Format: \$<1:Content> 或 <Content>'
-    - '&7ForExample: \$<s:DefaultPrefix> 或 <DefaultPrefix>'
+    - "&e&l'&c&l<>&e&l' Nicht ersetzbare Variablen müssen mit ‘&c&l\$&e&l’ maskiert werden"
+    - '&7Format: \$<1:Inhalt> oder <Inhalt>'
+    - '&7Zum Beispiel: \$<s:Standardpräfix> Oder <Standardpräfix>'
     - ''
-    - '&e&lRandomType:'
-    - '&cb   - &7WholeLineJudgment&r [<b:Match:String1:String2:String3:String4>] This line was deleted because no matching word is the same as the matching name'
-    - '&cb   - &7WholeLineJudgment&r [<b:<l:Quality>:Epic:Excellent:Ordinary>]'
-    - '&ct   - &7TimeFormat&r [<t:1Y1M1D1h1m1s>]'
-    - '&cc   - &7Calculator&r [<c:((2*3) + 2) * 1.4>] [<c:int ((2*3) + 2) * 1.4>]'
-    - '&cl   - &7LockRandom&r [<l:Quality>] [<l:EASY#AAA:BBB:CCC>]'
-    - '&cs   - &7NormalRandom&r [<s:<s:Quality>NmColor>♦&r] [<s:AAA:BBB:CCC>]'
-    - '&cd   - &7DecimalRandom&r [<d:2.3_6>]'
-    - '&ci&7/&cr - &7IntegerRandom&r [<i:1_7>]'
-    - '&cu   - &7UUIDRandom&r [<u:random>]'
-    - '&cj   - &7ScriptProcessing&r [<j:Default.itemScript#QAQ,QWQ,???,!!!>]'
+    - '&e&lZufälliger Typ:'
+    - '&cb   - &7prüfen&r [<b:Übereinstimmender:Wort1:Wort2:Wort3:Wort4>] Diese Zeile wurde gelöscht, weil kein übereinstimmendes Wort und kein übereinstimmender Name vorhanden waren.'
+    - '&cb   - &7prüfen&r [<b:<l:Qualität>:Episch:Hervorragend:Gewöhnlich>]'
+    - '&ct   - &7Zeitformat&r [<t:1Y1M1D1h1m1s>]'
+    - '&cc   - &7Rechner&r [<c:((2*3) + 2) * 1.4>] [<c:int ((2*3) + 2) * 1.4>]'
+    - '&cl   - &7sperren&r [<l:Qualität>] [<l:EASY#AAA:BBB:CCC>]'
+    - '&cs   - &7Normale&r [<s:<s:Qualität>Color>♦&r] [<s:AAA:BBB:CCC>]'
+    - '&cd   - &7Dezimale&r [<d:2.3_6>]'
+    - '&ci&7/&cr - &7Ganzzahl&r [<i:1_7>]'
+    - '&cu   - &7UUID&r [<u:random>]'
+    - '&cj   - &7Skript&r [<j:Default.itemScript#QAQ,QWQ,???,!!!>]'
     - ''
-    - "&eLocal Variables call Global Variables ~"
-    - "&c ~ &7 represents &4null&7 in yml"
-    - '&7Override Global Result -> <s:DefaultPrefix>'
-    - '&7Global and Local mixed Result -> <s:DefaultLore>'
+    - "&eLokale Variablen rufen globale Variablen mit ~ auf"
+    - "&c ~ &7 in YAML bedeutet &4null"
+    - '&7Globale Variablen überschreiben-> <s:Standardpräfix>'
+    - '&7Globale und lokale Mischung-> <s:Standard-Lore>'
     - ''
-    - 'Variables that do not exist delete the row: <s:DoesNotExist>'
-    - '&r↑here s a line that s been eaten'
+    - 'Nicht vorhandene Variablen löschen die Zeile: <s:Nicht-vorhanden>'
+    - '&r↑Hier wurde eine Zeile verschluckt'
   Random:
-    DefaultPrefix: "Prefix"
-    DefaultLore:
-      # 33% probability random to Lore, 66% probability random to global variable
+    Standardpräfix: "Prefix"
+    Standard-Lore:
+      # 33% Wahrscheinlichkeit zufällig zu Lore, 66% Wahrscheinlichkeit zufällig zu globaler Variable
       - 1: "Lore"
       - 2: ~
 
@@ -229,50 +237,49 @@ Default-4:
     meta:
       ==: ItemMeta
       meta-type: UNSPECIFIC
-      display-name: §7Import type of apple
+      display-name: §7Import-Typ Apfel
       lore:
-        - §7An item of type Import
+        - §7Ein Gegenstand vom Typ Import
         - ''
-        - §cHow to save this type of item?§7
+        - §cWie speichert man diesen Typ von Gegenstand?§7
         - ''
-        - §7/sx save <ItemID> Import
+        - §7/sx save ID Import
         - ''
-        - §cIt does not support automatic updates§7
+        - §cEs unterstützt keine automatische Aktualisierung§7
 
 Default-5:
-  Name: '&bSlow Sword'
-  # YML syntax-set the anchor point to be valid only in the current file and what else is Google
+  Name: '&bLangsames Schwert'
+  # YML-Syntax - Anker setzen, nur in dieser Datei gültig
   ID: &def5-ID
     - 268
     - 272
     - 283
     - 267
     - 276
-  # Set durability to maximum * 20%
+  # Haltbarkeit auf 20% des Maximalwerts setzen
   Durability: 20%
   Lore:
-    - '&7Use Attributes to set the original attack speed'
+    - '&7Verwenden Sie Attributes, um die ursprüngliche Angriffsgeschwindigkeit einzustellen'
     - ''
-    - "&c'GENERIC_ATTACK_SPEED:-1:2:HAND' - Tool will not lift"
-  Type: Default
+    - "&c'GENERIC_ATTACK_SPEED:-1:2:HAND' - Werkzeug kann nicht angehoben werden"
+  Type: Standard
   Update: true
   Attributes:
     - "GENERIC_ATTACK_SPEED:-0.7:1:HAND"
     # - "GENERIC_ATTACK_SPEED:-1:2:HAND"
 
 Default-6:
-  Name: "&dTickle Sword"
-  # YML Syntax-Reference anchor is valid only within the current file
+  Name: "&dKitzelschwert"
+  # YML-Syntax - Anker referenzieren, nur in dieser Datei gültig
   ID: *def5-ID
-  # Set Endurance to a maximum of -30
+  # Haltbarkeit auf Maximalwert - 30 setzen
   Durability: 30
   Attributes:
     - "GENERIC_ATTACK_DAMAGE:-0.99:2:HAND"
 
 Default-7:
   ID: <l:ID#POTION:SPLASH_POTION:LINGERING_POTION>
-  Lore: [ "&cAt present, the potion has only implemented versions 1.11.1 and above." ]
-  #  Potion: <s:WATER:POTION:JUMP> DoNotUseThisModelAgain
+  Lore: [ "&cTrank realisiert derzeit nur Version 1.11.1 und höher" ]
   Potion:
     ABSORPTION: &PotionData
       duration: <c:int 20 * <i:1_10> * <s:<l:ID>>>
@@ -292,30 +299,85 @@ Default-7:
 Default-8:
   ID: 419
   EnchantList:
-    # Binding Curse does not take effect on horses
+    # Bindungsfluch wirkt nicht auf Pferde
     - BINDING_CURSE:1
   Attributes:
-    # It is known that 1.17 versions of horses can obtain attributes from horse armor, versions 1.12.2 and below cannot be used, and other versions have not been tested.
+    # Bekannt ist, dass Pferde in Version 1.17 Attribute von Pferderüstungen erhalten können. 
+    # In Version 1.12.2 und darunter nicht nutzbar, andere Versionen nicht getestet.
     - "HORSE_JUMP_STRENGTH:2:0:CHEST"
     - "GENERIC_MOVEMENT_SPEED:0.5:1:CHEST"
 
 #Default-9: Default-1
 Default-9:
-  Name: '&9Items that can be replaced'
+  Name: '&9Ersetzbarer Gegenstand'
   ID: '350'
   Lore:
     - ''
-    - '&7If you want to replace this item with Default-1'
-    - "&7Please use: 'Default-9: Default-1'"
+    - '&7Ersetze diesen Gegenstand durch Default-1'
+    - "&7Verwenden: 'Default-9: Default-1'"
     - ''
-    - '&cUpdate for target (Default-1) must be turned on to replace'
-    - '&4&lSubstitution is not retroactive'
+    - '&cDas Ziel (Default-1) muss Update aktiviert haben, um ersetzt zu werden'
+    - '&4&lErsetzen ist nicht umkehrbar'
 
-# Is a Ordinary SX item, yml shorthand
-# A non-existent ID will prevent the item from being give out, but it will not report an error.
-Default-10.ID: 'Non-existent items'
+#Ist ein gewöhnlicher SX-Item, yml abgekürzt
+#Durch die nicht vorhandene ID kann der Gegenstand nicht mehr angezeigt werden, es wird jedoch kein Fehler gemeldet
+Default-10.ID: 'Gegenstände, die nicht existieren'
 
-# Items prefixed with "NoLoad" will not be loaded
-NoLoad_Item:
+#
+##################################################################
+##                          Component                           ##
+##################################################################
+#
+Component-1:
+  ID: DIAMOND
+  Name: "Komponenten-Tutorial"
+  Amount: 99
+  Lore:
+    - "&c该功能为 1.21.1 新增"
+    - "&c看到这段文本"
+    - "&c代表不支持组件功能"
+  #Komponenten
+  Components:
+    minecraft:item_name: 'Standard-name§8(kann_nicht_durch_Amboss_geändert_werden)'
+    minecraft:custom_name: '{"text":"Name der Farbe mit Seltenheit (Amboss modifiziert) § c rot"}'
+    # Seltenheit, Färbe priorität unter dem Namen
+    minecraft:rarity: 'epic'
+    # Maximaler Stapel
+    minecraft:max_stack_size: 99
+    minecraft:food:
+      can_always_eat: true
+      eat_seconds: 1.6
+      effects: [ ]
+      nutrition: 5
+      saturation: 10
+    minecraft:lore:
+      - '{"text":"§aHallo Welt Lores"}'
+      - '{"text":"§bDies ist die zweite Zeile"}'
+      - '{"text":"§e§lDieser Gegenstand ist essbar"}'
+      - '{"text":"§e§lDieser Gegenstand kann Steine abbauen"}'
+      - '{"text":"§a§lDieser Gegenstand kann bis zu 99 gestapelt werden"}'
+    minecraft:tool:
+      rules:
+        - blocks:
+            - minecraft:stone
+          correct_for_drops: true
+
+Component-2:
+  ID: 369
+  Amount: 50
+  Update: true
+  Components:
+    minecraft:item_name: 'Pommes'
+    minecraft:custom_name: 'Pommes'
+    minecraft:max_stack_size: 50
+    minecraft:rarity: 'rare'
+    minecraft:food:
+      eat_seconds: 0.1
+      nutrition: 1
+      saturation: 1
+      can_always_eat: true
+
+# Gegenstände oder Dateien mit dem Präfix "NoLoad" werden nicht geladen
+NoLoad_Gegenstand:
   ID: 1
-  Name: "Items that will not be loaded"
+  Name: "Nicht geladener Gegenstand"
