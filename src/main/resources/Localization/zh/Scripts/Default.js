@@ -1,8 +1,5 @@
 /*global SXItem, Bukkit, Arrays, Utils*/
 
-// 
-
-
 /**
  * 指令: /si script Default testPlayer <玩家名> <参数>
  * <p/>

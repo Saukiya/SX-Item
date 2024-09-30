@@ -1,22 +1,62 @@
-// 指令: /si script Default testFunction
-function testFunction(args) {
-    return args + " is " + (args != null);
-}
+/*global SXItem, Bukkit, Arrays, Utils*/
 
-// 指令: /si script Default testPlayer <玩家名> <参数>
+/**
+ * Befehl: /si script Standard testPlayer <Spielername> <Parameter>
+ * <p/>
+ * Wenn alle Parameter ein online 'Spielername' sind, wird dieser automatisch in ein 'Spielerobjekt' umgewandelt.
+ * @param player Spielername
+ * @param args Parameter
+ * @see [Player](https://bukkit.windit.net/javadoc/org/bukkit/entity/Player.html)
+ */
 function testPlayer(player, args) {
     if (player != null) {
-        player.sendMessage("received a message: " + args);
+        player.sendMessage("Eine Nachricht erhalten: " + args)
     } else {
-        SXItem.getInst().getLogger().info("Online members can be run as actual parameters inside the /si script method")
+        SXItem.getInst().getLogger().info("Online-Mitglieder können als tatsächliche Parameter innerhalb der /si script-Methode ausgeführt werden.")
     }
 }
 
-// item random <j:Default.itemScript#QAQ,QWQ> is in this format
-// docker is a fixed parameter. For more information, see RandomDocker.java
-// args is an array of input strings. The online "player name" is automatically converted to "player object".
-// The automatic conversion function will consider whether to cut or keep it later.
+/**
+ * JS-Zufallsformat:<j:Standard.itemScript#QAQ,QWQ>
+ * @param docker JS-Zufall für das aktuelle RandomDocker, siehe [RandomDocker](https://github.com/Saukiya/SX-Item/blob/master/src/main/java/github/saukiya/sxitem/data/random/RandomDocker.java)
+ * @param args JS-Zufalls-String-Array, zum Beispiel ['QAQ', 'QWQ'].
+ * @returns string
+ */
 function itemScript(docker, args) {
-    docker.getPlayer().sendMessage("Send parameters to players: " + args[0] + args[1]);
+    if (docker.getPlayer() != null) {
+        docker.getPlayer().sendMessage("Parameter an den Spieler senden: " + args[0] + args[1])
+    }
     return args[SXItem.getRandom().nextInt(args.length)];
 }
+
+// Nach dem Laden des Skripts werden Bukkit-Events registriert. Einzelheiten findest du in Event.js.
+// registerNormalEvent("org.bukkit.event.player.PlayerItemHeldEvent", function (event) {
+//     let player = event.getPlayer();
+//     SXItem.getInst().getLogger().info("JS-" + event.getEventName() + ": " + player.getName())
+// });
+
+// Codebeispiel
+//
+// Implementierbare Listenmethoden
+// function newList1() {
+//     return new Array("TEST4", "WER", "SDF", "SCV");
+// }
+//
+// function newList2() {
+//     return Arrays.asList("TEST3", "QAZ", "WSX", "EDC");
+// }
+//
+// function newList3() {
+//     return ["TEST6", "ERT", "DFG", "CVB"];
+// }
+//
+// // ArrayList wird im Global.js-Ordner deklariert, jedoch wird die Verwendung nicht empfohlen. 
+// // Es ist besser, die eigenen Funktionen von JS zu verwenden und die Interaktion mit Java so weit wie möglich zu reduzieren.
+// function newList4() {
+//     let list = new ArrayList();
+//     list.add("TEST2");
+//     list.add("ABC");
+//     list.add("BCD");
+//     list.add("CDE");
+//     return list
+// }

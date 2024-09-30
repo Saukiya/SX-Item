@@ -1,15 +1,20 @@
-#Log Level: [OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL]
+# Protokollstufe: [OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL]
 LoggerLevel: "INFO"
-# Floating-point number formatting
+# Fließkomma-Formatierung
 DecimalFormat: "#.##"
-# Date formatting
+# Datumsformatierung
 TimeFormat: yyyy/MM/dd HH:mm
-# Engine selection: JS engine is used by default, this plugin does not come with an engine module, to disable it you can delete this line
+# Engine-Auswahl: Standardmäßig wird die JS-Engine verwendet. Dieses Plugin enthält kein Engine-Modul. 
+# Die folgenden Links wurden nicht verifiziert und dienen nur als Referenz.
+# JS: https://github.com/eldoriarpg/NashornJS
+# Python: https://github.com/magicmq/PySpigot
 ScriptEngine: js
-# Global protection NBT list [Protect the following NBT from being changed during auto-updates]
+# Um die Engine-Funktion zu deaktivieren...
+#ScriptEngine: ~
+# Globale geschützte NBT-Liste [Schützt die folgenden NBTs vor Änderungen bei automatischen Updates]
 ProtectNBT:
   - "protect.data"
-# If inventory is full when giving items, they will drop [Simple pickup protection, only protects player's pickups]
+# Wenn das Inventar voll ist, werden die Gegenstände beim Geben fallen gelassen [mit einfachem Aufsammelschutz].
 GiveOverflowDrop: true
-# SX-Items dropped by epic monsters go directly into player's inventory
+# MythicMobs-Drops (SX-Item) gehen direkt in das Spielerinventar.
 MobDropToPlayerInventory: true

@@ -1,4 +1,4 @@
-# Log Level: [OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL]
+# 日志等级: [OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL]
 LoggerLevel: "INFO"
 # 浮点数格式化
 DecimalFormat: "#.##"
