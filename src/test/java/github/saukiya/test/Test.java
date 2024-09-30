@@ -14,7 +14,6 @@ import lombok.val;
 import org.apache.commons.lang.text.StrLookup;
 import org.apache.commons.lang.text.StrMatcher;
 import org.apache.commons.lang.text.StrSubstitutor;
-import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -42,6 +41,7 @@ public class Test {
 
     static JsonParser JSON_PARSER = new JsonParser();
     static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    static Random random = new Random();
 
 
     @SuppressWarnings({"SystemGetProperty", "Since15"})
@@ -54,26 +54,70 @@ public class Test {
     }
 
     public static void main(String[] args) {
-        System.out.println("num: " + getNum("WQRWQR1658.492112 121312nm", 0));
-        ;
+        System.out.println("array-key: " + Arrays.stream(createArray()).mapToInt(x -> x.length).sum());
+        testArray();
+        // 身高是硬伤啊
+        System.out.println("map-key: " + createMap().keySet().size());
+        testMap();
+        
     }
 
-    public static void defaultConfig() throws Exception {
-        
-        MemorySection globalConfig = (MemorySection) loadYml("Localization/zh/Config.yml").getConfigurationSection("GlobalItem");
-        YamlConfiguration itemConfig = loadYml("Localization/zh/Item/Test.yml");
+    public static void testMap() {
+        long time = 0L;
+        for (int i = 0; i < 50000; i++) {
+            val v1 = createMap();
+            val v2 = createMap();
+            long startTime = System.nanoTime();
+            testSumMap(v1, v2);
+            time += System.nanoTime() - startTime;
+        }
+        System.out.println("\t耗时: " + (time / 1000000D));
+    }
 
-        itemConfig.addDefault("Test-1", globalConfig);
+    public static Map<String, Double> createMap() {
+        Map<String, Double> result = new HashMap<>();
+        for (int x = 0; x < 10; x++) {
+            for (int y = 0; y < x + 2; y++) {
+                result.put(x + "." + y, random.nextDouble() * 10);
+            }
+        }
+        return result;
+    }
 
-        MemorySection subConfig = (MemorySection) itemConfig.getConfigurationSection("Test-1");
-        System.out.println("globalConfig: " + globalConfig.getClass().getSimpleName());
-        System.out.println("subConfig: " + subConfig.getClass().getSimpleName());
+    public static void testSumMap(Map<String, Double> v1, Map<String, Double> v2) {
+        v2.forEach((k, v) -> v1.merge(k, v, Double::sum));
+    }
 
-        System.out.println(subConfig.contains("Test"));
-        System.out.println(subConfig.getString("Test"));
-        System.out.println(new ArrayList<>(subConfig.getKeys(false)));
-//        yamlToTagTest();
-//        checkUpdate();
+    public static void testArray() {
+        long time = 0L;
+        for (int i = 0; i < 50000; i++) {
+            val v1 = createArray();
+            val v2 = createArray();
+            long startTime = System.nanoTime();
+            testSumArray(v1, v2);
+            time += System.nanoTime() - startTime;
+        }
+        System.out.println("\t耗时: " + (time / 1000000D));
+    }
+
+    public static double[][] createArray() {
+        val result = new double[10][];
+        for (int x = 0; x < result.length; x++) {
+            result[x] = new double[x + 2];
+            for (int y = 0; y < x + 2; y++) {
+                result[x][y] = random.nextDouble() * 10;
+            }
+        }
+        return result;
+    }
+
+    public static void testSumArray(double[][] v1, double[][] v2) {
+        for (int x = 0, lengthX = v1.length; x < lengthX; x++) {
+            val vx = v1[x];
+            for (int y = 0, lengthY = vx.length; y < lengthY; y++) {
+                vx[y] += v2[x][y];
+            }
+        }
     }
 
     public static double getNum(String str, int index) {
