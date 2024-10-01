@@ -21,8 +21,8 @@ ADMIN:
   PLUGIN_RELOAD: '&8[SX-Item] §cPlugin wurde neu geladen'
 COMMAND:
   GIVE: 'Gibt dem Spieler einen Gegenstand'
-  SAVE: 'Speichert den aktuellen Gegenstand in der Konfigurationsdatei'
-  NBT: 'Zeigt und bearbeitet die NBT-Daten eines Gegenstands'
-  COMPONENT: 'Zeigt und bearbeitet die Komponenten-Daten eines Gegenstands'
+  SAVE: 'Speichert den aktuellen Gegenstand in der Konfiguration'
+  NBT: 'Zeigt und bearbeitet die NBT eines Gegenstands'
+  COMPONENT: 'Zeigt und bearbeitet die Komponenten eines Gegenstands'
   SCRIPT: 'Ruft Skript-Funktionen auf'
   RELOAD: 'Lädt die Konfiguration dieses Plugins neu'

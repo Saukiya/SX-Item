@@ -262,7 +262,7 @@ Default-5:
     - '&7Verwenden Sie Attributes, um die ursprüngliche Angriffsgeschwindigkeit einzustellen'
     - ''
     - "&c'GENERIC_ATTACK_SPEED:-1:2:HAND' - Werkzeug kann nicht angehoben werden"
-  Type: Standard
+  Type: Default
   Update: true
   Attributes:
     - "GENERIC_ATTACK_SPEED:-0.7:1:HAND"
