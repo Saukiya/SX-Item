@@ -35,11 +35,6 @@ public class ItemUtil_v1_8_R3 extends ItemUtil {
     }
 
     @Override
-    public void clearAttribute(ItemStack item, ItemMeta meta) {
-        NbtUtil.getInst().getItemTagWrapper(item).builder().set("AttributeModifiers", Collections.emptyList()).save();
-    }
-
-    @Override
     public List<AttributeData> getAttributes(ItemStack item) {
         return ((List<Map<String, Object>>) NbtUtil.getInst().getItemTagWrapper(item).getList("AttributeModifiers", new ArrayList<>())).stream().map(
                 map -> new AttributeData(
