@@ -180,7 +180,7 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
                     effectId = docker.replace(effectId);
                     PotionEffectType effect = null;
                     for (PotionEffectType potionEffectType : potionEffectTypes) {
-                        if (!potionEffectType.getName().equals(effectId)) continue;
+                        if (potionEffectType == null || potionEffectType.getName().equals(effectId)) continue;
                         effect = potionEffectType;
                     }
                     if (effect != null) {

@@ -89,13 +89,16 @@ public class GiveCommand extends SubCommand implements Listener {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
-        if (args.length == 2) {
-            return SXItem.getItemManager().getItemList().stream().filter(itemName -> itemName.toLowerCase().contains(args[1].toLowerCase())).collect(Collectors.toList());
+        switch (args.length) {
+            case 2:
+                return SXItem.getItemManager().getItemList().stream().filter(itemName -> itemName.toLowerCase().contains(args[1].toLowerCase())).collect(Collectors.toList());
+            case 3:
+                return null;
+            case 4:
+                return Collections.singletonList("1");
+            default:
+                return Collections.emptyList();
         }
-        if (args.length == 4) {
-            return Collections.singletonList("1");
-        }
-        return args.length == 3 ? null : Collections.emptyList();
     }
 
     @EventHandler

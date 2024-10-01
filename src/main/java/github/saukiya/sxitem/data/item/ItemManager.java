@@ -393,7 +393,7 @@ public class ItemManager implements Listener {
      */
     public void sendItemInfoToPlayer(CommandSender sender, String search) {
         sender.sendMessage("");
-        if (search != null && search.isEmpty()) {
+        if (search != null && search.isEmpty() && (informationMap.size() > 1 || informationMap.values().stream().anyMatch(information -> information.size() > 1))) {
             // 文件夹
             MessageUtil.getInst().builder()
                     .add("§eDirectoryList§8 - §7ClickOpen")
