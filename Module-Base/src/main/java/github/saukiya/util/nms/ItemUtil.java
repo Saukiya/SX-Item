@@ -1,12 +1,12 @@
 package github.saukiya.util.nms;
 
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -68,15 +68,16 @@ public abstract class ItemUtil implements NMS {
     }
 
     /**
-     * 清除Attribute属性 (当前实现为完整清除，1.12.1以下通过NBT清除) TODO 需验证
+     * 清除Attribute属性 (1.8.8-1.12.2)
      *
      * @param item ItemStack
      * @param meta ItemMeta
      */
     public void clearAttribute(ItemStack item, ItemMeta meta) {
         if (meta == null) return;
-        meta.setAttributeModifiers(ArrayListMultimap.create());
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         item.setItemMeta(meta);
+        addAttribute(item, new ItemUtil.AttributeData().setAttrName("GENERIC_ATTACK_DAMAGE").setAmount(0));
     }
 
     /**

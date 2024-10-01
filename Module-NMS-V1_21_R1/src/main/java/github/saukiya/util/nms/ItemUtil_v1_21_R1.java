@@ -56,6 +56,12 @@ public class ItemUtil_v1_21_R1 extends ItemUtil {
     }
 
     @Override
+    public void clearAttribute(ItemStack item, ItemMeta meta) {
+        if (meta == null) return;
+        ComponentUtil.getInst().getItemWrapper(item).set("minecraft:attribute_modifiers", null).save();
+    }
+
+    @Override
     public List<AttributeData> getAttributes(ItemStack item) {
         ItemMeta meta = item.getItemMeta();
         if (!meta.hasAttributeModifiers()) return null;
