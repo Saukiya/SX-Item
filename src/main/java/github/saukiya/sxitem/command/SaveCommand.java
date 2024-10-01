@@ -59,7 +59,7 @@ public class SaveCommand extends SubCommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
-        if (args.length == 2) return Arrays.asList("$itemName", args[1]);
+        if (args.length == 2 && args[1].isEmpty()) return Arrays.asList("[itemName]", args[1]);
         if (args.length == 3) {
             return new ArrayList<>(ItemManager.getLoadFunction().keySet());
         }

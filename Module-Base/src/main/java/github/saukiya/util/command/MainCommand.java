@@ -67,7 +67,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         SenderType type = getType(sender);
         if (args.length == 0) {
-            sender.sendMessage("§0-§8 --§7 ---§c ----§4 -----§b " + plugin.getName() + "§4 -----§c ----§7 ---§8 --§0 - §0Author " + plugin.getDescription().getAuthors());
+            MessageUtil.getInst().builder().add("§0-§8 --§7 ---§c ----§4 -----§b " + plugin.getName() + "§4 -----§c ----§7 ---§8 --§0 -").show("§7" + plugin.getDescription().getVersion() + " - " + plugin.getDescription().getAuthors()).send(sender);
             String color = "§7";
             for (SubCommand sub : COMMANDS) {
                 if (sub.isUse(sender, type) && !sub.hide) {
