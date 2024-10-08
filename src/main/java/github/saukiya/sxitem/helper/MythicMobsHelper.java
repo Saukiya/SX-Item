@@ -164,12 +164,23 @@ public class MythicMobsHelper {
 
     public static class V4Listener implements Listener {
 
+        private boolean isVersionGreaterThan490;
+
+        V4Listener() {
+            try {
+                io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobSpawnEvent.class.getMethod("getMob");
+                isVersionGreaterThan490 = true;
+            } catch (NoSuchMethodException e) {
+                isVersionGreaterThan490 = false;
+            }
+        }
+
         @EventHandler
         void on(io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobSpawnEvent event) {
             if (event.getEntity() instanceof LivingEntity) {
                 String mobType = event.getMobType().getInternalName();
                 EntityEquipment mobEquipment = ((LivingEntity) event.getEntity()).getEquipment();
-                Map<String, String> mobMap = getMobMap(event.getMob());
+                Map<String, String> mobMap = isVersionGreaterThan490 ? getMobMap(event.getMob()) : new HashMap<>();
                 List<String> sxEquipmentList = event.getMobType().getConfig().getStringList("SX-Equipment");
                 spawnHandler.spawn(mobType, mobEquipment, mobMap, sxEquipmentList);
             }
