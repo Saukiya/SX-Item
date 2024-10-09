@@ -71,8 +71,8 @@ configure([rootProject, baseProject, depProject]) {
 
 jar.archiveClassifier = "core"
 processResources.expand(version: version, language: "~")
-buildCopyTask('buildLatestJar', "$rootDir/build", "Latest")
-buildCopyTask('buildDebugJar', "$rootDir/run/plugins", "Debug")
+buildCopyTask('buildLatestJar', "$rootDir\\build", "Latest")
+buildCopyTask('buildDebugJar', "$rootDir\\run\\plugins", "Debug")
 
 tasks.register('dependencyJar', Jar) {
     from rootProject.sourceSets.main.output.classesDirs
@@ -105,6 +105,9 @@ shadowJar {
     subprojects.each { subProject ->
         from subProject.sourceSets.main.output
     }
+    doLast {
+        println "OutputPath: " + destinationDirectory.get()
+    }
 }
 
 ['de', 'en', 'zh'].each { lang ->
@@ -124,6 +127,9 @@ shadowJar {
         dependsOn "processResources($lang)"
         from "$buildDir/resources/main.$lang/"
         from zipTree(shadowJar.archiveFile.get().asFile.path)
+        doLast {
+            println "OutputPath: " + destinationDirectory.get()
+        }
     }
 }
 
@@ -161,5 +167,8 @@ def buildCopyTask(String taskName, String destinationDir, String jarSuffix) {
         dependsOn shadowJar
         from shadowJar.archiveFile.get().asFile.path
         into(destinationDir).rename { "${project.name}-${jarSuffix}.jar" }
+        doLast {
+            println "OutputPath: " + destinationDir
+        }
     }
 }

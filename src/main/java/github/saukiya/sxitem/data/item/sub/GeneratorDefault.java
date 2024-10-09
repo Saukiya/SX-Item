@@ -207,18 +207,16 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         item.setItemMeta(meta);
         if (config.getBoolean("ClearAttribute")) {
             ItemUtil.getInst().clearAttribute(item, meta);
-        } else {
-            if (config.isList("Attributes")) {
-                ItemUtil.getInst().addAttributes(item, docker.replace(config.getStringList("Attributes")).stream()
-                        .map(data -> data.split(":")).filter(split -> split.length >= 3)
-                        .map(split -> new ItemUtil.AttributeData()
-                                .setAttrName(split[0])
-                                .setAmount(Double.parseDouble(split[1]))
-                                .setOperation(Integer.parseInt(split[2]))
-                                .setSlot(split.length > 3 ? split[3] : null))
-                        .collect(Collectors.toList())
-                );
-            }
+        } else if (config.isList("Attributes")) {
+            ItemUtil.getInst().addAttributes(item, docker.replace(config.getStringList("Attributes")).stream()
+                    .map(data -> data.split(":")).filter(split -> split.length >= 3)
+                    .map(split -> new ItemUtil.AttributeData()
+                            .setAttrName(split[0])
+                            .setAmount(Double.parseDouble(split[1]))
+                            .setOperation(Integer.parseInt(split[2]))
+                            .setSlot(split.length > 3 ? split[3] : null))
+                    .collect(Collectors.toList())
+            );
         }
 
         Object nmsItem = NbtUtil.getInst().getNMSItem(item);
@@ -227,13 +225,13 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
             ComponentUtil.getInst().setDataComponentMap(nmsItem, component);
         }
 
-        val wrapper = NbtUtil.getInst().getItemTagWrapper(item, nmsItem);
-        wrapper.setAll((Base.Compound) docker.replace(nbt));
+        if (nbt != null || !docker.getLockMap().isEmpty()) {
+            val wrapper = NbtUtil.getInst().getItemTagWrapper(item, nmsItem);
+            wrapper.setAll((Base.Compound) docker.replace(nbt));
 
-        docker.getLockMap().forEach((key, value) -> wrapper.set(SXItem.getInst().getName() + ".Lock." + key, value));
-
-        wrapper.save();
-
+            docker.getLockMap().forEach((key, value) -> wrapper.set(SXItem.getInst().getName() + ".Lock." + key, value));
+            wrapper.save();
+        }
         return item;
     }
 
