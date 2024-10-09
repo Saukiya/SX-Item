@@ -300,21 +300,29 @@ public class ItemManager implements Listener {
     /**
      * 检查更新物品
      */
-    public void checkUpdateItem(Player player, ItemStack... itemStacks) {
-        checkUpdateItem(player, plugin.getName(), itemStacks);
+    @Deprecated
+    public void checkUpdateItem(Player player, String prefix, ItemStack... itemStacks) {
+        checkUpdateItem(player, prefix + ".ItemKey", prefix + ".HashCode", itemStacks);
     }
 
     /**
      * 检查更新物品
      */
-    public void checkUpdateItem(Player player, String prefix, ItemStack... itemStacks) {
+    public void checkUpdateItem(Player player, ItemStack... itemStacks) {
+        checkUpdateItem(player, plugin.getName() + ".ItemKey", plugin.getName() + ".HashCode", itemStacks);
+    }
+
+    /**
+     * 检查更新物品
+     */
+    public void checkUpdateItem(Player player, String itemKey, String hashCodeKey, ItemStack... itemStacks) {
         for (ItemStack item : itemStacks) {
             if (item == null) continue;
             val oldWrapper = NbtUtil.getInst().getItemTagWrapper(item);
-            IGenerator ig = itemMap.get(oldWrapper.getString(prefix + ".ItemKey"));
+            IGenerator ig = itemMap.get(oldWrapper.getString(itemKey));
             if (ig instanceof IUpdate) {
                 IUpdate updateIg = (IUpdate) ig;
-                Integer hashCode = oldWrapper.getInt(prefix + ".HashCode");
+                Integer hashCode = oldWrapper.getInt(hashCodeKey);
                 if (!updateIg.isUpdate() || (hashCode != null && updateIg.updateCode() == hashCode)) continue;
                 updateItem(player, item, updateIg, oldWrapper);
             }

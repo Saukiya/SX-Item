@@ -27,4 +27,8 @@ public class Tuple<A, B> {
     public void b(B var0) {
         this.b = var0;
     }
+
+    public static <A, B> Tuple<A, B> of(A var0, B var1) {
+        return new Tuple<>(var0, var1);
+    }
 }
