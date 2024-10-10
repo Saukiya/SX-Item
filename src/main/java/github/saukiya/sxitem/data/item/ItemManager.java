@@ -50,6 +50,12 @@ public class ItemManager implements Listener {
 
     private final JavaPlugin plugin;
 
+    private final String itemKey;
+
+    private final String hashCodeKey;
+
+    private final String defaultType;
+
     private final File rootDirectory;
 
     private final List<Player> checkPlayers = new ArrayList<>();
@@ -63,7 +69,18 @@ public class ItemManager implements Listener {
     private final Map<String, List<Tuple<String, List<IGenerator>>>> informationMap = new HashMap<>();
 
     public ItemManager(JavaPlugin plugin) {
+        this(plugin, plugin.getName() + ".ItemKey", plugin.getName() + ".HashCode");
+    }
+
+    public ItemManager(JavaPlugin plugin, String itemKey, String hashCodeKey) {
+        this(plugin, itemKey, hashCodeKey, "Default");
+    }
+
+    public ItemManager(JavaPlugin plugin, String itemKey, String hashCodeKey, String defaultType) {
         this.plugin = plugin;
+        this.itemKey = itemKey;
+        this.hashCodeKey = hashCodeKey;
+        this.defaultType = defaultType;
         this.rootDirectory = new File(plugin.getDataFolder(), "Item");
         plugin.getLogger().info("Loaded " + loadFunction.size() + " ItemGenerators");
         loadItemData();
@@ -176,7 +193,7 @@ public class ItemManager implements Listener {
                     itemMap.put(key, null);
                     continue;
                 }
-                String type = config.getString(key + ".Type", "Default");
+                String type = config.getString(key + ".Type", defaultType);
                 IGenerator.Loader loadFunction = getLoadFunction().get(type);
                 if (loadFunction != null) {
                     config.set(key + ".Path", path);
@@ -235,7 +252,7 @@ public class ItemManager implements Listener {
     @Nullable
     public IGenerator getGenerator(ItemStack item) {
         if (item != null && !item.getType().equals(Material.AIR) && item.hasItemMeta()) {
-            return itemMap.get(NbtUtil.getInst().getItemTagWrapper(item).getString(plugin.getName() + ".ItemKey"));
+            return itemMap.get(NbtUtil.getInst().getItemTagWrapper(item).getString(itemKey));
         }
         return null;
     }
@@ -281,8 +298,8 @@ public class ItemManager implements Listener {
         ItemStack item = ig.getItem(player, args);
         if (item != emptyItem && item != null && ig instanceof IUpdate) {
             NbtUtil.getInst().getItemTagWrapper(item).builder()
-                    .set(plugin.getName() + ".ItemKey", ig.getKey())
-                    .set(plugin.getName() + ".HashCode", ((IUpdate) ig).updateCode())
+                    .set(itemKey, ig.getKey())
+                    .set(hashCodeKey, ((IUpdate) ig).updateCode())
                     .save();
         }
         SXItemSpawnEvent event = new SXItemSpawnEvent(plugin, player, ig, item);
@@ -300,22 +317,7 @@ public class ItemManager implements Listener {
     /**
      * 检查更新物品
      */
-    @Deprecated
-    public void checkUpdateItem(Player player, String prefix, ItemStack... itemStacks) {
-        checkUpdateItem(player, prefix + ".ItemKey", prefix + ".HashCode", itemStacks);
-    }
-
-    /**
-     * 检查更新物品
-     */
     public void checkUpdateItem(Player player, ItemStack... itemStacks) {
-        checkUpdateItem(player, plugin.getName() + ".ItemKey", plugin.getName() + ".HashCode", itemStacks);
-    }
-
-    /**
-     * 检查更新物品
-     */
-    public void checkUpdateItem(Player player, String itemKey, String hashCodeKey, ItemStack... itemStacks) {
         for (ItemStack item : itemStacks) {
             if (item == null) continue;
             val oldWrapper = NbtUtil.getInst().getItemTagWrapper(item);
@@ -334,7 +336,7 @@ public class ItemManager implements Listener {
      */
     public void updateItem(Player player, ItemStack item) {
         val oldWrapper = NbtUtil.getInst().getItemTagWrapper(item);
-        IGenerator ig = itemMap.get(oldWrapper.getString(plugin.getName() + ".ItemKey"));
+        IGenerator ig = itemMap.get(oldWrapper.getString(itemKey));
         if (!(ig instanceof IUpdate)) return;
         updateItem(player, item, (IUpdate) ig, oldWrapper);
     }
@@ -345,8 +347,8 @@ public class ItemManager implements Listener {
     public void updateItem(Player player, ItemStack item, IUpdate updateIg, NbtUtil.Wrapper oldWrapper) {
         ItemStack newItem = updateIg.update(item, oldWrapper, player);
         val wrapper = NbtUtil.getInst().getItemTagWrapper(newItem);
-        wrapper.set(plugin.getName() + ".ItemKey", updateIg.getKey());
-        wrapper.set(plugin.getName() + ".HashCode", updateIg.updateCode());
+        wrapper.set(itemKey, updateIg.getKey());
+        wrapper.set(hashCodeKey, updateIg.updateCode());
         HashSet<String> protectNBT = new HashSet<>(protectNbtList);
         updateIg.getConfig().getStringList("ProtectNBT").forEach(nbt -> {
             if (nbt.startsWith("!")) {
