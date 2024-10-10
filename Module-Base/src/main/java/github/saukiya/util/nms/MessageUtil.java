@@ -121,11 +121,7 @@ public abstract class MessageUtil implements NMS {
         }
 
         public void send(CommandSender sender) {
-            if (sender instanceof Player) {
-                ((Player) sender).spigot().sendMessage(handle);
-            } else {
-                sender.sendMessage(handle.toLegacyText());
-            }
+            sender.spigot().sendMessage(handle);
         }
 
         protected <V extends BaseComponent> V setCurrent(V baseComponent) {
