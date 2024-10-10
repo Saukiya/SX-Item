@@ -7,6 +7,7 @@ import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
 import lombok.SneakyThrows;
+import lombok.val;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.*;
 import net.minecraft.world.item.component.CustomData;
@@ -52,7 +53,7 @@ public class NbtUtil_v1_21_R1 extends NbtUtil {
 
     @Override
     public NBTTagCompound getNMSItemNBT(Object nmsItem) {
-        var dataComponentMap = ((net.minecraft.world.item.ItemStack) nmsItem).a();
+        val dataComponentMap = ((net.minecraft.world.item.ItemStack) nmsItem).a();
         CustomData data = dataComponentMap.a(DataComponents.b);
         return data != null ? data.d() : new NBTTagCompound();
     }
