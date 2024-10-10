@@ -28,6 +28,8 @@ allprojects { project ->
         maven { url "https://mvn.lumine.io/repository/maven-public/" }
         // bStats-bukkit
         maven { url 'https://repo.codemc.org/repository/maven-public' }
+        // CraftBukkit
+        maven { url 'https://repo.codemc.io/repository/nms/' }
         // Github Project
         maven { url 'https://jitpack.io' }
     }
@@ -36,7 +38,6 @@ allprojects { project ->
         if (project != baseProject) {
             implementation baseProject
         }
-        compileOnly fileTree('lib')
         compileOnly 'org.projectlombok:lombok:1.18.34'
         annotationProcessor 'org.projectlombok:lombok:1.18.34'
     }
@@ -45,19 +46,8 @@ allprojects { project ->
 configure([rootProject, baseProject, depProject]) {
     dependencies {
         compileOnly 'org.spigotmc:spigot-api:1.21.1-R0.1-SNAPSHOT'
-        compileOnly 'commons-lang:commons-lang:2.6'
-        compileOnly 'io.lumine.xikage:MythicMobs:4.9.0'
-        compileOnly 'io.lumine:Mythic-Dist:5.2.1'
-        compileOnly 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
-        implementation 'org.bstats:bstats-bukkit:2.2.1'
-
-        //testImplementation project(':Module-NMS-V1_17_R1')
-        testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
-        rootProject.configurations.compileOnly.dependencies.each { dependency ->
-            if (dependency.name == "unspecified") return
-            testImplementation "$dependency.group:$dependency.name:$dependency.version"
-        }
     }
+
     javadoc {
         enabled = true
         options.charSet = 'UTF-8'
@@ -66,6 +56,19 @@ configure([rootProject, baseProject, depProject]) {
         destinationDir = file("${buildDir}/docs/javadoc")
         source = files(rootProject.sourceSets.main.allJava, baseProject.sourceSets.main.allJava, depProject.sourceSets.main.allJava)
         classpath = files(rootProject.sourceSets.main.compileClasspath, baseProject.sourceSets.main.compileClasspath, depProject.sourceSets.main.compileClasspath)
+    }
+}
+
+dependencies {
+    compileOnly 'commons-lang:commons-lang:2.6'
+    compileOnly 'io.lumine.xikage:MythicMobs:4.9.0'
+    compileOnly 'io.lumine:Mythic-Dist:5.2.1'
+    implementation 'org.bstats:bstats-bukkit:2.2.1'
+
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
+    rootProject.configurations.compileOnly.dependencies.each { dependency ->
+        if (dependency.name == "unspecified") return
+        testImplementation "$dependency.group:$dependency.name:$dependency.version"
     }
 }
 
