@@ -1,3 +1,4 @@
+targetCompatibility = JavaVersion.VERSION_17
 dependencies {
     compileOnly 'org.bukkit:craftbukkit:1.19.4-R0.1-SNAPSHOT'
 }

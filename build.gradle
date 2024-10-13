@@ -20,6 +20,8 @@ allprojects { project ->
     repositories {
         mavenLocal()
         mavenCentral()
+        // Minecraft Api
+        maven { url 'https://libraries.minecraft.net'}
         // Spigot Api
         maven { url 'https://hub.spigotmc.org/nexus/content/repositories/releases/' }
         // Paper Api
