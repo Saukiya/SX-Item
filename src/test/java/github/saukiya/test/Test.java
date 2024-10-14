@@ -54,11 +54,6 @@ public class Test {
     }
 
     public static void main(String[] args) {
-        System.out.println("array-key: " + Arrays.stream(createArray()).mapToInt(x -> x.length).sum());
-        testArray();
-        // 身高是硬伤啊
-        System.out.println("map-key: " + createMap().keySet().size());
-        testMap();
         
     }
 

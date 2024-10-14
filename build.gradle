@@ -38,7 +38,7 @@ allprojects { project ->
 
     dependencies {
         if (project != baseProject) {
-            implementation baseProject
+            compileOnly baseProject
         }
         compileOnly 'org.projectlombok:lombok:1.18.34'
         annotationProcessor 'org.projectlombok:lombok:1.18.34'
@@ -62,16 +62,16 @@ configure([rootProject, baseProject, depProject]) {
 }
 
 dependencies {
+    implementation 'org.bstats:bstats-bukkit:2.2.1'
     compileOnly 'commons-lang:commons-lang:2.6'
     compileOnly 'io.lumine.xikage:MythicMobs:4.9.0'
     compileOnly 'io.lumine:Mythic-Dist:5.2.1'
-    implementation 'org.bstats:bstats-bukkit:2.2.1'
 
+    testImplementation baseProject
+    testImplementation 'org.bukkit:craftbukkit:1.21.1-R0.1-SNAPSHOT'
+    testImplementation 'commons-lang:commons-lang:2.6'
+    testCompileOnly 'org.projectlombok:lombok:1.18.34'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
-    rootProject.configurations.compileOnly.dependencies.each { dependency ->
-        if (dependency.name == "unspecified") return
-        testImplementation "$dependency.group:$dependency.name:$dependency.version"
-    }
 }
 
 jar.archiveClassifier = "core"

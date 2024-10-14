@@ -4,8 +4,11 @@
 //import com.google.gson.GsonBuilder;
 //import com.google.gson.JsonParser;
 //import github.saukiya.util.nbt.TagCompound;
+//import github.saukiya.util.nbt.TagList;
+//import github.saukiya.util.nbt.TagLong;
 //import github.saukiya.util.nms.NbtUtil;
 //import lombok.SneakyThrows;
+//import net.minecraft.nbt.*;
 //
 //import java.util.Arrays;
 //
@@ -59,7 +62,7 @@
 //        TagCompound tagBase;
 //        NBTTagCompound nbtBase;
 //        //nmsNBT转sxNBT
-//        tagBase = NbtUtil.getInst().toTag(nbtTagCompound);
+//        tagBase = (TagCompound) NbtUtil.getInst().toTag(nbtTagCompound);
 //        System.out.println("[NMS->SX] " + tagBase);
 //
 //        //sxNBT转nmsNBT
@@ -116,7 +119,7 @@
 //        System.out.println(compound.get("sub.qwq.b"));
 //    }
 //
-//    public static void yamlTagTest(){
+//    public static void yamlTagTest() throws Exception {
 //        NBTTagList tagList = new NBTTagList();
 //        tagList.add(NBTTagByte.a(true));
 //        tagList.add(NBTTagByte.a(true));
@@ -129,12 +132,12 @@
 //        nbtTagCompound.a("byte", NBTTagByte.a(false));
 //        System.out.println(nbtTagCompound);
 //        NBTTagCompound compound = new NBTTagCompound();
-//        compound.set("tag.sub", NBTTagString.a("Test"));
+//        compound.a("tag.sub", NBTTagString.a("Test"));
 //        System.out.println("compound: " + compound);
-//        System.out.println("compound-tag.sub: " + compound.get("tag.sub"));
+//        System.out.println("compound-tag.sub: " + compound.c("tag.sub"));
 //
 //        TagCompound tagCompound = new TagCompound();
-//        tagCompound.put("tag.List", new TagList(Arrays.asList(
+//        tagCompound.set("tag.List", new TagList(Arrays.asList(
 //                new TagLong(1),
 //                new TagLong(1),
 //                new TagLong(1),
