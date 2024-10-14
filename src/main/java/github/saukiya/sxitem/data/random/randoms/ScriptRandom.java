@@ -19,8 +19,8 @@ public class ScriptRandom implements IRandom {
     /**
      * 支持格式
      * <pre>
-     *  &lt;s:key&gt;
-     *  &lt;s:File.Function#AAA,BBB&gt;
+     *  &lt;j:File.Function&gt; - 执行无参数方法并返回值
+     *  &lt;j:File.Function#AAA,BBB&gt; - 执行有参数方法并返回值
      * </pre>
      *
      * @param key    处理的key

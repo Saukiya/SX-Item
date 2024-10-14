@@ -39,8 +39,8 @@ public class Test {
     static Pattern pattern = Pattern.compile("v(\\d+)_(\\d+)_R(\\d+)");
     static Pattern time_pattern = Pattern.compile("\\d+");
 
-    static JsonParser JSON_PARSER = new JsonParser();
-    static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    static JsonParser jsonParser = new JsonParser();
+    static Gson gson = new GsonBuilder().setPrettyPrinting().create();
     static Random random = new Random();
 
 

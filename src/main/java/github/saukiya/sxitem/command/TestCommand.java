@@ -120,7 +120,7 @@ public class TestCommand extends SubCommand {
                 sender.sendMessage("物品: " + generator.getKey() + " 有问题");
             }
         }
-        timeConsuming.forEach((k,v) -> sender.sendMessage("物品 " + k + " 耗时: " + (v / 1000000D) + " ms"));
+        timeConsuming.forEach((k, v) -> sender.sendMessage("物品 " + k + " 耗时: " + (v / 1000000D) + " ms"));
         sender.sendMessage("获取SX物品通过");
 
         // 1.11.2以下不支持在componentBuilder中带有long[]类型的nbt

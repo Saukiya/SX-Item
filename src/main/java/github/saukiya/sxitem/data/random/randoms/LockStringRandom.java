@@ -11,8 +11,8 @@ public class LockStringRandom implements IRandom {
     /**
      * 支持格式
      * <pre>
-     *  &lt;l:key&gt;
-     *  &lt;l:key#AAA,BBB&gt;
+     *  &lt;l:key&gt; - 从key集合中随机抽取一个值并锁定
+     *  &lt;l:key#AAA,BBB&gt; - 从AAA/BBB中随机抽取一个值并锁定
      * </pre>
      *
      * @param key    处理的key

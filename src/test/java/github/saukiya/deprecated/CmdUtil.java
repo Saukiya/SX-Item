@@ -1,4 +1,4 @@
-package github.saukiya.test;
+package github.saukiya.deprecated;
 
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.util.helper.PlaceholderHelper;

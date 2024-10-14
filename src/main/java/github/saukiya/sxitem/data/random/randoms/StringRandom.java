@@ -10,10 +10,10 @@ public class StringRandom implements IRandom {
     /**
      * 支持格式
      * <pre>
-     *  &lt;s:key&gt;
-     *  &lt;s:AAA,BBB,CCC&gt;
+     *  &lt;s:key&gt; - 从key集合中随机抽取一个值
+     *  &lt;s:AAA,BBB,CCC&gt; - 从AAA/BBB/CCC中随机抽取一个值
      * </pre>
-     *
+     * 
      * @param key    处理的key
      * @param docker 缓存
      * @return

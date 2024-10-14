@@ -20,6 +20,18 @@ public class CalculatorRandom implements IRandom {
      */
     static Pattern p = Pattern.compile("(?<!\\d)-?\\d+(\\.\\d+)?|[+\\-*/%()]");// 这个正则为匹配表达式中的数字或运算符
 
+    /**
+     * 支持格式
+     * <pre>
+     *  &lt;c:100 / 3&gt; - 计算 100 / 3 并返回小数(33.33)
+     *  &lt;c:int 5 * &lt;d:0.8_1.2&gt;&gt; - 计算 5 * (0.8~1.2) 并返回整数(4/5/6)
+     *  &lt;c:&lt;i:1_20&gt; * &lt;l:level#1.5,2.5,3.5&gt;&gt; - 结合其他随机模式, 套公式返回小数
+     * </pre>
+     *
+     * @param key    处理的key
+     * @param docker 缓存
+     * @return
+     */
     @Override
     public String replace(String key, RandomDocker docker) {
         try {

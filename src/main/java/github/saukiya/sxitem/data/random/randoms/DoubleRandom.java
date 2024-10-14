@@ -6,14 +6,23 @@ import github.saukiya.sxitem.data.random.RandomDocker;
 
 public class DoubleRandom implements IRandom {
 
+    /**
+     * 支持格式
+     * <pre>
+     *  &lt;d:1.5_2.5&gt; - 从1.5-2.5随机抽一个小数
+     *  &lt;d:100_10&gt; - 从10-100随机抽一个小数(不分顺序)
+     * </pre>
+     *
+     * @param key    处理的key
+     * @param docker 缓存
+     * @return
+     */
     @Override
     public String replace(String key, RandomDocker docker) {
-        String[] strSplit = key.split("_");
-        if (strSplit.length > 1) {
-            double[] doubles = {Double.parseDouble(strSplit[0]), Double.parseDouble(strSplit[1])};
-            return SXItem.getDf().format(SXItem.getRandom().nextDouble() * (doubles[1] - doubles[0]) + doubles[0]);
-        }
-        SXItem.getInst().getLogger().warning("DoubleRandom Error: " + key);
-        return null;
+        int index = key.indexOf('_');
+        if (index == -1) return key;
+        double min = Double.parseDouble(key.substring(0, index));
+        double max = Double.parseDouble(key.substring(index + 1));
+        return SXItem.getDf().format(SXItem.getRandom().nextDouble() * (max - min) + min);
     }
 }

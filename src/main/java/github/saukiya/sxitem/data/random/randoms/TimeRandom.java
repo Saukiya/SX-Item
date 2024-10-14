@@ -11,6 +11,18 @@ public class TimeRandom implements IRandom {
 
     static final Pattern PATTERN = Pattern.compile("\\d+");
 
+    /**
+     * 支持格式
+     * <pre>
+     *  &lt;t:600&gt; - 10分钟后的时间文本,等价于10m
+     *  &lt;t:1Y1M1D&gt; - 1年1月1天后的时间文本
+     *  &lt;t:1h1m1s&gt; - 1小时1分钟1秒后的时间文本
+     * </pre>
+     *
+     * @param key    处理的key
+     * @param docker 缓存
+     * @return
+     */
     @Override
     public String replace(String key, RandomDocker docker) {
         if (PATTERN.matcher(key).matches()) {
@@ -19,7 +31,8 @@ public class TimeRandom implements IRandom {
             Calendar calendar = Calendar.getInstance();
             int num = 0;
             for (int i = 0, length = key.length(); i < length; i++) {
-                switch (key.charAt(i)) {
+                char c = key.charAt(i);
+                switch (c) {
                     case '0':
                     case '1':
                     case '2':
@@ -30,7 +43,7 @@ public class TimeRandom implements IRandom {
                     case '7':
                     case '8':
                     case '9':
-                        num = num * 10 + key.charAt(i) - 48;
+                        num = num * 10 + c - 48;
                         break;
                     case 'Y':
                     case 'y':
