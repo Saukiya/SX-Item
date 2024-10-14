@@ -26,7 +26,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -260,7 +259,7 @@ public class ItemManager implements Listener {
     /**
      * 获取物品 - 不带玩家参数
      */
-    @NotNull
+    @Nonnull
     public ItemStack getItem(String itemName, Object... args) {
         return getItem(itemName, null, args);
     }
@@ -268,7 +267,7 @@ public class ItemManager implements Listener {
     /**
      * 获取物品 - 不带玩家参数
      */
-    @NotNull
+    @Nonnull
     public ItemStack getItem(IGenerator ig, Object... args) {
         return getItem(ig, null, args);
     }
@@ -276,7 +275,7 @@ public class ItemManager implements Listener {
     /**
      * 获取物品
      */
-    @NotNull
+    @Nonnull
     public ItemStack getItem(String itemName, Player player, Object... args) {
         if (itemName == null) return emptyItem;
         IGenerator ig = itemMap.get(itemName);
@@ -292,7 +291,7 @@ public class ItemManager implements Listener {
     /**
      * 获取物品
      */
-    @NotNull
+    @Nonnull
     public ItemStack getItem(IGenerator ig, Player player, Object... args) {
         if (ig == null) return emptyItem;
         ItemStack item = ig.getItem(player, args);

@@ -104,7 +104,9 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
                 randomDocker.getOtherList().add((Map<String, String>) args[0]);
             } else if (args[0] instanceof String) {
                 Map<String, String> map = new HashMap<>();
-                for (int i = 1; i < args.length; i++, i++) map.put((String) args[i - 1], (String) args[i]);
+                for (int i = 1; i < args.length; i += 2) {
+                    map.put((String) args[i - 1], (String) args[i]);
+                }
                 randomDocker.getOtherList().add(map);
             }
         }

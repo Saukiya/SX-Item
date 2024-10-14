@@ -95,7 +95,7 @@ public class RandomDocker extends StrLookup {
      * @return RandomText
      */
     public List<String> replace(List<String> list) {
-        return PlaceholderHelper.setPlaceholders(getPlayer(), list.stream().flatMap(str -> Arrays.stream(ss.replace(str).split("\n"))).filter(s -> !s.contains("%DeleteLore") && !s.contains("%deletelore")).collect(Collectors.toList()));
+        return PlaceholderHelper.setPlaceholders(getPlayer(), list.stream().flatMap(str -> Arrays.stream(ss.replace(str).split("\n"))).filter(s -> !s.contains("%DeleteLore")).collect(Collectors.toList()));
     }
 
     /**
@@ -116,7 +116,7 @@ public class RandomDocker extends StrLookup {
                 ((TagList) tagBase).forEach((v) -> tagList.add(replace(v)));
                 return tagList;
             case STRING:
-                return new TagString(PlaceholderHelper.setPlaceholders(getPlayer(), replace(((TagString) tagBase).getValue())));
+                return new TagString(replace(((TagString) tagBase).getValue()));
             default:
                 return tagBase;
         }
@@ -142,8 +142,9 @@ public class RandomDocker extends StrLookup {
         if (str.length() > 2 && str.charAt(1) == ':') {
             IRandom random = RandomManager.getRandom(str.charAt(0));
             if (random != null) {
-                if (str.indexOf('%') != str.lastIndexOf('%'))
+                if (str.indexOf('%') != str.lastIndexOf('%')) {
                     str = PlaceholderHelper.setPlaceholders(player, str);
+                }
                 str = random.replace(str.substring(2), this);
                 return str != null ? str : "%DeleteLore";
             }

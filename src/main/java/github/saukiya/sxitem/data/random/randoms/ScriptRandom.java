@@ -16,6 +16,17 @@ public class ScriptRandom implements IRandom {
 
     private static final Pattern pattern = Pattern.compile("(\\w+)\\.(\\w+)#(.+)");
 
+    /**
+     * 支持格式
+     * <pre>
+     *  &lt;s:key&gt;
+     *  &lt;s:File.Function#AAA,BBB&gt;
+     * </pre>
+     *
+     * @param key    处理的key
+     * @param docker 缓存
+     * @return
+     */
     @Override
     public String replace(String key, RandomDocker docker) {
         if (!SXItem.getScriptManager().isEnabled()) return null;
@@ -24,7 +35,7 @@ public class ScriptRandom implements IRandom {
             Object[] args = matcher.group(3).split(",");
             for (int i = 0; i < args.length; i++) {
                 Player player = Bukkit.getPlayerExact(args[i].toString());
-                if (player != null) args[i] = player;
+                if (player != null) args[i] = player; // TODO 可能报错
             }
             Object result;
             try {
