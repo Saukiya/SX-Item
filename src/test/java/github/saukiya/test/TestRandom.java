@@ -3,6 +3,7 @@ package github.saukiya.test;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.RandomDocker;
 import github.saukiya.sxitem.util.Config;
+import github.saukiya.util.TestBenchmark;
 import github.saukiya.util.helper.PlaceholderHelper;
 import lombok.val;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -24,16 +25,15 @@ public class TestRandom {
     final RandomDocker docker = new RandomDocker();
 
     public static void main(String[] args) throws Exception {
-//        TestBenchmark.run("calculator1", "calculator2");
+        TestBenchmark.run("calculator1", "calculator3");
 //        TestBenchmark.run("time1", "time2");
 //        TestBenchmark.run("double1", "double2");
 //        TestBenchmark.run("int1", "int2");
 //        TestBenchmark.run("lock1", "lock2");
 //        TestBenchmark.run();
-        System.out.println("结果2： " + inst.calculator2(new CalculatorState()));
-        ;
-        System.out.println("结果1： " + inst.calculator1(new CalculatorState()));
-        ;
+//        System.out.println("结果1： " + inst.calculator1(new CalculatorState()));
+//        System.out.println("结果2： " + inst.calculator2(new CalculatorState()));
+//        System.out.println("结果3： " + inst.calculator3(new CalculatorState()));
     }
 
     public void setup() throws Exception {
@@ -124,9 +124,7 @@ public class TestRandom {
         /*符号栈*/
         Stack<Character> operator = new Stack<>();
         operator.push('?');// 在栈顶压人一个null，配合它的优先级，目的是减少下面程序的判断
-//        number.push(0D);
 
-        System.out.println(expr);
         /* 将expr打散为运算数和运算符 */
         double temp = 0;
         int isDecimal = 0;
@@ -185,20 +183,72 @@ public class TestRandom {
                 default:
                     continue;
             }
-            System.out.println("number: " + number);
-            System.out.println("operator: " + operator);
         }
 
-        while (!operator.empty()) {//遍历结束后，符号栈数字栈依次弹栈计算，并将结果压入数字栈
+        while (operator.peek() != '?') {//遍历结束后，符号栈数字栈依次弹栈计算，并将结果压入数字栈
             temp = doubleCal(number.pop(), temp, operator.pop());
         }
         return intTransform ? Math.round(temp) : temp;
     }
 
+    @Benchmark
+    public Number calculator3(CalculatorState state) throws Exception {
+        String expr = state.key;
+        boolean intTransform = expr.startsWith("int");
+        if (intTransform) {
+            expr = expr.substring(3);
+        }
+        /*数字栈*/
+        Stack<Double> number = new Stack<>();
+        /*符号栈*/
+        Stack<Character> operator = new Stack<>();
+        operator.push('?');// 在栈顶压人一个null，配合它的优先级，目的是减少下面程序的判断
+
+        /* 将expr打散为运算数和运算符 */
+        Matcher m = CALCULATOR_PATTERN.matcher(expr);
+        while (m.find()) {
+            String temp = m.group();
+            switch (temp) {
+                case "(":
+                    operator.push('(');
+                    break;
+                case ")":
+                    char b;
+                    while ((b = operator.pop()) != '(') {
+                        double a1 = number.pop();
+                        double a2 = number.pop();
+                        number.push(doubleCal(a2, a1, b));
+                    }
+                    break;
+                case "+":
+                case "-":
+                case "*":
+                case "/":
+                case "%":
+                    int priority = getPriority(temp);
+                    while (priority <= getPriority(operator.peek())) {
+                        double a1 = number.pop();
+                        double a2 = number.pop();
+                        number.push(doubleCal(a2, a1, operator.pop()));
+                    }
+                    operator.push(temp.charAt(0));
+                    break;
+                default:
+                    number.push(Double.valueOf(temp));
+                    break;
+            }
+        }
+
+        while (operator.peek() != '?') {//遍历结束后，符号栈数字栈依次弹栈计算，并将结果压入数字栈
+            double a1 = number.pop();
+            double a2 = number.pop();
+            number.push(doubleCal(a2, a1, operator.pop()));
+        }
+        return intTransform ? Math.round(number.pop()) : number.pop();
+    }
+
     private double doubleCal(double a1, double a2, char operator) throws Exception {
-        System.out.println(a1 + String.valueOf(operator) + a2);
         switch (operator) {
-            case '?':
             case '+':
                 return a1 + a2;
             case '-':
