@@ -8,16 +8,16 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 计算器工具
+ * 来源: CSDN
+ * 方法来源于网站: https://blog.csdn.net/qq_37969433/article/details/81200872
+ * 标题: （算法）java完成解析数学算式（计算器）三 —— 用栈解析
+ *
+ * @author Sirm23333
+ */
 public class CalculatorRandom implements IRandom {
 
-    /**
-     * 计算器工具
-     * 来源: CSDN
-     * 方法来源于网站: https://blog.csdn.net/qq_37969433/article/details/81200872
-     * 标题: （算法）java完成解析数学算式（计算器）三 —— 用栈解析
-     *
-     * @author Sirm23333
-     */
     static Pattern p = Pattern.compile("(?<!\\d)-?\\d+(\\.\\d+)?|[+\\-*/%()]");// 这个正则为匹配表达式中的数字或运算符
 
     /**
@@ -43,7 +43,7 @@ public class CalculatorRandom implements IRandom {
         }
     }
 
-    private static double doubleCal(double a1, double a2, char operator) throws Exception {
+    private double doubleCal(double a1, double a2, char operator) throws Exception {
         switch (operator) {
             case '+':
                 return a1 + a2;
@@ -61,7 +61,7 @@ public class CalculatorRandom implements IRandom {
         throw new Exception("illegal operator!");
     }
 
-    private static int getPriority(String s) throws Exception {
+    private int getPriority(String s) throws Exception {
         if (s == null) {
             return 0;
         }
@@ -81,10 +81,9 @@ public class CalculatorRandom implements IRandom {
         throw new Exception("illegal operator!");
     }
 
-    public static Number getResult(String expr) throws Exception {
-        boolean intTransform = false;
-        if (expr.startsWith("int")) {
-            intTransform = true;
+    public Number getResult(String expr) throws Exception {
+        boolean intTransform = expr.startsWith("int");
+        if (intTransform) {
             expr = expr.substring(3);
         }
         /*数字栈*/

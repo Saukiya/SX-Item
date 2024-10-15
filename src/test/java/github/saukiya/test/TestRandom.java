@@ -3,16 +3,13 @@ package github.saukiya.test;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.RandomDocker;
 import github.saukiya.sxitem.util.Config;
-import github.saukiya.util.TestBenchmark;
 import github.saukiya.util.helper.PlaceholderHelper;
 import lombok.val;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.openjdk.jmh.annotations.*;
 
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @State(Scope.Thread)
@@ -22,24 +19,26 @@ public class TestRandom {
 
     static final Pattern LONG_PATTERN = Pattern.compile("\\d+");
 
+    static Pattern CALCULATOR_PATTERN = Pattern.compile("(?<!\\d)-?\\d+(\\.\\d+)?|[+\\-*/%()]");
+
     final RandomDocker docker = new RandomDocker();
 
     public static void main(String[] args) throws Exception {
+//        TestBenchmark.run("calculator1", "calculator2");
 //        TestBenchmark.run("time1", "time2");
 //        TestBenchmark.run("double1", "double2");
 //        TestBenchmark.run("int1", "int2");
 //        TestBenchmark.run("lock1", "lock2");
-        TestBenchmark.run();
+//        TestBenchmark.run();
+        System.out.println("结果2： " + inst.calculator2(new CalculatorState()));
+        ;
+        System.out.println("结果1： " + inst.calculator1(new CalculatorState()));
+        ;
     }
 
     public void setup() throws Exception {
-        setupInvocation();
         setupTrial();
-    }
-
-    @Setup(Level.Invocation)
-    public void setupInvocation() {
-        docker.getLockMap().clear();
+        setupInvocation();
     }
 
     @Setup(Level.Trial)
@@ -49,6 +48,210 @@ public class TestRandom {
         val temp = Config.class.getDeclaredField("config");
         temp.setAccessible(true);
         temp.set(null, config);
+    }
+
+    @Setup(Level.Invocation)
+    public void setupInvocation() {
+        docker.getLockMap().clear();
+    }
+
+    @State(value = Scope.Thread)
+    public static class CalculatorState {
+        @Param({"(8 + 6 / 3) * 10 - 5 / 10", "12 + 24 - 36 * 2 / (4 + 6) % 3"})
+        String key = "5 + (8 + 6 / 3) * 10 - 5 / 10";
+    }
+
+    @Benchmark
+    public Number calculator1(CalculatorState state) throws Exception {
+        String expr = state.key;
+        boolean intTransform = expr.startsWith("int");
+        if (intTransform) {
+            expr = expr.substring(3);
+        }
+        /*数字栈*/
+        Stack<Double> number = new Stack<>();
+        /*符号栈*/
+        Stack<String> operator = new Stack<>();
+        operator.push(null);// 在栈顶压人一个null，配合它的优先级，目的是减少下面程序的判断
+
+        /* 将expr打散为运算数和运算符 */
+        Matcher m = CALCULATOR_PATTERN.matcher(expr);
+        while (m.find()) {
+            String temp = m.group();
+            if (temp.matches("[+\\-*/%()]")) {//遇到符号
+                if (temp.equals("(")) {//遇到左括号，直接入符号栈
+                    operator.push(temp);
+                } else if (temp.equals(")")) {//遇到右括号，"符号栈弹栈取栈顶符号b，数字栈弹栈取栈顶数字a1，数字栈弹栈取栈顶数字a2，计算a2 b a1 ,将结果压入数字栈"，重复引号步骤至取栈顶为左括号，将左括号弹出
+                    String b;
+                    while (!(b = operator.pop()).equals("(")) {
+                        double a1 = number.pop();
+                        double a2 = number.pop();
+                        number.push(doubleCal(a2, a1, b.charAt(0)));
+                    }
+                } else {//遇到运算符，满足该运算符的优先级大于栈顶元素的优先级压栈；否则计算后压栈
+                    while (getPriority(temp) <= getPriority(operator.peek())) {
+                        double a1 = number.pop();
+                        double a2 = number.pop();
+                        String b = operator.pop();
+                        number.push(doubleCal(a2, a1, b.charAt(0)));
+                    }
+                    operator.push(temp);
+                }
+            } else {//遇到数字，直接压入数字栈
+                number.push(Double.valueOf(temp));
+            }
+        }
+
+        while (operator.peek() != null) {//遍历结束后，符号栈数字栈依次弹栈计算，并将结果压入数字栈
+            double a1 = number.pop();
+            double a2 = number.pop();
+            String b = operator.pop();
+            number.push(doubleCal(a2, a1, b.charAt(0)));
+        }
+        return intTransform ? Math.round(number.pop()) : number.pop();
+    }
+
+    // 负数支持不行 '-1234 * 5'
+    @Benchmark
+    public Number calculator2(CalculatorState state) throws Exception {
+        String expr = state.key;
+        boolean intTransform = expr.startsWith("int");
+        if (intTransform) {
+            expr = expr.substring(3);
+        }
+        /*数字栈*/
+        Stack<Double> number = new Stack<>();
+        /*符号栈*/
+        Stack<Character> operator = new Stack<>();
+        operator.push('?');// 在栈顶压人一个null，配合它的优先级，目的是减少下面程序的判断
+//        number.push(0D);
+
+        System.out.println(expr);
+        /* 将expr打散为运算数和运算符 */
+        double temp = 0;
+        int isDecimal = 0;
+        for (int i = 0, length = expr.length(); i < length; i++) {
+            char c = expr.charAt(i);
+            switch (c) {
+                case '(':
+                    operator.push('(');
+                    number.push(temp);
+                    temp = 0;
+                    isDecimal = 0;
+                    break;
+                case ')':
+                    // 计算处理
+                    while ((c = operator.pop()) != '(') {
+                        temp = doubleCal(number.pop(), temp, c);
+                    }
+                    number.push(temp);
+                    temp = 0;
+                    isDecimal = 0;
+                    break;
+                case '+':
+                case '-':
+                case '*':
+                case '/':
+                case '%':
+                    int priority = getPriority(c);
+                    while (priority <= getPriority(operator.peek())) {
+                        temp = doubleCal(number.pop(), temp, operator.pop());
+                    }
+                    number.push(temp);
+                    operator.push(c);
+                    temp = 0;
+                    isDecimal = 0;
+                    break;
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                case '0':
+                    if (isDecimal <= 0) {
+                        temp = temp * 10 + c - 48;
+                        isDecimal++;
+                        break;
+                    }
+                    temp += (c - 48) * Math.pow(10, isDecimal--);
+                    break;
+                case '.':
+                    isDecimal = -1;
+                    break;
+                default:
+                    continue;
+            }
+            System.out.println("number: " + number);
+            System.out.println("operator: " + operator);
+        }
+
+        while (!operator.empty()) {//遍历结束后，符号栈数字栈依次弹栈计算，并将结果压入数字栈
+            temp = doubleCal(number.pop(), temp, operator.pop());
+        }
+        return intTransform ? Math.round(temp) : temp;
+    }
+
+    private double doubleCal(double a1, double a2, char operator) throws Exception {
+        System.out.println(a1 + String.valueOf(operator) + a2);
+        switch (operator) {
+            case '?':
+            case '+':
+                return a1 + a2;
+            case '-':
+                return a1 - a2;
+            case '*':
+                return a1 * a2;
+            case '/':
+                return a1 / a2;
+            case '%':
+                return a1 % a2;
+            default:
+                break;
+        }
+        throw new Exception("illegal operator!");
+    }
+
+    private int getPriority(String s) throws Exception {
+        if (s == null) {
+            return 0;
+        }
+        switch (s) {
+            case "(":
+                return 1;
+            case "+":
+            case "-":
+                return 2;
+            case "*":
+            case "%":
+            case "/":
+                return 3;
+            default:
+                break;
+        }
+        throw new Exception("illegal operator!");
+    }
+
+    private int getPriority(char c) throws Exception {
+        switch (c) {
+            case '?':
+                return 0;
+            case '(':
+                return 1;
+            case '+':
+            case '-':
+                return 2;
+            case '*':
+            case '%':
+            case '/':
+                return 3;
+            default:
+                break;
+        }
+        throw new Exception("illegal operator!");
     }
 
     @State(Scope.Thread)
