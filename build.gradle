@@ -1,7 +1,6 @@
 plugins {
     id 'maven-publish'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
-    id 'me.champeau.jmh' version '0.6.6'
 }
 var baseProject = project(":Module-Base")
 var depProject = project(":Module-Deprecated-v3")
@@ -80,7 +79,6 @@ dependencies {
     }
 }
 
-jmh.includeTests = true
 jar.archiveClassifier = "core"
 processResources.expand(version: version, language: "~")
 buildCopyTask('buildLatestJar', "$rootDir\\build", "Latest")
@@ -171,7 +169,7 @@ publishing {
     }
 }
 
-assemble.group = buildDependents.group = buildNeeded.group = jar.group = classes.group = testClasses.group = jmhClasses.group = "build other"
+assemble.group = buildDependents.group = buildNeeded.group = jar.group = classes.group = testClasses.group = "build other"
 
 def buildCopyTask(String taskName, String destinationDir, String jarSuffix) {
     tasks.register(taskName, Copy) {

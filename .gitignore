@@ -7,7 +7,7 @@
 
 */build/
 */out/
-*/generated/
-*/generated_tests/
+*/*/generated/
+*/*/generated_tests/
 
 local.properties
