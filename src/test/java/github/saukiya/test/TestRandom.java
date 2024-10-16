@@ -3,6 +3,7 @@ package github.saukiya.test;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.RandomDocker;
 import github.saukiya.sxitem.util.Config;
+import github.saukiya.util.TestBenchmark;
 import github.saukiya.util.helper.PlaceholderHelper;
 import lombok.val;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -17,6 +18,8 @@ public class TestRandom {
 
     static final TestRandom inst = new TestRandom();
 
+    static final Map<String, Object> validation = new LinkedHashMap<>();
+
     static final Pattern LONG_PATTERN = Pattern.compile("\\d+");
 
     static Pattern CALCULATOR_PATTERN = Pattern.compile("(?<!\\d)-?\\d+(\\.\\d+)?|[+\\-*/%()]");
@@ -24,17 +27,34 @@ public class TestRandom {
     final RandomDocker docker = new RandomDocker();
 
     public static void main(String[] args) throws Exception {
-//        TestBenchmark.run("calculator2", "calculator3");
+        TestBenchmark.run("calculator1", "calculator3");
 //        TestBenchmark.run("time1", "time2");
 //        TestBenchmark.run("double2", "double3");
 //        TestBenchmark.run("int1", "int2");
 //        TestBenchmark.run("lock1", "lock2");
 //        TestBenchmark.run();
 //        System.out.println("默认“： " + new CalculatorRandom().getResult(new CalculatorState().key));
-        
+        val state = new CalculatorState();
 //        System.out.println("结果1： " + inst.calculator1(new CalculatorState()));
 //        System.out.println("结果2： " + inst.calculator2(new CalculatorState()));
-        System.out.println("结果3： " + inst.calculator3(new CalculatorState()));
+        System.out.println("结果3： " + inst.calculator3(state));
+
+        validation.put("(8 + 6 / 3) * 10 - 5 / 10", (8d + 6d / 3d) * 10d - 5d / 10d);
+        validation.put("12 + 24 - 36 * 2 / (4 + 6) % 3", 12d + 24d - 36d * 2d / (4d + 6d) % 3d);
+        validation.put("14/3*2", 14d / 3d * 2d);
+        validation.put("(1+(4+5+2)-3)+(6+8)", (1 + (4 + 5 + 2) - 3) + (6 + 8));
+        validation.put("-3 + ((4 * (10 - (6 / 2))) - (8 % 3) + (5 + (-7) / 2))", -3d + ((4d * (10d - (6d / 2d))) - (8d % 3d) + (5d + (-7d) / 2d)));
+        validation.put("-2 + 1", -2 + 1);
+        validation.put("- (3 + (4 + 5))", -(3 + (4 + 5)));
+        validation.put("- (3 - (- (4 + 5) ) )", -(3 - (-(4 + 5))));
+
+        for (Map.Entry<String, Object> entry : validation.entrySet()) {
+            state.key = entry.getKey();
+            System.out.print(state.key);
+            Object result = inst.calculator3(state);
+
+            System.out.println("  =  " + result + " -> " + entry.getValue());
+        }
     }
 
     public void setup() throws Exception {
@@ -63,7 +83,7 @@ public class TestRandom {
     }
 
     @Benchmark
-    public Number calculator1(CalculatorState state) throws Exception {
+    public static Number calculator1(CalculatorState state) throws Exception {
         String expr = state.key;
         boolean intTransform = expr.startsWith("int");
         if (intTransform) {
@@ -87,14 +107,14 @@ public class TestRandom {
                     while (!(b = operator.pop()).equals("(")) {
                         double a1 = number.pop();
                         double a2 = number.pop();
-                        number.push(doubleCal(a2, a1, b.charAt(0)));
+                        number.push(operator(a2, a1, b.charAt(0)));
                     }
                 } else {//遇到运算符，满足该运算符的优先级大于栈顶元素的优先级压栈；否则计算后压栈
                     while (getPriority(temp) <= getPriority(operator.peek())) {
                         double a1 = number.pop();
                         double a2 = number.pop();
                         String b = operator.pop();
-                        number.push(doubleCal(a2, a1, b.charAt(0)));
+                        number.push(operator(a2, a1, b.charAt(0)));
                     }
                     operator.push(temp);
                 }
@@ -107,7 +127,7 @@ public class TestRandom {
             double a1 = number.pop();
             double a2 = number.pop();
             String b = operator.pop();
-            number.push(doubleCal(a2, a1, b.charAt(0)));
+            number.push(operator(a2, a1, b.charAt(0)));
         }
         return intTransform ? Math.round(number.pop()) : number.pop();
     }
@@ -139,7 +159,7 @@ public class TestRandom {
                     while ((b = operator.pop()) != '(') {
                         double a1 = number.pop();
                         double a2 = number.pop();
-                        number.push(doubleCal(a2, a1, b));
+                        number.push(operator(a2, a1, b));
                     }
                     break;
                 case "+":
@@ -147,13 +167,13 @@ public class TestRandom {
                 case "*":
                 case "/":
                 case "%":
-                    int priority = getPriority(temp);
+                    int priority = getPriority(temp.charAt(0));
 //                    System.out.println("2\t" + operator + "\t" + number);
                     while (priority <= getPriority(operator.peek())) {
 //                        System.out.println("\t\t" + operator.peek() + "\t" + number);
                         double a1 = number.pop();
                         double a2 = number.pop();
-                        number.push(doubleCal(a2, a1, operator.pop()));
+                        number.push(operator(a2, a1, operator.pop()));
                     }
                     operator.push(temp.charAt(0));
                     break;
@@ -167,7 +187,7 @@ public class TestRandom {
 //            System.out.println("3\t\t" + operator.peek() + "\t" + number);
             double a1 = number.pop();
             double a2 = number.pop();
-            number.push(doubleCal(a2, a1, operator.pop()));
+            number.push(operator(a2, a1, operator.pop()));
         }
         return intTransform ? Math.round(number.pop()) : number.pop();
     }
@@ -185,22 +205,18 @@ public class TestRandom {
         /*符号栈*/
         CharStack operator = new CharStack();
         operator.push('?');// 在栈顶压人一个null，配合它的优先级，目的是减少下面程序的判断
-        number.push(0);// 在栈顶压入一个0， 防止 '-()'表达
 
         /* 将expr打散为运算数和运算符 */
         double num = 0;
         int numBits = 0;
-        int scale = 1;
-        boolean canNegative = false;
-        for (int i = 0, length = expr.length(); i < length; i++) {
-            char c = expr.charAt(i);
+        boolean canNegative = true;
+        for (char c : expr.toCharArray()) {
             switch (c) {
                 case '(':
                     canNegative = true;
                     if (numBits != 0) {
                         number.push(num);
                         num = numBits = 0;
-                        scale = 1;
                     }
                     operator.push('(');
                     break;
@@ -210,40 +226,38 @@ public class TestRandom {
                     if (numBits != 0) {
                         number.push(num);
                         num = numBits = 0;
-                        scale = 1;
                     }
-                    System.out.println("1\t" + operator + "\t" + number);
+//                    System.out.println("\t" + c + "\t" + operator + "\t" + number);
                     while ((c = operator.pop()) != '(') {
                         double d1 = number.pop();
                         double d2 = number.pop();
-                        number.push(doubleCal(d2, d1, c));
+//                        System.out.println("\t\t" + c+ "\t" + d2 + "\t\t" + d1);
+                        number.push(operator(d2, d1, c));
                     }
                     break;
                 case '-':
                     if (canNegative) {
                         // 负数模式
-                        scale = -1;
-                        num = -num;
+                        number.push(0);
+                        operator.push('-');
                         break;
-                    } else {
-                        canNegative = true;
                     }
                 case '+':
                 case '*':
                 case '/':
                 case '%':
+                    canNegative = true;
                     if (numBits != 0) {
                         number.push(num);
                         num = numBits = 0;
-                        scale = 1;
                     }
                     int priority = getPriority(c);
-                    System.out.println("2\t" + operator + "\t" + number);
+//                    System.out.println("\t" + c + "\t" + operator + "\t" + number);
                     while (priority <= getPriority(operator.peek())) {
-                        System.out.println("\t\t" + operator.peek() + "\t" + number);
                         double d1 = number.pop();
                         double d2 = number.pop();
-                        number.push(doubleCal(d2, d1, operator.pop()));
+//                        System.out.println("\t\t" + operator.peek() + "\t" + d2 + "\t\t" + d1);
+                        number.push(operator(d2, d1, operator.pop()));
                     }
                     operator.push(c);
                     break;
@@ -259,10 +273,10 @@ public class TestRandom {
                 case '0':
                     canNegative = false;
                     if (numBits >= 0) {
-                        num = (num * 10) + (c - 48) * scale;
+                        num = (num * 10) + (c - 48);
                         numBits++;
                     } else {
-                        num += (c - 48) * Math.pow(10, numBits--) * scale;
+                        num += (c - 48) * Math.pow(10, numBits--);
                     }
                     break;
                 case '.':
@@ -278,10 +292,44 @@ public class TestRandom {
         }
 
         while (operator.peek() != '?') {//遍历结束后，符号栈数字栈依次弹栈计算，并将结果压入数字栈
-            System.out.println("3\t\t" + operator.peek() + "\t" + number + "\t" + num);
-            num = doubleCal(number.pop(), num, operator.pop());
+//            System.out.println("\t3\t" + operator.peek() + "\t" + number + "\t" + num);
+            num = operator(number.pop(), num, operator.pop());
         }
         return intTransform ? Math.round(num) : num;
+    }
+
+    public static class IntStack {
+        int[] stack = new int[8]; // 假设栈的最大容量是100
+        int top = -1; // 栈顶指针
+
+        // 入栈操作
+        public void push(int value) {
+            if (++top == stack.length) resize();
+            stack[top] = value;
+        }
+
+        // 出栈操作
+        public int pop() {
+            if (top == -1) throw new EmptyStackException();
+            return stack[top--];
+        }
+
+        public int peek() {
+            if (top == -1) throw new EmptyStackException();
+            return stack[top];
+        }
+
+        // 自动扩容
+        private void resize() {
+            int[] newStack = new int[stack.length * 2];
+            System.arraycopy(stack, 0, newStack, 0, stack.length);
+            stack = newStack;
+        }
+
+        @Override
+        public String toString() {
+            return Arrays.toString(Arrays.copyOf(stack, top + 1));
+        }
     }
 
     public static class CharStack {
@@ -352,7 +400,7 @@ public class TestRandom {
         }
     }
 
-    private double doubleCal(double a1, double a2, char operator) throws Exception {
+    private static double operator(double a1, double a2, char operator) throws Exception {
         switch (operator) {
             case '+':
                 return a1 + a2;
@@ -370,7 +418,7 @@ public class TestRandom {
         throw new Exception("illegal operator!");
     }
 
-    private int intCal(int a1, int a2, char operator) throws Exception {
+    private int operator(int a1, int a2, char operator) throws Exception {
         switch (operator) {
             case '+':
                 return a1 + a2;
@@ -388,7 +436,7 @@ public class TestRandom {
         throw new Exception("illegal operator!");
     }
 
-    private int getPriority(String s) throws Exception {
+    private static int getPriority(String s) throws Exception {
         if (s == null) {
             return 0;
         }
@@ -418,8 +466,8 @@ public class TestRandom {
             case '-':
                 return 2;
             case '*':
-            case '%':
             case '/':
+            case '%':
                 return 3;
             default:
                 break;
