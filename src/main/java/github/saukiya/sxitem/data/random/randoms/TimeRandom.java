@@ -3,13 +3,11 @@ package github.saukiya.sxitem.data.random.randoms;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.IRandom;
 import github.saukiya.sxitem.data.random.RandomDocker;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.Calendar;
-import java.util.regex.Pattern;
 
 public class TimeRandom implements IRandom {
-
-    static final Pattern PATTERN = Pattern.compile("\\d+");
 
     /**
      * 支持格式
@@ -25,57 +23,52 @@ public class TimeRandom implements IRandom {
      */
     @Override
     public String replace(String key, RandomDocker docker) {
-        if (PATTERN.matcher(key).matches()) {
+        if (StringUtils.isNumeric(key)) {
             return SXItem.getSdf().get().format(System.currentTimeMillis() + Long.parseLong(key) * 1000);
-        } else {
-            Calendar calendar = Calendar.getInstance();
-            int num = 0;
-            for (int i = 0, length = key.length(); i < length; i++) {
-                char c = key.charAt(i);
-                switch (c) {
-                    case '0':
-                    case '1':
-                    case '2':
-                    case '3':
-                    case '4':
-                    case '5':
-                    case '6':
-                    case '7':
-                    case '8':
-                    case '9':
-                        num = num * 10 + c - 48;
-                        break;
-                    case 'Y':
-                    case 'y':
-                        calendar.add(Calendar.YEAR, num);
-                        num = 0;
-                        break;
-                    case 'M':
-                        calendar.add(Calendar.MONTH, num);
-                        num = 0;
-                        break;
-                    case 'D':
-                    case 'd':
-                        calendar.add(Calendar.DATE, num);
-                        num = 0;
-                        break;
-                    case 'H':
-                    case 'h':
-                        calendar.add(Calendar.HOUR_OF_DAY, num);
-                        num = 0;
-                        break;
-                    case 'm':
-                        calendar.add(Calendar.MINUTE, num);
-                        num = 0;
-                        break;
-                    case 'S':
-                    case 's':
-                        calendar.add(Calendar.SECOND, num);
-                        num = 0;
-                        break;
-                }
-            }
-            return SXItem.getSdf().get().format(calendar.getTimeInMillis());
         }
+        Calendar calendar = Calendar.getInstance();
+        int num = 0;
+        for (char c : key.toCharArray()) {
+            switch (c) {
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    num = c - 48 + num * 10;
+                    continue;
+                case 'Y':
+                case 'y':
+                    calendar.add(Calendar.YEAR, num);
+                    break;
+                case 'M':
+                    calendar.add(Calendar.MONTH, num);
+                    break;
+                case 'D':
+                case 'd':
+                    calendar.add(Calendar.DATE, num);
+                    break;
+                case 'H':
+                case 'h':
+                    calendar.add(Calendar.HOUR_OF_DAY, num);
+                    break;
+                case 'm':
+                    calendar.add(Calendar.MINUTE, num);
+                    break;
+                case 'S':
+                case 's':
+                    calendar.add(Calendar.SECOND, num);
+                    break;
+                default:
+                    continue;
+            }
+            num = 0;
+        }
+        return SXItem.getSdf().get().format(calendar.getTime());
     }
 }

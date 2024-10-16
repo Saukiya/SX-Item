@@ -8,6 +8,9 @@ import java.util.Map;
 
 public class LockStringRandom implements IRandom {
 
+    public String separator = ":";
+//    public String separator = ","; // TODO
+
     /**
      * 支持格式
      * <pre>
@@ -40,7 +43,7 @@ public class LockStringRandom implements IRandom {
                 if (value != null) break;
             }
             if (value == null) {
-                value = randomArray(temp.split(","));
+                value = randomArray(temp.split(separator));
             }
         } else {
             value = docker.replace(docker.random(key));
@@ -52,7 +55,7 @@ public class LockStringRandom implements IRandom {
         return value;
     }
 
-    public String randomArray(String[] array) {
+    public static String randomArray(String[] array) {
         return array[SXItem.getRandom().nextInt(array.length)];
     }
 }

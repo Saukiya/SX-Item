@@ -3,9 +3,11 @@ package github.saukiya.test;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.RandomDocker;
 import github.saukiya.sxitem.util.Config;
-import github.saukiya.util.TestBenchmark;
+import github.saukiya.util.base.CharStack;
+import github.saukiya.util.base.DoubleStack;
 import github.saukiya.util.helper.PlaceholderHelper;
 import lombok.val;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.openjdk.jmh.annotations.*;
 
@@ -13,57 +15,16 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("UnusedReturnValue")
 @State(Scope.Thread)
 public class TestRandom {
-
-    static final TestRandom inst = new TestRandom();
-
-    static final Map<String, Object> validation = new LinkedHashMap<>();
 
     static final Pattern LONG_PATTERN = Pattern.compile("\\d+");
 
     static Pattern CALCULATOR_PATTERN = Pattern.compile("(?<!\\d)-?\\d+(\\.\\d+)?|[+\\-*/%()]");
 
-    final RandomDocker docker = new RandomDocker();
-
-    public static void main(String[] args) throws Exception {
-        TestBenchmark.run("calculator1", "calculator3");
-//        TestBenchmark.run("time1", "time2");
-//        TestBenchmark.run("double2", "double3");
-//        TestBenchmark.run("int1", "int2");
-//        TestBenchmark.run("lock1", "lock2");
-//        TestBenchmark.run();
-//        System.out.println("默认“： " + new CalculatorRandom().getResult(new CalculatorState().key));
-        val state = new CalculatorState();
-//        System.out.println("结果1： " + inst.calculator1(new CalculatorState()));
-//        System.out.println("结果2： " + inst.calculator2(new CalculatorState()));
-        System.out.println("结果3： " + inst.calculator3(state));
-
-        validation.put("(8 + 6 / 3) * 10 - 5 / 10", (8d + 6d / 3d) * 10d - 5d / 10d);
-        validation.put("12 + 24 - 36 * 2 / (4 + 6) % 3", 12d + 24d - 36d * 2d / (4d + 6d) % 3d);
-        validation.put("14/3*2", 14d / 3d * 2d);
-        validation.put("(1+(4+5+2)-3)+(6+8)", (1 + (4 + 5 + 2) - 3) + (6 + 8));
-        validation.put("-3 + ((4 * (10 - (6 / 2))) - (8 % 3) + (5 + (-7) / 2))", -3d + ((4d * (10d - (6d / 2d))) - (8d % 3d) + (5d + (-7d) / 2d)));
-        validation.put("-2 + 1", -2 + 1);
-        validation.put("- (3 + (4 + 5))", -(3 + (4 + 5)));
-        validation.put("- (3 - (- (4 + 5) ) )", -(3 - (-(4 + 5))));
-
-        for (Map.Entry<String, Object> entry : validation.entrySet()) {
-            state.key = entry.getKey();
-            System.out.print(state.key);
-            Object result = inst.calculator3(state);
-
-            System.out.println("  =  " + result + " -> " + entry.getValue());
-        }
-    }
-
-    public void setup() throws Exception {
-        setupTrial();
-        setupInvocation();
-    }
-
     @Setup(Level.Trial)
-    public void setupTrial() throws Exception {
+    public static void setupTrial() throws Exception {
         YamlConfiguration config = new YamlConfiguration();
         config.set(Config.TIME_FORMAT, "yyyy/MM/dd HH:mm");
         val temp = Config.class.getDeclaredField("config");
@@ -71,29 +32,83 @@ public class TestRandom {
         temp.set(null, config);
     }
 
-    @Setup(Level.Invocation)
-    public void setupInvocation() {
-        docker.getLockMap().clear();
+    public static void main(String[] args) throws Exception {
+//        TestBenchmark.run(CalculatorBM.class);
+//        TestBenchmark.run(TimeBM.class);
+//        TestBenchmark.run(DoubleBM.class);
+//        TestBenchmark.run(IntBM.class);
+//        TestBenchmark.run(LockBM.class);
+//        TestBenchmark.run("CalculatorBM.test3", "TimeBM.test3", "DoubleBM.test3", "IntegerBM.test3", "LockBM.test2");
+//        TestBenchmark.run();
+
+//        calculatorValidation();
     }
 
-    @State(value = Scope.Thread)
-    public static class CalculatorState {
-        @Param({"(8 + 6 / 3) * 10 - 5 / 10", "12 + 24 - 36 * 2 / (4 + 6) % 3", "14/3*2", "(1+(4+5+2)-3)+(6+8)", "-3 + ((4 * (10 - (6 / 2))) - (8 % 3) + (5 + (-7) / 2))", "-2 + 1", "- (3 + (4 + 5))", "- (3 - (- (4 + 5) ) )"})
-        String key = "- (3 - (- (4 + 5) ) )";
-    }
+    public static String boolean1(String key) {
+        String comStr = null;
 
-    @Benchmark
-    public static Number calculator1(CalculatorState state) throws Exception {
-        String expr = state.key;
-        boolean intTransform = expr.startsWith("int");
-        if (intTransform) {
-            expr = expr.substring(3);
+        for (String str : key.split(":")) {
+            if (comStr == null) comStr = str;
+            else if (str.equals(comStr)) return "";
         }
+        return null;
+    }
+
+    public static String boolean2(String key) {
+        String comStr = null;
+
+        for (String str : key.split(":")) {
+            if (comStr == null) comStr = str;
+            else if (str.equals(comStr)) return "";
+        }
+        return null;
+    }
+
+    public static void calculatorValidation() {
+        val validation = new LinkedHashMap<String, Object>();
+        validation.put("(8 + 6 / 3) * 10 - 5 / 10", (8d + 6d / 3d) * 10d - 5d / 10d);
+        validation.put("12 + 24 - 36 * 2 / (4 + 6) % 3", 12d + 24d - 36d * 2d / (4d + 6d) % 3d);
+        validation.put("14/3*2", 14d / 3d * 2d);
+        validation.put("1+2-5*3", 1 + 2 - 5 * 3);
+        validation.put("(1+(4+5+2)-3)+(6+8)", (1 + (4 + 5 + 2) - 3) + (6 + 8));
+        validation.put("-3 + ((4 * (10 - (6 / 2))) - (8 % 3) + (5 + (-7) / 2))", -3d + ((4d * (10d - (6d / 2d))) - (8d % 3d) + (5d + (-7d) / 2d)));
+        validation.put("-2 + 1", -2 + 1);
+        validation.put("- (3 + (4 + 5))", -(3 + (4 + 5)));
+        validation.put("- (3 - (- (4 + 5) ) )", -(3 - (-(4 + 5))));
+        validation.put("3.5 + (-12.7) * 4.2", 3.5 + (-12.7) * 4.2);
+        validation.put("-8.2 / 2.4 + 5 * 3", -8.2 / 2.4 + 5 * 3);
+        validation.put("(7.8 % 2) - 15 / 2", (7.8 % 2d) - 15 / 2d);
+        validation.put("19.5 * (-3) / 7 + 1", 19.5 * (-3) / 7d + 1);
+        validation.put("12.5 - 4.6 * (2 % 5)", 12.5 - 4.6 * (2 % 5));
+        validation.put("8.9 * 2.2 / (-3) - 1", 8.9 * 2.2 / (-3d) - 1);
+        validation.put("-7 + 4.5 * (6 / 3)", -7 + 4.5 * (6 / 3d));
+        validation.put("15 / 3.5 + (-2) * 9", 15 / 3.5 + (-2) * 9);
+        validation.put("(5.4 - 1.8) * 3 % 7", (5.4 - 1.8) * 3 % 7);
+        validation.put("8.0 * (-2.5) / 5 + 4", 8.0 * (-2.5) / 5d + 4);
+        validation.put("(14.2 / (-7.1) + 18.5) * 3.2", (14.2 / (-7.1) + 18.5) * 3.2);
+        validation.put("-5.7 * (6.9 % 3.3 - 1.8) + 15", -5.7 * (6.9 % 3.3 - 1.8) + 15);
+        validation.put("22.8 / (2.4 - 12.5 * 3) + 9", 22.8 / (2.4 - 12.5 * 3) + 9);
+        validation.put("(-3.2 + 8.4) * 4.7 % 6 - 1.5", (-3.2 + 8.4) * 4.7 % 6 - 1.5);
+        validation.put("17.6 * 3.5 / (-2.2) + 5.8 - 4", 17.6 * 3.5 / (-2.2) + 5.8 - 4);
+        validation.put("(9.5 - 4.2) / 7.3 * 2.1 + (-8)", (9.5 - 4.2) / 7.3 * 2.1 + (-8));
+        validation.put("5.6 % 2.3 - 1.9 * (11 / 2.8) + 6", 5.6 % 2.3 - 1.9 * (11 / 2.8) + 6);
+        validation.put("(-14.5 / 7.2 + 2.3) * 3.5 - 9", (-14.5 / 7.2 + 2.3) * 3.5 - 9);
+        validation.put("8.8 * (5 - 2.7 / (-3.1)) + 10", 8.8 * (5 - 2.7 / (-3.1)) + 10);
+        validation.put("4.1 / 2.5 * (1.6 - 8.7 % 3) + 6", 4.1 / 2.5 * (1.6 - 8.7 % 3) + 6);
+        validation.put("----------------1", 1);
+
+        for (Map.Entry<String, Object> entry : validation.entrySet()) {
+            System.out.print(entry.getKey());
+            System.out.printf("  =  %s -> %s%n", calculator3(entry.getKey()), entry.getValue());
+        }
+    }
+
+    public static double calculator1(String expr) {
         /*数字栈*/
         Stack<Double> number = new Stack<>();
         /*符号栈*/
         Stack<String> operator = new Stack<>();
-        operator.push(null);// 在栈顶压人一个null，配合它的优先级，目的是减少下面程序的判断
+        operator.push("?");// 在栈顶压人一个null，配合它的优先级，目的是减少下面程序的判断
 
         /* 将expr打散为运算数和运算符 */
         Matcher m = CALCULATOR_PATTERN.matcher(expr);
@@ -110,11 +125,10 @@ public class TestRandom {
                         number.push(operator(a2, a1, b.charAt(0)));
                     }
                 } else {//遇到运算符，满足该运算符的优先级大于栈顶元素的优先级压栈；否则计算后压栈
-                    while (getPriority(temp) <= getPriority(operator.peek())) {
+                    while (getPriority(temp.charAt(0)) <= getPriority(operator.peek().charAt(0))) {
                         double a1 = number.pop();
                         double a2 = number.pop();
-                        String b = operator.pop();
-                        number.push(operator(a2, a1, b.charAt(0)));
+                        number.push(operator(a2, a1, operator.pop().charAt(0)));
                     }
                     operator.push(temp);
                 }
@@ -123,123 +137,49 @@ public class TestRandom {
             }
         }
 
-        while (operator.peek() != null) {//遍历结束后，符号栈数字栈依次弹栈计算，并将结果压入数字栈
+        while (!operator.peek().equals("?")) {//遍历结束后，符号栈数字栈依次弹栈计算，并将结果压入数字栈
             double a1 = number.pop();
             double a2 = number.pop();
-            String b = operator.pop();
-            number.push(operator(a2, a1, b.charAt(0)));
+            number.push(operator(a2, a1, operator.pop().charAt(0)));
         }
-        return intTransform ? Math.round(number.pop()) : number.pop();
+        return number.pop();
     }
 
-    @Benchmark
-    public Number calculator2(CalculatorState state) throws Exception {
-        String expr = state.key;
-        boolean intTransform = expr.startsWith("int");
-        if (intTransform) {
-            expr = expr.substring(3);
-        }
+    public static double calculator3(String expression) {
         /*数字栈*/
         DoubleStack number = new DoubleStack();
         /*符号栈*/
         CharStack operator = new CharStack();
-        operator.push('?');// 在栈顶压人一个null，配合它的优先级，目的是减少下面程序的判断
+        // 在栈顶压人一个?，配合它的优先级，目的是减少下面程序的判断
+        operator.push('?');
 
-        /* 将expr打散为运算数和运算符 */
-        Matcher m = CALCULATOR_PATTERN.matcher(expr);
-        while (m.find()) {
-            String temp = m.group();
-            switch (temp) {
-                case "(":
-                    operator.push('(');
-                    break;
-                case ")":
-                    char b;
-//                    System.out.println("1\t" + operator + "\t" + number);
-                    while ((b = operator.pop()) != '(') {
-                        double a1 = number.pop();
-                        double a2 = number.pop();
-                        number.push(operator(a2, a1, b));
-                    }
-                    break;
-                case "+":
-                case "-":
-                case "*":
-                case "/":
-                case "%":
-                    int priority = getPriority(temp.charAt(0));
-//                    System.out.println("2\t" + operator + "\t" + number);
-                    while (priority <= getPriority(operator.peek())) {
-//                        System.out.println("\t\t" + operator.peek() + "\t" + number);
-                        double a1 = number.pop();
-                        double a2 = number.pop();
-                        number.push(operator(a2, a1, operator.pop()));
-                    }
-                    operator.push(temp.charAt(0));
-                    break;
-                default:
-                    number.push(Double.parseDouble(temp));
-                    continue;
-            }
-        }
-
-        while (operator.peek() != '?') {//遍历结束后，符号栈数字栈依次弹栈计算，并将结果压入数字栈
-//            System.out.println("3\t\t" + operator.peek() + "\t" + number);
-            double a1 = number.pop();
-            double a2 = number.pop();
-            number.push(operator(a2, a1, operator.pop()));
-        }
-        return intTransform ? Math.round(number.pop()) : number.pop();
-    }
-
-    // 感谢leetCode对此函数的大力支持(提供测试用例): https://leetcode.cn/problems/basic-calculator/submissions/573314961/
-    @Benchmark
-    public Number calculator3(CalculatorState state) throws Exception {
-        String expr = state.key;
-        boolean intTransform = expr.startsWith("int");
-        if (intTransform) {
-            expr = expr.substring(3);
-        }
-        /*数字栈*/
-        DoubleStack number = new DoubleStack();
-        /*符号栈*/
-        CharStack operator = new CharStack();
-        operator.push('?');// 在栈顶压人一个null，配合它的优先级，目的是减少下面程序的判断
-
-        /* 将expr打散为运算数和运算符 */
         double num = 0;
         int numBits = 0;
         boolean canNegative = true;
-        for (char c : expr.toCharArray()) {
+        for (char c : expression.toCharArray()) {
             switch (c) {
                 case '(':
                     canNegative = true;
+                    operator.push('(');
                     if (numBits != 0) {
                         number.push(num);
                         num = numBits = 0;
                     }
-                    operator.push('(');
                     break;
                 case ')':
                     canNegative = false;
-                    // 计算处理
-                    if (numBits != 0) {
-                        number.push(num);
-                        num = numBits = 0;
-                    }
-//                    System.out.println("\t" + c + "\t" + operator + "\t" + number);
+                    num = numBits != 0 ? num : number.pop();
                     while ((c = operator.pop()) != '(') {
-                        double d1 = number.pop();
-                        double d2 = number.pop();
-//                        System.out.println("\t\t" + c+ "\t" + d2 + "\t\t" + d1);
-                        number.push(operator(d2, d1, c));
+                        num = operator(number.pop(), num, c);
                     }
+                    number.push(num);
+                    num = numBits = 0;
                     break;
                 case '-':
                     if (canNegative) {
-                        // 负数模式
+                        // 补位
                         number.push(0);
-                        operator.push('-');
+                        operator.push(c);
                         break;
                     }
                 case '+':
@@ -247,19 +187,14 @@ public class TestRandom {
                 case '/':
                 case '%':
                     canNegative = true;
-                    if (numBits != 0) {
-                        number.push(num);
-                        num = numBits = 0;
-                    }
+                    num = numBits != 0 ? num : number.pop();
                     int priority = getPriority(c);
-//                    System.out.println("\t" + c + "\t" + operator + "\t" + number);
                     while (priority <= getPriority(operator.peek())) {
-                        double d1 = number.pop();
-                        double d2 = number.pop();
-//                        System.out.println("\t\t" + operator.peek() + "\t" + d2 + "\t\t" + d1);
-                        number.push(operator(d2, d1, operator.pop()));
+                        num = operator(number.pop(), num, operator.pop());
                     }
                     operator.push(c);
+                    number.push(num);
+                    num = numBits = 0;
                     break;
                 case '1':
                 case '2':
@@ -292,115 +227,12 @@ public class TestRandom {
         }
 
         while (operator.peek() != '?') {//遍历结束后，符号栈数字栈依次弹栈计算，并将结果压入数字栈
-//            System.out.println("\t3\t" + operator.peek() + "\t" + number + "\t" + num);
             num = operator(number.pop(), num, operator.pop());
         }
-        return intTransform ? Math.round(num) : num;
+        return num;
     }
 
-    public static class IntStack {
-        int[] stack = new int[8]; // 假设栈的最大容量是100
-        int top = -1; // 栈顶指针
-
-        // 入栈操作
-        public void push(int value) {
-            if (++top == stack.length) resize();
-            stack[top] = value;
-        }
-
-        // 出栈操作
-        public int pop() {
-            if (top == -1) throw new EmptyStackException();
-            return stack[top--];
-        }
-
-        public int peek() {
-            if (top == -1) throw new EmptyStackException();
-            return stack[top];
-        }
-
-        // 自动扩容
-        private void resize() {
-            int[] newStack = new int[stack.length * 2];
-            System.arraycopy(stack, 0, newStack, 0, stack.length);
-            stack = newStack;
-        }
-
-        @Override
-        public String toString() {
-            return Arrays.toString(Arrays.copyOf(stack, top + 1));
-        }
-    }
-
-    public static class CharStack {
-        char[] stack = new char[8]; // 假设栈的最大容量是100
-        int top = -1; // 栈顶指针
-
-        // 入栈操作
-        public void push(char value) {
-            if (++top == stack.length) resize();
-            stack[top] = value;
-        }
-
-        // 出栈操作
-        public char pop() {
-            if (top == -1) throw new EmptyStackException();
-            return stack[top--];
-        }
-
-        public char peek() {
-            if (top == -1) throw new EmptyStackException();
-            return stack[top];
-        }
-
-        // 自动扩容
-        private void resize() {
-            char[] newStack = new char[stack.length * 2];
-            System.arraycopy(stack, 0, newStack, 0, stack.length);
-            stack = newStack;
-        }
-
-        @Override
-        public String toString() {
-            return Arrays.toString(Arrays.copyOf(stack, top + 1));
-        }
-    }
-
-    public static class DoubleStack {
-        double[] stack = new double[8]; // 假设栈的最大容量是100
-        int top = -1; // 栈顶指针
-
-        // 入栈操作
-        public void push(double value) {
-            if (++top == stack.length) resize();
-            stack[top] = value;
-        }
-
-        // 出栈操作
-        public double pop() {
-            if (top == -1) throw new EmptyStackException();
-            return stack[top--];
-        }
-
-        public double peek() {
-            if (top == -1) throw new EmptyStackException();
-            return stack[top];
-        }
-
-        // 自动扩容
-        private void resize() {
-            double[] newStack = new double[stack.length * 2];
-            System.arraycopy(stack, 0, newStack, 0, stack.length);
-            stack = newStack;
-        }
-
-        @Override
-        public String toString() {
-            return Arrays.toString(Arrays.copyOf(stack, top + 1));
-        }
-    }
-
-    private static double operator(double a1, double a2, char operator) throws Exception {
+    private static double operator(double a1, double a2, char operator) {
         switch (operator) {
             case '+':
                 return a1 + a2;
@@ -415,48 +247,10 @@ public class TestRandom {
             default:
                 break;
         }
-        throw new Exception("illegal operator!");
+        throw new IllegalStateException("illegal operator!");
     }
 
-    private int operator(int a1, int a2, char operator) throws Exception {
-        switch (operator) {
-            case '+':
-                return a1 + a2;
-            case '-':
-                return a1 - a2;
-            case '*':
-                return a1 * a2;
-            case '/':
-                return a1 / a2;
-            case '%':
-                return a1 % a2;
-            default:
-                break;
-        }
-        throw new Exception("illegal operator!");
-    }
-
-    private static int getPriority(String s) throws Exception {
-        if (s == null) {
-            return 0;
-        }
-        switch (s) {
-            case "(":
-                return 1;
-            case "+":
-            case "-":
-                return 2;
-            case "*":
-            case "%":
-            case "/":
-                return 3;
-            default:
-                break;
-        }
-        throw new Exception("illegal operator!");
-    }
-
-    private int getPriority(char c) throws Exception {
+    private static int getPriority(char c) {
         switch (c) {
             case '?':
                 return 0;
@@ -472,18 +266,10 @@ public class TestRandom {
             default:
                 break;
         }
-        throw new Exception("illegal operator!");
+        throw new IllegalStateException("illegal operator!");
     }
 
-    @State(Scope.Thread)
-    public static class TimeState {
-        @Param({"20Y12M31D23h59m59s", "12345"})
-        String key = "20Y12M31D23h59m59s";
-    }
-
-    @Benchmark
-    public String time1(TimeState state) {
-        val key = state.key;
+    public static String time1(String key) {
         if (LONG_PATTERN.matcher(key).matches()) {
             return SXItem.getSdf().get().format(System.currentTimeMillis() + Long.parseLong(key) * 1000);
         } else {
@@ -538,123 +324,89 @@ public class TestRandom {
         }
     }
 
-    @Benchmark
-    public String time2(TimeState state) {
-        val key = state.key;
-        if (LONG_PATTERN.matcher(key).matches()) {
+    public static String time2(String key) {
+        if (StringUtils.isNumeric(key)) {
             return SXItem.getSdf().get().format(System.currentTimeMillis() + Long.parseLong(key) * 1000);
-        } else {
-            Calendar calendar = Calendar.getInstance();
-            int num = 0;
-            for (int i = 0, length = key.length(); i < length; i++) {
-                char c = key.charAt(i);
-                if (Character.isDigit(c)) {
-                    num = num * 10 + (c - '0');
-                } else {
-                    updateCalendar(calendar, num, c);
-                    num = 0;
-                }
+        }
+        Calendar calendar = Calendar.getInstance();
+        int num = 0;
+        for (char c : key.toCharArray()) {
+            switch (c) {
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    num = c - 48 + num * 10;
+                    continue;
+                case 'Y':
+                case 'y':
+                    calendar.add(Calendar.YEAR, num);
+                    break;
+                case 'M':
+                    calendar.add(Calendar.MONTH, num);
+                    break;
+                case 'D':
+                case 'd':
+                    calendar.add(Calendar.DATE, num);
+                    break;
+                case 'H':
+                case 'h':
+                    calendar.add(Calendar.HOUR_OF_DAY, num);
+                    break;
+                case 'm':
+                    calendar.add(Calendar.MINUTE, num);
+                    break;
+                case 'S':
+                case 's':
+                    calendar.add(Calendar.SECOND, num);
+                    break;
+                default:
+                    continue;
             }
-            return SXItem.getSdf().get().format(calendar.getTimeInMillis());
+            num = 0;
         }
+        return SXItem.getSdf().get().format(calendar.getTime());
     }
 
-    private void updateCalendar(Calendar calendar, int num, char unit) {
-        switch (unit) {
-            case 'Y':
-            case 'y':
-                calendar.add(Calendar.YEAR, num);
-                break;
-            case 'M':
-                calendar.add(Calendar.MONTH, num);
-                break;
-            case 'D':
-            case 'd':
-                calendar.add(Calendar.DATE, num);
-                break;
-            case 'H':
-            case 'h':
-                calendar.add(Calendar.HOUR_OF_DAY, num);
-                break;
-            case 'm':
-                calendar.add(Calendar.MINUTE, num);
-                break;
-            case 'S':
-            case 's':
-                calendar.add(Calendar.SECOND, num);
-                break;
-        }
-    }
-
-    @State(Scope.Thread)
-    public static class DoubleState {
-        @Param({"1.5_2.5", "200_100"})
-        String key = "1.5_2.5";
-    }
-
-    @Benchmark
-    public String double1(DoubleState state) {
-        val key = state.key;
+    public static String double1(String key) {
         String[] strSplit = key.split("_");
         if (strSplit.length == 1) return key;
         double[] doubles = {Double.parseDouble(strSplit[0]), Double.parseDouble(strSplit[1])};
         return SXItem.getDf().format(SXItem.getRandom().nextDouble() * (doubles[1] - doubles[0]) + doubles[0]);
     }
 
-    @Benchmark
-    public String double2(DoubleState state) {
-        val key = state.key;
+    public static String double3(String key) {
         int index = key.indexOf('_');
         if (index == -1) return key;
         double min = Double.parseDouble(key.substring(0, index));
         double max = Double.parseDouble(key.substring(index + 1));
-        return SXItem.getDf().format(SXItem.getRandom().nextDouble() * (max - min) + min);
-    }
-
-    @Benchmark
-    public Object double3(DoubleState state) {
-        val key = state.key;
-        int index = key.indexOf('_');
-        if (index == -1) return key;
-        double min = Double.parseDouble(key.substring(0, index));
-        double max = Double.parseDouble(key.substring(index + 1));
-        // TODO SXItem.getDf().format 占用性能过高
-        // TODO %.2f 会保留小数点后的0位
         double result = SXItem.getRandom().nextFloat() * (max - min) + min;
-        return Math.round(result * 100) / 100D;
+        return String.valueOf(Math.round(result * 100) / 100D);
     }
 
-    @State(Scope.Thread)
-    public static class IntState {
-        @Param({"1_2", "200_100"})
-        String key = "1_2";
-    }
-
-    @Benchmark
-    public String int1(IntState state) {
-        val key = state.key;
+    public static String int1(String key) {
         int[] ints = Arrays.stream(key.split("_")).mapToInt(Integer::parseInt).sorted().toArray();
         return String.valueOf(SXItem.getRandom().nextInt(1 + ints[1] - ints[0]) + ints[0]);
     }
 
-    @Benchmark
-    public String int2(IntState state) {
-        val key = state.key;
+    public static String int2(String key) {
         val index = key.indexOf('_');
         int min = Integer.parseInt(key.substring(0, index));
         int max = Integer.parseInt(key.substring(index + 1));
         return String.valueOf(SXItem.getRandom().nextInt(1 + Math.abs(max - min)) + Math.min(max, min));
     }
 
-    @State(Scope.Thread)
-    public static class LockState {
-        @Param({"KEY#100,200,300"})
-        String key = "KEY#100,200,300";
+    private static String randomArray(String[] array) {
+        return array[SXItem.getRandom().nextInt(array.length)];
     }
 
-    @Benchmark
-    public String lock1(LockState state) {
-        String key = state.key;
+    public static String lock1(String key, RandomDocker docker) {
         String value;
         if (key.contains("#")) {
             String[] temp = key.substring(key.indexOf("#") + 1).split(",");
@@ -667,9 +419,7 @@ public class TestRandom {
         return docker.getLockMap() == null ? value : docker.getLockMap().computeIfAbsent(key, k -> value);
     }
 
-    @Benchmark
-    public String lock2(LockState state) {
-        String key = state.key;
+    public static String lock2(String key, RandomDocker docker) {
         String value = null;
         String temp = null;
         int indexOf = key.indexOf('#');
@@ -701,7 +451,99 @@ public class TestRandom {
         return value;
     }
 
-    public String randomArray(String[] array) {
-        return array[SXItem.getRandom().nextInt(array.length)];
+    @State(Scope.Thread)
+    public static class LockBM {
+        @Param({"KEY#100,200,300"})
+        String key = "KEY#100,200,300";
+        RandomDocker docker = new RandomDocker();
+
+        @Benchmark
+        public void test1() {
+            TestRandom.lock1(key, docker);
+        }
+
+        @Benchmark
+        public void test2() {
+            TestRandom.lock2(key, docker);
+        }
+    }
+
+    @State(Scope.Thread)
+    public static class IntBM {
+        @Param({"1_2", "200_100"})
+        String key = "1_2";
+
+        @Benchmark
+        public void test1() {
+            TestRandom.calculator1(key);
+        }
+
+        @Benchmark
+        public void test3() {
+            TestRandom.calculator3(key);
+        }
+    }
+
+    @State(Scope.Thread)
+    public static class DoubleBM {
+        @Param({"1.5_2.5", "200_100"})
+        String key = "1.5_2.5";
+
+        @Benchmark
+        public void test1() {
+            TestRandom.double1(key);
+        }
+
+        @Benchmark
+        public void test3() {
+            TestRandom.double3(key);
+        }
+    }
+
+    @State(Scope.Thread)
+    public static class TimeBM {
+        @Param({"20Y12M31D23h59m59s", "12345"})
+        String key = "20Y12M31D23h59m59s";
+
+        @Benchmark
+        public void test1() {
+            TestRandom.time1(key);
+        }
+
+        @Benchmark
+        public void test3() {
+            TestRandom.time2(key);
+        }
+    }
+
+    @State(value = Scope.Thread)
+    public static class CalculatorBM {
+        @Param({"(8 + 6 / 3) * 10 - 5 / 10", "12 + 24 - 36 * 2 / (4 + 6) % 3", "14/3*2", "(1+(4+5+2)-3)+(6+8)", "-3 + ((4 * (10 - (6 / 2))) - (8 % 3) + (5 + (-7) / 2))", "-2 + 1", "- (3 + (4 + 5))", "- (3 - (- (4 + 5) ) )"})
+        String key = "- (3 - (- (4 + 5) ) )";
+
+        @Benchmark
+        public void test1() {
+            TestRandom.calculator1(key);
+        }
+
+        @Benchmark
+        public void test3() {
+            TestRandom.calculator3(key);
+        }
+    }
+
+    @State(value = Scope.Thread)
+    public static class BooleanBM {
+        String key = "AAA#BBB,CCC,DDD";
+
+        @Benchmark
+        public void test1() {
+            TestRandom.boolean1(key);
+        }
+
+        @Benchmark
+        public void test2() {
+            TestRandom.boolean2(key);
+        }
     }
 }

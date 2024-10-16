@@ -5,6 +5,9 @@ import github.saukiya.sxitem.data.random.RandomDocker;
 
 public class BooleanRandom implements IRandom {
 
+    public String separator = ":";
+//    public String separator = ","; // TODO
+
     /**
      * 支持格式
      * <pre>
@@ -19,6 +22,7 @@ public class BooleanRandom implements IRandom {
     @Override
     public String replace(String key, RandomDocker docker) {
         String comStr = null;
+
         for (String str : key.split(":")) {
             if (comStr == null) comStr = str;
             else if (str.equals(comStr)) return "";

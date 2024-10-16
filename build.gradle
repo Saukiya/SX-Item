@@ -48,6 +48,7 @@ allprojects { project ->
 configure([rootProject, baseProject, depProject]) {
     dependencies {
         compileOnly 'org.spigotmc:spigot-api:1.21.1-R0.1-SNAPSHOT'
+        compileOnly 'commons-lang:commons-lang:2.6'
     }
 
     javadoc {
@@ -63,7 +64,6 @@ configure([rootProject, baseProject, depProject]) {
 
 dependencies {
     implementation 'org.bstats:bstats-bukkit:2.2.1'
-    compileOnly 'commons-lang:commons-lang:2.6'
     compileOnly 'io.lumine.xikage:MythicMobs:4.9.0'
     compileOnly 'io.lumine:Mythic-Dist:5.2.1'
 

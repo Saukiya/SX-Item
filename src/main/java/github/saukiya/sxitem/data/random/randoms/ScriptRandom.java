@@ -8,7 +8,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import javax.script.Bindings;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,19 +33,19 @@ public class ScriptRandom implements IRandom {
         if (!SXItem.getScriptManager().isEnabled()) return null;
         Matcher matcher = pattern.matcher(key);
         if (matcher.matches()) {
-            Object[] args = matcher.group(3).split(",");
-            for (int i = 0; i < args.length; i++) {
-                Player player = Bukkit.getPlayerExact(args[i].toString());
-                if (player != null) args[i] = player; // TODO 可能报错
-            }
+            Object[] args = Arrays.stream(matcher.group(3).split(",")).map(arg -> {
+                Player player = Bukkit.getPlayerExact(arg);
+                if (player == null) return arg;
+                return player;
+            }).toArray();
             Object result;
             try {
                 result = SXItem.getScriptManager().callFunction(matcher.group(1), matcher.group(2), docker, args);
             } catch (Exception e) {
                 e.printStackTrace();
-                return e.getMessage();
+                return null;
             }
-            if (result instanceof List) return String.join("\n", (List<String>) result);
+            if (result instanceof Collection) return StringUtils.join((Collection) result, "\n");
             if (result instanceof Bindings) {
                 // ScriptObjectMirror 本质是 Bindings
                 return StringUtils.join(((Bindings) result).values(), "\n");

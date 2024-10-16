@@ -23,6 +23,7 @@ public class DoubleRandom implements IRandom {
         if (index == -1) return key;
         double min = Double.parseDouble(key.substring(0, index));
         double max = Double.parseDouble(key.substring(index + 1));
-        return SXItem.getDf().format(SXItem.getRandom().nextDouble() * (max - min) + min);
+        double result = SXItem.getRandom().nextDouble() * (max - min) + min;
+        return String.valueOf(Math.round(result * 100) / 100D);
     }
 }

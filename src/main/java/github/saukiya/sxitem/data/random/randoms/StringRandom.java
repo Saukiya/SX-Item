@@ -7,6 +7,9 @@ import github.saukiya.util.helper.PlaceholderHelper;
 
 public class StringRandom implements IRandom {
 
+    public String separator = ":";
+//    public String separator = ","; // TODO
+
     /**
      * 支持格式
      * <pre>
@@ -21,7 +24,7 @@ public class StringRandom implements IRandom {
     @Override
     public String replace(String key, RandomDocker docker) {
         if (key.indexOf(':') >= 0) {
-            String[] temp = key.split(",");
+            String[] temp = key.split(separator);
             return PlaceholderHelper.setPlaceholders(docker.getPlayer(), temp[SXItem.getRandom().nextInt(temp.length)]);
         }
         return PlaceholderHelper.setPlaceholders(docker.getPlayer(), docker.random(key));

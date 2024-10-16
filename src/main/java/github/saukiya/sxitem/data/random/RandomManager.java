@@ -13,6 +13,7 @@ import java.io.File;
 import java.util.*;
 
 /**
+ * ExpressionManager
  * @author Saukiya
  */
 public class RandomManager {
