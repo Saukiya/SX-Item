@@ -34,21 +34,21 @@ public class TestRandom {
     }
 
     public static void main(String[] args) throws Exception {
-        TestBenchmark.run(BooleanBM.class);
+//        TestBenchmark.run(BooleanBM.class);
 //        TestBenchmark.run(CalculatorBM.class);
 //        TestBenchmark.run(TimeBM.class);
 //        TestBenchmark.run(DoubleBM.class);
 //        TestBenchmark.run(IntBM.class);
 //        TestBenchmark.run(LockBM.class);
-//        TestBenchmark.run("CalculatorBM.test3", "TimeBM.test3", "DoubleBM.test3", "IntegerBM.test3", "LockBM.test2");
+        TestBenchmark.run("BooleanBM.test3", "CalculatorBM.test3", "TimeBM.test3", "DoubleBM.test3", "IntegerBM.test3", "LockBM.test2");
 //        TestBenchmark.run();
 //        calculatorValidation();
-        System.out.println(boolean1("AAA:BBB:CCC:DDD:EEE:AAA"));
-        System.out.println(boolean1("AAA:BBB:CCC:DDD:EEE:AAAA"));
-        System.out.println(boolean1("AAA#BBB:CCC:DDD:AA:BBB"));
-        System.out.println(boolean3("AAA:BBB:CCC:DDD:EEE:AAA"));
-        System.out.println(boolean3("AAA:BBB:CCC:DDD:EEE:AAAA"));
-        System.out.println(boolean3("AAA#BBB:CCC:DDD:AA:BBB"));
+//        System.out.println(boolean1("AAA:BBB:CCC:DDD:EEE:AAA") != null);
+//        System.out.println(boolean1("AAA:BBB:CCC:DDD:EEE:AAAA") != null);
+//        System.out.println(boolean1("AAA:AAA:BB:CC:DD:EE:FF:GG:HH:YY:GG:KK:AA") != null);
+//        System.out.println(boolean3("AAA:BBB:CCC:DDD:EEE:AAA") != null);
+//        System.out.println(boolean3("AAA:BBB:CCC:DDD:EEE:AAAA") != null);
+//        System.out.println(boolean3("AA#AAA:BB:CC:DD:EE:FF:GG:HH:YY:GG:KK:AA") != null);
     }
 
     public static String boolean1(String key) {
@@ -551,7 +551,7 @@ public class TestRandom {
 
     @State(value = Scope.Thread)
     public static class CalculatorBM {
-        @Param({"(8 + 6 / 3) * 10 - 5 / 10", "12 + 24 - 36 * 2 / (4 + 6) % 3", "14/3*2", "(1+(4+5+2)-3)+(6+8)", "-3 + ((4 * (10 - (6 / 2))) - (8 % 3) + (5 + (-7) / 2))", "-2 + 1", "- (3 + (4 + 5))", "- (3 - (- (4 + 5) ) )"})
+        @Param({"12 + 24 - 36 * 2 / (4 + 6) % 3", "-3 + ((4 * (10 - (6 / 2))) - (8 % 3) + (5 + (-7) / 2))"})
         String key = "- (3 - (- (4 + 5) ) )";
 
         @Benchmark
@@ -567,8 +567,8 @@ public class TestRandom {
 
     @State(value = Scope.Thread)
     public static class BooleanBM {
-        @Param({"AAA:BBB:CCC:DDD:AA", "AA:BB:CC:DD:EE:FF:GG:HH:YY:GG:KK:AAA", "AA:BB:AA:DD:A:FF:GG:HH:AAA"})
-        String key = "AAA:BBB:CCC:DDD";
+        @Param({"AA:AAA:BB:CC:DD:EE:FF:GG:HH:YY:GG:KK:AA", "AA:BB:AA:DD:A:FF:GG:HH:AAA"})
+        String key = "AA:AAA:BB:CC:DD:EE:FF:GG:HH:YY:GG:KK:AA";
 
         @Benchmark
         public void test1() {
