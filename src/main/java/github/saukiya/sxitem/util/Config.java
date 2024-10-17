@@ -5,7 +5,6 @@ import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.text.DecimalFormat;
 import java.util.logging.Level;
 
 /**
@@ -41,6 +40,5 @@ public class Config {
 
     public static void setup() {
         SXItem.getInst().getLogger().setLevel(Level.parse(config.getString(LOGGER_LEVEL, "ALL")));
-        SXItem.setDf(new DecimalFormat(config.getString(DECIMAL_FORMAT, "#.##")));
     }
 }

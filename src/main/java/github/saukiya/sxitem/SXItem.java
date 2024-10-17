@@ -40,6 +40,7 @@ public class SXItem extends JavaPlugin {
     private static final Random random = new Random();
     @Setter
     @Getter
+    @Deprecated
     private static DecimalFormat df = new DecimalFormat("#.##");
     @Getter
     private static SXItem inst;
