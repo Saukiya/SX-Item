@@ -96,18 +96,17 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
 
     @Override
     protected ItemStack getItem(Player player, Object... args) {
-        if (args.length > 0 && args[0] instanceof RandomDocker)
+        if (args.length > 0 && args[0] instanceof RandomDocker) {
             return getItem(player, (RandomDocker) args[0]);
-        RandomDocker randomDocker = new RandomDocker(randomMap, player);
+        }
+        RandomDocker randomDocker = new RandomDocker(player, randomMap);
         if (args.length > 0) {
             if (args[0] instanceof Map) {
-                randomDocker.getOtherList().add((Map<String, String>) args[0]);
+                randomDocker.getOtherMap().putAll((Map<String, String>) args[0]);
             } else if (args[0] instanceof String) {
-                Map<String, String> map = new HashMap<>();
                 for (int i = 1; i < args.length; i += 2) {
-                    map.put((String) args[i - 1], (String) args[i]);
+                    randomDocker.getOtherMap().put((String) args[i - 1], (String) args[i]);
                 }
-                randomDocker.getOtherList().add(map);
             }
         }
         return getItem(player, randomDocker);
@@ -249,9 +248,9 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
 
     @Override
     public ItemStack update(ItemStack oldItem, NbtUtil.Wrapper oldWrapper, Player player) {
-        RandomDocker randomDocker = new RandomDocker(randomMap, player);
+        RandomDocker randomDocker = new RandomDocker(player, randomMap);
         Map<String, String> map = (Map<String, String>) oldWrapper.getMap(SXItem.getInst().getName() + ".Lock");
-        if (map != null) randomDocker.getOtherList().add(map);
+        if (map != null) randomDocker.getOtherMap().putAll(map);
         return getItem(player, randomDocker);
     }
 

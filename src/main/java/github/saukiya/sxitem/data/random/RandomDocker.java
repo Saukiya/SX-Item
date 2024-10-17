@@ -1,6 +1,7 @@
 package github.saukiya.sxitem.data.random;
 
 import github.saukiya.sxitem.SXItem;
+import github.saukiya.util.base.EmptyMap;
 import github.saukiya.util.helper.PlaceholderHelper;
 import github.saukiya.util.nbt.TagBase;
 import github.saukiya.util.nbt.TagCompound;
@@ -12,8 +13,14 @@ import org.apache.commons.lang.text.StrMatcher;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Random容器
@@ -28,11 +35,7 @@ public class RandomDocker extends StrLookup {
     static final StrMatcher SUF_MATCHER = StrMatcher.charMatcher('>');
 
     @Getter
-    static final RandomDocker inst = new RandomDocker();
-
-    static {
-        inst.lockMap = null;
-    }
+    static final RandomDocker inst = new RandomDocker(null, null, EmptyMap.emptyMap());
 
     final StrSubstitutor ss = new StrSubstitutor(this, PRE_MATCHER, SUF_MATCHER, StrSubstitutor.DEFAULT_ESCAPE);
 
@@ -46,35 +49,46 @@ public class RandomDocker extends StrLookup {
      * 局部变量 物品配置表内的
      */
     @Getter
+    @Nullable
     final Map<String, INode> localMap;
+
+    /**
+     * 永久变量
+     */
+    @Getter
+    @Nonnull
+    final Map<String, String> lockMap;
 
     /**
      * 其他变量
      */
     @Getter
-    final List<Map<String, String>> otherList = new ArrayList<>();
-
-    /**
-     * 永久变量缓存
-     */
-    @Getter
-    Map<String, String> lockMap = new HashMap<>();
+    final Map<String, String> otherMap = new HashMap<>();
 
     public RandomDocker() {
-        this(null, null);
+        this(null, null, new HashMap<>());
     }
 
-    public RandomDocker(Map<String, INode> localMap) {
-        this(localMap, null);
+//    public RandomDocker(Player player) {
+//        this(player, null);
+//    }
+//
+//    public RandomDocker(Map<String, INode> localMap) {
+//        this(null, localMap);
+//    }
+//
+//    public RandomDocker(Map<String, INode> localMap, Player player) {
+//        this(player, localMap, new HashMap<>());
+//    }
+
+    public RandomDocker(Player player, Map<String, INode> localMap) {
+        this(player, localMap, new HashMap<>());
     }
 
-    public RandomDocker(Player player) {
-        this(null, player);
-    }
-
-    public RandomDocker(Map<String, INode> localMap, Player player) {
+    protected RandomDocker(Player player, Map<String, INode> localMap, Map<String, String> lockMap) {
         this.localMap = localMap;
         this.player = player;
+        this.lockMap = lockMap;
         this.ss.setEnableSubstitutionInVariables(true);
     }
 
@@ -95,7 +109,12 @@ public class RandomDocker extends StrLookup {
      * @return RandomText
      */
     public List<String> replace(List<String> list) {
-        return PlaceholderHelper.setPlaceholders(getPlayer(), list.stream().flatMap(str -> Arrays.stream(ss.replace(str).split("\n"))).filter(s -> !s.contains("%DeleteLore")).collect(Collectors.toList()));
+        return PlaceholderHelper.setPlaceholders(getPlayer(), list.stream()
+                .map(ss::replace)
+                .flatMap(str -> str.indexOf('\n') != -1 ? Arrays.stream(str.split("\n")) : Stream.of(str))
+                .filter(s -> !s.contains("%DeleteLore"))
+                .collect(Collectors.toList())
+        );
     }
 
     /**
@@ -130,7 +149,7 @@ public class RandomDocker extends StrLookup {
      */
     public String random(String key) {
         String str;
-        str = otherList.stream().map(map -> map.get(key)).filter(Objects::nonNull).findFirst().orElse(null);
+        str = otherMap.get(key);
         if (str != null) return str;
         str = RandomManager.random(key, localMap);
         if (str != null) return str;

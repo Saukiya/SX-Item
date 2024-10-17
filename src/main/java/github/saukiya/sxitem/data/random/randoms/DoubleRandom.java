@@ -4,6 +4,9 @@ import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.IRandom;
 import github.saukiya.sxitem.data.random.RandomDocker;
 
+/**
+ * &lt;d:&gt; 创建一个随机浮点数
+ */
 public class DoubleRandom implements IRandom {
 
     /**

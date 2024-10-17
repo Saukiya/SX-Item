@@ -7,6 +7,9 @@ import org.apache.commons.lang.StringUtils;
 
 import java.util.Calendar;
 
+/**
+ * &lt;t:&gt; 动态生成时间文本
+ */
 public class TimeRandom implements IRandom {
 
     /**

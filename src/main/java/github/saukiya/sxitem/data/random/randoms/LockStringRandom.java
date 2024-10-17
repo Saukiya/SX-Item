@@ -4,18 +4,17 @@ import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.IRandom;
 import github.saukiya.sxitem.data.random.RandomDocker;
 
-import java.util.Map;
-
+/**
+ * &lt;l:&gt; 获取并锁定一个随机文本
+ */
 public class LockStringRandom implements IRandom {
 
-    public String separator = ":";
-//    public String separator = ","; // TODO
 
     /**
      * 支持格式
      * <pre>
      *  &lt;l:key&gt; - 从key集合中随机抽取一个值并锁定
-     *  &lt;l:key#AAA,BBB&gt; - 从AAA/BBB中随机抽取一个值并锁定
+     *  &lt;l:key#AAA:BBB&gt; - 从AAA/BBB中随机抽取一个值并锁定
      * </pre>
      *
      * @param key    处理的key
@@ -24,35 +23,22 @@ public class LockStringRandom implements IRandom {
      */
     @Override
     public String replace(String key, RandomDocker docker) {
-        String value = null;
-        String temp = null;
         int indexOf = key.indexOf('#');
+        String temp = indexOf == -1 ? null : key.substring(indexOf + 1);
+        String finalKey = indexOf == -1 ? key : key.substring(0, indexOf);
 
-        if (indexOf >= 0) {
-            temp = key.substring(indexOf + 1);
-            key = key.substring(0, indexOf);
-        }
-
-        if (docker.getLockMap() != null && (value = docker.getLockMap().get(key)) != null) {
-            return value;
-        }
-
-        if (temp != null) {
-            for (Map<String, String> map : docker.getOtherList()) {
-                value = map.get(key);
-                if (value != null) break;
+        return docker.getLockMap().computeIfAbsent(finalKey, k -> {
+            String value;
+            if (temp != null) {
+                value = docker.getOtherMap().get(finalKey);
+                if (value == null) {
+                    value = randomArray(temp.split(":"));
+                }
+            } else {
+                value = docker.random(finalKey);
             }
-            if (value == null) {
-                value = randomArray(temp.split(separator));
-            }
-        } else {
-            value = docker.replace(docker.random(key));
-        }
-
-        if (docker.getLockMap() != null) {
-            docker.getLockMap().put(key, value);
-        }
-        return value;
+            return docker.replace(value);
+        });
     }
 
     public static String randomArray(String[] array) {
