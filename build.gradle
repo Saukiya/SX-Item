@@ -43,6 +43,10 @@ allprojects { project ->
         compileOnly 'org.projectlombok:lombok:1.18.34'
         annotationProcessor 'org.projectlombok:lombok:1.18.34'
     }
+
+    tasks.withType(JavaCompile) {
+        options.compilerArgs += ["-Xlint:-options"]
+    }
 }
 
 configure([rootProject, baseProject, depProject]) {
