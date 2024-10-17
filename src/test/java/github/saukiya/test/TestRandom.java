@@ -3,6 +3,7 @@ package github.saukiya.test;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.RandomDocker;
 import github.saukiya.sxitem.util.Config;
+import github.saukiya.util.TestBenchmark;
 import github.saukiya.util.base.CharStack;
 import github.saukiya.util.base.DoubleStack;
 import github.saukiya.util.helper.PlaceholderHelper;
@@ -33,6 +34,7 @@ public class TestRandom {
     }
 
     public static void main(String[] args) throws Exception {
+        TestBenchmark.run(BooleanBM.class);
 //        TestBenchmark.run(CalculatorBM.class);
 //        TestBenchmark.run(TimeBM.class);
 //        TestBenchmark.run(DoubleBM.class);
@@ -40,8 +42,13 @@ public class TestRandom {
 //        TestBenchmark.run(LockBM.class);
 //        TestBenchmark.run("CalculatorBM.test3", "TimeBM.test3", "DoubleBM.test3", "IntegerBM.test3", "LockBM.test2");
 //        TestBenchmark.run();
-
 //        calculatorValidation();
+        System.out.println(boolean1("AAA:BBB:CCC:DDD:EEE:AAA"));
+        System.out.println(boolean1("AAA:BBB:CCC:DDD:EEE:AAAA"));
+        System.out.println(boolean1("AAA#BBB:CCC:DDD:AA:BBB"));
+        System.out.println(boolean3("AAA:BBB:CCC:DDD:EEE:AAA"));
+        System.out.println(boolean3("AAA:BBB:CCC:DDD:EEE:AAAA"));
+        System.out.println(boolean3("AAA#BBB:CCC:DDD:AA:BBB"));
     }
 
     public static String boolean1(String key) {
@@ -54,14 +61,40 @@ public class TestRandom {
         return null;
     }
 
-    public static String boolean2(String key) {
-        String comStr = null;
+    public static String boolean3(String key) {
+        char[] chars = key.toCharArray();
+        int index = 0, check = 0, length = chars.length;
 
-        for (String str : key.split(":")) {
-            if (comStr == null) comStr = str;
-            else if (str.equals(comStr)) return "";
+        for (int i = 0; i < length; i++) {
+            switch (chars[i]) {
+                case '#':
+                case ':':
+                    check = i;
+                    break;
+                default:
+                    continue;
+            }
+            break;
         }
-        return null;
+        if (check == 0) return null;
+        for (int i = check + 1; i < length; i++) {
+            char c = chars[i];
+            switch (c) {
+                case ':':
+                case ',':
+                    if (index == check) {
+                        return "";
+                    }
+                    index = 0;
+                    break;
+                default:
+                    if (index != -1 && chars[index++] != c) {
+                        index = -1;
+                    }
+                    break;
+            }
+        }
+        return index == check ? "" : null;
     }
 
     public static void calculatorValidation() {
@@ -534,7 +567,8 @@ public class TestRandom {
 
     @State(value = Scope.Thread)
     public static class BooleanBM {
-        String key = "AAA#BBB,CCC,DDD";
+        @Param({"AAA:BBB:CCC:DDD:AA", "AA:BB:CC:DD:EE:FF:GG:HH:YY:GG:KK:AAA", "AA:BB:AA:DD:A:FF:GG:HH:AAA"})
+        String key = "AAA:BBB:CCC:DDD";
 
         @Benchmark
         public void test1() {
@@ -542,8 +576,8 @@ public class TestRandom {
         }
 
         @Benchmark
-        public void test2() {
-            TestRandom.boolean2(key);
+        public void test3() {
+            TestRandom.boolean3(key);
         }
     }
 }
