@@ -24,21 +24,28 @@ public class LockStringRandom implements IRandom {
     @Override
     public String replace(String key, RandomDocker docker) {
         int indexOf = key.indexOf('#');
-        String temp = indexOf == -1 ? null : key.substring(indexOf + 1);
-        String finalKey = indexOf == -1 ? key : key.substring(0, indexOf);
+        String temp = null;
+        if (indexOf != -1) {
+            temp = key.substring(indexOf + 1);
+            key = key.substring(0, indexOf);
+        }
 
-        return docker.getLockMap().computeIfAbsent(finalKey, k -> {
-            String value;
-            if (temp != null) {
-                value = docker.getOtherMap().get(finalKey);
-                if (value == null) {
-                    value = randomArray(temp.split(":"));
-                }
-            } else {
-                value = docker.random(finalKey);
+        String value = docker.getLockMap().get(key);
+        if (value != null) {
+            return value;
+        }
+
+        if (temp != null) {
+            value = docker.getOtherMap().get(key);
+            if (value == null) {
+                value = randomArray(temp.split(":"));
             }
-            return docker.replace(value);
-        });
+        } else {
+            value = docker.random(key);
+        }
+
+        docker.getLockMap().put(key, value = docker.replace(value));
+        return value;
     }
 
     public static String randomArray(String[] array) {

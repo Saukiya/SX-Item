@@ -48,9 +48,11 @@ public class MythicMobsHelper {
             // 数量
             int amount = 1;
             if (args.length > 1 && !args[1].isEmpty()) {
-                if (args[1].contains("-")) {
-                    int[] ints = Arrays.stream(args[1].split("-")).mapToInt(Integer::parseInt).sorted().toArray();
-                    amount = SXItem.getRandom().nextInt(1 + ints[1] - ints[0]) + ints[0];
+                int index = args[1].indexOf('-');
+                if (index != -1) {
+                    int min = Integer.parseInt(args[1].substring(0, index));
+                    int max = Integer.parseInt(args[1].substring(index + 1));
+                    amount = SXItem.getRandom().nextInt(1 + Math.abs(max - min)) + Math.min(max, min);
                 } else {
                     amount = Integer.parseInt(args[1]);
                 }
@@ -148,7 +150,7 @@ public class MythicMobsHelper {
     public static Map<String, String> getOtherMap(String[] args, int index) {
         Map<String, String> otherMap = new HashMap<>();
         for (int i = index; i < args.length; i++) {
-            String[] splits = args[i].split(":");
+            String[] splits = args[i].split(":", 2);
             otherMap.put(splits[0], splits[1]);
         }
         return otherMap;

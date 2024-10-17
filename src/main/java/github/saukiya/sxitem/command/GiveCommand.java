@@ -63,7 +63,7 @@ public class GiveCommand extends SubCommand implements Listener {
         if (args.length > 4) {
             otherMap = new HashMap<>();
             for (int i = 4; i < args.length; i++) {
-                String[] splits = args[i].split(":");
+                String[] splits = args[i].split(":", 2);
                 otherMap.put(splits[0], splits[1]);
             }
         }

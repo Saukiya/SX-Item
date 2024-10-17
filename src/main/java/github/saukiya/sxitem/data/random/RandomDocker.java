@@ -86,8 +86,8 @@ public class RandomDocker extends StrLookup {
     }
 
     protected RandomDocker(Player player, Map<String, INode> localMap, Map<String, String> lockMap) {
-        this.localMap = localMap;
         this.player = player;
+        this.localMap = localMap;
         this.lockMap = lockMap;
         this.ss.setEnableSubstitutionInVariables(true);
     }
