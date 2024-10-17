@@ -9,20 +9,27 @@ import github.saukiya.util.base.DoubleStack;
 import github.saukiya.util.helper.PlaceholderHelper;
 import lombok.val;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.openjdk.jmh.annotations.*;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @SuppressWarnings("UnusedReturnValue")
 @State(Scope.Thread)
 public class TestRandom {
 
+    private static final Pattern SCRIPT_PATTERN = Pattern.compile("(\\w+)\\.(\\w+)#(.+)");
+
     static final Pattern LONG_PATTERN = Pattern.compile("\\d+");
 
     static Pattern CALCULATOR_PATTERN = Pattern.compile("(?<!\\d)-?\\d+(\\.\\d+)?|[+\\-*/%()]");
+
+    static List<String> copyList = Arrays.asList("|||||||||||||", "|||||||||||||||", "||||||||||\n|||||||||||", "||||||||||||||||", "|||||||||||||||||||||", "||||||||||\n|||||||||||", "|||||||||||||||||||||", "||||||||\n|||||||\n||||||", "|||||||||||||||||||||");
 
     @Setup(Level.Trial)
     public static void setupTrial() throws Exception {
@@ -34,13 +41,15 @@ public class TestRandom {
     }
 
     public static void main(String[] args) throws Exception {
+//        TestBenchmark.run(ScriptBM.class);
 //        TestBenchmark.run(BooleanBM.class);
 //        TestBenchmark.run(CalculatorBM.class);
 //        TestBenchmark.run(TimeBM.class);
 //        TestBenchmark.run(DoubleBM.class);
 //        TestBenchmark.run(IntBM.class);
 //        TestBenchmark.run(LockBM.class);
-        TestBenchmark.run("BooleanBM.test3", "CalculatorBM.test3", "TimeBM.test3", "DoubleBM.test3", "IntegerBM.test3", "LockBM.test2");
+//        TestBenchmark.run("BooleanBM.test3", "CalculatorBM.test3", "TimeBM.test3", "DoubleBM.test3", "IntegerBM.test3", "LockBM.test2");
+        TestBenchmark.run("test1", "test2");
 //        TestBenchmark.run();
 //        calculatorValidation();
 //        System.out.println(boolean1("AAA:BBB:CCC:DDD:EEE:AAA") != null);
@@ -49,6 +58,65 @@ public class TestRandom {
 //        System.out.println(boolean3("AAA:BBB:CCC:DDD:EEE:AAA") != null);
 //        System.out.println(boolean3("AAA:BBB:CCC:DDD:EEE:AAAA") != null);
 //        System.out.println(boolean3("AA#AAA:BB:CC:DD:EE:FF:GG:HH:YY:GG:KK:AA") != null);
+
+        System.out.println(test1());
+        System.out.println(test2());
+    }
+
+    @Benchmark
+    public static Object test1() {
+        val list = new ArrayList<>(copyList);
+        return list.stream()
+                .flatMap(str -> str.indexOf('\n') != -1 ? Arrays.stream(str.split("\n")) : Stream.of(str))
+                .filter(s -> !s.contains("%DeleteLore"))
+                .collect(Collectors.toList());
+    }
+
+    @Benchmark
+    public static Object test2() {
+        val list = new ArrayList<>(copyList);
+        for (int i = 0; i < list.size(); i++) {
+            String str = list.get(i);
+            if (str.indexOf('\n') != -1) {
+                String[] split = str.split("\n");
+                str = split[0];
+                list.remove(i);
+                list.addAll(i, Arrays.asList(split));
+            }
+
+            if (str.contains("%DeleteLore")) {
+                list.remove(i--);
+            }
+        }
+        return list;
+    }
+
+    public static String scriptRegex1(String key) {
+        Matcher matcher = SCRIPT_PATTERN.matcher(key);
+        if (matcher.matches()) {
+            String fileName = matcher.group(1);
+            String functionName = matcher.group(2);
+            Object[] args = matcher.group(3).split(",");
+        }
+        return null;
+    }
+
+    public static String scriptRegex2(String key) {
+        int index1 = key.indexOf('.');
+        Validate.isTrue(index1 != -1, key);
+        String fileName = key.substring(0, index1++);
+
+        int index2 = key.indexOf('#', index1);
+        index2 = index2 != -1 ? index2 : key.length();
+        String functionName = key.substring(index1, index2++);
+
+        Object[] args;
+        if (index2 > key.length()) {
+            args = null;
+        } else {
+            args = key.substring(index2).split(",");
+        }
+        return null;
     }
 
     public static String boolean1(String key) {
@@ -411,7 +479,7 @@ public class TestRandom {
         String[] strSplit = key.split("_");
         if (strSplit.length == 1) return key;
         double[] doubles = {Double.parseDouble(strSplit[0]), Double.parseDouble(strSplit[1])};
-        return SXItem.getDf().format(SXItem.getRandom().nextDouble() * (doubles[1] - doubles[0]) + doubles[0]);
+        return Test.df.format(SXItem.getRandom().nextDouble() * (doubles[1] - doubles[0]) + doubles[0]);
     }
 
     public static String double3(String key) {
@@ -444,7 +512,7 @@ public class TestRandom {
         if (key.contains("#")) {
             String[] temp = key.substring(key.indexOf("#") + 1).split(",");
             String finalKey = key = key.substring(0, key.indexOf("#"));
-            String tempValue = docker.getOtherList().stream().map(map -> map.get(finalKey)).filter(Objects::nonNull).findFirst().orElse(null);
+            String tempValue = docker.getOtherMap().get(finalKey);
             value = PlaceholderHelper.setPlaceholders(docker.getPlayer(), docker.replace(tempValue != null ? tempValue : temp[SXItem.getRandom().nextInt(temp.length)]));
         } else {
             value = PlaceholderHelper.setPlaceholders(docker.getPlayer(), docker.replace(docker.random(key)));
@@ -467,12 +535,9 @@ public class TestRandom {
         }
 
         if (temp != null) {
-            for (Map<String, String> map : docker.getOtherList()) {
-                value = map.get(key);
-                if (value != null) break;
-            }
+            value = docker.getOtherMap().get(key);
             if (value == null) {
-                value = randomArray(temp.split(","));
+                value = randomArray(temp.split(":"));
             }
         } else {
             value = docker.replace(docker.random(key));
@@ -508,12 +573,12 @@ public class TestRandom {
 
         @Benchmark
         public void test1() {
-            TestRandom.calculator1(key);
+            TestRandom.int1(key);
         }
 
         @Benchmark
         public void test3() {
-            TestRandom.calculator3(key);
+            TestRandom.int2(key);
         }
     }
 
@@ -578,6 +643,22 @@ public class TestRandom {
         @Benchmark
         public void test3() {
             TestRandom.boolean3(key);
+        }
+    }
+
+    @State(value = Scope.Thread)
+    public static class ScriptBM {
+        @Param({"File.function#AAA,BBB", "File.function#AAA,BBB,CCC"})
+        String key = "File.function#AAA,BBB";
+
+        @Benchmark
+        public void test1() {
+            TestRandom.scriptRegex1(key);
+        }
+
+        @Benchmark
+        public void test2() {
+            TestRandom.scriptRegex2(key);
         }
     }
 }

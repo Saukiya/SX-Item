@@ -5,6 +5,7 @@ import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.RandomDocker;
+import github.saukiya.util.base.EmptyMap;
 import github.saukiya.util.base.Tuple;
 import github.saukiya.util.nbt.TagBase;
 import github.saukiya.util.nbt.TagCompound;
@@ -24,6 +25,7 @@ import java.lang.management.ManagementFactory;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -34,6 +36,7 @@ import java.util.stream.IntStream;
 public class Test {
     static File projectPath = new File(System.getProperty("user.dir"));
     static File currentPath = new File(projectPath, "src/main/resources");
+    static DecimalFormat df = new DecimalFormat("#.##");
     static SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");
     static Map<String, List<Tuple<Double, String>>> dataMap = new HashMap();
     static Pattern pattern = Pattern.compile("v(\\d+)_(\\d+)_R(\\d+)");
@@ -54,7 +57,10 @@ public class Test {
     }
 
     public static void main(String[] args) {
-        
+        Map<String, String> map = EmptyMap.emptyMap();
+        System.out.println(map.get("?"));
+        System.out.println(map.putIfAbsent("?", "?"));
+        System.out.println(map.computeIfAbsent("?", k -> "?"));
     }
 
     public static void testMap() {
@@ -419,7 +425,7 @@ public class Test {
         if (strSplit.length > 1) {
             double[] doubles = {Double.parseDouble(strSplit[0]), Double.parseDouble(strSplit[1])};
             Arrays.sort(doubles);
-            return SXItem.getDf().format(doubles[0] != doubles[1] ? SXItem.getRandom().nextDouble() * (doubles[1] - doubles[0]) + doubles[0] : doubles[0]);
+            return df.format(doubles[0] != doubles[1] ? SXItem.getRandom().nextDouble() * (doubles[1] - doubles[0]) + doubles[0] : doubles[0]);
         }
         return null;
     }
