@@ -20,10 +20,14 @@ public class PlaceholderHelper {
     static boolean enabled;
 
     public static void setup(JavaPlugin plugin) {
-        setup(plugin, null);
+        setup(plugin, null, null);
     }
 
     public static void setup(JavaPlugin plugin, PlaceholderRequest placeholderRequest) {
+        setup(plugin, plugin.getName().toLowerCase(Locale.ROOT).replace("-", ""), placeholderRequest);
+    }
+
+    public static void setup(JavaPlugin plugin, String identifier, PlaceholderRequest placeholderRequest) {
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             enabled = true;
             plugin.getLogger().info("PlaceholderHelper Enabled");
@@ -33,7 +37,8 @@ public class PlaceholderHelper {
             return;
         }
 
-        Placeholder.register(plugin, placeholderRequest);
+        if (identifier == null || placeholderRequest == null) return;
+        Placeholder.register(plugin, identifier, placeholderRequest);
     }
 
     public static List<String> setPlaceholders(Player player, List<String> list) {
@@ -58,16 +63,17 @@ public class PlaceholderHelper {
     static class Placeholder extends PlaceholderExpansion {
 
         final JavaPlugin plugin;
+        final String identifier;
         final PlaceholderRequest handle;
 
-        public static void register(JavaPlugin plugin, PlaceholderRequest placeholderRequest) {
-            new Placeholder(plugin, placeholderRequest);
+        public static void register(JavaPlugin plugin, String identifier, PlaceholderRequest placeholderRequest) {
+            new Placeholder(plugin, identifier, placeholderRequest).register();
         }
 
         @Nonnull
         @Override
         public String getIdentifier() {
-            return plugin.getName().toLowerCase(Locale.ROOT).replace("-", "");
+            return identifier;
         }
 
         @Nonnull
