@@ -87,7 +87,7 @@ public class NBTCommand extends SubCommand {
                 String keys = String.join("/", ItemManager.getMaterialString(item.getType()));
                 if (!keys.isEmpty()) cb.add("-").add(keys).show(Message.NBT__CLICK_COPY.get()).suggestCommand(keys);
                 cb.add("] §cItem-NBT:").send(sender);
-                sendNBT("", tag, sender);
+                sendNBT(sender, tag, "");
                 break;
         }
     }
@@ -103,7 +103,11 @@ public class NBTCommand extends SubCommand {
         return sender instanceof Player ? Collections.emptyList() : null;
     }
 
-    public static void sendNBT(String prefix, TagCompound tagCompound, CommandSender sender) {
+    public static void sendNBT(CommandSender sender, ItemStack item) {
+        sendNBT(sender, NbtUtil.getInst().getItemTag(item), "");
+    }
+
+    public static void sendNBT(CommandSender sender, TagCompound tagCompound, String prefix) {
         if (tagCompound == null) return;
         String path, typeShow, nbtShow;
         for (Map.Entry<String, TagBase<?>> entry : tagCompound.entrySet()) {
@@ -111,7 +115,7 @@ public class NBTCommand extends SubCommand {
             path = prefix + entry.getKey();
             typeShow = tagBase.getTypeId().name();
             if (tagBase.getTypeId() == TagType.COMPOUND) {
-                sendNBT(path + '.', (TagCompound) tagBase, sender);
+                sendNBT(sender, (TagCompound) tagBase, path + '.');
                 continue;
             }
             if (tagBase.getTypeId() == TagType.LIST) {
@@ -132,7 +136,7 @@ public class NBTCommand extends SubCommand {
                         .send(sender);
             } else {
                 messageBuilder
-                        .add("§c " + String.format("%-30s", path))
+                        .add("§c " + String.format("%-32s", path))
                         .add("\t" + nbtShow.replace("\n", "§c\\n§f"))
                         .send(sender);
             }

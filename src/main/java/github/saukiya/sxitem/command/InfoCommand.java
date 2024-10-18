@@ -2,22 +2,15 @@ package github.saukiya.sxitem.command;
 
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.item.IGenerator;
-import github.saukiya.sxitem.util.Config;
-import github.saukiya.sxitem.util.Message;
 import github.saukiya.util.command.SubCommand;
-import github.saukiya.util.nms.MessageUtil;
-import org.apache.commons.lang.StringUtils;
+import github.saukiya.util.nms.NMS;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,11 +21,12 @@ import java.util.stream.Collectors;
 /**
  * @author Saukiya
  */
-public class GiveCommand extends SubCommand implements Listener {
+public class InfoCommand extends SubCommand implements Listener {
 
-    public GiveCommand() {
-        super("give", 0);
-        setArg("[item] <player> <count> <key:value...>");
+    public InfoCommand() {
+        super("info", 0);
+        setArg("[item] <player> <key:value...>");
+        setHide();
     }
 
     @Override
@@ -53,40 +47,21 @@ public class GiveCommand extends SubCommand implements Listener {
         } else if (sender instanceof Player) {
             player = (Player) sender;
         }
-        if (player == null) {
-            MessageUtil.send(sender, Message.ADMIN__NO_ONLINE.get());
-            return;
-        }
-
-        int amount = args.length > 3 && StringUtils.isNumeric(args[3]) ? Integer.parseInt(args[3]) : 1;
 
         Map<String, String> otherMap = null;
-        if (args.length > 4) {
+        if (args.length > 2) {
             otherMap = new HashMap<>();
-            for (int i = 4; i < args.length; i++) {
+            for (int i = 2; i < args.length; i++) {
                 String[] splits = args[i].split(":", 2);
                 if (splits.length == 1) continue;
                 otherMap.put(splits[0], splits[1]);
             }
         }
-
-        Inventory inv = player.getInventory();
-        for (int i = 0; i < amount; i++) {
-            ItemStack itemStack = SXItem.getItemManager().getItem(ig, player, otherMap);
-
-            if (inv.firstEmpty() != -1) {
-                inv.addItem(itemStack);
-            } else if (Config.getConfig().getBoolean(Config.GIVE_OVERFLOW_DROP)) {
-                Item item = player.getWorld().dropItem(player.getLocation(), itemStack);
-                item.setMetadata("SX-Item|DropData", new FixedMetadataValue(SXItem.getInst(), player.getName()));
-                item.setPickupDelay(40);
-            } else {
-                SXItem.getInst().getLogger().warning("Give Error Player:" + player.getName() + " ItemKey:" + args[1]);
-                ItemMeta meta = itemStack.getItemMeta();
-                MessageUtil.send(player, Message.GIVE__GIVE_ITEM_ERROR.get(meta.hasDisplayName() ? meta.getDisplayName() : args[1]));
-            }
+        ItemStack itemStack = SXItem.getItemManager().getItem(ig, player, otherMap);
+        if (NMS.compareTo(1, 20, 5) >= 0) {
+            ComponentCommand.sendData(sender, itemStack);
         }
-        MessageUtil.send(sender, Message.GIVE__GIVE_ITEM.get(player.getName(), String.valueOf(amount), args[1]));
+        NBTCommand.sendNBT(sender, itemStack);
     }
 
     @Override

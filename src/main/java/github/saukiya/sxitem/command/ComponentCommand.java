@@ -22,9 +22,9 @@ import java.util.stream.Collectors;
 
 public class ComponentCommand extends SubCommand {
 
-    private final Map<String, List<String>> preInput = new HashMap<>();
+    private static final Gson gson = new Gson();
 
-    private final Gson gson = new Gson();
+    private final Map<String, List<String>> preInput = new HashMap<>();
 
     public ComponentCommand() {
         super("component", 60);
@@ -66,7 +66,7 @@ public class ComponentCommand extends SubCommand {
         }
 
         val wrapper = ComponentUtil.getInst().getItemWrapper(itemStack);
-        JsonObject json = (JsonObject) wrapper.toJson();
+        JsonObject json = wrapper.toJson().getAsJsonObject();
 
         switch (operate) {
             case "set":
@@ -124,7 +124,11 @@ public class ComponentCommand extends SubCommand {
         return Collections.emptyList();
     }
 
-    private void sendData(CommandSender sender, ItemStack item, JsonObject json) {
+    public static void sendData(CommandSender sender, ItemStack item) {
+        sendData(sender, item, ComponentUtil.getInst().getItemWrapper(item).toJson().getAsJsonObject());
+    }
+
+    public static void sendData(CommandSender sender, ItemStack item, JsonObject json) {
         val cb = MessageUtil.getInst().builder()
                 .show(item)
                 .add("§7[")
@@ -139,7 +143,7 @@ public class ComponentCommand extends SubCommand {
         sendComponent(sender, json);
     }
 
-    private void sendComponent(CommandSender sender, JsonElement json) {
+    public static void sendComponent(CommandSender sender, JsonElement json) {
         for (Map.Entry<String, JsonElement> entry : json.getAsJsonObject().entrySet()) {
             String key = entry.getKey();
             String jsonString = ComponentUtil.getGson().toJson(entry.getValue());
