@@ -71,8 +71,6 @@ public class InfoCommand extends SubCommand implements Listener {
                 return SXItem.getItemManager().getItemList().stream().filter(itemName -> itemName.toLowerCase().contains(args[1].toLowerCase())).collect(Collectors.toList());
             case 3:
                 return null;
-            case 4:
-                return Collections.singletonList("1");
             default:
                 return Collections.emptyList();
         }

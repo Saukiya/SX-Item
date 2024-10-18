@@ -8,6 +8,7 @@ import github.saukiya.util.nbt.TagCompound;
 import github.saukiya.util.nbt.TagList;
 import github.saukiya.util.nbt.TagString;
 import lombok.Getter;
+import lombok.val;
 import org.apache.commons.lang.text.StrLookup;
 import org.apache.commons.lang.text.StrMatcher;
 import org.apache.commons.lang.text.StrSubstitutor;
@@ -15,12 +16,10 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Random容器
@@ -109,12 +108,21 @@ public class RandomDocker extends StrLookup {
      * @return RandomText
      */
     public List<String> replace(List<String> list) {
-        return PlaceholderHelper.setPlaceholders(getPlayer(), list.stream()
-                .map(ss::replace)
-                .flatMap(str -> str.indexOf('\n') != -1 ? Arrays.stream(str.split("\n")) : Stream.of(str))
-                .filter(s -> !s.contains("%DeleteLore"))
-                .collect(Collectors.toList())
-        );
+        val result = new ArrayList<String>();
+        for (String str : list) {
+            str = ss.replace(str);
+            if (str.indexOf('\n') != -1) {
+                String[] split = str.split("\n");
+                for (String s : split) {
+                    if (!s.contains("%DeleteLore")) {
+                        result.add(s);
+                    }
+                }
+            } else if (!str.contains("%DeleteLore")) {
+                result.add(str);
+            }
+        }
+        return result;
     }
 
     /**

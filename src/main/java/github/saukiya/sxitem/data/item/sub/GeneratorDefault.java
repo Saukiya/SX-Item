@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.val;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -27,10 +28,7 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -112,25 +110,30 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         return getItem(player, randomDocker);
     }
 
-    // TODO 干脆都整到ItemUtil里
+    @SuppressWarnings("deprecation")
     private ItemStack getItem(Player player, RandomDocker docker) {
-        String[] materialAndDurability = docker.replace(ids.get(SXItem.getRandom().nextInt(ids.size()))).split(":");
-        Material material = ItemManager.getMaterial(materialAndDurability[0]);
+        String materialAndDurability = docker.replace(ids.get(SXItem.getRandom().nextInt(ids.size())));
+        int indexOf = materialAndDurability.indexOf(':');
+        val materialName = indexOf != -1 ? materialAndDurability.substring(0, indexOf) : materialAndDurability;
+        Material material = ItemManager.getMaterial(materialName);
         if (material == null) {
-            SXItem.getInst().getLogger().warning("Item-" + getKey() + " ID ERROR: " + materialAndDurability[0]);
+            SXItem.getInst().getLogger().warning("Item-" + getKey() + " ID ERROR: " + materialName);
             return ItemManager.getEmptyItem();
         }
         ItemStack item = new ItemStack(material, Integer.parseInt(docker.replace(config.getString("Amount", "1"))));
-        String durability = materialAndDurability.length > 1 ? materialAndDurability[1] : docker.replace(config.getString("Durability"));
-        if (durability != null) {
-            if (durability.endsWith("%")) {
-                item.setDurability((short) (material.getMaxDurability() * (1 - Double.parseDouble(durability.substring(0, durability.length() - 1)) / 100)));
-            } else if (durability.startsWith("<")) {
-                item.setDurability((short) (material.getMaxDurability() - Short.parseShort(durability.substring(1))));
+        String durability = indexOf != -1 ? materialAndDurability.substring(indexOf + 1) : docker.replace(config.getString("Durability"));
+        if (!StringUtils.isEmpty(durability)) {
+            if (durability.charAt(durability.length() - 1) == '%') {
+                durability = durability.substring(0, durability.length() - 1);
+                item.setDurability((short) (material.getMaxDurability() * (1 - Double.parseDouble(durability) / 100)));
+            } else if (durability.charAt(0) == '<') {
+                durability = durability.substring(1);
+                item.setDurability((short) (material.getMaxDurability() - Short.parseShort(durability)));
             } else {
                 item.setDurability(Short.parseShort(durability));
             }
         }
+
         ItemMeta meta = item.getItemMeta();
 
         String itemName = docker.replace(this.displayName);
@@ -151,13 +154,6 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
             }
         }
 
-        if (NMS.compareTo(1,14,1) >= 0) {
-            int customData = config.getInt("CustomModelData", -1);
-            if (customData != -1) {
-                meta.setCustomModelData(customData);
-            }
-        }
-
         for (String flagName : config.getStringList("ItemFlagList")) {
             for (ItemFlag itemFlag : ItemFlag.values()) {
                 if (itemFlag.name().equals(flagName)) {
@@ -171,8 +167,12 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
 
         ItemUtil.getInst().setSkull(meta, docker.replace(config.getString("SkullName")));
 
+        if (meta instanceof LeatherArmorMeta && config.isString("Color")) {
+            ((LeatherArmorMeta) meta).setColor(Color.fromRGB(Integer.parseInt(docker.replace(config.getString("Color")), 16)));
+        }
+
         // TODO 这玩意最好整合到ItemUtil里做NMS
-        if (config.isConfigurationSection("Potion") && NMS.compareTo(1, 11, 1) >= 0 && meta instanceof PotionMeta) {
+        if (NMS.compareTo(1, 11, 1) >= 0 && config.isConfigurationSection("Potion") && meta instanceof PotionMeta) {
             ConfigurationSection potionConfig = config.getConfigurationSection("Potion");
             PotionEffectType[] potionEffectTypes = PotionEffectType.values();
             if (potionConfig != null) {
@@ -201,23 +201,31 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
             }
         }
 
-        if (meta instanceof LeatherArmorMeta && config.isString("Color")) {
-            ((LeatherArmorMeta) meta).setColor(Color.fromRGB(Integer.parseInt(docker.replace(config.getString("Color")), 16)));
+        if (NMS.compareTo(1, 14, 1) >= 0) {
+            int customData = config.getInt("CustomModelData", -1);
+            if (customData != -1) {
+                meta.setCustomModelData(customData);
+            }
         }
 
         item.setItemMeta(meta);
+
         if (config.getBoolean("ClearAttribute")) {
             ItemUtil.getInst().clearAttribute(item, meta);
         } else if (config.isList("Attributes")) {
-            ItemUtil.getInst().addAttributes(item, docker.replace(config.getStringList("Attributes")).stream()
-                    .map(data -> data.split(":")).filter(split -> split.length >= 3)
-                    .map(split -> new ItemUtil.AttributeData()
+            List<ItemUtil.AttributeData> attributeList = new ArrayList<>();
+            for (String data : docker.replace(config.getStringList("Attributes"))) {
+                String[] split = data.split(":");
+                if (split.length >= 3) {
+                    val attributeData = new ItemUtil.AttributeData()
                             .setAttrName(split[0])
                             .setAmount(Double.parseDouble(split[1]))
                             .setOperation(Integer.parseInt(split[2]))
-                            .setSlot(split.length > 3 ? split[3] : null))
-                    .collect(Collectors.toList())
-            );
+                            .setSlot(split.length > 3 ? split[3] : null);
+                    attributeList.add(attributeData);
+                }
+            }
+            ItemUtil.getInst().addAttributes(item, attributeList);
         }
 
         Object nmsItem = NbtUtil.getInst().getNMSItem(item);
@@ -276,7 +284,7 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         config.set("SkullName", ItemUtil.getInst().getSkull(itemMeta));
     }
 
-    public Map<String, Object> convertConfig(ConfigurationSection config) {
+    public static Map<String, Object> convertConfig(ConfigurationSection config) {
         Map<String, Object> result = config.getValues(false);
         result.entrySet().stream().filter(entry -> entry.getValue() instanceof ConfigurationSection).forEachOrdered(entry -> result.put(entry.getKey(), convertConfig((ConfigurationSection) entry.getValue())));
         return result;

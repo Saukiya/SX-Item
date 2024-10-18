@@ -92,7 +92,13 @@ public interface NMS {
     static int compareTo(String version) {
         Matcher matcher = Data.VERSION_PATTERN.matcher(version);
         if (!matcher.matches()) return -1;
-        return IntStream.range(0, 3).map(i -> Integer.compare(Data.thisVersionSplit[i], Integer.parseInt(matcher.group(i + 1)))).filter(ct -> ct != 0).findFirst().orElse(0);
+        for (int i = 0; i < 3; i++) {
+            int ct = Integer.compare(Data.thisVersionSplit[i], Integer.parseInt(matcher.group(i + 1)));
+            if (ct != 0) {
+                return ct;
+            }
+        }
+        return 0;
     }
 
     /**
@@ -103,7 +109,13 @@ public interface NMS {
      */
     static int compareTo(int... version) {
         if (version.length < 3) return -1;
-        return IntStream.range(0, 3).map(i -> Integer.compare(Data.thisVersionSplit[i], version[i])).filter(i -> i != 0).findFirst().orElse(0);
+        for (int i = 0; i < 3; i++) {
+            int compare = Integer.compare(Data.thisVersionSplit[i], version[i]);
+            if (compare != 0) {
+                return compare;
+            }
+        }
+        return 0;
     }
 
     /**

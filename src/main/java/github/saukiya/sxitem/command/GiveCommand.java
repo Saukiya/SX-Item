@@ -8,6 +8,7 @@ import github.saukiya.util.command.SubCommand;
 import github.saukiya.util.nms.MessageUtil;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -73,6 +74,7 @@ public class GiveCommand extends SubCommand implements Listener {
         Inventory inv = player.getInventory();
         for (int i = 0; i < amount; i++) {
             ItemStack itemStack = SXItem.getItemManager().getItem(ig, player, otherMap);
+            if (itemStack.getType() == Material.AIR) continue;
 
             if (inv.firstEmpty() != -1) {
                 inv.addItem(itemStack);
