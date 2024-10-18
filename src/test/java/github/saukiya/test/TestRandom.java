@@ -65,8 +65,7 @@ public class TestRandom {
 
     @Benchmark
     public static Object test1() {
-        val list = new ArrayList<>(copyList);
-        return list.stream()
+        return copyList.stream()
                 .flatMap(str -> str.indexOf('\n') != -1 ? Arrays.stream(str.split("\n")) : Stream.of(str))
                 .filter(s -> !s.contains("%DeleteLore"))
                 .collect(Collectors.toList());
@@ -74,18 +73,17 @@ public class TestRandom {
 
     @Benchmark
     public static Object test2() {
-        val list = new ArrayList<>(copyList);
-        for (int i = 0; i < list.size(); i++) {
-            String str = list.get(i);
+        val list = new ArrayList<>();
+        for (String str : copyList) {
             if (str.indexOf('\n') != -1) {
                 String[] split = str.split("\n");
-                str = split[0];
-                list.remove(i);
-                list.addAll(i, Arrays.asList(split));
-            }
-
-            if (str.contains("%DeleteLore")) {
-                list.remove(i--);
+                for (String s : split) {
+                    if (!s.contains("%DeleteLore")) {
+                        list.add(s);
+                    }
+                }
+            } else if (!str.contains("%DeleteLore")) {
+                list.add(str);
             }
         }
         return list;
@@ -149,7 +147,6 @@ public class TestRandom {
             char c = chars[i];
             switch (c) {
                 case ':':
-                case ',':
                     if (index == check) {
                         return "";
                     }
@@ -195,7 +192,7 @@ public class TestRandom {
         validation.put("5.6 % 2.3 - 1.9 * (11 / 2.8) + 6", 5.6 % 2.3 - 1.9 * (11 / 2.8) + 6);
         validation.put("(-14.5 / 7.2 + 2.3) * 3.5 - 9", (-14.5 / 7.2 + 2.3) * 3.5 - 9);
         validation.put("8.8 * (5 - 2.7 / (-3.1)) + 10", 8.8 * (5 - 2.7 / (-3.1)) + 10);
-        validation.put("4.1 / 2.5 * (1.6 - 8.7 % 3) + 6", 4.1 / 2.5 * (1.6 - 8.7 % 3) + 6);
+        validation.put("4.1 / (----2.5) * (1.6 - 8.7 % 3) + 6", 4.1 / 2.5 * (1.6 - 8.7 % 3) + 6);
         validation.put("----------------1", 1);
 
         for (Map.Entry<String, Object> entry : validation.entrySet()) {
@@ -510,7 +507,7 @@ public class TestRandom {
     public static String lock1(String key, RandomDocker docker) {
         String value;
         if (key.contains("#")) {
-            String[] temp = key.substring(key.indexOf("#") + 1).split(",");
+            String[] temp = key.substring(key.indexOf("#") + 1).split(":");
             String finalKey = key = key.substring(0, key.indexOf("#"));
             String tempValue = docker.getOtherMap().get(finalKey);
             value = PlaceholderHelper.setPlaceholders(docker.getPlayer(), docker.replace(tempValue != null ? tempValue : temp[SXItem.getRandom().nextInt(temp.length)]));
@@ -551,8 +548,8 @@ public class TestRandom {
 
     @State(Scope.Thread)
     public static class LockBM {
-        @Param({"KEY#100,200,300"})
-        String key = "KEY#100,200,300";
+        @Param({"KEY#100:200:300"})
+        String key = "KEY#100:200:300";
         RandomDocker docker = new RandomDocker();
 
         @Benchmark

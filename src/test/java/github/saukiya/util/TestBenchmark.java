@@ -2,6 +2,7 @@ package github.saukiya.util;
 
 import lombok.val;
 import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.profile.GCProfiler;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.ChainedOptionsBuilder;
@@ -49,6 +50,8 @@ public class TestBenchmark {
                 .timeUnit(TimeUnit.NANOSECONDS)
                 .mode(Mode.AverageTime)
                 .threads(2)
-                .forks(1);
+                .forks(1)
+                .addProfiler(GCProfiler.class)
+                ;
     }
 }
