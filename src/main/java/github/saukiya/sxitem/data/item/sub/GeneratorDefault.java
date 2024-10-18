@@ -254,28 +254,26 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         return getItem(player, randomDocker);
     }
 
-    public static Saver saveFunc() {
-        return (item, config) -> {
-            ItemMeta itemMeta = item.getItemMeta();
-            config.set("Name", itemMeta.hasDisplayName() ? itemMeta.getDisplayName().replace('§', '&') : null);
-            config.set("ID", item.getType().name() + (item.getDurability() != 0 ? ":" + item.getDurability() : ""));
-            if (item.getAmount() > 1)
-                config.set("Amount", item.getAmount());
-            if (itemMeta.hasLore())
-                config.set("Lore", itemMeta.getLore().stream().map(s -> s.replace('§', '&')).collect(Collectors.toList()));
-            if (itemMeta.hasEnchants())
-                config.set("EnchantList", itemMeta.getEnchants().entrySet().stream().map(entry -> entry.getKey().getName() + ":" + entry.getValue()).collect(Collectors.toList()));
-            if (!itemMeta.getItemFlags().isEmpty())
-                config.set("ItemFlagList", itemMeta.getItemFlags().stream().map(Enum::name).collect(Collectors.toList()));
-            if (ItemUtil.getInst().isUnbreakable(itemMeta))
-                config.set("Unbreakable", true);
-            List<ItemUtil.AttributeData> attributeList = ItemUtil.getInst().getAttributes(item);
-            if (attributeList != null && !attributeList.isEmpty())
-                config.set("Attributes", attributeList.stream().map(data -> data.getAttrName() + ":" + data.getAmount() + ":" + data.getOperation() + (data.getSlot() != null ? ":" + data.getSlot() : "")).collect(Collectors.toList()));
-            if (itemMeta instanceof LeatherArmorMeta)
-                config.set("Color", Integer.toHexString(((LeatherArmorMeta) itemMeta).getColor().asRGB()));
-            config.set("SkullName", ItemUtil.getInst().getSkull(itemMeta));
-        };
+    public static void save(ItemStack item, ConfigurationSection config) {
+        ItemMeta itemMeta = item.getItemMeta();
+        config.set("Name", itemMeta.hasDisplayName() ? itemMeta.getDisplayName().replace('§', '&') : null);
+        config.set("ID", item.getType().name() + (item.getDurability() != 0 ? ":" + item.getDurability() : ""));
+        if (item.getAmount() > 1)
+            config.set("Amount", item.getAmount());
+        if (itemMeta.hasLore())
+            config.set("Lore", itemMeta.getLore().stream().map(s -> s.replace('§', '&')).collect(Collectors.toList()));
+        if (itemMeta.hasEnchants())
+            config.set("EnchantList", itemMeta.getEnchants().entrySet().stream().map(entry -> entry.getKey().getName() + ":" + entry.getValue()).collect(Collectors.toList()));
+        if (!itemMeta.getItemFlags().isEmpty())
+            config.set("ItemFlagList", itemMeta.getItemFlags().stream().map(Enum::name).collect(Collectors.toList()));
+        if (ItemUtil.getInst().isUnbreakable(itemMeta))
+            config.set("Unbreakable", true);
+        List<ItemUtil.AttributeData> attributeList = ItemUtil.getInst().getAttributes(item);
+        if (attributeList != null && !attributeList.isEmpty())
+            config.set("Attributes", attributeList.stream().map(data -> data.getAttrName() + ":" + data.getAmount() + ":" + data.getOperation() + (data.getSlot() != null ? ":" + data.getSlot() : "")).collect(Collectors.toList()));
+        if (itemMeta instanceof LeatherArmorMeta)
+            config.set("Color", Integer.toHexString(((LeatherArmorMeta) itemMeta).getColor().asRGB()));
+        config.set("SkullName", ItemUtil.getInst().getSkull(itemMeta));
     }
 
     public Map<String, Object> convertConfig(ConfigurationSection config) {

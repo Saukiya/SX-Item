@@ -47,7 +47,7 @@ public class GeneratorImport extends IGenerator {
         return item.clone();
     }
 
-    public static Saver saveFunc() {
-        return (item, config) -> config.set("Item", item);
+    public static void save(ItemStack item, ConfigurationSection config) {
+        config.set("Item", item);
     }
 }

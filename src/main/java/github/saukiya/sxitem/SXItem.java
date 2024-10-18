@@ -66,6 +66,7 @@ public class SXItem extends JavaPlugin {
         mainCommand = new MainCommand(this, Message::getStatic);
         mainCommand.register(new GiveCommand());
         mainCommand.register(new SaveCommand());
+        mainCommand.register(new InfoCommand());
         mainCommand.register(new NBTCommand());
         if (NMS.compareTo(1,20,5) >= 0) {
             mainCommand.register(new ComponentCommand());
@@ -75,8 +76,8 @@ public class SXItem extends JavaPlugin {
         mainCommand.register(new TestCommand());
 
         ItemManager.loadMaterialData();
-        ItemManager.register("Default", GeneratorDefault::new, GeneratorDefault.saveFunc());
-        ItemManager.register("Import", GeneratorImport::new, GeneratorImport.saveFunc());
+        ItemManager.register("Default", GeneratorDefault::new, GeneratorDefault::save);
+        ItemManager.register("Import", GeneratorImport::new, GeneratorImport::save);
 
         RandomManager.register(new BooleanRandom(), 'b');
         RandomManager.register(new CalculatorRandom(), 'c');
