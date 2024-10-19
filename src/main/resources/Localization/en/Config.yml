@@ -1,7 +1,5 @@
 # Log Level: [OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL]
 LoggerLevel: "INFO"
-# Floating-point number formatting
-DecimalFormat: "#.##"
 # Date formatting
 TimeFormat: yyyy/MM/dd HH:mm
 # Engine selection: JS engine is used by default, this plugin does not come with an engine module, to disable it you can delete this line

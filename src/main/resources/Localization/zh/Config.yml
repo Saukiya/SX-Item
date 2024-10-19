@@ -1,7 +1,5 @@
 # 日志等级: [OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL]
 LoggerLevel: "INFO"
-# 浮点数格式化
-DecimalFormat: "#.##"
 # 日期格式化
 TimeFormat: yyyy/MM/dd HH:mm
 # 引擎选择:默认采用JS引擎,该插件不自带引擎模块, 以下链接未经验证, 仅供参考
@@ -17,7 +15,3 @@ ProtectNBT:
 GiveOverflowDrop: true
 # 史诗怪物掉落的SX物品直接进入玩家背包
 MobDropToPlayerInventory: true
-Custom:
-  Random:
-    S.Separator: ','
-    L.Separator: ','

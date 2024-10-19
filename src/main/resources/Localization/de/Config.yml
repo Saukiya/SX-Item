@@ -1,7 +1,5 @@
 # Protokollstufe: [OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL]
 LoggerLevel: "INFO"
-# Fließkomma-Formatierung
-DecimalFormat: "#.##"
 # Datumsformatierung
 TimeFormat: yyyy/MM/dd HH:mm
 # Engine-Auswahl: Standardmäßig wird die JS-Engine verwendet. Dieses Plugin enthält kein Engine-Modul. 
