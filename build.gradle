@@ -79,7 +79,7 @@ dependencies {
     testAnnotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.34'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
     if (!System.env.JITPACK) {
-        testImplementation project("Module-NMS-V1_17_R1")
+        testImplementation project("Module-NMS:V1_17_R1")
     }
 }
 
