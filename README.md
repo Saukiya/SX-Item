@@ -9,15 +9,13 @@
 [Spigot](https://www.spigotmc.org/resources/sx-item.119751) ·
 [~~MCBBS~~](https://www.mcbbs.net/thread-1471655-1-1.html)
 
-<details><summary>简体中文</summary>
+## Support Server
 
-## 支持服务端:(未在列表内则未经过测试)
-- paper
-- spigot
-- bukkit
+- Spigot
+- Paper
+- More...
 
-## 支持版本:
-
+## Support version
 | Version	 | Version	 |
 |:--------:|:--------:|
 | 1.8.8 	  | 1.19.4	  |
@@ -31,33 +29,15 @@
 | 1.18.2	  |
 | 1.19.2	  |
 
-### 有需求就发issue，被动更新
+## Gradle
 
-</details>
+```groovy
+repositories {
+    // Github Project
+    maven { url 'https://jitpack.io' }
+}
 
-<details><summary>English</summary>
-
-## Support server: (if not in the list, it has not been tested)
-
-- paper
-- spigot
-- bukkit
-
-## Support version:
-
-| Version	 | Version	 |
-|:--------:|:--------:|
-| 1.8.8 	  | 1.19.4	  |
-| 1.11.2	  | 1.20.1	  |
-| 1.12.2	  | 1.20.2	  |
-| 1.13.2	  | 1.20.3	  |
-| 1.14.4	  | 1.20.4	  |
-| 1.15.2	  | 1.21.1	  |
-| 1.16.5	  |
-| 1.17.1	  |
-| 1.18.2	  |
-| 1.19.2	  |
-
-### Send issue as soon as you need it, and update it passively.
-
-</details>
+dependencies {
+    implementation 'com.github.Saukiya:SX-Item:-SNAPSHOT'
+}
+```
