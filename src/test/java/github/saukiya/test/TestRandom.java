@@ -3,7 +3,6 @@ package github.saukiya.test;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.random.RandomDocker;
 import github.saukiya.sxitem.util.Config;
-import github.saukiya.util.TestBenchmark;
 import github.saukiya.util.base.CharStack;
 import github.saukiya.util.base.DoubleStack;
 import github.saukiya.util.helper.PlaceholderHelper;
@@ -11,8 +10,12 @@ import lombok.val;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.Param;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.State;
 
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,13 +34,15 @@ public class TestRandom {
 
     static List<String> copyList = Arrays.asList("|||||||||||||", "|||||||||||||||", "||||||||||\n|||||||||||", "||||||||||||||||", "|||||||||||||||||||||", "||||||||||\n|||||||||||", "|||||||||||||||||||||", "||||||||\n|||||||\n||||||", "|||||||||||||||||||||");
 
-    @Setup(Level.Trial)
-    public static void setupTrial() throws Exception {
-        YamlConfiguration config = new YamlConfiguration();
-        config.set(Config.TIME_FORMAT, "yyyy/MM/dd HH:mm");
-        val temp = Config.class.getDeclaredField("config");
-        temp.setAccessible(true);
-        temp.set(null, config);
+    static {
+        try {
+            YamlConfiguration config = new YamlConfiguration();
+            config.set(Config.TIME_FORMAT, "yyyy/MM/dd HH:mm");
+            Field temp = Config.class.getDeclaredField("config");
+            temp.setAccessible(true);
+            temp.set(null, config);
+        } catch (Exception e) {
+        }
     }
 
     public static void main(String[] args) throws Exception {
@@ -49,7 +54,7 @@ public class TestRandom {
 //        TestBenchmark.run(IntBM.class);
 //        TestBenchmark.run(LockBM.class);
 //        TestBenchmark.run("BooleanBM.test3", "CalculatorBM.test3", "TimeBM.test3", "DoubleBM.test3", "IntegerBM.test3", "LockBM.test2");
-        TestBenchmark.run("test1", "test2");
+//        TestBenchmark.run("replace1", "replace2");
 //        TestBenchmark.run();
 //        calculatorValidation();
 //        System.out.println(boolean1("AAA:BBB:CCC:DDD:EEE:AAA") != null);
@@ -58,13 +63,10 @@ public class TestRandom {
 //        System.out.println(boolean3("AAA:BBB:CCC:DDD:EEE:AAA") != null);
 //        System.out.println(boolean3("AAA:BBB:CCC:DDD:EEE:AAAA") != null);
 //        System.out.println(boolean3("AA#AAA:BB:CC:DD:EE:FF:GG:HH:YY:GG:KK:AA") != null);
-
-        System.out.println(test1());
-        System.out.println(test2());
     }
 
     @Benchmark
-    public static Object test1() {
+    public static Object replace1() {
         return copyList.stream()
                 .flatMap(str -> str.indexOf('\n') != -1 ? Arrays.stream(str.split("\n")) : Stream.of(str))
                 .filter(s -> !s.contains("%DeleteLore"))
@@ -72,7 +74,7 @@ public class TestRandom {
     }
 
     @Benchmark
-    public static Object test2() {
+    public static Object replace2() {
         val list = new ArrayList<>();
         for (String str : copyList) {
             if (str.indexOf('\n') != -1) {
@@ -549,7 +551,7 @@ public class TestRandom {
     @State(Scope.Thread)
     public static class LockBM {
         @Param({"KEY#100:200:300"})
-        String key = "KEY#100:200:300";
+        String key;
         RandomDocker docker = new RandomDocker();
 
         @Benchmark
@@ -565,8 +567,8 @@ public class TestRandom {
 
     @State(Scope.Thread)
     public static class IntBM {
-        @Param({"1_2", "200_100"})
-        String key = "1_2";
+        @Param({"10_20"})
+        String key;
 
         @Benchmark
         public void test1() {
@@ -581,8 +583,8 @@ public class TestRandom {
 
     @State(Scope.Thread)
     public static class DoubleBM {
-        @Param({"1.5_2.5", "200_100"})
-        String key = "1.5_2.5";
+        @Param({"1.5_15.5"})
+        String key;
 
         @Benchmark
         public void test1() {
@@ -597,8 +599,8 @@ public class TestRandom {
 
     @State(Scope.Thread)
     public static class TimeBM {
-        @Param({"20Y12M31D23h59m59s", "12345"})
-        String key = "20Y12M31D23h59m59s";
+        @Param({"20Y12M31D23h59m59s"})
+        String key;
 
         @Benchmark
         public void test1() {
@@ -613,8 +615,8 @@ public class TestRandom {
 
     @State(value = Scope.Thread)
     public static class CalculatorBM {
-        @Param({"12 + 24 - 36 * 2 / (4 + 6) % 3", "-3 + ((4 * (10 - (6 / 2))) - (8 % 3) + (5 + (-7) / 2))"})
-        String key = "- (3 - (- (4 + 5) ) )";
+        @Param({"-3 + ((4 * (10 - (6 / 2))) - (8 % 3) + (5 + (-7) / 2))"})
+        String key;
 
         @Benchmark
         public void test1() {
@@ -629,8 +631,8 @@ public class TestRandom {
 
     @State(value = Scope.Thread)
     public static class BooleanBM {
-        @Param({"AA:AAA:BB:CC:DD:EE:FF:GG:HH:YY:GG:KK:AA", "AA:BB:AA:DD:A:FF:GG:HH:AAA"})
-        String key = "AA:AAA:BB:CC:DD:EE:FF:GG:HH:YY:GG:KK:AA";
+        @Param({"AA:AAA:BB:CC:DD:EE:FF:GG:AA:HH:YY:GG:KK"})
+        String key;
 
         @Benchmark
         public void test1() {
@@ -645,8 +647,8 @@ public class TestRandom {
 
     @State(value = Scope.Thread)
     public static class ScriptBM {
-        @Param({"File.function#AAA,BBB", "File.function#AAA,BBB,CCC"})
-        String key = "File.function#AAA,BBB";
+        @Param({"File.function#AAA,BBB,CCC"})
+        String key;
 
         @Benchmark
         public void test1() {
