@@ -100,7 +100,7 @@ public class ExpressionSpace extends StrLookup {
     public List<String> replace(List<String> list) {
         val result = new ArrayList<String>();
         for (String str : list) {
-            str = ss.replace(str);
+            str = PlaceholderHelper.setPlaceholders(getPlayer(), ss.replace(str));
             if (str.indexOf('\n') != -1) {
                 String[] split = str.split("\n");
                 for (String s : split) {
