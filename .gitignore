@@ -6,9 +6,9 @@
 /run/
 /versions/
 
-*/build/
-*/out/
-*/*/generated/
-*/*/generated_tests/
+**/out/
+**/build/
+**/generated/
+**/generated_tests/
 
 local.properties
