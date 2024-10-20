@@ -11,9 +11,11 @@ import github.saukiya.util.nbt.TagList;
 import github.saukiya.util.nbt.TagString;
 import lombok.Getter;
 import lombok.val;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrLookup;
 import org.apache.commons.lang.text.StrMatcher;
 import org.apache.commons.lang.text.StrSubstitutor;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -137,6 +139,59 @@ public class ExpressionSpace extends StrLookup {
             default:
                 return tagBase;
         }
+    }
+
+    /**
+     * 替换基础类型的表达式
+     *
+     * @param object ConfigurationSection/List/Map/String
+     * @return RandomText
+     */
+    @SuppressWarnings({"unchecked"})
+    public Object replace(Object object) {
+        if (object == null) return null;
+        if (object instanceof ConfigurationSection) {
+            return replace(((ConfigurationSection) object).getValues(false));
+        } else if (object instanceof Map) {
+            val value = (Map<Object, Object>) object;
+            val map = new HashMap<>();
+            for (Map.Entry<?, ? super Object> entry : value.entrySet()) {
+                map.put(entry.getKey(), replace(entry.getValue()));
+            }
+            return map;
+        } else if (object instanceof List) {
+            val value = (List<Object>) object;
+            val list = new ArrayList<>();
+            for (Object o : value) {
+                list.add(replace(o));
+            }
+            return list;
+        } else if (object instanceof String) {
+            val value = (String) object;
+            val result = replace(value);
+            if (StringUtils.isEmpty(result) || result.charAt(0) != '[') return result;
+
+            int last = result.indexOf(']');
+            if (last == -1) return result;
+            val type = result.substring(1, last);
+            val caseResult = result.substring(last + 1);
+            switch (type) {
+                case "int":
+                    return Integer.valueOf(caseResult);
+                case "byte":
+                    return Byte.valueOf(caseResult);
+                case "short":
+                    return Short.valueOf(caseResult);
+                case "long":
+                    return Long.valueOf(caseResult);
+                case "float":
+                    return Float.valueOf(caseResult);
+                case "double":
+                    return Double.valueOf(caseResult);
+            }
+            return result;
+        }
+        return object;
     }
 
     /**

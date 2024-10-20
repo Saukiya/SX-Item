@@ -6,9 +6,6 @@ import github.saukiya.sxitem.data.item.IGenerator;
 import github.saukiya.sxitem.data.item.IUpdate;
 import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.data.random.INode;
-import github.saukiya.util.base.Base;
-import github.saukiya.util.nbt.TagCompound;
-import github.saukiya.util.nbt.TagType;
 import github.saukiya.util.nms.*;
 import lombok.Getter;
 import lombok.val;
@@ -43,7 +40,7 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
 
     Map<String, INode> randomMap;
 
-    TagCompound nbt;
+    Map<String, Object> nbt;
 
     Object component;
 
@@ -60,7 +57,7 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
             SXItem.getRandomManager().loadRandom(this.randomMap = new HashMap<>(), config.getConfigurationSection("Random"));
         }
         if (config.isConfigurationSection("NBT")) {
-            this.nbt = (TagCompound) TagType.toTag(config.getConfigurationSection("NBT"));
+            this.nbt = convertConfig(config.getConfigurationSection("NBT"));
         }
         if (config.isConfigurationSection("Components")) {
             component = ComponentUtil.getInst().valueToMap(convertConfig(config.getConfigurationSection("Components")));
@@ -236,7 +233,7 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
 
         if (nbt != null || !expression.getLockMap().isEmpty()) {
             val wrapper = NbtUtil.getInst().getItemTagWrapper(item, nmsItem);
-            wrapper.setAll((Base.Compound) expression.replace(nbt));
+            wrapper.setAll((Map<Object, Object>) expression.replace(nbt));
 
             expression.getLockMap().forEach((key, value) -> wrapper.set(SXItem.getInst().getName() + ".Lock." + key, value));
             wrapper.save();

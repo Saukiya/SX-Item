@@ -101,7 +101,10 @@
 # 参考API: https://bukkit.windit.net/javadoc/org/bukkit/potion/PotionEffectType.html
 #
 #物品标签 NBT [Type:Map-?] (支持随机)
-# 描述: 自由的将NBT节点下的配置信息设置到物品NBT中，可输入/si nbt查看
+# 描述: 将NBT数据设置到物品NBT中，可输入/si nbt查看
+# 转换类型示例: (只支持byte/short/int/long/float/double, 暂时不支持byte[]\int[]\long[])
+#   key1: "[int]<i:1_100>" # 将1-100的整数字符串转为int整数
+#   key2: "[double]<d:1_100>" # 将1-100的小数字符串转为double小数
 #
 #堆叠组件: Components [Type:Map]
 # 描述: 高度自定义物品 仅1.20.6+支持 (插件为1.21.1+)
@@ -228,6 +231,15 @@ Default-3:
       # 1/3的概率随机到Lore，2/3的概率随机到全局变量
       - 1: "Lore"
       - 2: ~
+  NBT:
+    # 转成对应的数据类型
+    StringConvert:
+      byte: "[byte]<s:-128:127>"
+      short: "[short]<s:-32768:32767>"
+      int: "[int]<s:-2147483648:2147483647>"
+      long: "[long]<s:-9223372036854775808:9223372036854775807>"
+      float: "[float]<d:-2333_2333>"
+      double: "[double]<d:-2333_2333>"
 
 Default-4:
   Type: Import

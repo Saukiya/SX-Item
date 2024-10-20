@@ -228,6 +228,15 @@ Default-3:
       # 33% Wahrscheinlichkeit zufällig zu Lore, 66% Wahrscheinlichkeit zufällig zu globaler Variable
       - 1: "Lore"
       - 2: ~
+  NBT:
+    # In den entsprechenden Datentyp umwandeln
+    StringConvert:
+      byte: "[byte]<s:-128:127>"
+      short: "[short]<s:-32768:32767>"
+      int: "[int]<s:-2147483648:2147483647>"
+      long: "[long]<s:-9223372036854775808:9223372036854775807>"
+      float: "[float]<d:-2333_2333>"
+      double: "[double]<d:-2333_2333>"
 
 Default-4:
   Type: Import
