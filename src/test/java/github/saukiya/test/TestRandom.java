@@ -57,12 +57,7 @@ public class TestRandom {
 //        TestBenchmark.run("replace1", "replace2");
 //        TestBenchmark.run();
 //        calculatorValidation();
-//        System.out.println(boolean1("AAA:BBB:CCC:DDD:EEE:AAA") != null);
-//        System.out.println(boolean1("AAA:BBB:CCC:DDD:EEE:AAAA") != null);
-//        System.out.println(boolean1("AAA:AAA:BB:CC:DD:EE:FF:GG:HH:YY:GG:KK:AA") != null);
-//        System.out.println(boolean3("AAA:BBB:CCC:DDD:EEE:AAA") != null);
-//        System.out.println(boolean3("AAA:BBB:CCC:DDD:EEE:AAAA") != null);
-//        System.out.println(boolean3("AA#AAA:BB:CC:DD:EE:FF:GG:HH:YY:GG:KK:AA") != null);
+
     }
 
     @Benchmark
