@@ -1,9 +1,13 @@
 package github.saukiya.util.base;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+
 import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.Set;
 
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class EmptyMap<K, V> extends AbstractMap<K, V> {
 
     private static final EmptyMap<?, ?> EMPTY = new EmptyMap<>();
