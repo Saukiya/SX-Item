@@ -1,8 +1,8 @@
-package github.saukiya.sxitem.data.random.randoms;
+package github.saukiya.sxitem.data.expression.impl;
 
 import github.saukiya.sxitem.SXItem;
-import github.saukiya.sxitem.data.random.IRandom;
-import github.saukiya.sxitem.data.random.RandomDocker;
+import github.saukiya.sxitem.data.expression.ExpressionSpace;
+import github.saukiya.sxitem.data.expression.IExpression;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -15,21 +15,21 @@ import java.util.Collection;
 /**
  * &lt;j:&gt; 调用脚本引擎方法
  */
-public class ScriptRandom implements IRandom {
+public class ScriptExpression implements IExpression {
 
     /**
      * 支持格式
      * <pre>
-     *  &lt;j:File.function&gt; - 执行无参数方法 File.function(docker,null)
-     *  &lt;j:File.function#AAA&gt; - 执行有参数方法 File.function(docker,[AAA])
+     *  &lt;j:File.function&gt; - 执行无参数方法 File.function(space,null)
+     *  &lt;j:File.function#AAA&gt; - 执行有参数方法 File.function(space,[AAA])
      * </pre>
      *
      * @param key    处理的key
-     * @param docker 缓存
+     * @param space 缓存
      * @return
      */
     @Override
-    public String replace(String key, RandomDocker docker) {
+    public String replace(String key, ExpressionSpace space) {
         if (!SXItem.getScriptManager().isEnabled()) return null;
         int index1 = key.indexOf('.');
         Validate.isTrue(index1 != -1, key);
@@ -52,7 +52,7 @@ public class ScriptRandom implements IRandom {
 
         Object result;
         try {
-            result = SXItem.getScriptManager().callFunction(fileName, functionName, docker, args);
+            result = SXItem.getScriptManager().callFunction(fileName, functionName, space, args);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

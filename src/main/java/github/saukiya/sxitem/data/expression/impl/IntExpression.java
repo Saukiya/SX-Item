@@ -1,13 +1,13 @@
-package github.saukiya.sxitem.data.random.randoms;
+package github.saukiya.sxitem.data.expression.impl;
 
 import github.saukiya.sxitem.SXItem;
-import github.saukiya.sxitem.data.random.IRandom;
-import github.saukiya.sxitem.data.random.RandomDocker;
+import github.saukiya.sxitem.data.expression.ExpressionSpace;
+import github.saukiya.sxitem.data.expression.IExpression;
 
 /**
  * &lt;i:&gt; 创建一个随机整数
  */
-public class IntRandom implements IRandom {
+public class IntExpression implements IExpression {
 
     /**
      * 支持格式
@@ -17,11 +17,11 @@ public class IntRandom implements IRandom {
      * </pre>
      *
      * @param key    处理的key
-     * @param docker 缓存
+     * @param space 缓存
      * @return
      */
     @Override
-    public String replace(String key, RandomDocker docker) {
+    public String replace(String key, ExpressionSpace space) {
         int index = key.indexOf('_');
         if (index == -1) return key;
         int min = Integer.parseInt(key.substring(0, index));

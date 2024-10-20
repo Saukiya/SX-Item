@@ -2,12 +2,13 @@ package github.saukiya.sxitem;
 
 import github.saukiya.sxitem.command.*;
 import github.saukiya.sxitem.data.ScriptManager;
+import github.saukiya.sxitem.data.expression.ExpressionManager;
+import github.saukiya.sxitem.data.expression.ExpressionSpace;
+import github.saukiya.sxitem.data.expression.impl.*;
 import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.data.item.sub.GeneratorDefault;
 import github.saukiya.sxitem.data.item.sub.GeneratorImport;
-import github.saukiya.sxitem.data.random.RandomDocker;
 import github.saukiya.sxitem.data.random.RandomManager;
-import github.saukiya.sxitem.data.random.randoms.*;
 import github.saukiya.sxitem.helper.MythicMobsHelper;
 import github.saukiya.sxitem.util.Config;
 import github.saukiya.sxitem.util.Message;
@@ -79,17 +80,18 @@ public class SXItem extends JavaPlugin {
         ItemManager.register("Default", GeneratorDefault::new, GeneratorDefault::save);
         ItemManager.register("Import", GeneratorImport::new, GeneratorImport::save);
 
-        RandomManager.register(new BooleanRandom(), 'b');
-        RandomManager.register(new CalculatorRandom(), 'c');
-        RandomManager.register(new LockStringRandom(), 'l');
-        RandomManager.register(new StringRandom(), 's');
-        RandomManager.register(new TimeRandom(), 't');
-        RandomManager.register(new DoubleRandom(), 'd');
-        RandomManager.register(new IntRandom(), 'i', 'r');
-        RandomManager.register(new ScriptRandom(), 'j');
-        RandomManager.register(new UUIDRandom(), 'u');
+        ExpressionManager.register(new BooleanExpression(), 'b');
+        ExpressionManager.register(new CalculatorExpression(), 'c');
+        ExpressionManager.register(new LockStringExpression(), 'l');
+        ExpressionManager.register(new StringRandomExpression(), 's');
+        ExpressionManager.register(new TimeExpression(), 't');
+        ExpressionManager.register(new DoubleExpression(), 'd');
+        ExpressionManager.register(new IntExpression(), 'i', 'r');
+        ExpressionManager.register(new ScriptExpression(), 'j');
+        ExpressionManager.register(new UUIDExpression(), 'u');
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     public void onEnable() {
         new Metrics(this, 11948);
@@ -105,7 +107,7 @@ public class SXItem extends JavaPlugin {
         itemManager = new ItemManager(this);
 
         Config.setup();
-        PlaceholderHelper.setup(this, (player, params) -> RandomDocker.getInst().replace(params));
+        PlaceholderHelper.setup(this, (player, params) -> ExpressionSpace.getInst().replace(params));
         MythicMobsHelper.setup();
         mainCommand.onEnable("SxItem");
         getLogger().info("Loading Time: " + (System.currentTimeMillis() - oldTimes) + " ms");

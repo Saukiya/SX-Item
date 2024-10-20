@@ -1,12 +1,12 @@
-package github.saukiya.sxitem.data.random.randoms;
+package github.saukiya.sxitem.data.expression.impl;
 
-import github.saukiya.sxitem.data.random.IRandom;
-import github.saukiya.sxitem.data.random.RandomDocker;
+import github.saukiya.sxitem.data.expression.ExpressionSpace;
+import github.saukiya.sxitem.data.expression.IExpression;
 
 /**
  * &lt;b:&gt; 判断两个值或多个值是否相同
  */
-public class BooleanRandom implements IRandom {
+public class BooleanExpression implements IExpression {
 
     /**
      * 支持格式
@@ -18,11 +18,11 @@ public class BooleanRandom implements IRandom {
      * </pre>
      *
      * @param key    处理的key
-     * @param docker 缓存
+     * @param space 缓存
      * @return
      */
     @Override
-    public String replace(String key, RandomDocker docker) {
+    public String replace(String key, ExpressionSpace space) {
         char[] chars = key.toCharArray();
         int index = 0, check = 0, length = chars.length;
 

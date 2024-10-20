@@ -1,14 +1,13 @@
-package github.saukiya.sxitem.data.random.randoms;
+package github.saukiya.sxitem.data.expression.impl;
 
 import github.saukiya.sxitem.SXItem;
-import github.saukiya.sxitem.data.random.IRandom;
-import github.saukiya.sxitem.data.random.RandomDocker;
+import github.saukiya.sxitem.data.expression.ExpressionSpace;
+import github.saukiya.sxitem.data.expression.IExpression;
 
 /**
  * &lt;l:&gt; 获取并锁定一个随机文本
  */
-public class LockStringRandom implements IRandom {
-
+public class LockStringExpression implements IExpression {
 
     /**
      * 支持格式
@@ -18,11 +17,11 @@ public class LockStringRandom implements IRandom {
      * </pre>
      *
      * @param key    处理的key
-     * @param docker 缓存
+     * @param space 缓存
      * @return
      */
     @Override
-    public String replace(String key, RandomDocker docker) {
+    public String replace(String key, ExpressionSpace space) {
         int indexOf = key.indexOf('#');
         String temp = null;
         if (indexOf != -1) {
@@ -30,21 +29,21 @@ public class LockStringRandom implements IRandom {
             key = key.substring(0, indexOf);
         }
 
-        String value = docker.getLockMap().get(key);
+        String value = space.getLockMap().get(key);
         if (value != null) {
             return value;
         }
 
         if (temp != null) {
-            value = docker.getOtherMap().get(key);
+            value = space.getOtherMap().get(key);
             if (value == null) {
                 value = randomArray(temp.split(":"));
             }
         } else {
-            value = docker.random(key);
+            value = space.random(key);
         }
 
-        docker.getLockMap().put(key, value = docker.replace(value));
+        space.getLockMap().put(key, value = space.replace(value));
         return value;
     }
 

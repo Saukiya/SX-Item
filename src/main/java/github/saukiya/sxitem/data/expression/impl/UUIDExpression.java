@@ -1,14 +1,14 @@
-package github.saukiya.sxitem.data.random.randoms;
+package github.saukiya.sxitem.data.expression.impl;
 
-import github.saukiya.sxitem.data.random.IRandom;
-import github.saukiya.sxitem.data.random.RandomDocker;
+import github.saukiya.sxitem.data.expression.ExpressionSpace;
+import github.saukiya.sxitem.data.expression.IExpression;
 
 import java.util.UUID;
 
 /**
  * &lt;u:&gt; 返回一串uuid
  */
-public class UUIDRandom implements IRandom {
+public class UUIDExpression implements IExpression {
 
     /**
      * 支持格式
@@ -18,11 +18,11 @@ public class UUIDRandom implements IRandom {
      * </pre>
      *
      * @param key    处理的key
-     * @param docker 缓存
+     * @param space 缓存
      * @return
      */
     @Override
-    public String replace(String key, RandomDocker docker) {
+    public String replace(String key, ExpressionSpace space) {
         if (key.equals("random")) {
             return UUID.randomUUID().toString();
         }

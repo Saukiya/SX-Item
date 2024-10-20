@@ -1,6 +1,8 @@
-package github.saukiya.sxitem.data.random;
+package github.saukiya.sxitem.data.expression;
 
 import github.saukiya.sxitem.SXItem;
+import github.saukiya.sxitem.data.random.INode;
+import github.saukiya.sxitem.data.random.RandomManager;
 import github.saukiya.util.base.EmptyMap;
 import github.saukiya.util.helper.PlaceholderHelper;
 import github.saukiya.util.nbt.TagBase;
@@ -28,13 +30,13 @@ import java.util.Map;
  * 流程：
  * 1. new RandomDocker(map, player).replace("");
  */
-public class RandomDocker extends StrLookup {
+public class ExpressionSpace extends StrLookup {
 
     static final StrMatcher PRE_MATCHER = StrMatcher.charMatcher('<');
     static final StrMatcher SUF_MATCHER = StrMatcher.charMatcher('>');
 
     @Getter
-    static final RandomDocker inst = new RandomDocker(null, null, EmptyMap.emptyMap());
+    static final ExpressionSpace inst = new ExpressionSpace(null, null, EmptyMap.emptyMap());
 
     final StrSubstitutor ss = new StrSubstitutor(this, PRE_MATCHER, SUF_MATCHER, StrSubstitutor.DEFAULT_ESCAPE);
 
@@ -64,27 +66,15 @@ public class RandomDocker extends StrLookup {
     @Getter
     final Map<String, String> otherMap = new HashMap<>();
 
-    public RandomDocker() {
+    public ExpressionSpace() {
         this(null, null, new HashMap<>());
     }
 
-//    public RandomDocker(Player player) {
-//        this(player, null);
-//    }
-//
-//    public RandomDocker(Map<String, INode> localMap) {
-//        this(null, localMap);
-//    }
-//
-//    public RandomDocker(Map<String, INode> localMap, Player player) {
-//        this(player, localMap, new HashMap<>());
-//    }
-
-    public RandomDocker(Player player, Map<String, INode> localMap) {
+    public ExpressionSpace(Player player, Map<String, INode> localMap) {
         this(player, localMap, new HashMap<>());
     }
 
-    protected RandomDocker(Player player, Map<String, INode> localMap, Map<String, String> lockMap) {
+    protected ExpressionSpace(Player player, Map<String, INode> localMap, Map<String, String> lockMap) {
         this.player = player;
         this.localMap = localMap;
         this.lockMap = lockMap;
@@ -92,7 +82,7 @@ public class RandomDocker extends StrLookup {
     }
 
     /**
-     * 替换文本内的随机占位符
+     * 替换文本内的表达式
      *
      * @param string Text
      * @return RandomText
@@ -102,7 +92,7 @@ public class RandomDocker extends StrLookup {
     }
 
     /**
-     * 替换文本内的随机占位符
+     * 替换文本内的表达式
      *
      * @param list Text
      * @return RandomText
@@ -114,11 +104,11 @@ public class RandomDocker extends StrLookup {
             if (str.indexOf('\n') != -1) {
                 String[] split = str.split("\n");
                 for (String s : split) {
-                    if (!s.contains("%DeleteLore")) {
+                    if (!s.contains("%DeleteLore%")) {
                         result.add(s);
                     }
                 }
-            } else if (!str.contains("%DeleteLore")) {
+            } else if (!str.contains("%DeleteLore%")) {
                 result.add(str);
             }
         }
@@ -126,7 +116,7 @@ public class RandomDocker extends StrLookup {
     }
 
     /**
-     * 替换NBT内的随机占位符，深拷贝TagCompound、TagList、TagString
+     * 替换NBT内的表达式，深拷贝TagCompound、TagList、TagString
      *
      * @param tagBase TagBase
      * @return RandomTag
@@ -166,17 +156,19 @@ public class RandomDocker extends StrLookup {
 
     @Override
     public String lookup(String str) {
-        if (str.length() > 2 && str.charAt(1) == ':') {
-            IRandom random = RandomManager.getRandom(str.charAt(0));
+        int index = str.indexOf(':');
+        if (index != -1) {
+            IExpression random = ExpressionManager.get(str.substring(0, index));
             if (random != null) {
-                if (str.indexOf('%') != str.lastIndexOf('%')) {
+                int placeholderIndex = str.indexOf('%');
+                if (placeholderIndex != -1 && placeholderIndex != str.lastIndexOf('%')) {
                     str = PlaceholderHelper.setPlaceholders(player, str);
                 }
-                str = random.replace(str.substring(2), this);
-                return str != null ? str : "%DeleteLore";
+                str = random.replace(str.substring(index + 1), this);
+                return str != null ? str : "%DeleteLore%";
             }
-            SXItem.getInst().getLogger().warning("No Random Type: " + str.charAt(0));
+            SXItem.getInst().getLogger().warning("No Random Type: " + str.substring(0, index));
         }
-        return null;
+        return str;
     }
 }

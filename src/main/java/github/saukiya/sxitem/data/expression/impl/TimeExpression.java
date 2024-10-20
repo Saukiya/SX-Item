@@ -1,8 +1,8 @@
-package github.saukiya.sxitem.data.random.randoms;
+package github.saukiya.sxitem.data.expression.impl;
 
 import github.saukiya.sxitem.SXItem;
-import github.saukiya.sxitem.data.random.IRandom;
-import github.saukiya.sxitem.data.random.RandomDocker;
+import github.saukiya.sxitem.data.expression.ExpressionSpace;
+import github.saukiya.sxitem.data.expression.IExpression;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.Calendar;
@@ -10,7 +10,7 @@ import java.util.Calendar;
 /**
  * &lt;t:&gt; 动态生成时间文本
  */
-public class TimeRandom implements IRandom {
+public class TimeExpression implements IExpression {
 
     /**
      * 支持格式
@@ -21,11 +21,11 @@ public class TimeRandom implements IRandom {
      * </pre>
      *
      * @param key    处理的key
-     * @param docker 缓存
+     * @param space 缓存
      * @return
      */
     @Override
-    public String replace(String key, RandomDocker docker) {
+    public String replace(String key, ExpressionSpace space) {
         if (StringUtils.isNumeric(key)) {
             return SXItem.getSdf().get().format(System.currentTimeMillis() + Long.parseLong(key) * 1000);
         }

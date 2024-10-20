@@ -1,7 +1,7 @@
 package github.saukiya.test;
 
 import github.saukiya.sxitem.SXItem;
-import github.saukiya.sxitem.data.random.RandomDocker;
+import github.saukiya.sxitem.data.expression.ExpressionSpace;
 import github.saukiya.sxitem.util.Config;
 import github.saukiya.util.base.CharStack;
 import github.saukiya.util.base.DoubleStack;
@@ -506,7 +506,7 @@ public class TestRandom {
         return array[SXItem.getRandom().nextInt(array.length)];
     }
 
-    public static String lock1(String key, RandomDocker docker) {
+    public static String lock1(String key, ExpressionSpace docker) {
         String value;
         if (key.contains("#")) {
             String[] temp = key.substring(key.indexOf("#") + 1).split(":");
@@ -519,7 +519,7 @@ public class TestRandom {
         return docker.getLockMap() == null ? value : docker.getLockMap().computeIfAbsent(key, k -> value);
     }
 
-    public static String lock2(String key, RandomDocker docker) {
+    public static String lock2(String key, ExpressionSpace docker) {
         String value = null;
         String temp = null;
         int indexOf = key.indexOf('#');
@@ -552,7 +552,7 @@ public class TestRandom {
     public static class LockBM {
         @Param({"KEY#100:200:300"})
         String key;
-        RandomDocker docker = new RandomDocker();
+        ExpressionSpace docker = new ExpressionSpace();
 
         @Benchmark
         public void test1() {

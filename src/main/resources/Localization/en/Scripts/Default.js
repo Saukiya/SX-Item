@@ -18,12 +18,12 @@ function testPlayer(player, args) {
 
 /**
  * JS random format: <j:Default.itemScript#QAQ,QWQ>
- * @param docker JS random current RandomDocker, specific reference [RandomDocker](https://github.com/Saukiya/SX-Item/blob/master/src/main/java/github/saukiya/sxitem/data/random/RandomDocker.java)
+ * @param space JS random current ExpressionSpace, specific reference [ExpressionSpace](https://github.com/Saukiya/SX-Item/blob/master/src/main/java/github/saukiya/sxitem/data/expression/ExpressionSpace.java)
  * @param args JS random string array such as ['QAQ', 'QWQ']
  * @returns string
  */
-function itemScript(docker, args) {
-    docker.getPlayer().sendMessage("Send parameters to players: " + args[0] + args[1]);
+function itemScript(space, args) {
+    space.getPlayer().sendMessage("Send parameters to players: " + args[0] + args[1]);
     return args[SXItem.getRandom().nextInt(args.length)];
 }
 

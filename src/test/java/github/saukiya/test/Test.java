@@ -4,7 +4,7 @@ package github.saukiya.test;
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
 import github.saukiya.sxitem.SXItem;
-import github.saukiya.sxitem.data.random.RandomDocker;
+import github.saukiya.sxitem.data.expression.ExpressionSpace;
 import github.saukiya.util.base.EmptyMap;
 import github.saukiya.util.base.Tuple;
 import github.saukiya.util.nbt.TagBase;
@@ -410,7 +410,7 @@ public class Test {
         }
     }
 
-    public static String replaceInt(String key, RandomDocker docker) {
+    public static String replaceInt(String key, ExpressionSpace docker) {
         String[] strSplit = key.split("_");
         if (strSplit.length > 1) {
             int[] ints = {Integer.parseInt(strSplit[0]), Integer.parseInt(strSplit[1])};
@@ -420,7 +420,7 @@ public class Test {
         return null;
     }
 
-    public static String replaceDouble(String key, RandomDocker docker) {
+    public static String replaceDouble(String key, ExpressionSpace docker) {
         String[] strSplit = key.split("_");
         if (strSplit.length > 1) {
             double[] doubles = {Double.parseDouble(strSplit[0]), Double.parseDouble(strSplit[1])};

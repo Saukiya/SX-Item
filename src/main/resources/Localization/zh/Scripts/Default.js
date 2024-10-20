@@ -18,13 +18,13 @@ function testPlayer(player, args) {
 
 /**
  * JS随机格式: <j:Default.itemScript#QAQ,QWQ>
- * @param docker JS随机当前的RandomDocker，具体参考 [RandomDocker](https://github.com/Saukiya/SX-Item/blob/master/src/main/java/github/saukiya/sxitem/data/random/RandomDocker.java)
+ * @param space JS随机当前的ExpressionSpace，具体参考 [ExpressionSpace](https://github.com/Saukiya/SX-Item/blob/master/src/main/java/github/saukiya/sxitem/data/expression/ExpressionSpace.java)
  * @param args JS随机所带的字符串数组 例如['QAQ', 'QWQ']
  * @returns string
  */
-function itemScript(docker, args) {
-    if (docker.getPlayer() != null) {
-        docker.getPlayer().sendMessage("把参数发给玩家: " + args[0] + args[1])
+function itemScript(space, args) {
+    if (space.getPlayer() != null) {
+        space.getPlayer().sendMessage("把参数发给玩家: " + args[0] + args[1])
     }
     return args[SXItem.getRandom().nextInt(args.length)];
 }

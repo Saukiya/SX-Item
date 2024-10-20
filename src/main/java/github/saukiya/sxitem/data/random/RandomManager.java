@@ -1,5 +1,7 @@
 package github.saukiya.sxitem.data.random;
 
+import github.saukiya.sxitem.data.expression.ExpressionManager;
+import github.saukiya.sxitem.data.expression.IExpression;
 import github.saukiya.sxitem.data.random.nodes.MultipleNode;
 import github.saukiya.sxitem.data.random.nodes.SingletonNode;
 import lombok.Getter;
@@ -13,12 +15,10 @@ import java.io.File;
 import java.util.*;
 
 /**
- * ExpressionManager
+ * RandomManager
  * @author Saukiya
  */
 public class RandomManager {
-
-    protected static final Map<Character, IRandom> RANDOMS = new HashMap<>();
 
     private final JavaPlugin plugin;
 
@@ -119,26 +119,9 @@ public class RandomManager {
         return node.get();
     }
 
-    /**
-     * 注册新的随机类型
-     *
-     * @param random 随机处理
-     * @param types  类型
-     */
-    public static void register(IRandom random, char... types) {
-        for (char type : types) {
-            RANDOMS.put(type, random);
-        }
-    }
-
-    /**
-     * 获取随机类型
-     *
-     * @param type 类型
-     * @return 随机处理
-     */
-    protected static IRandom getRandom(char type) {
-        return RANDOMS.get(type);
+    @Deprecated
+    public static void register(IExpression random, char... types) {
+        ExpressionManager.register(random, types);
     }
 
     /**

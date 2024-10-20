@@ -1,11 +1,11 @@
 package github.saukiya.sxitem.data.item.sub;
 
 import github.saukiya.sxitem.SXItem;
+import github.saukiya.sxitem.data.expression.ExpressionSpace;
 import github.saukiya.sxitem.data.item.IGenerator;
 import github.saukiya.sxitem.data.item.IUpdate;
 import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.data.random.INode;
-import github.saukiya.sxitem.data.random.RandomDocker;
 import github.saukiya.util.base.Base;
 import github.saukiya.util.nbt.TagCompound;
 import github.saukiya.util.nbt.TagType;
@@ -76,16 +76,16 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
 
     @Override
     public String getName() {
-        if (displayName != null) return RandomDocker.getInst().replace(displayName).replace('&', '§');
+        if (displayName != null) return ExpressionSpace.getInst().replace(displayName).replace('&', '§');
         return "§7" + String.join("§8|§7", ids);
     }
 
     @Override
     public BaseComponent getNameComponent() {
         if (displayName != null)
-            return new TextComponent(RandomDocker.getInst().replace(displayName).replace('&', '§'));
+            return new TextComponent(ExpressionSpace.getInst().replace(displayName).replace('&', '§'));
         MessageUtil.Builder cb = MessageUtil.getInst().builder().add("§r");
-        Material material = ItemManager.getMaterial(RandomDocker.getInst().replace(ids.get(0)));
+        Material material = ItemManager.getMaterial(ExpressionSpace.getInst().replace(ids.get(0)));
         if (material != null) cb.add(material);
         else cb.add(ids.get(0));
         if (ids.size() > 1) cb.add("..");
@@ -94,25 +94,25 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
 
     @Override
     protected ItemStack getItem(Player player, Object... args) {
-        if (args.length > 0 && args[0] instanceof RandomDocker) {
-            return getItem(player, (RandomDocker) args[0]);
+        if (args.length > 0 && args[0] instanceof ExpressionSpace) {
+            return getItem(player, (ExpressionSpace) args[0]);
         }
-        RandomDocker randomDocker = new RandomDocker(player, randomMap);
+        ExpressionSpace space = new ExpressionSpace(player, randomMap);
         if (args.length > 0) {
             if (args[0] instanceof Map) {
-                randomDocker.getOtherMap().putAll((Map<String, String>) args[0]);
+                space.getOtherMap().putAll((Map<String, String>) args[0]);
             } else if (args[0] instanceof String) {
                 for (int i = 1; i < args.length; i += 2) {
-                    randomDocker.getOtherMap().put((String) args[i - 1], (String) args[i]);
+                    space.getOtherMap().put((String) args[i - 1], (String) args[i]);
                 }
             }
         }
-        return getItem(player, randomDocker);
+        return getItem(player, space);
     }
 
     @SuppressWarnings("deprecation")
-    private ItemStack getItem(Player player, RandomDocker docker) {
-        String materialAndDurability = docker.replace(ids.get(SXItem.getRandom().nextInt(ids.size())));
+    private ItemStack getItem(Player player, ExpressionSpace expression) {
+        String materialAndDurability = expression.replace(ids.get(SXItem.getRandom().nextInt(ids.size())));
         int indexOf = materialAndDurability.indexOf(':');
         val materialName = indexOf != -1 ? materialAndDurability.substring(0, indexOf) : materialAndDurability;
         Material material = ItemManager.getMaterial(materialName);
@@ -120,8 +120,8 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
             SXItem.getInst().getLogger().warning("Item-" + getKey() + " ID ERROR: " + materialName);
             return ItemManager.getEmptyItem();
         }
-        ItemStack item = new ItemStack(material, Integer.parseInt(docker.replace(config.getString("Amount", "1"))));
-        String durability = indexOf != -1 ? materialAndDurability.substring(indexOf + 1) : docker.replace(config.getString("Durability"));
+        ItemStack item = new ItemStack(material, Integer.parseInt(expression.replace(config.getString("Amount", "1"))));
+        String durability = indexOf != -1 ? materialAndDurability.substring(indexOf + 1) : expression.replace(config.getString("Durability"));
         if (!StringUtils.isEmpty(durability)) {
             if (durability.charAt(durability.length() - 1) == '%') {
                 durability = durability.substring(0, durability.length() - 1);
@@ -136,16 +136,16 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
 
         ItemMeta meta = item.getItemMeta();
 
-        String itemName = docker.replace(this.displayName);
+        String itemName = expression.replace(this.displayName);
         if (itemName != null) {
             meta.setDisplayName(itemName.replace('&', '§'));
         }
 
-        List<String> loreList = docker.replace(config.getStringList("Lore"));
+        List<String> loreList = expression.replace(config.getStringList("Lore"));
         loreList.replaceAll(lore -> lore.replace('&', '§'));
         meta.setLore(loreList);
 
-        for (String enchant : docker.replace(config.getStringList("EnchantList"))) {
+        for (String enchant : expression.replace(config.getStringList("EnchantList"))) {
             String[] enchantSplit = enchant.split(":");
             Enchantment enchantment = Enchantment.getByName(enchantSplit[0]);
             int level = Integer.parseInt(enchantSplit[1]);
@@ -165,10 +165,10 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
 
         ItemUtil.getInst().setUnbreakable(meta, config.getBoolean("Unbreakable"));
 
-        ItemUtil.getInst().setSkull(meta, docker.replace(config.getString("SkullName")));
+        ItemUtil.getInst().setSkull(meta, expression.replace(config.getString("SkullName")));
 
         if (meta instanceof LeatherArmorMeta && config.isString("Color")) {
-            ((LeatherArmorMeta) meta).setColor(Color.fromRGB(Integer.parseInt(docker.replace(config.getString("Color")), 16)));
+            ((LeatherArmorMeta) meta).setColor(Color.fromRGB(Integer.parseInt(expression.replace(config.getString("Color")), 16)));
         }
 
         // TODO 这玩意最好整合到ItemUtil里做NMS
@@ -178,15 +178,15 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
             if (potionConfig != null) {
                 for (String effectId : potionConfig.getKeys(false)) {
                     ConfigurationSection potionEffectConfig = potionConfig.getConfigurationSection(effectId);
-                    effectId = docker.replace(effectId);
+                    effectId = expression.replace(effectId);
                     PotionEffectType effect = null;
                     for (PotionEffectType potionEffectType : potionEffectTypes) {
                         if (potionEffectType == null || potionEffectType.getName().equals(effectId)) continue;
                         effect = potionEffectType;
                     }
                     if (effect != null) {
-                        int duration = Integer.parseInt(docker.replace(potionEffectConfig.getString("duration", "1")));
-                        int amplifier = Integer.parseInt(docker.replace(potionEffectConfig.getString("amplifier", "1")));
+                        int duration = Integer.parseInt(expression.replace(potionEffectConfig.getString("duration", "1")));
+                        int amplifier = Integer.parseInt(expression.replace(potionEffectConfig.getString("amplifier", "1")));
                         boolean ambient = potionEffectConfig.getBoolean("ambient", true);
                         boolean particles = potionEffectConfig.getBoolean("particles", true);
                         PotionEffect potionEffect;
@@ -214,7 +214,7 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
             ItemUtil.getInst().clearAttribute(item, meta);
         } else if (config.isList("Attributes")) {
             List<ItemUtil.AttributeData> attributeList = new ArrayList<>();
-            for (String data : docker.replace(config.getStringList("Attributes"))) {
+            for (String data : expression.replace(config.getStringList("Attributes"))) {
                 String[] split = data.split(":");
                 if (split.length >= 3) {
                     val attributeData = new ItemUtil.AttributeData()
@@ -234,11 +234,11 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
             ComponentUtil.getInst().setDataComponentMap(nmsItem, component);
         }
 
-        if (nbt != null || !docker.getLockMap().isEmpty()) {
+        if (nbt != null || !expression.getLockMap().isEmpty()) {
             val wrapper = NbtUtil.getInst().getItemTagWrapper(item, nmsItem);
-            wrapper.setAll((Base.Compound) docker.replace(nbt));
+            wrapper.setAll((Base.Compound) expression.replace(nbt));
 
-            docker.getLockMap().forEach((key, value) -> wrapper.set(SXItem.getInst().getName() + ".Lock." + key, value));
+            expression.getLockMap().forEach((key, value) -> wrapper.set(SXItem.getInst().getName() + ".Lock." + key, value));
             wrapper.save();
         }
         return item;
@@ -256,10 +256,10 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
 
     @Override
     public ItemStack update(ItemStack oldItem, NbtUtil.Wrapper oldWrapper, Player player) {
-        RandomDocker randomDocker = new RandomDocker(player, randomMap);
+        ExpressionSpace space = new ExpressionSpace(player, randomMap);
         Map<String, String> map = (Map<String, String>) oldWrapper.getMap(SXItem.getInst().getName() + ".Lock");
-        if (map != null) randomDocker.getOtherMap().putAll(map);
-        return getItem(player, randomDocker);
+        if (map != null) space.getOtherMap().putAll(map);
+        return getItem(player, space);
     }
 
     public static void save(ItemStack item, ConfigurationSection config) {
