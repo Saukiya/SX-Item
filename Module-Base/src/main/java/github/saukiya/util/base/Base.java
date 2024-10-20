@@ -71,6 +71,11 @@ public class Base {
             if (value != null) value.keySet().forEach(key -> set(key, value.get(key)));
         }
 
+        default void setAll(Map<Object, Object> value) {
+            if (value == null) return;
+            value.forEach((k, v) -> set(k.toString(), v));
+        }
+
         /**
          * 按路径删除对象
          *

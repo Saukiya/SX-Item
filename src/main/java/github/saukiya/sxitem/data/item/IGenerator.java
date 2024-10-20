@@ -2,6 +2,7 @@ package github.saukiya.sxitem.data.item;
 
 import lombok.Getter;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -47,9 +48,11 @@ public abstract class IGenerator {
     /**
      * 返回展示组件
      *
-     * @return
+     * @return BaseComponent
      */
-    public abstract BaseComponent getNameComponent();
+    public BaseComponent getNameComponent() {
+        return new TextComponent(getName());
+    }
 
     /**
      * 获取物品
