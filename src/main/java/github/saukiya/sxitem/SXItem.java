@@ -89,6 +89,8 @@ public class SXItem extends JavaPlugin {
         ExpressionManager.register(new IntExpression(), 'i', 'r');
         ExpressionManager.register(new ScriptExpression(), 'j');
         ExpressionManager.register(new UUIDExpression(), 'u');
+        ExpressionManager.register(new MaxExpression(), "max");
+        ExpressionManager.register(new MinExpression(), "min");
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
