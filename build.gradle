@@ -9,7 +9,7 @@ allprojects { project ->
     apply plugin: 'java'
 
     group 'io.github.saukiya'
-    version '4.2.0'
+    version '4.2.1'
 
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
