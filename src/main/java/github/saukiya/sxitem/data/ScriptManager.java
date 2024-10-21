@@ -96,7 +96,7 @@ public class ScriptManager implements Listener {
         String engineName = Config.getConfig().getString(Config.SCRIPT_ENGINE, "js");
         if (engineName.isEmpty()) throw new NullPointerException("Scripts Disabled");
         // nashorn 参数
-        System.setProperty("nashorn.args", "--language=es6 -Dnashorn.args=--no-deprecation-warning");
+        System.setProperty("nashorn.args", "--language=es6");
         val engineManager = new ScriptEngineManager();
         engine = engineManager.getEngineByName(engineName);
         if (engine == null) {
