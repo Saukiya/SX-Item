@@ -141,6 +141,11 @@ class Data {
     protected static final String VERSION;
     protected static final Pattern VERSION_PATTERN = Pattern.compile("v(\\d+)_(\\d+)_R(\\d+)");
     protected static final int[] thisVersionSplit;
+    protected static final Map<String, String> REVERSION = new HashMap<String, String>() {{
+        put("1.20.5", "v1_20_R4");
+        put("1.20.6", "v1_20_R4");
+        put("1.21", "v1_21_R1");
+    }};
 
     static {
         CLASS_WRAPS_MAP.put(void.class, Void.class);
@@ -169,12 +174,16 @@ class Data {
         String versionSource = Bukkit.getServer() != null ? Bukkit.getServer().getClass().getPackage().getName().split("^.+\\.")[1] : "v1_17_R1";
         Matcher matcher = VERSION_PATTERN.matcher(versionSource);
         if (!matcher.matches()) {
-            if (NMS.hasClass("com.destroystokyo.paper.ParticleBuilder")) {
-                versionSource = Bukkit.getServer().getBukkitVersion();
-                Matcher paerMatcher = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)").matcher(versionSource.split("-")[0]);
-                paerMatcher.matches();
-                return IntStream.range(0, paerMatcher.groupCount()).map(i -> Integer.parseInt(paerMatcher.group(i + 1))).toArray();
+            versionSource = Bukkit.getServer().getBukkitVersion().split("-")[0];
+            if (REVERSION.containsKey(versionSource)) {
+                versionSource = REVERSION.get(versionSource);
+            } else {
+                String[] split = versionSource.split("\\.");
+                versionSource = "v" + split[0] + "_" + split[1] + "_R" + (split.length > 2 ? split[2] : "1");
             }
+            Matcher reMatcher = VERSION_PATTERN.matcher(versionSource);
+            reMatcher.matches();
+            return IntStream.range(0, reMatcher.groupCount()).map(i -> Integer.parseInt(reMatcher.group(i + 1))).toArray();
         }
         return IntStream.range(0, matcher.groupCount()).map(i -> Integer.parseInt(matcher.group(i + 1))).toArray();
     }
