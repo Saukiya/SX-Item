@@ -2,7 +2,7 @@
 
 [Minecraft-Plugin] 物品管理插件
 
-[下载](https://github.com/Saukiya/SX-Item/releases/download/4.0.0/SX-Item-4.0.0-all.jar) ·
+[下载](https://github.com/Saukiya/SX-Item/releases/latest) ·
 [文档](https://www.maplex.top/archives/sxitem) ·
 [统计](https://bstats.org/plugin/bukkit/SX-Item) ·
 [MineBBS](https://www.minebbs.com/resources/sx-item-1-8-1-20-x.7252/) ·
