@@ -38,6 +38,6 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.Saukiya:SX-Item:-SNAPSHOT'
+    compileOnly 'com.github.Saukiya:SX-Item:-SNAPSHOT'
 }
 ```
