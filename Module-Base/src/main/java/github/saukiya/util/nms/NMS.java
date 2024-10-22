@@ -138,14 +138,14 @@ class Data {
     protected static final Map<Class<? extends NMS>, NMS> INST_MAP = new HashMap<>();
     protected static final Map<Class<?>, Map<String, Field>> FIELD_CACHE_MAP = new HashMap<>();
     protected static final Map<Class<?>, Class<?>> CLASS_WRAPS_MAP = new HashMap<>();
-    protected static final String VERSION;
     protected static final Pattern VERSION_PATTERN = Pattern.compile("v(\\d+)_(\\d+)_R(\\d+)");
-    protected static final int[] thisVersionSplit;
     protected static final Map<String, String> REVERSION = new HashMap<String, String>() {{
         put("1.20.5", "v1_20_R4");
         put("1.20.6", "v1_20_R4");
         put("1.21", "v1_21_R1");
     }};
+    protected static final String VERSION;
+    protected static final int[] thisVersionSplit;
 
     static {
         CLASS_WRAPS_MAP.put(void.class, Void.class);
@@ -173,19 +173,20 @@ class Data {
     private static int[] getVersion() {
         String versionSource = Bukkit.getServer() != null ? Bukkit.getServer().getClass().getPackage().getName().split("^.+\\.")[1] : "v1_17_R1";
         Matcher matcher = VERSION_PATTERN.matcher(versionSource);
-        if (!matcher.matches()) {
-            versionSource = Bukkit.getServer().getBukkitVersion().split("-")[0];
-            if (REVERSION.containsKey(versionSource)) {
-                versionSource = REVERSION.get(versionSource);
-            } else {
-                String[] split = versionSource.split("\\.");
-                versionSource = "v" + split[0] + "_" + split[1] + "_R" + (split.length > 2 ? split[2] : "1");
-            }
-            Matcher reMatcher = VERSION_PATTERN.matcher(versionSource);
-            reMatcher.matches();
-            return IntStream.range(0, reMatcher.groupCount()).map(i -> Integer.parseInt(reMatcher.group(i + 1))).toArray();
+        if (matcher.matches()) {
+            return IntStream.range(0, matcher.groupCount()).map(i -> Integer.parseInt(matcher.group(i + 1))).toArray();
         }
-        return IntStream.range(0, matcher.groupCount()).map(i -> Integer.parseInt(matcher.group(i + 1))).toArray();
+        // paper
+        versionSource = Bukkit.getServer().getBukkitVersion().split("-")[0];
+        if (REVERSION.containsKey(versionSource)) {
+            versionSource = REVERSION.get(versionSource);
+        } else {
+            String[] split = versionSource.split("\\.");
+            versionSource = "v" + split[0] + "_" + split[1] + "_R" + (split.length > 2 ? split[2] : "1");
+        }
+        Matcher reMatcher = VERSION_PATTERN.matcher(versionSource);
+        reMatcher.matches();
+        return IntStream.range(0, reMatcher.groupCount()).map(i -> Integer.parseInt(reMatcher.group(i + 1))).toArray();
     }
 
     protected static boolean checkClass(@Nonnull Class<?> c1, @NonNull Class<?> c2) {
