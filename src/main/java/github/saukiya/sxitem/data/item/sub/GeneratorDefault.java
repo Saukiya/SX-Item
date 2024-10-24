@@ -34,19 +34,19 @@ import java.util.stream.Collectors;
 @Getter
 public class GeneratorDefault extends IGenerator implements IUpdate {
 
-    String displayName;
+    protected String displayName;
 
-    List<String> ids;
+    protected List<String> ids;
 
-    Map<String, INode> randomMap;
+    protected Map<String, INode> randomMap;
 
-    Map<String, Object> nbt;
+    protected Map<String, Object> nbt;
 
-    Object component;
+    protected Object component;
 
-    int hashCode;
+    protected int hashCode;
 
-    boolean update;
+    protected boolean update;
 
     @SuppressWarnings("DataFlowIssue")
     public GeneratorDefault(String key, ConfigurationSection config, String group) {
@@ -108,7 +108,7 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
     }
 
     @SuppressWarnings("deprecation")
-    private ItemStack getItem(Player player, ExpressionSpace expression) {
+    protected ItemStack getItem(Player player, ExpressionSpace expression) {
         String materialAndDurability = expression.replace(ids.get(SXItem.getRandom().nextInt(ids.size())));
         int indexOf = materialAndDurability.indexOf(':');
         val materialName = indexOf != -1 ? materialAndDurability.substring(0, indexOf) : materialAndDurability;
