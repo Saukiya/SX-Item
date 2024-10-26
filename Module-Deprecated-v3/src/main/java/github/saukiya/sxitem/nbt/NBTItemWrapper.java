@@ -1,10 +1,10 @@
 package github.saukiya.sxitem.nbt;
 
-import github.saukiya.util.nms.NbtUtil;
+import github.saukiya.tools.nms.NbtUtil;
 import lombok.AllArgsConstructor;
 
 /**
- * @see github.saukiya.util.nms.NbtUtil.ItemWrapper
+ * @see github.saukiya.tools.nms.NbtUtil.ItemWrapper
  * @deprecated
  */
 public class NBTItemWrapper extends NBTTagWrapper {

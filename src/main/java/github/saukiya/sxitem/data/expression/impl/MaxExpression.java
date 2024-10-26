@@ -1,25 +1,18 @@
 package github.saukiya.sxitem.data.expression.impl;
 
-import github.saukiya.sxitem.data.expression.ExpressionSpace;
+import github.saukiya.sxitem.data.expression.ExpressionHandler;
 import github.saukiya.sxitem.data.expression.IExpression;
 
 /**
- * &lt;max:&gt; 获取最大值
+ * {@code <max:1:10>} 获取最大值
+ * <pre>{@code
+ *  "<max:12.3:34.5:45.6>" - 从12.3/34.5/45.6中找出最大值: 45.6
+ * }</pre>
  */
 public class MaxExpression implements IExpression {
 
-    /**
-     * 支持格式
-     * <pre>
-     *  &lt;max:12.3:34.5:45.6&gt; - 从12.3/34.5/45.6中找出最大值
-     * </pre>
-     *
-     * @param key   处理的key
-     * @param space 缓存
-     * @return
-     */
     @Override
-    public String replace(String key, ExpressionSpace space) {
+    public String replace(String key, ExpressionHandler handler) {
         String result = "";
         double max = Double.MIN_VALUE;
 

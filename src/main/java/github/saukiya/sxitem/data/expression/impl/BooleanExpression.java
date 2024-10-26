@@ -1,28 +1,21 @@
 package github.saukiya.sxitem.data.expression.impl;
 
-import github.saukiya.sxitem.data.expression.ExpressionSpace;
+import github.saukiya.sxitem.data.expression.ExpressionHandler;
 import github.saukiya.sxitem.data.expression.IExpression;
 
 /**
- * &lt;b:&gt; 判断两个值或多个值是否相同
+ * {@code <b:AA#AA:BB>} 判断首值与后续值是否相同
+ * <pre>{@code
+ *  "<b:AA#AA>" - 判断AA是否与AA相同, 相同则保留此行
+ *  "<b:AA#BB:CC>" - 判断AA是否与BB,CC相同, 不同则删除此行
+ *  "<b:AA:AA>" - 与第一条逻辑相同
+ *  "<b:AA:BB:CC>" - 与第二条逻辑相同
+ * }</pre>
  */
 public class BooleanExpression implements IExpression {
 
-    /**
-     * 支持格式
-     * <pre>
-     *  &lt;b:AA:AA&gt; 判断AA是否与AA相同, 相同则保留此行
-     *  &lt;b:AA:BB:CC&gt; 判断AA是否与BB,CC相同, 不同则删除此行
-     *  &lt;b:AA#AA&gt; 与第一条逻辑相同
-     *  &lt;b:AA#BB:CC&gt; 与第二条逻辑相同
-     * </pre>
-     *
-     * @param key    处理的key
-     * @param space 缓存
-     * @return
-     */
     @Override
-    public String replace(String key, ExpressionSpace space) {
+    public String replace(String key, ExpressionHandler handler) {
         char[] chars = key.toCharArray();
         int index = 0, check = 0, length = chars.length;
 

@@ -1,7 +1,8 @@
 package github.saukiya.sxitem.data;
 
 import github.saukiya.sxitem.util.Config;
-import github.saukiya.util.helper.PlaceholderHelper;
+import github.saukiya.sxitem.util.Util;
+import github.saukiya.tools.helper.PlaceholderHelper;
 import lombok.Getter;
 import lombok.val;
 import org.bukkit.Bukkit;
@@ -22,8 +23,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class ScriptManager implements Listener {
-
-    private static final Random random = new Random();
 
 //    private final ConcurrentHashMap<String, CompiledScript> compiledScripts = new ConcurrentHashMap<>();
 
@@ -241,7 +240,7 @@ public class ScriptManager implements Listener {
         }
 
         public static int randomInt(Integer first, Integer last) {
-            return random.nextInt(1 + last - first) + first;
+            return Util.random(first, last);
         }
 
         public static double randomDouble(double min, double max) {

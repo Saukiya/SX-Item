@@ -6,13 +6,13 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 /**
- * @see github.saukiya.util.common.LocalizationUtil
+ * @see github.saukiya.tools.util.LocalizationUtil
  * @deprecated
  */
 public class LocalizationUtil {
 
     @Deprecated
     public static void saveResource(JavaPlugin plugin) throws IOException, URISyntaxException {
-        github.saukiya.util.common.LocalizationUtil.saveResource(plugin);
+        github.saukiya.tools.util.LocalizationUtil.saveResource(plugin);
     }
 }

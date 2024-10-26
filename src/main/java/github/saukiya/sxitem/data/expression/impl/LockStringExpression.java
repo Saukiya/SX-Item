@@ -1,27 +1,20 @@
 package github.saukiya.sxitem.data.expression.impl;
 
-import github.saukiya.sxitem.SXItem;
-import github.saukiya.sxitem.data.expression.ExpressionSpace;
+import github.saukiya.sxitem.data.expression.ExpressionHandler;
 import github.saukiya.sxitem.data.expression.IExpression;
+import github.saukiya.sxitem.util.Util;
 
 /**
- * &lt;l:&gt; 获取并锁定一个随机文本
+ * {@code <l:randomKey>} 获取并锁定一个随机文本
+ * <pre>{@code
+ *  "<l:key>" - 从key集合中随机抽取一个值并锁定
+ *  "<l:key#AAA:BBB>" - 从AAA/BBB中随机抽取一个值并锁定
+ * }</pre>
  */
 public class LockStringExpression implements IExpression {
 
-    /**
-     * 支持格式
-     * <pre>
-     *  &lt;l:key&gt; - 从key集合中随机抽取一个值并锁定
-     *  &lt;l:key#AAA:BBB&gt; - 从AAA/BBB中随机抽取一个值并锁定
-     * </pre>
-     *
-     * @param key    处理的key
-     * @param space 缓存
-     * @return
-     */
     @Override
-    public String replace(String key, ExpressionSpace space) {
+    public String replace(String key, ExpressionHandler handler) {
         int indexOf = key.indexOf('#');
         String temp = null;
         if (indexOf != -1) {
@@ -29,25 +22,21 @@ public class LockStringExpression implements IExpression {
             key = key.substring(0, indexOf);
         }
 
-        String value = space.getLockMap().get(key);
+        String value = handler.getLockMap().get(key);
         if (value != null) {
             return value;
         }
 
         if (temp != null) {
-            value = space.getOtherMap().get(key);
+            value = handler.getOtherMap().get(key);
             if (value == null) {
-                value = randomArray(temp.split(":"));
+                value = Util.random(temp.split(":"));
             }
         } else {
-            value = space.random(key);
+            value = handler.random(key);
         }
 
-        space.getLockMap().put(key, value = space.replace(value));
+        handler.getLockMap().put(key, value = handler.replace(value));
         return value;
-    }
-
-    public static String randomArray(String[] array) {
-        return array[SXItem.getRandom().nextInt(array.length)];
     }
 }

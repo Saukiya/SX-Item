@@ -16,7 +16,6 @@ import java.util.*;
 
 /**
  * RandomManager
- * @author Saukiya
  */
 public class RandomManager {
 

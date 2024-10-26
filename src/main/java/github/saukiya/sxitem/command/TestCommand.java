@@ -4,9 +4,9 @@ import com.google.gson.JsonParser;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.item.IGenerator;
 import github.saukiya.sxitem.util.Message;
-import github.saukiya.util.command.SubCommand;
-import github.saukiya.util.nbt.TagCompound;
-import github.saukiya.util.nms.*;
+import github.saukiya.tools.command.SubCommand;
+import github.saukiya.tools.nbt.TagCompound;
+import github.saukiya.tools.nms.*;
 import lombok.val;
 import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.bukkit.Bukkit;
@@ -17,10 +17,13 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
+/**
+ * 测试环境指令
+ */
 public class TestCommand extends SubCommand {
     public TestCommand() {
         super("test", -1);
-        setHide();
+        setHide(true);
     }
 
     @Override

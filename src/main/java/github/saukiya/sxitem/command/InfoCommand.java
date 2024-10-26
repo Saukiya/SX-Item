@@ -2,8 +2,8 @@ package github.saukiya.sxitem.command;
 
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.item.IGenerator;
-import github.saukiya.util.command.SubCommand;
-import github.saukiya.util.nms.NMS;
+import github.saukiya.tools.command.SubCommand;
+import github.saukiya.tools.nms.NMS;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -18,15 +18,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * @author Saukiya
- */
 public class InfoCommand extends SubCommand implements Listener {
 
     public InfoCommand() {
         super("info", 0);
         setArg("[item] <player> <key:value...>");
-        setHide();
+        setHide(true);
     }
 
     @Override

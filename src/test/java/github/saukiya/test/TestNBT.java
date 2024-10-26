@@ -1,7 +1,7 @@
 package github.saukiya.test;
 
-import github.saukiya.util.nbt.TagCompound;
-import github.saukiya.util.nms.NbtUtil;
+import github.saukiya.tools.nbt.TagCompound;
+import github.saukiya.tools.nms.NbtUtil;
 import lombok.SneakyThrows;
 import lombok.val;
 

@@ -13,8 +13,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * 物品生成事件
- *
- * @author Saukiya
  */
 @Getter
 @Setter

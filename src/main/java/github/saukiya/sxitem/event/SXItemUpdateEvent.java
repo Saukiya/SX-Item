@@ -11,8 +11,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * 物品更新事件
- *
- * @author Saukiya
  */
 @Getter
 @Setter

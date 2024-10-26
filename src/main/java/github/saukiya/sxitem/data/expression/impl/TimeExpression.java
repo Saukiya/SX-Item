@@ -1,31 +1,24 @@
 package github.saukiya.sxitem.data.expression.impl;
 
 import github.saukiya.sxitem.SXItem;
-import github.saukiya.sxitem.data.expression.ExpressionSpace;
+import github.saukiya.sxitem.data.expression.ExpressionHandler;
 import github.saukiya.sxitem.data.expression.IExpression;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.Calendar;
 
 /**
- * &lt;t:&gt; 动态生成时间文本
+ * {@code <t:1Y1M1D1h1m1s>} 动态生成时间文本
+ * <pre>{@code
+ *  "<t:600>" - 10分钟后的时间文本,等价于10m
+ *  "<t:1Y1M1D>" - 1年1月1天后的时间文本
+ *  "<t:1h1m1s>" - 1小时1分钟1秒后的时间文本
+ * }</pre>
  */
 public class TimeExpression implements IExpression {
 
-    /**
-     * 支持格式
-     * <pre>
-     *  &lt;t:600&gt; - 10分钟后的时间文本,等价于10m
-     *  &lt;t:1Y1M1D&gt; - 1年1月1天后的时间文本
-     *  &lt;t:1h1m1s&gt; - 1小时1分钟1秒后的时间文本
-     * </pre>
-     *
-     * @param key    处理的key
-     * @param space 缓存
-     * @return
-     */
     @Override
-    public String replace(String key, ExpressionSpace space) {
+    public String replace(String key, ExpressionHandler handler) {
         if (StringUtils.isNumeric(key)) {
             return SXItem.getSdf().get().format(System.currentTimeMillis() + Long.parseLong(key) * 1000);
         }

@@ -1,11 +1,11 @@
 package github.saukiya.test;
 
 import github.saukiya.sxitem.SXItem;
-import github.saukiya.sxitem.data.expression.ExpressionSpace;
+import github.saukiya.sxitem.data.expression.ExpressionHandler;
 import github.saukiya.sxitem.util.Config;
-import github.saukiya.util.base.CharStack;
-import github.saukiya.util.base.DoubleStack;
-import github.saukiya.util.helper.PlaceholderHelper;
+import github.saukiya.tools.base.CharStack;
+import github.saukiya.tools.base.DoubleStack;
+import github.saukiya.tools.helper.PlaceholderHelper;
 import lombok.val;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
@@ -501,7 +501,7 @@ public class TestRandom {
         return array[SXItem.getRandom().nextInt(array.length)];
     }
 
-    public static String lock1(String key, ExpressionSpace docker) {
+    public static String lock1(String key, ExpressionHandler docker) {
         String value;
         if (key.contains("#")) {
             String[] temp = key.substring(key.indexOf("#") + 1).split(":");
@@ -514,7 +514,7 @@ public class TestRandom {
         return docker.getLockMap() == null ? value : docker.getLockMap().computeIfAbsent(key, k -> value);
     }
 
-    public static String lock2(String key, ExpressionSpace docker) {
+    public static String lock2(String key, ExpressionHandler docker) {
         String value = null;
         String temp = null;
         int indexOf = key.indexOf('#');
@@ -547,7 +547,7 @@ public class TestRandom {
     public static class LockBM {
         @Param({"KEY#100:200:300"})
         String key;
-        ExpressionSpace docker = new ExpressionSpace();
+        ExpressionHandler docker = new ExpressionHandler();
 
         @Benchmark
         public void test1() {

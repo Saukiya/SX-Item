@@ -3,9 +3,9 @@ package github.saukiya.sxitem.command;
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.util.Message;
-import github.saukiya.util.command.SenderType;
-import github.saukiya.util.command.SubCommand;
-import github.saukiya.util.nms.MessageUtil;
+import github.saukiya.tools.command.SenderType;
+import github.saukiya.tools.command.SubCommand;
+import github.saukiya.tools.nms.MessageUtil;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -18,7 +18,11 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @author Saukiya
+ * 保存物品指令
+ * <pre>
+ *  <code>/si save Temp1</code> - 将手持物品保存为 Default类型 的 Temp1物品
+ *  <code>/si save Temp2 Import</code> - 将手持物品保存为 Import类型 的 Temp2物品
+ * </pre>
  */
 public class SaveCommand extends SubCommand {
 

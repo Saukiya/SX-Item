@@ -1,6 +1,6 @@
 package github.saukiya.sxitem.nbt;
 
-import github.saukiya.util.nms.NbtUtil;
+import github.saukiya.tools.nms.NbtUtil;
 import lombok.AllArgsConstructor;
 import lombok.experimental.Delegate;
 
@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * @see github.saukiya.util.nms.NbtUtil.Wrapper
+ * @see github.saukiya.tools.nms.NbtUtil.Wrapper
  * @deprecated
  */
 @AllArgsConstructor

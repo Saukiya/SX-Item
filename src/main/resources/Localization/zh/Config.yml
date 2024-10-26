@@ -1,5 +1,8 @@
 # 日志等级: [OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL]
 LoggerLevel: "INFO"
+LoggerRecord: true
+# 小数保留精度,四舍五入 [2.3456 -> 2.35]
+DecimalPrecision: 2
 # 日期格式化
 TimeFormat: yyyy/MM/dd HH:mm
 # 引擎选择:默认采用JS引擎,该插件不自带引擎模块, 以下链接未经验证, 仅供参考

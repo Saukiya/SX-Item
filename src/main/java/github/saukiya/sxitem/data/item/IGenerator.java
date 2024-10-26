@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * @author Saukiya TODO 添加RandomGenerator
+ * 物品生成器抽象类
  */
 @Getter
 public abstract class IGenerator {

@@ -169,7 +169,7 @@ Default-1:
 
 Default-2:
   Name: '&c机械轻羽之靴'
-  ID: 301
+  ID: LEATHER_BOOTS
   Lore:
     - '&6物品类型: 靴子'
     - '&c生命上限: +2000'

@@ -1,10 +1,10 @@
 package github.saukiya.sxitem.data.random;
 
-import github.saukiya.sxitem.data.expression.ExpressionSpace;
+import github.saukiya.sxitem.data.expression.ExpressionHandler;
 
 /**
- * @see ExpressionSpace
+ * @see ExpressionHandler
  * @deprecated
  */
-public class RandomDocker extends ExpressionSpace {
+public class RandomDocker extends ExpressionHandler {
 }

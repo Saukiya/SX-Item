@@ -6,8 +6,6 @@ import org.bukkit.event.HandlerList;
 
 /**
  * 插件重载事件
- *
- * @author Saukiya
  */
 public class SXItemReloadEvent extends Event {
 

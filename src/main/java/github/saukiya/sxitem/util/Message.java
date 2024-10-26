@@ -9,12 +9,6 @@ import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * NMS化
- *
- * @author Saukiya
- */
-
 public enum Message {
 
     GIVE__NO_ITEM,
@@ -48,7 +42,7 @@ public enum Message {
      * @return String
      */
     public String get(Object... args) {
-        return getStatic(toString(), args);
+        return getString(toString(), args);
     }
 
     /**
@@ -58,7 +52,7 @@ public enum Message {
      * @return List
      */
     public List<String> getList(Object... args) {
-        return getListStatic(toString(), args);
+        return getStringList(toString(), args);
     }
 
     @Override
@@ -79,11 +73,11 @@ public enum Message {
         messages = YamlConfiguration.loadConfiguration(file);
     }
 
-    public static String getStatic(String loc, Object... args) {
+    public static String getString(String loc, Object... args) {
         return MessageFormat.format(messages.getString(loc, "Null Message: " + loc), args).replace('&', '§');
     }
 
-    public static List<String> getListStatic(String loc, Object... args) {
+    public static List<String> getStringList(String loc, Object... args) {
         List<String> list = messages.getStringList(loc);
         if (list.isEmpty()) return Collections.singletonList("Null Message: " + loc);
         list.replaceAll(str -> MessageFormat.format(str, args).replace('&', '§'));

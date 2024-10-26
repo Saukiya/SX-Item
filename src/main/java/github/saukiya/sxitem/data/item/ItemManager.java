@@ -1,15 +1,14 @@
 package github.saukiya.sxitem.data.item;
 
 import github.saukiya.sxitem.SXItem;
+import github.saukiya.sxitem.data.item.impl.GeneratorReMaterial;
 import github.saukiya.sxitem.event.SXItemSpawnEvent;
 import github.saukiya.sxitem.event.SXItemUpdateEvent;
-import github.saukiya.sxitem.util.Config;
-import github.saukiya.util.base.Tuple;
-import github.saukiya.util.nms.MessageUtil;
-import github.saukiya.util.nms.NMS;
-import github.saukiya.util.nms.NbtUtil;
+import github.saukiya.tools.base.Tuple;
+import github.saukiya.tools.nms.MessageUtil;
+import github.saukiya.tools.nms.NbtUtil;
+import github.saukiya.tools.util.ReMaterial;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -20,7 +19,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
@@ -35,7 +34,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * @author Saukiya
+ * 物品管理器
  */
 public class ItemManager implements Listener {
     @Getter
@@ -44,8 +43,6 @@ public class ItemManager implements Listener {
     private static final Map<String, IGenerator.Saver> saveFunction = new HashMap<>();
     @Getter
     private static final ItemStack emptyItem = new ItemStack(Material.AIR, 0);
-    @Getter
-    private static final Map<String, Material> materialMap = new HashMap<>();
 
     private final JavaPlugin plugin;
 
@@ -59,13 +56,16 @@ public class ItemManager implements Listener {
 
     private final List<Player> checkPlayers = new ArrayList<>();
 
-    private final HashSet<String> protectNbtList = new HashSet<>();
+    private final Map<String, IGenerator> itemMap = new HashMap<>();
 
     private final Map<Tuple<String, String>, String> linkMap = new HashMap<>();
 
-    private final Map<String, IGenerator> itemMap = new HashMap<>();
-
     private final Map<String, List<Tuple<String, List<IGenerator>>>> informationMap = new HashMap<>();
+
+    private final IGenerator reMaterial = new GeneratorReMaterial();
+
+    @Getter
+    private final HashSet<String> protectNbtList = new HashSet<>();
 
     public ItemManager(JavaPlugin plugin) {
         this(plugin, plugin.getName() + ".ItemKey", plugin.getName() + ".HashCode");
@@ -98,6 +98,28 @@ public class ItemManager implements Listener {
     }
 
     /**
+     * 注册物品生成器
+     *
+     * @param type     类型
+     * @param loadFunc 加载方法
+     * @param saveFunc 保存方法
+     */
+    public static void register(String type, @Nonnull IGenerator.Loader loadFunc, @Nullable IGenerator.Saver saveFunc) {
+        if (type == null || loadFunction.containsKey(type)) {
+            SXItem.getInst().getLogger().severe("ItemGenerator >> Type Error: " + type);
+            return;
+        }
+        loadFunction.put(type, loadFunc);
+        if (saveFunc != null) saveFunction.put(type, saveFunc);
+        SXItem.getInst().getLogger().info("ItemGenerator >> Type Register: " + type);
+    }
+
+    @Deprecated
+    public static Material getMaterial(String key) {
+        return ReMaterial.getMaterial(key);
+    }
+
+    /**
      * 读取物品数据
      */
     public void loadItemData() {
@@ -108,15 +130,10 @@ public class ItemManager implements Listener {
         // 加载物品
         loadItem(plugin.getName(), rootDirectory);
         plugin.getLogger().info("Loaded " + itemMap.size() + " Items");
-        // 加载固定NBT
-        protectNbtList.clear();
-        protectNbtList.addAll(Config.getConfig().getStringList(Config.PROTECT_NBT));
     }
 
     /**
      * 获取物品编号列表
-     *
-     * @return Set
      */
     public Set<String> getItemList() {
         return itemMap.keySet();
@@ -124,8 +141,6 @@ public class ItemManager implements Listener {
 
     /**
      * 获取物品生成器列表
-     *
-     * @return Collection
      */
     public Collection<IGenerator> getGeneratorList() {
         return itemMap.values();
@@ -164,11 +179,11 @@ public class ItemManager implements Listener {
      * 2.不会被SX重载时清除
      * 3.每次加载清空上次的存储
      *
-     * @param group     组名
-     * @param configs   带名字的配置列表
+     * @param group   组名
+     * @param configs 带名字的配置列表
      */
     public void loadItem(String group, Map<String, ConfigurationSection> configs) {
-        itemMap.values().removeIf(ig -> ig.group.equals(group));
+        itemMap.values().removeIf(generator -> generator.group.equals(group));
         List<Tuple<String, List<IGenerator>>> information = new ArrayList<>();
         informationMap.put(group, information);
         Iterator<Tuple<String, String>> linkKeys = linkMap.keySet().iterator();
@@ -196,9 +211,9 @@ public class ItemManager implements Listener {
                 IGenerator.Loader loadFunction = getLoadFunction().get(type);
                 if (loadFunction != null) {
                     config.set(key + ".Path", path);
-                    IGenerator ig = loadFunction.apply(key, config.getConfigurationSection(key), group);
-                    informationList.add(ig);
-                    itemMap.put(key, ig);
+                    IGenerator generator = loadFunction.apply(key, config.getConfigurationSection(key), group);
+                    informationList.add(generator);
+                    itemMap.put(key, generator);
                 } else {
                     plugin.getLogger().warning("Don't Item Type: " + path + File.separator + key + " - " + type + " !");
                 }
@@ -207,83 +222,76 @@ public class ItemManager implements Listener {
         ReLoadLink();
     }
 
-    private void ReLoadLink() {
-        Iterator<Map.Entry<Tuple<String, String>, String>> iterator = linkMap.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<Tuple<String, String>, String> entry = iterator.next();
-            IGenerator ig = itemMap.get(entry.getKey().b());
-            if (ig != null) {
-                itemMap.put(entry.getKey().b(), ig);
-            } else {
-                itemMap.remove(entry.getKey().b());
-                iterator.remove();
-                plugin.getLogger().info("Linked Null: " + entry.getKey().a() + ":" + entry.getKey().b() + "->" + entry.getValue());
-            }
-        }
-    }
-
-    private void loadConfigs(File directory, Map<String, ConfigurationSection> configs, String path) {
-        for (File file : directory.listFiles()) {
-            if (file.getName().startsWith("NoLoad")) continue;
-            String filePath = !path.isEmpty() ? path + File.separator + file.getName() : file.getName();
-            if (file.isDirectory()) {
-                loadConfigs(file, configs, filePath);
-            } else if (file.getName().endsWith(".yml")) {
-                configs.put(filePath, YamlConfiguration.loadConfiguration(file));
-            }
-        }
-    }
-
     /**
-     * 通过key获取该物品的生成器
-     *
-     * @param key
-     * @return
+     * 通过识别物品key获取该物品的Id (需要支持接口IUpdate)
      */
     @Nullable
-    public IGenerator getGenerator(String key) {
-        return itemMap.get(key);
-    }
-
-    /**
-     * 通过识别物品key获取该物品的生成器(需要支持接口IUpdate)
-     */
-    @Nullable
-    public IGenerator getGenerator(ItemStack item) {
+    public String getItemKey(ItemStack item) {
         if (item != null && !item.getType().equals(Material.AIR) && item.hasItemMeta()) {
-            return itemMap.get(NbtUtil.getInst().getItemTagWrapper(item).getString(itemKey));
+            return NbtUtil.getInst().getItemTagWrapper(item).getString(itemKey);
         }
         return null;
     }
 
     /**
-     * 获取物品 - 不带玩家参数
+     * 通过key获取该物品的生成器
+     *
+     * @param itemKey
+     * @return
      */
-    @Nonnull
-    public ItemStack getItem(String itemName, Object... args) {
-        return getItem(itemName, null, args);
+    @Nullable
+    public IGenerator getGenerator(String itemKey) {
+        IGenerator result = itemMap.get(itemKey);
+        if (result == null && ReMaterial.has(itemKey)) {
+            return reMaterial;
+        }
+        return result;
+    }
+
+    /**
+     * 通过识别物品key获取该物品的生成器 (需要支持接口IUpdate)
+     */
+    @Nullable
+    public IGenerator getGenerator(ItemStack item) {
+        String key = getItemKey(item);
+        return itemMap.get(key);
+    }
+
+    /**
+     * 返回是否存在物品(或者材质ID)
+     */
+    public boolean hasItem(String itemKey) {
+        return itemMap.containsKey(itemKey) || ReMaterial.has(itemKey);
     }
 
     /**
      * 获取物品 - 不带玩家参数
      */
     @Nonnull
-    public ItemStack getItem(IGenerator ig, Object... args) {
-        return getItem(ig, null, args);
+    public ItemStack getItem(String itemKey, Object... args) {
+        return getItem(itemKey, null, args);
+    }
+
+    /**
+     * 获取物品 - 不带玩家参数
+     */
+    @Nonnull
+    public ItemStack getItem(IGenerator generator, Object... args) {
+        return getItem(generator, null, args);
     }
 
     /**
      * 获取物品
      */
     @Nonnull
-    public ItemStack getItem(String itemName, Player player, Object... args) {
-        if (itemName == null) return emptyItem;
-        IGenerator ig = itemMap.get(itemName);
-        if (ig != null) {
-            return getItem(ig, player, args);
+    public ItemStack getItem(String itemKey, Player player, Object... args) {
+        if (itemKey == null) return emptyItem;
+        IGenerator generator = itemMap.get(itemKey);
+        if (generator != null) {
+            return getItem(generator, player, args);
         } else {
-            Material material = getMaterial(itemName);
-            if (material != null) return new ItemStack(material);
+            ItemStack item = ReMaterial.getItem(itemKey);
+            if (item != null) return item;
         }
         return emptyItem;
     }
@@ -292,25 +300,18 @@ public class ItemManager implements Listener {
      * 获取物品
      */
     @Nonnull
-    public ItemStack getItem(IGenerator ig, Player player, Object... args) {
-        if (ig == null) return emptyItem;
-        ItemStack item = ig.getItem(player, args);
-        if (item != emptyItem && item != null && ig instanceof IUpdate) {
+    public ItemStack getItem(IGenerator generator, Player player, Object... args) {
+        if (generator == null) return emptyItem;
+        ItemStack item = generator.getItem(player, args);
+        if (item != emptyItem && item != null && generator instanceof IUpdate) {
             NbtUtil.getInst().getItemTagWrapper(item).builder()
-                    .set(itemKey, ig.getKey())
-                    .set(hashCodeKey, ((IUpdate) ig).updateCode())
+                    .set(itemKey, generator.getKey())
+                    .set(hashCodeKey, ((IUpdate) generator).updateCode())
                     .save();
         }
-        SXItemSpawnEvent event = new SXItemSpawnEvent(plugin, player, ig, item);
+        SXItemSpawnEvent event = new SXItemSpawnEvent(plugin, player, generator, item);
         Bukkit.getPluginManager().callEvent(event);
         return event.getItem();
-    }
-
-    /**
-     * 返回是否存在物品
-     */
-    public boolean hasItem(String itemName) {
-        return itemMap.containsKey(itemName) || getMaterial(itemName) != null;
     }
 
     /**
@@ -318,11 +319,11 @@ public class ItemManager implements Listener {
      */
     public void checkUpdateItem(Player player, ItemStack... itemStacks) {
         for (ItemStack item : itemStacks) {
-            if (item == null) continue;
+            if (item == null || item.getType().equals(Material.AIR)) continue;
             val oldWrapper = NbtUtil.getInst().getItemTagWrapper(item);
-            IGenerator ig = itemMap.get(oldWrapper.getString(itemKey));
-            if (ig instanceof IUpdate) {
-                IUpdate updateIg = (IUpdate) ig;
+            IGenerator generator = itemMap.get(oldWrapper.getString(itemKey));
+            if (generator instanceof IUpdate) {
+                IUpdate updateIg = (IUpdate) generator;
                 Integer hashCode = oldWrapper.getInt(hashCodeKey);
                 if (!updateIg.isUpdate() || (hashCode != null && updateIg.updateCode() == hashCode)) continue;
                 updateItem(player, item, updateIg, oldWrapper);
@@ -335,9 +336,9 @@ public class ItemManager implements Listener {
      */
     public void updateItem(Player player, ItemStack item) {
         val oldWrapper = NbtUtil.getInst().getItemTagWrapper(item);
-        IGenerator ig = itemMap.get(oldWrapper.getString(itemKey));
-        if (!(ig instanceof IUpdate)) return;
-        updateItem(player, item, (IUpdate) ig, oldWrapper);
+        IGenerator generator = itemMap.get(oldWrapper.getString(itemKey));
+        if (!(generator instanceof IUpdate)) return;
+        updateItem(player, item, (IUpdate) generator, oldWrapper);
     }
 
     /**
@@ -348,17 +349,7 @@ public class ItemManager implements Listener {
         val wrapper = NbtUtil.getInst().getItemTagWrapper(newItem);
         wrapper.set(itemKey, updateIg.getKey());
         wrapper.set(hashCodeKey, updateIg.updateCode());
-        HashSet<String> protectNBT = new HashSet<>(protectNbtList);
-        updateIg.getConfig().getStringList("ProtectNBT").forEach(nbt -> {
-            if (nbt.startsWith("!")) {
-                protectNBT.remove(nbt.substring(1));
-                return;
-            }
-            protectNBT.add(nbt);
-        });
-        // 存在原始NBT -> 基础数据 -> 原始NBT的性能转换
-        protectNBT.forEach(nbt -> wrapper.set(nbt, oldWrapper.get(nbt)));
-        wrapper.save();
+        updateIg.protectNBT(wrapper, oldWrapper, protectNbtList);
 
         SXItemUpdateEvent event = new SXItemUpdateEvent(plugin, player, (IGenerator) updateIg, newItem, item);
         Bukkit.getPluginManager().callEvent(event);
@@ -440,6 +431,21 @@ public class ItemManager implements Listener {
         }
     }
 
+    private void ReLoadLink() {
+        Iterator<Map.Entry<Tuple<String, String>, String>> iterator = linkMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Tuple<String, String>, String> entry = iterator.next();
+            IGenerator generator = itemMap.get(entry.getKey().b());
+            if (generator != null) {
+                itemMap.put(entry.getKey().b(), generator);
+            } else {
+                itemMap.remove(entry.getKey().b());
+                iterator.remove();
+                plugin.getLogger().info("Linked Null: " + entry.getKey().a() + ":" + entry.getKey().b() + "->" + entry.getValue());
+            }
+        }
+    }
+
     @EventHandler
     void on(PlayerItemHeldEvent event) {
         Inventory inv = event.getPlayer().getInventory();
@@ -447,8 +453,8 @@ public class ItemManager implements Listener {
     }
 
     @EventHandler
-    void on(InventoryCloseEvent event) {
-        if (event.getPlayer() instanceof Player) {// 这个 instanceof 是认真的吗
+    void on(InventoryOpenEvent event) {
+        if (event.getPlayer() instanceof Player) {
             Player player = (Player) event.getPlayer();
             if (player.equals(event.getInventory().getHolder())) {
                 checkPlayers.add(player);
@@ -461,84 +467,15 @@ public class ItemManager implements Listener {
         checkPlayers.add(event.getPlayer());
     }
 
-    /**
-     * 读取Material数据
-     */
-    @SneakyThrows
-    public static void loadMaterialData() {
-        materialMap.clear();
-        File file = new File(SXItem.getInst().getDataFolder(), "Material.yml");
-        if (!file.exists()) {
-            SXItem.getInst().saveResource("Material.yml", true);
-        }
-        boolean change = false;
-        YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
-        boolean methodUse = NMS.compareTo(1, 13, 1) >= 0;
-        for (Map.Entry<String, Object> entry : yaml.getValues(false).entrySet()) {
-            Material material = Material.getMaterial(entry.getKey());
-            if (material == null) {
-                try {
-                    if (methodUse) material = Material.getMaterial(entry.getKey(), true);
-                    if (material == null) {
-                        SXItem.getInst().getLogger().warning("Material.yml No Material - " + entry.getKey());
-                        continue;
-                    }
-                    change = true;
-                    SXItem.getInst().getLogger().config("Material.yml Change MaterialName - " + entry.getKey() + " To " + material.name());
-                    if (yaml.contains(material.name())) {
-                        yaml.set(material.name(), yaml.getString(material.name()) + "," + entry.getValue());
-                    } else {
-                        yaml.set(material.name(), entry.getValue());
-                    }
-                    yaml.set(entry.getKey(), null);
-                } catch (Exception ignored) {
-                    SXItem.getInst().getLogger().warning("Material.yml No Material - " + entry.getKey());
-                    continue;
-                }
-            }
-            for (String key : entry.getValue().toString().split(",")) {
-                if (!key.isEmpty()) {
-                    Object ret = materialMap.put(key, material);
-                    if (ret != null) {
-                        SXItem.getInst().getLogger().warning("Material.yml Repeat Key - " + key + " (" + ret + "/" + material + ")");
-                        materialMap.remove(key);
-                    }
-                }
+    private void loadConfigs(File directory, Map<String, ConfigurationSection> configs, String path) {
+        for (File file : directory.listFiles()) {
+            if (file.getName().startsWith("NoLoad")) continue;
+            String filePath = !path.isEmpty() ? path + File.separator + file.getName() : file.getName();
+            if (file.isDirectory()) {
+                loadConfigs(file, configs, filePath);
+            } else if (file.getName().endsWith(".yml")) {
+                configs.put(filePath, YamlConfiguration.loadConfiguration(file));
             }
         }
-        if (change) yaml.save(file);
-        SXItem.getInst().getLogger().info("Loaded " + materialMap.size() + " Materials");
-    }
-
-    /**
-     * 获取物品材质
-     *
-     * @param key 索引
-     * @return 材质
-     */
-    public static Material getMaterial(String key) {
-        Material material = materialMap.get(key);
-        return material != null ? material : Material.getMaterial(key.replace(' ', '_').toUpperCase(Locale.ROOT));
-    }
-
-    public static Set<String> getMaterialString(Material value) {
-        return materialMap.entrySet().stream().filter(e -> e.getValue().equals(value)).map(Map.Entry::getKey).collect(Collectors.toSet());
-    }
-
-    /**
-     * 注册物品生成器
-     *
-     * @param type     类型
-     * @param loadFunc 加载方法
-     * @param saveFunc 保存方法
-     */
-    public static void register(String type, @Nonnull IGenerator.Loader loadFunc, @Nullable IGenerator.Saver saveFunc) {
-        if (type == null || loadFunction.containsKey(type)) {
-            SXItem.getInst().getLogger().severe("ItemGenerator >> Type Error: " + type);
-            return;
-        }
-        loadFunction.put(type, loadFunc);
-        if (saveFunc != null) saveFunction.put(type, saveFunc);
-        SXItem.getInst().getLogger().info("ItemGenerator >> Type Register: " + type);
     }
 }

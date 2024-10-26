@@ -1,5 +1,8 @@
 # Protokollstufe: [OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL]
 LoggerLevel: "INFO"
+LoggerRecord: true
+# Dezimalgenauigkeit, Rundung. [2.3456 -> 2.35]
+DecimalPrecision: 2
 # Datumsformatierung
 TimeFormat: yyyy/MM/dd HH:mm
 # Engine-Auswahl: Standardmäßig wird die JS-Engine verwendet. Dieses Plugin enthält kein Engine-Modul. 
@@ -9,10 +12,10 @@ TimeFormat: yyyy/MM/dd HH:mm
 ScriptEngine: js
 # Um die Engine-Funktion zu deaktivieren...
 #ScriptEngine: ~
-# Globale geschützte NBT-Liste [Schützt die folgenden NBTs vor Änderungen bei automatischen Updates]
+# Globale geschützte NBT-Liste. [Schützt die folgenden NBTs vor Änderungen bei automatischen Updates]
 ProtectNBT:
   - "protect.data"
-# Wenn das Inventar voll ist, werden die Gegenstände beim Geben fallen gelassen [mit einfachem Aufsammelschutz].
+# Wenn das Inventar voll ist, werden die Gegenstände beim Geben fallen gelassen. [mit einfachem Aufsammelschutz]
 GiveOverflowDrop: true
 # MythicMobs-Drops (SX-Item) gehen direkt in das Spielerinventar.
 MobDropToPlayerInventory: true

@@ -2,8 +2,8 @@ package github.saukiya.sxitem.command;
 
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.util.Message;
-import github.saukiya.util.command.SubCommand;
-import github.saukiya.util.nms.MessageUtil;
+import github.saukiya.tools.command.SubCommand;
+import github.saukiya.tools.nms.MessageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -15,13 +15,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author Saukiya
+ * 调用脚本指令 (脚本启用时生效)
+ * <pre>
+ *  <code>/si script Default testPlayer player Hello</code> - 调用 Default 的 testPlayer 方法
+ * </pre>
  */
 public class ScriptCommand extends SubCommand implements Listener {
 
     public ScriptCommand() {
         super("script", 80);
-        setArg("[script] [func] <args>");
+        setArg("[file] [func] <args>");
     }
 
     @Override
@@ -65,5 +68,15 @@ public class ScriptCommand extends SubCommand implements Listener {
                 return SXItem.getScriptManager().getScriptFunc(args[1]).stream().filter(name -> name.contains(args[2])).collect(Collectors.toList());
         }
         return null;
+    }
+
+    @Override
+    public void onEnable() {
+        onReload();
+    }
+
+    @Override
+    public void onReload() {
+        setHide(!SXItem.getScriptManager().isEnabled());
     }
 }

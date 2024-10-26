@@ -2,11 +2,15 @@ package github.saukiya.sxitem.helper;
 
 import github.saukiya.sxitem.SXItem;
 import github.saukiya.sxitem.data.item.IGenerator;
+import github.saukiya.sxitem.data.item.impl.GeneratorReMaterial;
 import github.saukiya.sxitem.event.SXItemMythicMobsGiveToInventoryEvent;
 import github.saukiya.sxitem.util.Config;
-import github.saukiya.util.nms.NMS;
+import github.saukiya.sxitem.util.Util;
+import github.saukiya.tools.base.EmptyMap;
+import github.saukiya.tools.nms.NMS;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.val;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -52,17 +56,23 @@ public class MythicMobsHelper {
                 if (index != -1) {
                     int min = Integer.parseInt(args[1].substring(0, index));
                     int max = Integer.parseInt(args[1].substring(index + 1));
-                    amount = SXItem.getRandom().nextInt(1 + Math.abs(max - min)) + Math.min(max, min);
+                    amount = Util.random(min, max);
                 } else {
                     amount = Integer.parseInt(args[1]);
                 }
             }
             // 给予
             Inventory inventory = player.getInventory();
-            Map<String, String> otherMap = getOtherMap(args, 3);
-            otherMap.putAll(mobMap);
+            Object param;
+            if (ig instanceof GeneratorReMaterial) {
+                param = args[0];
+            } else {
+                val otherMap = getOtherMap(args, 3);
+                otherMap.putAll(mobMap);
+                param = otherMap;
+            }
             for (int i = 0; i < amount; i++) {
-                ItemStack itemStack = SXItem.getItemManager().getItem(ig, player, otherMap);
+                ItemStack itemStack = SXItem.getItemManager().getItem(ig, player, param);
                 if (itemStack.getType() == Material.AIR) continue;
                 if (Config.getConfig().getBoolean(Config.MOB_DROP_TO_PLAYER_INVENTORY)) {
                     SXItemMythicMobsGiveToInventoryEvent eventI = new SXItemMythicMobsGiveToInventoryEvent(ig, player, mobType, itemStack);
@@ -100,9 +110,16 @@ public class MythicMobsHelper {
             IGenerator ig = SXItem.getItemManager().getGenerator(sap[0]);
             if (ig == null || args.length > 1 && SXItem.getRandom().nextDouble() > Double.parseDouble(args[1]))
                 continue;
-            Map<String, String> otherMap = getOtherMap(args, 2);
-            otherMap.putAll(mobMap);
-            ItemStack itemStack = SXItem.getItemManager().getItem(ig, null, otherMap);
+
+            Object param;
+            if (ig instanceof GeneratorReMaterial) {
+                param = sap[0];
+            } else {
+                val otherMap = getOtherMap(args, 2);
+                otherMap.putAll(mobMap);
+                param = otherMap;
+            }
+            ItemStack itemStack = SXItem.getItemManager().getItem(ig, null, param);
             switch (sap[1]) {
                 case "-1":
                 case "OFFHAND":
@@ -183,7 +200,7 @@ public class MythicMobsHelper {
             if (event.getEntity() instanceof LivingEntity) {
                 String mobType = event.getMobType().getInternalName();
                 EntityEquipment mobEquipment = ((LivingEntity) event.getEntity()).getEquipment();
-                Map<String, String> mobMap = isVersionGreaterThan490 ? getMobMap(event.getMob()) : new HashMap<>();
+                Map<String, String> mobMap = isVersionGreaterThan490 ? getMobMap(event.getMob()) : EmptyMap.emptyMap();
                 List<String> sxEquipmentList = event.getMobType().getConfig().getStringList("SX-Equipment");
                 spawnHandler.spawn(mobType, mobEquipment, mobMap, sxEquipmentList);
             }

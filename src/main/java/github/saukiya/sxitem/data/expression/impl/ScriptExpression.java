@@ -1,7 +1,7 @@
 package github.saukiya.sxitem.data.expression.impl;
 
 import github.saukiya.sxitem.SXItem;
-import github.saukiya.sxitem.data.expression.ExpressionSpace;
+import github.saukiya.sxitem.data.expression.ExpressionHandler;
 import github.saukiya.sxitem.data.expression.IExpression;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
@@ -13,23 +13,16 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * &lt;j:&gt; 调用脚本引擎方法
+ * {@code <j:File.function#args1,args2>} 调用脚本引擎方法
+ * <pre>{@code
+ *  "<j:File.function>" - 执行无参数方法 File.function(handler,null)
+ *  "<j:File.function#AAA>" - 执行有参数方法 File.function(handler,[AAA])
+ * }</pre>
  */
 public class ScriptExpression implements IExpression {
 
-    /**
-     * 支持格式
-     * <pre>
-     *  &lt;j:File.function&gt; - 执行无参数方法 File.function(space,null)
-     *  &lt;j:File.function#AAA&gt; - 执行有参数方法 File.function(space,[AAA])
-     * </pre>
-     *
-     * @param key    处理的key
-     * @param space 缓存
-     * @return
-     */
     @Override
-    public String replace(String key, ExpressionSpace space) {
+    public String replace(String key, ExpressionHandler handler) {
         if (!SXItem.getScriptManager().isEnabled()) return null;
         int index1 = key.indexOf('.');
         Validate.isTrue(index1 != -1, key);
@@ -52,7 +45,7 @@ public class ScriptExpression implements IExpression {
 
         Object result;
         try {
-            result = SXItem.getScriptManager().callFunction(fileName, functionName, space, args);
+            result = SXItem.getScriptManager().callFunction(fileName, functionName, handler, args);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

@@ -4,13 +4,13 @@ package github.saukiya.test;
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
 import github.saukiya.sxitem.SXItem;
-import github.saukiya.sxitem.data.expression.ExpressionSpace;
-import github.saukiya.util.base.EmptyMap;
-import github.saukiya.util.base.Tuple;
-import github.saukiya.util.nbt.TagBase;
-import github.saukiya.util.nbt.TagCompound;
-import github.saukiya.util.nbt.TagType;
-import github.saukiya.util.nms.NMS;
+import github.saukiya.sxitem.data.expression.ExpressionHandler;
+import github.saukiya.tools.base.EmptyMap;
+import github.saukiya.tools.base.Tuple;
+import github.saukiya.tools.nbt.TagBase;
+import github.saukiya.tools.nbt.TagCompound;
+import github.saukiya.tools.nbt.TagType;
+import github.saukiya.tools.nms.NMS;
 import lombok.val;
 import org.apache.commons.lang.text.StrLookup;
 import org.apache.commons.lang.text.StrMatcher;
@@ -24,7 +24,6 @@ import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -35,7 +34,8 @@ import java.util.stream.IntStream;
 
 public class Test {
     static File projectPath = new File(System.getProperty("user.dir"));
-    static File currentPath = new File(projectPath, "src/main/resources");
+    static File mainResourcePath = new File(projectPath, "src/main/resources");
+    static File testResourcePath = new File(projectPath, "src/test/resources");
     static DecimalFormat df = new DecimalFormat("#.##");
     static SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");
     static Map<String, List<Tuple<Double, String>>> dataMap = new HashMap();
@@ -57,6 +57,9 @@ public class Test {
     }
 
     public static void main(String[] args) {
+    }
+
+    public static void testEmptyMap() {
         Map<String, String> map = EmptyMap.emptyMap();
         System.out.println(map.get("?"));
         System.out.println(map.putIfAbsent("?", "?"));
@@ -158,12 +161,12 @@ public class Test {
         return result;
     }
 
-    public static YamlConfiguration loadYml(String path) throws IOException {
-        return YamlConfiguration.loadConfiguration(getResourceAsStream(path));
+    public static YamlConfiguration loadYml(String path) {
+        return YamlConfiguration.loadConfiguration(new File(mainResourcePath, path));
     }
 
-    public static InputStreamReader getResourceAsStream(String path) throws IOException {
-        return new InputStreamReader(Files.newInputStream(new File(currentPath, path).toPath()));
+    public static YamlConfiguration loadYmlTest(String path) {
+        return YamlConfiguration.loadConfiguration(new File(testResourcePath, path));
     }
 
     public static void LoreTest() {
@@ -410,7 +413,7 @@ public class Test {
         }
     }
 
-    public static String replaceInt(String key, ExpressionSpace docker) {
+    public static String replaceInt(String key, ExpressionHandler docker) {
         String[] strSplit = key.split("_");
         if (strSplit.length > 1) {
             int[] ints = {Integer.parseInt(strSplit[0]), Integer.parseInt(strSplit[1])};
@@ -420,7 +423,7 @@ public class Test {
         return null;
     }
 
-    public static String replaceDouble(String key, ExpressionSpace docker) {
+    public static String replaceDouble(String key, ExpressionHandler docker) {
         String[] strSplit = key.split("_");
         if (strSplit.length > 1) {
             double[] doubles = {Double.parseDouble(strSplit[0]), Double.parseDouble(strSplit[1])};
@@ -441,68 +444,6 @@ public class Test {
         ss.setEnableSubstitutionInVariables(true);
         String resolvedString = ss.replace(str);
         System.out.println("resolvedString: " + resolvedString);
-    }
-
-    /**
-     * 加载Random数据
-     */
-    public static void loadData() {
-
-        // 配置读取的方式
-//        File file = new File("./src/main/resources/RandomString/Test.yml");
-        File file = new File("./src/main/resources/RandomString/DefaultRandom.yml");
-
-        YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
-        for (String key : yml.getKeys(false)) {
-            Object obj = yml.get(key);
-            System.out.println("----> " + key + " - " + obj.getClass().getSimpleName());
-            //单行 key - v
-            if (obj instanceof String) {
-                dataMap.put(key, Collections.singletonList(new Tuple<>(1D, obj.toString())));
-            }
-            // 多行 key - vList
-            else if (obj instanceof List) {
-                List<Tuple<Double, String>> list = new ArrayList<>();
-                Object unitObj = ((List<?>) obj).get(0);
-                System.out.println(unitObj.getClass());
-                if (unitObj instanceof Map) {
-                    List<Map> listMap = (List<Map>) obj;
-                    for (Map map : listMap) {
-                        System.out.println("?> " + map);
-                        list.add(new Tuple<>(Double.valueOf(map.get("rate").toString()), loadDataString(map.get("string"))));
-                    }
-                } else {
-                    // 标记可转化文本并备份
-                    Map<String, Integer> tempMap = new HashMap<>();
-                    String value;
-                    for (Object objs : (List) obj) {
-                        value = loadDataString(objs);
-                        tempMap.put(value, tempMap.getOrDefault(value, 0) + 1);
-                    }
-                    for (Map.Entry<String, Integer> entry : tempMap.entrySet()) {
-                        list.add(new Tuple<>(Double.valueOf(entry.getValue()), entry.getKey()));
-                    }
-                }
-
-                double value = 1;
-                double temp;
-                double sum = list.stream().mapToDouble(Tuple::a).sum();
-                for (int i = list.size() - 1; i >= 0; i--) {
-                    Tuple<Double, String> tuple = list.get(i);
-                    temp = tuple.a() / sum;
-                    tuple.a(value);
-                    value -= temp;
-                }
-                dataMap.put(key, list);
-            }
-        }
-        System.out.println("-------------?");
-        for (Map.Entry<String, List<Tuple<Double, String>>> entry : dataMap.entrySet()) {
-            System.out.println("key: " + entry.getKey());
-            for (Tuple<Double, String> tuple : entry.getValue()) {
-                System.out.println("- 权重:" + tuple.a() + " -> " + tuple.b());
-            }
-        }
     }
 
     public static String loadDataString(Object obj) {

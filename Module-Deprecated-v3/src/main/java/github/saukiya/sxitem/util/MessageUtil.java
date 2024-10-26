@@ -7,7 +7,7 @@ import lombok.experimental.Delegate;
 import org.bukkit.command.CommandSender;
 
 /**
- * @see github.saukiya.util.nms.MessageUtil
+ * @see github.saukiya.tools.nms.MessageUtil
  * @deprecated
  */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -15,10 +15,10 @@ public final class MessageUtil {
 
     @Deprecated
     @Getter
-    private static final MessageUtil inst = new MessageUtil(github.saukiya.util.nms.MessageUtil.getInst());
+    private static final MessageUtil inst = new MessageUtil(github.saukiya.tools.nms.MessageUtil.getInst());
 
     @Delegate
-    private github.saukiya.util.nms.MessageUtil target;
+    private github.saukiya.tools.nms.MessageUtil target;
 
     @Deprecated
     public final ComponentBuilder componentBuilder() {
@@ -27,6 +27,6 @@ public final class MessageUtil {
 
     @Deprecated
     public static void send(CommandSender sender, String msg) {
-        github.saukiya.util.nms.MessageUtil.send(sender, msg);
+        github.saukiya.tools.nms.MessageUtil.send(sender, msg);
     }
 }

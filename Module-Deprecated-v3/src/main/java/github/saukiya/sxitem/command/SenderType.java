@@ -1,7 +1,7 @@
 package github.saukiya.sxitem.command;
 
 /**
- * @see github.saukiya.util.command.SenderType
+ * @see github.saukiya.tools.command.SenderType
  * @deprecated
  */
 public enum SenderType {

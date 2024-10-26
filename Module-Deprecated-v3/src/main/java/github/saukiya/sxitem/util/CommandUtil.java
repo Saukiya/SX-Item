@@ -1,7 +1,7 @@
 package github.saukiya.sxitem.util;
 
-import github.saukiya.util.helper.PlaceholderHelper;
-import github.saukiya.util.nms.MessageUtil;
+import github.saukiya.tools.helper.PlaceholderHelper;
+import github.saukiya.tools.nms.MessageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;

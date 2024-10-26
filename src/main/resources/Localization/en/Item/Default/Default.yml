@@ -161,7 +161,7 @@ Default-1:
 
 Default-2:
   Name: '&cLight Feather Boots'
-  ID: 301
+  ID: LEATHER_BOOTS
   Lore:
     - '&6ItemType: Boots'
     - '&cMaxHP: +2000'

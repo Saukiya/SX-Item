@@ -1,8 +1,8 @@
 package github.saukiya.deprecated;
 
 import github.saukiya.sxitem.SXItem;
-import github.saukiya.util.helper.PlaceholderHelper;
-import github.saukiya.util.nms.MessageUtil;
+import github.saukiya.tools.helper.PlaceholderHelper;
+import github.saukiya.tools.nms.MessageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -11,9 +11,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author Saukiya
- */
 
 public class CmdUtil {
 

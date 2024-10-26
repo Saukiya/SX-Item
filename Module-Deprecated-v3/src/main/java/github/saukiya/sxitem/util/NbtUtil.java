@@ -2,7 +2,7 @@ package github.saukiya.sxitem.util;
 
 import github.saukiya.sxitem.nbt.NBTItemWrapper;
 import github.saukiya.sxitem.nbt.NBTTagWrapper;
-import github.saukiya.util.nms.NMS;
+import github.saukiya.tools.nms.NMS;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,17 +10,17 @@ import lombok.experimental.Delegate;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * @see github.saukiya.util.nms.NbtUtil
+ * @see github.saukiya.tools.nms.NbtUtil
  * @deprecated
  */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class NbtUtil {
 
     @Getter
-    private final static NbtUtil inst = new NbtUtil(NMS.getInst(github.saukiya.util.nms.NbtUtil.class));
+    private final static NbtUtil inst = new NbtUtil(NMS.getInst(github.saukiya.tools.nms.NbtUtil.class));
 
     @Delegate
-    private github.saukiya.util.nms.NbtUtil target;
+    private github.saukiya.tools.nms.NbtUtil target;
 
 
     @Deprecated

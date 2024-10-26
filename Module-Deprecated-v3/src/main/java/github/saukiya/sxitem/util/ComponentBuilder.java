@@ -1,6 +1,6 @@
 package github.saukiya.sxitem.util;
 
-import github.saukiya.util.nms.MessageUtil;
+import github.saukiya.tools.nms.MessageUtil;
 import lombok.AllArgsConstructor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Material;
@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 /**
- * @see github.saukiya.util.nms.MessageUtil.Builder
+ * @see github.saukiya.tools.nms.MessageUtil.Builder
  * @deprecated
  */
 @AllArgsConstructor

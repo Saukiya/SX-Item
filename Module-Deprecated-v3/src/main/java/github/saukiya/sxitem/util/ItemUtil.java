@@ -13,17 +13,17 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * @see github.saukiya.util.nms.ItemUtil
+ * @see github.saukiya.tools.nms.ItemUtil
  * @deprecated
  */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ItemUtil {
 
     @Getter
-    private static final ItemUtil inst = new ItemUtil(github.saukiya.util.nms.ItemUtil.getInst());
+    private static final ItemUtil inst = new ItemUtil(github.saukiya.tools.nms.ItemUtil.getInst());
 
     @Delegate
-    private github.saukiya.util.nms.ItemUtil target;
+    private github.saukiya.tools.nms.ItemUtil target;
 
     @Deprecated
     public List<AttributeData> getAttributes(ItemStack item) {
@@ -54,16 +54,16 @@ public final class ItemUtil {
     public static class AttributeData {
 
         @Delegate
-        github.saukiya.util.nms.ItemUtil.AttributeData target;
+        github.saukiya.tools.nms.ItemUtil.AttributeData target;
 
         @Deprecated
         public AttributeData() {
-            target = new github.saukiya.util.nms.ItemUtil.AttributeData();
+            target = new github.saukiya.tools.nms.ItemUtil.AttributeData();
         }
 
         @Deprecated
         public AttributeData(String attrName, UUID uniqueId, String name, double amount, int operation, String slot) {
-            target = new github.saukiya.util.nms.ItemUtil.AttributeData(attrName, uniqueId, name, amount, operation, slot);
+            target = new github.saukiya.tools.nms.ItemUtil.AttributeData(attrName, uniqueId, name, amount, operation, slot);
             target.setAttrName(attrName);
             target.setUniqueId(uniqueId);
             target.setName(name);

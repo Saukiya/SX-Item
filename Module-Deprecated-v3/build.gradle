@@ -1,3 +1,5 @@
 dependencies {
     compileOnly rootProject
+    compileOnly "$spigot"
+    compileOnly "$commons_lang"
 }

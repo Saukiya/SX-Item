@@ -18,13 +18,13 @@ function testPlayer(player, args) {
 
 /**
  * JS-Zufallsformat:<j:Standard.itemScript#QAQ,QWQ>
- * @param space JS-Zufall für das aktuelle ExpressionSpace, siehe [ExpressionSpace](https://github.com/Saukiya/SX-Item/blob/master/src/main/java/github/saukiya/sxitem/data/expression/ExpressionSpace.java)
+ * @param handler JS-Zufall für das aktuelle ExpressionHandler, siehe [ExpressionHandler](https://github.com/Saukiya/SX-Item/blob/master/src/main/java/github/saukiya/sxitem/data/expression/ExpressionHandler.java)
  * @param args JS-Zufalls-String-Array, zum Beispiel ['QAQ', 'QWQ'].
  * @returns string
  */
-function itemScript(space, args) {
-    if (space.getPlayer() != null) {
-        space.getPlayer().sendMessage("Parameter an den Spieler senden: " + args[0] + args[1])
+function itemScript(handler, args) {
+    if (handler.getPlayer() != null) {
+        handler.getPlayer().sendMessage("Parameter an den Spieler senden: " + args[0] + args[1])
     }
     return args[SXItem.getRandom().nextInt(args.length)];
 }

@@ -1,15 +1,15 @@
 package github.saukiya.sxitem.command;
 
 import github.saukiya.sxitem.SXItem;
-import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.util.Message;
-import github.saukiya.util.command.SubCommand;
-import github.saukiya.util.nbt.TagBase;
-import github.saukiya.util.nbt.TagCompound;
-import github.saukiya.util.nbt.TagList;
-import github.saukiya.util.nbt.TagType;
-import github.saukiya.util.nms.MessageUtil;
-import github.saukiya.util.nms.NbtUtil;
+import github.saukiya.tools.command.SubCommand;
+import github.saukiya.tools.nbt.TagBase;
+import github.saukiya.tools.nbt.TagCompound;
+import github.saukiya.tools.nbt.TagList;
+import github.saukiya.tools.nbt.TagType;
+import github.saukiya.tools.nms.MessageUtil;
+import github.saukiya.tools.nms.NbtUtil;
+import github.saukiya.tools.util.ReMaterial;
 import lombok.val;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -26,8 +26,15 @@ import java.util.stream.Collectors;
 
 /**
  * NBT显示指令
- *
- * @author Saukiya
+ * <pre>
+ * Player:
+ *  <code>/si nbt</code> - 查看手持物品的NBT标签
+ *  <code>/si nbt set SXItem.ItemKey Default-1</code> - 设置手持物品的指定NBT
+ *  <code>/si nbt remove SXItem</code> - 移除手持物品的指定NBT
+ * Console:
+ *  <code>/si nbt Default-1</code> - 查看Default-1的NBT标签
+ *  <code>/si nbt Default-1 player</code> - 查看Default-1的NBT标签 (通过player生成)
+ * </pre>
  */
 public class NBTCommand extends SubCommand {
 
@@ -84,7 +91,7 @@ public class NBTCommand extends SubCommand {
                         .add(item.getType().name())
                         .show(Message.NBT__CLICK_COPY.get())
                         .suggestCommand(item.getType().name());
-                String keys = String.join("/", ItemManager.getMaterialString(item.getType()));
+                String keys = ReMaterial.getKey(item.getType());
                 if (!keys.isEmpty()) cb.add("-").add(keys).show(Message.NBT__CLICK_COPY.get()).suggestCommand(keys);
                 cb.add("] §cItem-NBT:").send(sender);
                 sendNBT(sender, tag, "");

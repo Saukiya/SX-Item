@@ -5,11 +5,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import github.saukiya.sxitem.SXItem;
-import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.util.Message;
-import github.saukiya.util.command.SubCommand;
-import github.saukiya.util.nms.ComponentUtil;
-import github.saukiya.util.nms.MessageUtil;
+import github.saukiya.tools.command.SubCommand;
+import github.saukiya.tools.nms.ComponentUtil;
+import github.saukiya.tools.nms.MessageUtil;
+import github.saukiya.tools.nms.NMS;
+import github.saukiya.tools.util.ReMaterial;
 import lombok.val;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -20,6 +21,18 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * 组件功能指令 [1.21.1+]
+ * <pre>
+ * Player:
+ *  <code>/si component</code> - 查看手持物品的组件功能
+ *  <code>/si component set minecraft:max_damage 233</code> - 设置手持物品的指定组件
+ *  <code>/si component remove minecraft:max_damage</code> - 移除手持物品的指定组件
+ * Console:
+ *  <code>/si component Default-1</code> - 查看Default-1的组件功能
+ *  <code>/si component Default-1 player</code> - 查看Default-1的组件功能 (通过player生成)
+ * </pre>
+ */
 public class ComponentCommand extends SubCommand {
 
     private static final Gson gson = new Gson();
@@ -29,6 +42,7 @@ public class ComponentCommand extends SubCommand {
     public ComponentCommand() {
         super("component", 60);
         setArg("<set/remove> <key> <json>");
+        setHide(NMS.compareTo(1, 20, 5) < 0);
         preInput.put("minecraft:item_name", Collections.singletonList("\"defaultName\""));
         preInput.put("minecraft:max_damage", Collections.singletonList("1"));
         preInput.put("minecraft:max_stack_size", Collections.singletonList("10"));
@@ -135,7 +149,7 @@ public class ComponentCommand extends SubCommand {
                 .add(item.getType().name())
                 .show(Message.NBT__CLICK_COPY.get())
                 .suggestCommand(item.getType().name());
-        String keys = String.join("/", ItemManager.getMaterialString(item.getType()));
+        String keys = ReMaterial.getKey(item.getType());
         if (!keys.isEmpty()) cb.add("-").add(keys).show(Message.NBT__CLICK_COPY.get()).suggestCommand(keys);
         cb.add("§7] §cItem-Components:");
         cb.send(sender);

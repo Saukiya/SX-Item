@@ -1,31 +1,27 @@
 package github.saukiya.sxitem.data.expression.impl;
 
-import github.saukiya.sxitem.SXItem;
-import github.saukiya.sxitem.data.expression.ExpressionSpace;
+import github.saukiya.sxitem.data.expression.ExpressionHandler;
 import github.saukiya.sxitem.data.expression.IExpression;
+import github.saukiya.sxitem.util.Util;
 
 /**
- * &lt;i:&gt; 创建一个随机整数
+ * {@code <i:1_10>} 得到一个随机整数
+ * <pre>
+ * 特性: 支持负数, 不分顺序
+ * 别名: <code>r</code>
+ * {@code
+ *  "<i:10_100>" - 从10-100随机抽一个整数
+ *  "<i:100_10>" - 从10-100随机抽一个整数(不分顺序)
+ * }</pre>
  */
 public class IntExpression implements IExpression {
 
-    /**
-     * 支持格式
-     * <pre>
-     *  &lt;i:10_100&gt; - 从10-100随机抽一个整数
-     *  &lt;i:100_10&gt; - 从10-100随机抽一个整数(不分顺序)
-     * </pre>
-     *
-     * @param key    处理的key
-     * @param space 缓存
-     * @return
-     */
     @Override
-    public String replace(String key, ExpressionSpace space) {
+    public String replace(String key, ExpressionHandler handler) {
         int index = key.indexOf('_');
         if (index == -1) return key;
         int min = Integer.parseInt(key.substring(0, index));
         int max = Integer.parseInt(key.substring(index + 1));
-        return String.valueOf(SXItem.getRandom().nextInt(1 + Math.abs(max - min)) + Math.min(max, min));
+        return String.valueOf(Util.random(min, max));
     }
 }
