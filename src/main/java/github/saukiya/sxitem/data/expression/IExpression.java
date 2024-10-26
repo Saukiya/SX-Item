@@ -14,4 +14,14 @@ public interface IExpression {
      */
     String replace(String key, ExpressionHandler handler);
 
+    /**
+     * 验证字符串内容是否正常
+     *
+     * @param key
+     * @param handler
+     * @return
+     */
+    default boolean validation(String key, ExpressionHandler handler) {
+        return true;
+    }
 }

@@ -7,9 +7,6 @@ var baseProject = project(":Module-Base")
 allprojects { project ->
     apply plugin: 'java'
 
-    group 'io.github.saukiya'
-    version '4.3.0-SNAPSHOT'
-
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 
@@ -20,7 +17,7 @@ allprojects { project ->
         mavenLocal()
         mavenCentral()
         // Minecraft Api
-        maven { url 'https://libraries.minecraft.net'}
+        maven { url 'https://libraries.minecraft.net' }
         // Spigot Api
         maven { url 'https://hub.spigotmc.org/nexus/content/repositories/releases/' }
         // Paper Api
@@ -46,6 +43,10 @@ allprojects { project ->
     tasks.withType(JavaCompile) {
         options.compilerArgs += ["-Xlint:-options"]
     }
+
+    if (shapshot == "true") {
+        version += "-SNAPSHOT"
+    }
 }
 
 configure([rootProject, baseProject]) {
@@ -67,6 +68,7 @@ configure([rootProject, baseProject]) {
 
 dependencies {
     implementation 'org.bstats:bstats-bukkit:2.2.1'
+    compileOnly 'org.openjdk.nashorn:nashorn-core:15.4'
     compileOnly 'io.lumine.xikage:MythicMobs:4.9.0'
     compileOnly 'io.lumine:Mythic-Dist:5.2.1'
 
@@ -122,7 +124,7 @@ shadowJar {
     }
 }
 
-['de', 'en', 'zh'].each { lang ->
+languages.split(',').each { lang ->
     // 要在shadowJar之前处理资源文件
     tasks.register("processResources($lang)", Copy) {
         dependsOn shadowJar

@@ -9,6 +9,9 @@ softdepend:
   - PlaceholderAPI
   - MythicMobs
 
+libraries:
+  - org.openjdk.nashorn:nashorn-core:15.4
+
 commands:
   SxItem:
     aliases: [ sxi,si ]

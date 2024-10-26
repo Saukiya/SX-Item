@@ -1,8 +1,8 @@
 package github.saukiya.sxitem.data;
 
-import github.saukiya.sxitem.util.Config;
 import github.saukiya.sxitem.util.Util;
 import github.saukiya.tools.helper.PlaceholderHelper;
+import github.saukiya.tools.nms.NMS;
 import lombok.Getter;
 import lombok.val;
 import org.bukkit.Bukkit;
@@ -18,8 +18,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.function.Function;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class ScriptManager implements Listener {
@@ -28,9 +26,9 @@ public class ScriptManager implements Listener {
 
     private final Map<String, Bindings> bindingsMap = new HashMap<>();
 
-    private final Function<File, String> getScriptName;
-
     private final JavaPlugin plugin;
+
+    private final String engineName;
 
     private final File rootDirectory;
 
@@ -53,11 +51,15 @@ public class ScriptManager implements Listener {
      * @param plugin
      */
     public ScriptManager(JavaPlugin plugin) {
+        this(plugin, "js");
+    }
+
+    public ScriptManager(JavaPlugin plugin, String engineName) {
         this.plugin = plugin;
+        this.engineName = engineName;
+        ;
         this.rootDirectory = new File(plugin.getDataFolder(), "Scripts");
         this.globalDirectory = new File(rootDirectory, "Global");
-        val regex = Pattern.compile("\\..+$");
-        getScriptName = file -> regex.matcher(file.getName()).replaceAll("");
         reload();
     }
 
@@ -92,15 +94,21 @@ public class ScriptManager implements Listener {
      * 初始化引擎
      */
     private void initEngine() throws Exception {
-        String engineName = Config.getConfig().getString(Config.SCRIPT_ENGINE, "js");
         if (engineName.isEmpty()) throw new NullPointerException("Scripts Disabled");
-        // nashorn 参数
-        System.setProperty("nashorn.args", "--language=es6");
         val engineManager = new ScriptEngineManager();
+        if (engineName.equals("js")) {
+            // nashorn 参数
+            System.setProperty("nashorn.args", "--language=es6");
+        }
+
         engine = engineManager.getEngineByName(engineName);
         if (engine == null) {
-            val engineNames = engineManager.getEngineFactories().stream().map(ScriptEngineFactory::getEngineName).collect(Collectors.joining(", "));
-            throw new ScriptException("No Find ScriptEngine: " + engineName + ", Can Use: " + engineNames);
+            if (engineName.equals("js") && NMS.hasClass("org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory")) {
+                engine = new org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory().getScriptEngine();
+            } else {
+                val engineNames = engineManager.getEngineFactories().stream().map(ScriptEngineFactory::getEngineName).collect(Collectors.joining(", "));
+                throw new ScriptException("No Find ScriptEngine: " + engineName + (engineNames.isEmpty() ? "" : "Can Use: " + engineNames));
+            }
         }
         globalBindings = engine.createBindings();
         // class路径在jdk8中不一致
@@ -146,7 +154,8 @@ public class ScriptManager implements Listener {
             if (file.isDirectory()) {
                 loadScriptFile(file);
             } else {
-                String scriptName = getScriptName.apply(file);
+                int indexOf = file.getName().indexOf('.');
+                String scriptName = indexOf != -1 ? file.getName().substring(0, indexOf) : file.getName();
                 try (val reader = new FileReader(file)) {
                     CompiledScript compiled = compilable.compile(reader);
 
@@ -239,13 +248,12 @@ public class ScriptManager implements Listener {
             return ChatColor.translateAlternateColorCodes('&', string);
         }
 
-        public static int randomInt(Integer first, Integer last) {
-            return Util.random(first, last);
+        public static int randomInt(int min, int max) {
+            return Util.random(min, max);
         }
 
         public static double randomDouble(double min, double max) {
-            double range = (max - min) * Math.random();
-            return min + range;
+            return Util.random(min, max);
         }
     }
 }

@@ -98,7 +98,7 @@ public class SXItem extends JavaPlugin {
         ItemUtil.getInst();
         MessageUtil.getInst();
 
-        scriptManager = new ScriptManager(this);
+        scriptManager = new ScriptManager(this, Config.getConfig().getString(Config.SCRIPT_ENGINE, "js"));
         randomManager = new RandomManager(this);
         itemManager = new ItemManager(this);
 
