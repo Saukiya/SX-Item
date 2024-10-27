@@ -42,7 +42,6 @@ public class ComponentCommand extends SubCommand {
     public ComponentCommand() {
         super("component", 60);
         setArg("<set/remove> <key> <json>");
-        setHide(NMS.compareTo(1, 20, 5) < 0);
         preInput.put("minecraft:item_name", Collections.singletonList("\"defaultName\""));
         preInput.put("minecraft:max_damage", Collections.singletonList("1"));
         preInput.put("minecraft:max_stack_size", Collections.singletonList("10"));
@@ -54,9 +53,6 @@ public class ComponentCommand extends SubCommand {
                 )
         );
         preInput.put("minecraft:rarity", Arrays.asList("common", "uncommon", "rare", "epic"));
-
-        List<String> emptyList = Collections.emptyList();
-        ComponentUtil.getInst().getItemKeys().forEach(key -> preInput.putIfAbsent(key, emptyList));
     }
 
     @Override
@@ -155,6 +151,12 @@ public class ComponentCommand extends SubCommand {
         cb.send(sender);
 
         sendComponent(sender, json);
+    }
+
+    @Override
+    public void onEnable() {
+        setHide(NMS.compareTo(1, 20, 5) < 0);
+        ComponentUtil.getInst().getItemKeys().forEach(key -> preInput.putIfAbsent(key, Collections.emptyList()));
     }
 
     public static void sendComponent(CommandSender sender, JsonElement json) {

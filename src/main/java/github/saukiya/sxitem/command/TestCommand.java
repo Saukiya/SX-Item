@@ -29,6 +29,7 @@ public class TestCommand extends SubCommand {
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         ItemStack item;
+        String itemName = null;
         String operation = "all";
         Player player;
         sender.sendMessage("*该指令用于测试插件运行是否正常*");
@@ -38,7 +39,8 @@ public class TestCommand extends SubCommand {
             operation = args.length > 1 ? args[1] : operation;
         } else {
             player = args.length > 2 ? Bukkit.getPlayerExact(args[2]) : null;
-            item = SXItem.getItemManager().getItem(args.length > 1 ? args[1] : "Default-1", player);
+            itemName = args.length > 1 ? args[1] : "Default-1";
+            item = SXItem.getItemManager().getItem(itemName, player);
         }
         if (item.getType() == Material.AIR) {
             MessageUtil.send(sender, Message.GIVE__NO_ITEM.get());
@@ -48,7 +50,7 @@ public class TestCommand extends SubCommand {
             case "show":
                 MessageUtil.getInst().builder().add(player.getEquipment().getItemInHand()).send(player);
                 return;
-            case "tran":
+            case "trans":
                 MessageUtil.getInst().builder().add(new TranslatableComponent(args.length > 2 ? args[2] : "null")).send(player);
                 return;
             case "clear":
@@ -62,7 +64,6 @@ public class TestCommand extends SubCommand {
         input.put("minecraft:food", ComponentUtil.getGson().fromJson("{can_always_eat:true,eat_seconds:5,nutrition:3,saturation:1}", Map.class));
         val wrapper = ComponentUtil.getInst().getItemWrapper(item);
         wrapper.setFromValue(input).save();
-        SXItem.getInst().getLogger().warning("component: \n" + wrapper.toJsonString());
         sender.sendMessage("组件功能通过");
 
         val itemWrapper = NbtUtil.getInst().getItemTagWrapper(item);
@@ -106,9 +107,9 @@ public class TestCommand extends SubCommand {
             }
         }
         tagCompound.remove("test");
-        SXItem.getInst().getLogger().info("tag: \n" + tagCompound.toJsonString());
         sender.sendMessage("调用NBT物品通过");
-        Bukkit.dispatchCommand(sender, "sxi nbt all");
+        Bukkit.dispatchCommand(sender, "sxi nbt " + itemName);
+        Bukkit.dispatchCommand(sender, "sxi component " + itemName);
 
         MessageUtil.send(sender, "[TITLE]测试Title:fadein-20 stay-100 fadeOut-100:20:100:100");
         MessageUtil.send(sender, "[ACTIONBAR]测试ActionBar");

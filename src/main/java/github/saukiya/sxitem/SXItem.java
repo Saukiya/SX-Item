@@ -83,6 +83,12 @@ public class SXItem extends JavaPlugin {
         ExpressionManager.register(new UUIDExpression(), 'u');
         ExpressionManager.register(new MaxExpression(), "max");
         ExpressionManager.register(new MinExpression(), "min");
+
+        ReMaterial.values();
+        ComponentUtil.getInst();
+        NbtUtil.getInst();
+        ItemUtil.getInst();
+        MessageUtil.getInst();
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -91,12 +97,6 @@ public class SXItem extends JavaPlugin {
         new Metrics(this, 11948);
         long oldTimes = System.currentTimeMillis();
         LogUtil.setup(this, Config.getConfig().getBoolean(Config.LOGGER_RECORD, true));
-
-        ReMaterial.values();
-        ComponentUtil.getInst();
-        NbtUtil.getInst();
-        ItemUtil.getInst();
-        MessageUtil.getInst();
 
         scriptManager = new ScriptManager(this, Config.getConfig().getString(Config.SCRIPT_ENGINE, "js"));
         randomManager = new RandomManager(this);

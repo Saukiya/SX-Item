@@ -25,8 +25,15 @@ public interface NMS {
             synchronized (target) {
                 t = Data.INST_MAP.computeIfAbsent(target, k -> {
                     try {
-                        String version = Arrays.stream(versions).filter(ver -> compareTo(ver) >= 0).findFirst().orElse(Data.VERSION);
-                        return (NMS) Class.forName(target.getName() + "_" + version).getDeclaredConstructor().newInstance();
+                        String version;
+                        if (hasClass(target.getName() + "_" + Data.VERSION)) {
+                            version = Data.VERSION;
+                        } else {
+                            version = Arrays.stream(versions).filter(ver -> compareTo(ver) >= 0).findFirst().orElse(null);
+                        }
+                        Bukkit.getLogger().info("[SX-NMS] " + target.getSimpleName() + ": " + version);
+                        if (version == null) return target.getDeclaredConstructor().newInstance();
+                        return (NMS) Class.forName(target.getName() + '_' + version).getDeclaredConstructor().newInstance();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -143,6 +150,7 @@ class Data {
         put("1.20.5", "v1_20_R4");
         put("1.20.6", "v1_20_R4");
         put("1.21", "v1_21_R1");
+        put("1.21.3", "v1_21_R2");
     }};
     protected static final String VERSION;
     protected static final int[] thisVersionSplit;
@@ -159,6 +167,7 @@ class Data {
         CLASS_WRAPS_MAP.put(long.class, Long.class);
         thisVersionSplit = getVersion();
         VERSION = "v" + thisVersionSplit[0] + "_" + thisVersionSplit[1] + "_R" + thisVersionSplit[2];
+        Bukkit.getLogger().info("[SX-NMS] Version: " + VERSION);
     }
 
 

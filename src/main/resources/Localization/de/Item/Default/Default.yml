@@ -374,12 +374,15 @@ Component-1:
 Component-2:
   ID: 369
   Amount: 50
+  Lore:
+    - "&cDer essbare Effekt wird nur von 1.12.1 unterstützt"
   Update: true
   Components:
     minecraft:item_name: 'Pommes'
     minecraft:custom_name: 'Pommes'
     minecraft:max_stack_size: 50
     minecraft:rarity: 'rare'
+    # 1.21.1
     minecraft:food:
       eat_seconds: 0.1
       nutrition: 1
