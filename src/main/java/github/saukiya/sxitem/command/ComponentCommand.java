@@ -57,6 +57,7 @@ public class ComponentCommand extends SubCommand {
 
     @Override
     public void onCommand(CommandSender sender, String[] args) {
+        if (NMS.compareTo(1, 20, 5) < 0) return;
         ItemStack itemStack;
         String operate = "all";
         if (sender instanceof Player) {
