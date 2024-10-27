@@ -1,0 +1,715 @@
+## 兼容数字ID列表
+
+- `0`  AIR - 空气
+- `1`  STONE - 石头
+    - `1:0`  STONE - 石头
+    - `1:1`  GRANITE - 花岗岩
+    - `1:2`  POLISHED_GRANITE - 磨制花岗岩
+    - `1:3`  DIORITE - 闪长岩
+    - `1:4`  POLISHED_DIORITE - 磨制闪长岩
+    - `1:5`  ANDESITE - 安山岩
+    - `1:6`  POLISHED_ANDESITE - 磨制安山岩
+- `2`  GRASS_BLOCK `GRASS` - 草方块
+- `3`  DIRT - 泥土
+    - `3:0`  DIRT - 泥土
+    - `3:1`  COARSE_DIRT - 砂土
+    - `3:2`  PODZOL - 灰化土
+- `4`  COBBLESTONE - 圆石
+- `5`  OAK_PLANKS `WOOD` - 橡木木板
+    - `5:0`  OAK_PLANKS - 橡木木板
+    - `5:1`  SPRUCE_PLANKS - 云杉木板
+    - `5:2`  BIRCH_PLANKS - 白桦木板
+    - `5:3`  JUNGLE_PLANKS - 丛林木板
+    - `5:4`  ACACIA_PLANKS - 金合欢木板
+    - `5:5`  DARK_OAK_PLANKS - 深色橡木木板
+- `6`  OAK_SAPLING `SAPLING` - 橡树树苗
+    - `6:0`  OAK_SAPLING - 橡树树苗
+    - `6:1`  SPRUCE_SAPLING - 云杉树苗
+    - `6:2`  BIRCH_SAPLING - 白桦树苗
+    - `6:3`  JUNGLE_SAPLING - 丛林树苗
+    - `6:4`  ACACIA_SAPLING - 金合欢树苗
+    - `6:5`  DARK_OAK_SAPLING - 深色橡树树苗
+- `7`  BEDROCK - 基岩
+- `8`  WATER - 空气
+- `9`  WATER `STATIONARY_WATER` - 空气
+- `10`  LAVA - 空气
+- `11`  LAVA `STATIONARY_LAVA` - 空气
+- `12`  SAND - 沙子
+    - `12:0`  SAND - 沙子
+    - `12:1`  RED_SAND - 红沙
+- `13`  GRAVEL - 沙砾
+- `14`  GOLD_ORE - 金矿石
+- `15`  IRON_ORE - 铁矿石
+- `16`  COAL_ORE - 煤矿石
+- `17`  OAK_LOG `LOG` - 橡木
+    - `17:0`  OAK_LOG - 橡木
+    - `17:1`  SPRUCE_LOG - 云杉木
+    - `17:2`  BIRCH_LOG - 白桦木
+    - `17:3`  JUNGLE_LOG - 丛林木
+- `18`  OAK_LEAVES `LEAVES` - 橡树树叶
+    - `18:0`  OAK_LEAVES - 橡树树叶
+    - `18:1`  SPRUCE_LEAVES - 云杉树叶
+    - `18:2`  BIRCH_LEAVES - 白桦树叶
+    - `18:3`  JUNGLE_LEAVES - 丛林树叶
+- `19`  SPONGE - 海绵
+    - `19:0`  SPONGE - 海绵
+    - `19:1`  WET_SPONGE - 湿海绵
+- `20`  GLASS - 玻璃
+- `21`  LAPIS_ORE - 青金石矿石
+- `22`  LAPIS_BLOCK - 青金石块
+- `23`  DISPENSER - 发射器
+- `24`  SANDSTONE - 砂岩
+    - `24:0`  SANDSTONE - 砂岩
+    - `24:1`  CHISELED_SANDSTONE - 錾制砂岩
+    - `24:2`  CUT_SANDSTONE - 平滑砂岩
+- `25`  NOTE_BLOCK - 音符盒
+- `26`  RED_BED `BED_BLOCK` - 空气
+- `27`  POWERED_RAIL - 充能铁轨
+- `28`  DETECTOR_RAIL - 探测铁轨
+- `29`  STICKY_PISTON `PISTON_STICKY_BASE` - 粘性活塞
+- `30`  COBWEB `WEB` - 蜘蛛网
+- `31`  SHORT_GRASS `LONG_GRASS` - 灌木
+    - `31:0`  SHORT_GRASS - 灌木
+    - `31:1`  FERN - 草
+- `32`  DEAD_BUSH - 枯死的灌木
+- `33`  PISTON `PISTON_BASE` - 活塞
+- `34`  PISTON_HEAD `PISTON_EXTENSION` - 空气
+- `35`  WHITE_WOOL `WOOL` - 白色羊毛
+    - `35:0`  WHITE_WOOL - 白色羊毛
+    - `35:1`  ORANGE_WOOL - 橙色羊毛
+    - `35:2`  MAGENTA_WOOL - 品红色羊毛
+    - `35:3`  LIGHT_BLUE_WOOL - 淡蓝色羊毛
+    - `35:4`  YELLOW_WOOL - 黄色羊毛
+    - `35:5`  LIME_WOOL - 黄绿色羊毛
+    - `35:6`  PINK_WOOL - 粉红色羊毛
+    - `35:7`  GRAY_WOOL - 灰色羊毛
+    - `35:8`  LIGHT_GRAY_WOOL - 淡灰色羊毛
+    - `35:9`  CYAN_WOOL - 青色羊毛
+    - `35:10`  PURPLE_WOOL - 紫色羊毛
+    - `35:11`  BLUE_WOOL - 蓝色羊毛
+    - `35:12`  BROWN_WOOL - 棕色羊毛
+    - `35:13`  GREEN_WOOL - 绿色羊毛
+    - `35:14`  RED_WOOL - 红色羊毛
+    - `35:15`  BLACK_WOOL - 黑色羊毛
+- `36`  MOVING_PISTON `PISTON_MOVING_PIECE` - 空气
+- `37`  DANDELION `YELLOW_FLOWER` - 蒲公英
+- `38`  POPPY `RED_ROSE` - 虞美人
+    - `38:0`  POPPY - 虞美人
+    - `38:1`  BLUE_ORCHID - 兰花
+    - `38:2`  ALLIUM - 绒球葱
+    - `38:3`  AZURE_BLUET - 茜草花
+    - `38:4`  RED_TULIP - 红色郁金香
+    - `38:5`  ORANGE_TULIP - 橙色郁金香
+    - `38:6`  WHITE_TULIP - 白色郁金香
+    - `38:7`  PINK_TULIP - 粉红色郁金香
+    - `38:8`  OXEYE_DAISY - 滨菊
+- `39`  BROWN_MUSHROOM - 蘑菇
+- `40`  RED_MUSHROOM - 蘑菇
+- `41`  GOLD_BLOCK - 金块
+- `42`  IRON_BLOCK - 铁块
+- `43`  SMOOTH_STONE_SLAB `DOUBLE_STEP` - 空气
+- `44`  SMOOTH_STONE_SLAB `STEP` - 石台阶
+    - `44:0`  SMOOTH_STONE_SLAB - 石台阶
+    - `44:1`  SANDSTONE_SLAB - 砂岩台阶
+    - `44:2`  COBBLESTONE_SLAB - 木台阶
+    - `44:3`  BRICK_SLAB - 圆石台阶
+    - `44:4`  STONE_BRICK_SLAB - 砖台阶
+    - `44:5`  NETHER_BRICK_SLAB - 石砖台阶
+    - `44:6`  QUARTZ_SLAB - 地狱砖台阶
+- `45`  BRICK - 砖块
+- `46`  TNT - TNT
+- `47`  BOOKSHELF - 书架
+- `48`  MOSSY_COBBLESTONE - 苔石
+- `49`  OBSIDIAN - 黑曜石
+- `50`  TORCH - 火把
+- `51`  FIRE - 空气
+- `52`  SPAWNER `MOB_SPAWNER` - 刷怪箱
+- `53`  OAK_STAIRS `WOOD_STAIRS` - 橡木楼梯
+- `54`  CHEST - 箱子
+- `55`  REDSTONE_WIRE - 空气
+- `56`  DIAMOND_ORE - 钻石矿石
+- `57`  DIAMOND_BLOCK - 钻石块
+- `58`  CRAFTING_TABLE `WORKBENCH` - 工作台
+- `59`  WHEAT `CROPS` - 空气
+- `60`  FARMLAND `SOIL` - 耕地
+- `61`  FURNACE - 熔炉
+- `62`  FURNACE `BURNING_FURNACE` - 空气
+- `63`  OAK_SIGN `SIGN_POST` - 空气
+- `64`  OAK_DOOR `WOODEN_DOOR` - 空气
+- `65`  LADDER - 梯子
+- `66`  RAIL `RAILS` - 铁轨
+- `67`  COBBLESTONE_STAIRS - 圆石楼梯
+- `68`  OAK_WALL_SIGN `WALL_SIGN` - 空气
+- `69`  LEVER - 拉杆
+- `70`  STONE_PRESSURE_PLATE `STONE_PLATE` - 石质压力板
+- `71`  IRON_DOOR `IRON_DOOR_BLOCK` - 空气
+- `72`  OAK_PRESSURE_PLATE `WOOD_PLATE` - 木质压力板
+- `73`  REDSTONE_ORE - 红石矿石
+- `74`  REDSTONE_ORE `GLOWING_REDSTONE_ORE` - 空气
+- `75`  REDSTONE_WALL_TORCH `REDSTONE_TORCH_OFF` - 空气
+- `76`  REDSTONE_WALL_TORCH `REDSTONE_TORCH_ON` - 红石火把
+- `77`  STONE_BUTTON - 按钮
+- `78`  SNOW - 雪
+- `79`  ICE - 冰
+- `80`  SNOW_BLOCK - 雪
+- `81`  CACTUS - 仙人掌
+- `82`  CLAY - 粘土块
+- `83`  SUGAR_CANE `SUGAR_CANE_BLOCK` - 空气
+- `84`  JUKEBOX - 唱片机
+- `85`  OAK_FENCE `FENCE` - 橡木栅栏
+- `86`  PUMPKIN - 南瓜
+- `87`  NETHERRACK - 地狱岩
+- `88`  SOUL_SAND - 灵魂沙
+- `89`  GLOWSTONE - 荧石
+- `90`  NETHER_PORTAL `PORTAL` - 空气
+- `91`  JACK_O_LANTERN - 南瓜灯
+- `92`  CAKE `CAKE_BLOCK` - 空气
+- `93`  REPEATER `DIODE_BLOCK_OFF` - 空气
+- `94`  REPEATER `DIODE_BLOCK_ON` - 空气
+- `95`  WHITE_STAINED_GLASS `STAINED_GLASS` - 白色染色玻璃
+    - `95:0`  WHITE_STAINED_GLASS - 白色染色玻璃
+    - `95:1`  ORANGE_STAINED_GLASS - 橙色染色玻璃
+    - `95:2`  MAGENTA_STAINED_GLASS - 品红色染色玻璃
+    - `95:3`  LIGHT_BLUE_STAINED_GLASS - 淡蓝色染色玻璃
+    - `95:4`  YELLOW_STAINED_GLASS - 黄色染色玻璃
+    - `95:5`  LIME_STAINED_GLASS - 黄绿色染色玻璃
+    - `95:6`  PINK_STAINED_GLASS - 粉红色染色玻璃
+    - `95:7`  GRAY_STAINED_GLASS - 灰色染色玻璃
+    - `95:8`  LIGHT_GRAY_STAINED_GLASS - 淡灰色染色玻璃
+    - `95:9`  CYAN_STAINED_GLASS - 青色染色玻璃
+    - `95:10`  PURPLE_STAINED_GLASS - 紫色染色玻璃
+    - `95:11`  BLUE_STAINED_GLASS - 蓝色染色玻璃
+    - `95:12`  BROWN_STAINED_GLASS - 棕色染色玻璃
+    - `95:13`  GREEN_STAINED_GLASS - 绿色染色玻璃
+    - `95:14`  RED_STAINED_GLASS - 红色染色玻璃
+    - `95:15`  BLACK_STAINED_GLASS - 黑色染色玻璃
+- `96`  OAK_TRAPDOOR `TRAP_DOOR` - 活板门
+- `97`  INFESTED_STONE `MONSTER_EGGS` - 石头怪物蛋
+- `98`  STONE_BRICKS `SMOOTH_BRICK` - 石砖
+- `99`  BROWN_MUSHROOM_BLOCK `HUGE_MUSHROOM_1` - 蘑菇
+- `100`  RED_MUSHROOM_BLOCK `HUGE_MUSHROOM_2` - 蘑菇
+- `101`  IRON_BARS `IRON_FENCE` - 铁栏杆
+- `102`  GLASS_PANE `THIN_GLASS` - 玻璃板
+- `103`  MELON `MELON_BLOCK` - 西瓜
+- `104`  PUMPKIN_STEM - 空气
+- `105`  MELON_STEM - 空气
+- `106`  VINE - 藤蔓
+- `107`  OAK_FENCE_GATE `FENCE_GATE` - 橡木栅栏门
+- `108`  BRICK_STAIRS - 砖楼梯
+- `109`  STONE_BRICK_STAIRS `SMOOTH_STAIRS` - 石砖楼梯
+- `110`  MYCELIUM `MYCEL` - 菌丝
+- `111`  LILY_PAD `WATER_LILY` - 睡莲
+- `112`  NETHER_BRICK - 地狱砖
+- `113`  NETHER_BRICK_FENCE `NETHER_FENCE` - 地狱砖栅栏
+- `114`  NETHER_BRICK_STAIRS - 地狱砖楼梯
+- `115`  NETHER_WART `NETHER_WARTS` - 空气
+- `116`  ENCHANTING_TABLE `ENCHANTMENT_TABLE` - 附魔台
+- `117`  BREWING_STAND - 空气
+- `118`  CAULDRON - 空气
+- `119`  END_PORTAL `ENDER_PORTAL` - 空气
+- `120`  END_PORTAL_FRAME `ENDER_PORTAL_FRAME` - 末地传送门
+- `121`  END_STONE `ENDER_STONE` - 末地石
+- `122`  DRAGON_EGG - 龙蛋
+- `123`  REDSTONE_LAMP `REDSTONE_LAMP_OFF` - 红石灯
+- `124`  REDSTONE_LAMP `REDSTONE_LAMP_ON` - 空气
+- `125`  OAK_SLAB `WOOD_DOUBLE_STEP` - 空气
+- `126`  OAK_SLAB `WOOD_STEP` - 橡木台阶
+    - `126:0`  OAK_SLAB - 橡木台阶
+    - `126:1`  SPRUCE_SLAB - 云杉木台阶
+    - `126:2`  BIRCH_SLAB - 桦木台阶
+    - `126:3`  JUNGLE_SLAB - 丛林木台阶
+    - `126:4`  ACACIA_SLAB - 金合欢木台阶
+    - `126:5`  DARK_OAK_SLAB - 深色橡木台阶
+- `127`  COCOA - 空气
+- `128`  SANDSTONE_STAIRS - 砂岩楼梯
+- `129`  EMERALD_ORE - 绿宝石矿石
+- `130`  ENDER_CHEST - 末影箱
+- `131`  TRIPWIRE_HOOK - 绊线钩
+- `132`  TRIPWIRE - 空气
+- `133`  EMERALD_BLOCK - 绿宝石块
+- `134`  SPRUCE_STAIRS `SPRUCE_WOOD_STAIRS` - 云杉木楼梯
+- `135`  BIRCH_STAIRS `BIRCH_WOOD_STAIRS` - 桦木楼梯
+- `136`  JUNGLE_STAIRS `JUNGLE_WOOD_STAIRS` - 丛林木楼梯
+- `137`  COMMAND_BLOCK `COMMAND` - 命令方块
+- `138`  BEACON - 信标
+- `139`  COBBLESTONE_WALL `COBBLE_WALL` - 圆石墙
+    - `139:0`  COBBLESTONE_WALL - 圆石墙
+    - `139:1`  MOSSY_COBBLESTONE_WALL - 苔石墙
+- `140`  FLOWER_POT - 空气
+- `141`  CARROT - 空气
+- `142`  POTATO - 空气
+- `143`  OAK_BUTTON `WOOD_BUTTON` - 按钮
+- `145`  ANVIL - 铁砧
+    - `145:0`  ANVIL - 铁砧
+    - `145:1`  CHIPPED_ANVIL - 轻微损坏的铁砧
+    - `145:2`  DAMAGED_ANVIL - 严重损坏的铁砧
+- `146`  TRAPPED_CHEST - 陷阱箱
+- `147`  LIGHT_WEIGHTED_PRESSURE_PLATE `GOLD_PLATE` - 测重压力板（轻质）
+- `148`  HEAVY_WEIGHTED_PRESSURE_PLATE `IRON_PLATE` - 测重压力板（重质）
+- `149`  COMPARATOR `REDSTONE_COMPARATOR_OFF` - 空气
+- `150`  COMPARATOR `REDSTONE_COMPARATOR_ON` - 空气
+- `151`  DAYLIGHT_DETECTOR - 阳光传感器
+- `152`  REDSTONE_BLOCK - 红石块
+- `153`  NETHER_QUARTZ_ORE `QUARTZ_ORE` - 下界石英矿石
+- `154`  HOPPER - 漏斗
+- `155`  QUARTZ_BLOCK - 石英块
+    - `155:0`  QUARTZ_BLOCK - 石英块
+    - `155:1`  CHISELED_QUARTZ_BLOCK - 錾制石英块
+    - `155:2`  QUARTZ_PILLAR - 竖纹石英块
+- `156`  QUARTZ_STAIRS - 石英楼梯
+- `157`  ACTIVATOR_RAIL - 激活铁轨
+- `158`  DROPPER - 投掷器
+- `159`  WHITE_TERRACOTTA `STAINED_CLAY` - 白色陶瓦
+- `160`  WHITE_STAINED_GLASS_PANE `STAINED_GLASS_PANE` - 白色染色玻璃板
+    - `160:0`  WHITE_STAINED_GLASS_PANE - 白色染色玻璃板
+    - `160:1`  ORANGE_STAINED_GLASS_PANE - 橙色染色玻璃板
+    - `160:2`  MAGENTA_STAINED_GLASS_PANE - 品红色染色玻璃板
+    - `160:3`  LIGHT_BLUE_STAINED_GLASS_PANE - 淡蓝色染色玻璃板
+    - `160:4`  YELLOW_STAINED_GLASS_PANE - 黄色染色玻璃板
+    - `160:5`  LIME_STAINED_GLASS_PANE - 黄绿色染色玻璃板
+    - `160:6`  PINK_STAINED_GLASS_PANE - 粉红色染色玻璃板
+    - `160:7`  GRAY_STAINED_GLASS_PANE - 灰色染色玻璃板
+    - `160:8`  LIGHT_GRAY_STAINED_GLASS_PANE - 淡灰色染色玻璃板
+    - `160:9`  CYAN_STAINED_GLASS_PANE - 青色染色玻璃板
+    - `160:10`  PURPLE_STAINED_GLASS_PANE - 紫色染色玻璃板
+    - `160:11`  BLUE_STAINED_GLASS_PANE - 蓝色染色玻璃板
+    - `160:12`  BROWN_STAINED_GLASS_PANE - 棕色染色玻璃板
+    - `160:13`  GREEN_STAINED_GLASS_PANE - 绿色染色玻璃板
+    - `160:14`  RED_STAINED_GLASS_PANE - 红色染色玻璃板
+    - `160:15`  BLACK_STAINED_GLASS_PANE - 黑色染色玻璃板
+- `161`  ACACIA_LEAVES `LEAVES_2` - 金合欢树叶
+    - `161:0`  ACACIA_LEAVES - 金合欢树叶
+    - `161:1`  DARK_OAK_LEAVES - 深色橡树树叶
+- `162`  ACACIA_LOG `LOG_2` - 金合欢木
+    - `162:0`  ACACIA_LOG - 金合欢木
+    - `162:1`  DARK_OAK_LOG - 深色橡木
+- `163`  ACACIA_STAIRS - 金合欢木楼梯
+- `164`  DARK_OAK_STAIRS - 深色橡木楼梯
+- `165`  SLIME_BLOCK - 粘液块
+- `166`  BARRIER - 屏障
+- `167`  IRON_TRAPDOOR - 铁活板门
+- `168`  PRISMARINE - 海晶石
+    - `168:0`  PRISMARINE - 海晶石
+    - `168:1`  PRISMARINE_BRICKS - 海晶石砖
+    - `168:2`  DARK_PRISMARINE - 暗海晶石
+- `169`  SEA_LANTERN - 海晶灯
+- `170`  HAY_BLOCK - 干草块
+- `171`  WHITE_CARPET `CARPET` - 白色地毯
+    - `171:0`  WHITE_CARPET - 白色地毯
+    - `171:1`  ORANGE_CARPET - 橙色地毯
+    - `171:2`  MAGENTA_CARPET - 品红色地毯
+    - `171:3`  LIGHT_BLUE_CARPET - 淡蓝色地毯
+    - `171:4`  YELLOW_CARPET - 黄色地毯
+    - `171:5`  LIME_CARPET - 黄绿色地毯
+    - `171:6`  PINK_CARPET - 粉红色地毯
+    - `171:7`  GRAY_CARPET - 灰色地毯
+    - `171:8`  LIGHT_GRAY_CARPET - 淡灰色地毯
+    - `171:9`  CYAN_CARPET - 青色地毯
+    - `171:10`  PURPLE_CARPET - 紫色地毯
+    - `171:11`  BLUE_CARPET - 蓝色地毯
+    - `171:12`  BROWN_CARPET - 棕色地毯
+    - `171:13`  GREEN_CARPET - 绿色地毯
+    - `171:14`  RED_CARPET - 红色地毯
+    - `171:15`  BLACK_CARPET - 黑色地毯
+- `172`  TERRACOTTA `HARD_CLAY` - 陶瓦
+- `173`  COAL_BLOCK - 煤炭块
+- `174`  PACKED_ICE - 浮冰
+- `175`  SUNFLOWER `DOUBLE_PLANT` - 向日葵
+    - `175:0`  SUNFLOWER - 向日葵
+    - `175:1`  LILAC - 丁香
+    - `175:2`  TALL_GRASS - 高草丛
+    - `175:3`  LARGE_FERN - 大型蕨
+    - `175:4`  ROSE_BUSH - 玫瑰丛
+    - `175:5`  PEONY - 牡丹
+- `176`  WHITE_BANNER `STANDING_BANNER` - 空气
+- `177`  WHITE_WALL_BANNER `WALL_BANNER` - 空气
+- `178`  DAYLIGHT_DETECTOR `DAYLIGHT_DETECTOR_INVERTED` - 空气
+- `179`  RED_SANDSTONE - 红砂岩
+    - `179:0`  RED_SANDSTONE - 红砂岩
+    - `179:1`  CHISELED_RED_SANDSTONE - 錾制红砂岩
+    - `179:2`  CUT_RED_SANDSTONE - 平滑红砂岩
+- `180`  RED_SANDSTONE_STAIRS - 红砂岩楼梯
+- `181`  RED_SANDSTONE_SLAB `DOUBLE_STONE_SLAB2` - 空气
+- `182`  RED_SANDSTONE_SLAB `STONE_SLAB2` - 红砂岩台阶
+- `183`  SPRUCE_FENCE_GATE - 云杉木栅栏门
+- `184`  BIRCH_FENCE_GATE - 白桦木栅栏门
+- `185`  JUNGLE_FENCE_GATE - 丛林木栅栏门
+- `186`  DARK_OAK_FENCE_GATE - 深色橡木栅栏门
+- `187`  ACACIA_FENCE_GATE - 金合欢栅栏门
+- `188`  SPRUCE_FENCE - 云杉木栅栏
+- `189`  BIRCH_FENCE - 白桦木栅栏
+- `190`  JUNGLE_FENCE - 丛林木栅栏
+- `191`  DARK_OAK_FENCE - 深色橡木栅栏
+- `192`  ACACIA_FENCE - 金合欢栅栏
+- `193`  SPRUCE_DOOR - 空气
+- `194`  BIRCH_DOOR - 空气
+- `195`  JUNGLE_DOOR - 空气
+- `196`  ACACIA_DOOR - 空气
+- `197`  DARK_OAK_DOOR - 空气
+- `198`  END_ROD - 末地烛
+- `199`  CHORUS_PLANT - 紫颂植物
+- `200`  CHORUS_FLOWER - 紫颂花
+- `201`  PURPUR_BLOCK - 紫珀块
+- `202`  PURPUR_PILLAR - 竖纹紫珀块
+- `203`  PURPUR_STAIRS - 紫珀楼梯
+- `204`  PURPUR_SLAB `PURPUR_DOUBLE_SLAB` - 空气
+- `205`  PURPUR_SLAB - 紫珀台阶
+- `206`  END_STONE_BRICKS `END_BRICKS` - 末地石砖
+- `207`  BEETROOTS `BEETROOT_BLOCK` - 空气
+- `208`  DIRT_PATH `GRASS_PATH` - 草径
+- `209`  END_GATEWAY - 空气
+- `210`  REPEATING_COMMAND_BLOCK `COMMAND_REPEATING` - 循环型命令方块
+- `211`  CHAIN_COMMAND_BLOCK `COMMAND_CHAIN` - 连锁型命令方块
+- `212`  FROSTED_ICE - 空气
+- `213`  MAGMA_BLOCK `MAGMA` - 岩浆块
+- `214`  NETHER_WART_BLOCK - 地狱疣块
+- `215`  RED_NETHER_BRICKS `RED_NETHER_BRICK` - 红色地狱砖
+- `216`  BONE_BLOCK - 骨块
+- `217`  STRUCTURE_VOID - 结构空位
+- `218`  OBSERVER - 侦测器
+- `219`  WHITE_SHULKER_BOX - 白色潜影盒
+- `220`  ORANGE_SHULKER_BOX - 橙色潜影盒
+- `221`  MAGENTA_SHULKER_BOX - 品红色潜影盒
+- `222`  LIGHT_BLUE_SHULKER_BOX - 淡蓝色潜影盒
+- `223`  YELLOW_SHULKER_BOX - 黄色潜影盒
+- `224`  LIME_SHULKER_BOX - 黄绿色潜影盒
+- `225`  PINK_SHULKER_BOX - 粉红色潜影盒
+- `226`  GRAY_SHULKER_BOX - 灰色潜影盒
+- `227`  LIGHT_GRAY_SHULKER_BOX `SILVER_SHULKER_BOX` - 淡灰色潜影盒
+- `228`  CYAN_SHULKER_BOX - 青色潜影盒
+- `229`  PURPLE_SHULKER_BOX - 紫色潜影盒
+- `230`  BLUE_SHULKER_BOX - 蓝色潜影盒
+- `231`  BROWN_SHULKER_BOX - 棕色潜影盒
+- `232`  GREEN_SHULKER_BOX - 绿色潜影盒
+- `233`  RED_SHULKER_BOX - 红色潜影盒
+- `234`  BLACK_SHULKER_BOX - 黑色潜影盒
+- `235`  WHITE_GLAZED_TERRACOTTA - 白色带釉陶瓦
+- `236`  ORANGE_GLAZED_TERRACOTTA - 橙色带釉陶瓦
+- `237`  MAGENTA_GLAZED_TERRACOTTA - 品红色带釉陶瓦
+- `238`  LIGHT_BLUE_GLAZED_TERRACOTTA - 淡蓝色带釉陶瓦
+- `239`  YELLOW_GLAZED_TERRACOTTA - 黄色带釉陶瓦
+- `240`  LIME_GLAZED_TERRACOTTA - 黄绿色带釉陶瓦
+- `241`  PINK_GLAZED_TERRACOTTA - 粉红色带釉陶瓦
+- `242`  GRAY_GLAZED_TERRACOTTA - 灰色带釉陶瓦
+- `243`  LIGHT_GRAY_GLAZED_TERRACOTTA `SILVER_GLAZED_TERRACOTTA` - 淡灰色带釉陶瓦
+- `244`  CYAN_GLAZED_TERRACOTTA - 青色带釉陶瓦
+- `245`  PURPLE_GLAZED_TERRACOTTA - 紫色带釉陶瓦
+- `246`  BLUE_GLAZED_TERRACOTTA - 蓝色带釉陶瓦
+- `247`  BROWN_GLAZED_TERRACOTTA - 棕色带釉陶瓦
+- `248`  GREEN_GLAZED_TERRACOTTA - 绿色带釉陶瓦
+- `249`  RED_GLAZED_TERRACOTTA - 红色带釉陶瓦
+- `250`  BLACK_GLAZED_TERRACOTTA - 黑色带釉陶瓦
+- `251`  WHITE_CONCRETE `CONCRETE` - 白色混凝土
+    - `251:0`  WHITE_CONCRETE - 白色混凝土
+    - `251:1`  ORANGE_CONCRETE - 橙色混凝土
+    - `251:2`  MAGENTA_CONCRETE - 品红色混凝土
+    - `251:3`  LIGHT_BLUE_CONCRETE - 淡蓝色混凝土
+    - `251:4`  YELLOW_CONCRETE - 黄色混凝土
+    - `251:5`  LIME_CONCRETE - 黄绿色混凝土
+    - `251:6`  PINK_CONCRETE - 粉红色混凝土
+    - `251:7`  GRAY_CONCRETE - 灰色混凝土
+    - `251:8`  LIGHT_GRAY_CONCRETE - 淡灰色混凝土
+    - `251:9`  CYAN_CONCRETE - 青色混凝土
+    - `251:10`  PURPLE_CONCRETE - 紫色混凝土
+    - `251:11`  BLUE_CONCRETE - 蓝色混凝土
+    - `251:12`  BROWN_CONCRETE - 棕色混凝土
+    - `251:13`  GREEN_CONCRETE - 绿色混凝土
+    - `251:14`  RED_CONCRETE - 红色混凝土
+    - `251:15`  BLACK_CONCRETE - 黑色混凝土
+- `252`  WHITE_CONCRETE_POWDER `CONCRETE_POWDER` - 白色混凝土粉末
+    - `252:0`  WHITE_CONCRETE_POWDER - 白色混凝土粉末
+    - `252:1`  ORANGE_CONCRETE_POWDER - 橙色混凝土粉末
+    - `252:2`  MAGENTA_CONCRETE_POWDER - 品红色混凝土粉末
+    - `252:3`  LIGHT_BLUE_CONCRETE_POWDER - 淡蓝色混凝土粉末
+    - `252:4`  YELLOW_CONCRETE_POWDER - 黄色混凝土粉末
+    - `252:5`  LIME_CONCRETE_POWDER - 黄绿色混凝土粉末
+    - `252:6`  PINK_CONCRETE_POWDER - 粉红色混凝土粉末
+    - `252:7`  GRAY_CONCRETE_POWDER - 灰色混凝土粉末
+    - `252:8`  LIGHT_GRAY_CONCRETE_POWDER - 淡灰色混凝土粉末
+    - `252:9`  CYAN_CONCRETE_POWDER - 青色混凝土粉末
+    - `252:10`  PURPLE_CONCRETE_POWDER - 紫色混凝土粉末
+    - `252:11`  BLUE_CONCRETE_POWDER - 蓝色混凝土粉末
+    - `252:12`  BROWN_CONCRETE_POWDER - 棕色混凝土粉末
+    - `252:13`  GREEN_CONCRETE_POWDER - 绿色混凝土粉末
+    - `252:14`  RED_CONCRETE_POWDER - 红色混凝土粉末
+    - `252:15`  BLACK_CONCRETE_POWDER - 黑色混凝土粉末
+- `255`  STRUCTURE_BLOCK - 结构方块
+- `256`  IRON_SHOVEL `IRON_SPADE` - 铁锹
+- `257`  IRON_PICKAXE - 铁镐
+- `258`  IRON_AXE - 铁斧
+- `259`  FLINT_AND_STEEL - 打火石
+- `260`  APPLE - 苹果
+- `261`  BOW - 弓
+- `262`  ARROW - 箭
+- `263`  COAL - 煤炭
+    - `263:0`  COAL - 煤炭
+    - `263:1`  CHARCOAL - 木炭
+- `264`  DIAMOND - 钻石
+- `265`  IRON_INGOT - 铁锭
+- `266`  GOLD_INGOT - 金锭
+- `267`  IRON_SWORD - 铁剑
+- `268`  WOODEN_SWORD `WOOD_SWORD` - 木剑
+- `269`  WOODEN_SHOVEL `WOOD_SPADE` - 木锹
+- `270`  WOODEN_PICKAXE `WOOD_PICKAXE` - 木镐
+- `271`  WOODEN_AXE `WOOD_AXE` - 木斧
+- `272`  STONE_SWORD - 石剑
+- `273`  STONE_SHOVEL `STONE_SPADE` - 石锹
+- `274`  STONE_PICKAXE - 石镐
+- `275`  STONE_AXE - 石斧
+- `276`  DIAMOND_SWORD - 钻石剑
+- `277`  DIAMOND_SHOVEL `DIAMOND_SPADE` - 钻石锹
+- `278`  DIAMOND_PICKAXE - 钻石镐
+- `279`  DIAMOND_AXE - 钻石斧
+- `280`  STICK - 木棍
+- `281`  BOWL - 碗
+- `282`  MUSHROOM_STEW `MUSHROOM_SOUP` - 蘑菇煲
+- `283`  GOLDEN_SWORD `GOLD_SWORD` - 金剑
+- `284`  GOLDEN_SHOVEL `GOLD_SPADE` - 金锹
+- `285`  GOLDEN_PICKAXE `GOLD_PICKAXE` - 金镐
+- `286`  GOLDEN_AXE `GOLD_AXE` - 金斧
+- `287`  STRING - 线
+- `288`  FEATHER - 羽毛
+- `289`  GUNPOWDER `SULPHUR` - 火药
+- `290`  WOODEN_HOE `WOOD_HOE` - 木锄
+- `291`  STONE_HOE - 石锄
+- `292`  IRON_HOE - 铁锄
+- `293`  DIAMOND_HOE - 钻石锄
+- `294`  GOLDEN_HOE `GOLD_HOE` - 金锄
+- `295`  WHEAT_SEEDS `SEEDS` - 小麦种子
+- `296`  WHEAT - 小麦
+- `297`  BREAD - 面包
+- `298`  LEATHER_HELMET - 皮革帽子
+- `299`  LEATHER_CHESTPLATE - 皮革外套
+- `300`  LEATHER_LEGGINGS - 皮革裤子
+- `301`  LEATHER_BOOTS - 皮革靴子
+- `302`  CHAINMAIL_HELMET - 锁链头盔
+- `303`  CHAINMAIL_CHESTPLATE - 锁链胸甲
+- `304`  CHAINMAIL_LEGGINGS - 锁链护腿
+- `305`  CHAINMAIL_BOOTS - 锁链靴子
+- `306`  IRON_HELMET - 铁头盔
+- `307`  IRON_CHESTPLATE - 铁胸甲
+- `308`  IRON_LEGGINGS - 铁护腿
+- `309`  IRON_BOOTS - 铁靴子
+- `310`  DIAMOND_HELMET - 钻石头盔
+- `311`  DIAMOND_CHESTPLATE - 钻石胸甲
+- `312`  DIAMOND_LEGGINGS - 钻石护腿
+- `313`  DIAMOND_BOOTS - 钻石靴子
+- `314`  GOLDEN_HELMET `GOLD_HELMET` - 金头盔
+- `315`  GOLDEN_CHESTPLATE `GOLD_CHESTPLATE` - 金胸甲
+- `316`  GOLDEN_LEGGINGS `GOLD_LEGGINGS` - 金护腿
+- `317`  GOLDEN_BOOTS `GOLD_BOOTS` - 金靴子
+- `318`  FLINT - 燧石
+- `319`  PORKCHOP `PORK` - 生猪排
+- `320`  COOKED_PORKCHOP `GRILLED_PORK` - 熟猪排
+- `321`  PAINTING - 画
+- `322`  GOLDEN_APPLE - 金苹果
+    - `322:0`  GOLDEN_APPLE - 金苹果
+    - `322:1`  ENCHANTED_GOLDEN_APPLE - 金苹果
+- `323`  OAK_SIGN `SIGN` - 告示牌
+- `324`  OAK_DOOR `WOOD_DOOR` - 橡木门
+- `325`  BUCKET - 桶
+- `326`  WATER_BUCKET - 水桶
+- `327`  LAVA_BUCKET - 熔岩桶
+- `328`  MINECART - 矿车
+- `329`  SADDLE - 鞍
+- `330`  IRON_DOOR - 铁门
+- `331`  REDSTONE - 红石
+- `332`  SNOWBALL `SNOW_BALL` - 雪球
+- `333`  OAK_BOAT `BOAT` - 橡木船
+- `334`  LEATHER - 皮革
+- `335`  MILK_BUCKET - 牛奶
+- `336`  BRICK `CLAY_BRICK` - 红砖
+- `337`  CLAY_BALL - 粘土
+- `338`  SUGAR_CANE - 甘蔗
+- `339`  PAPER - 纸
+- `340`  BOOK - 书
+- `341`  SLIME_BALL - 粘液球
+- `342`  CHEST_MINECART `STORAGE_MINECART` - 运输矿车
+- `343`  FURNACE_MINECART `POWERED_MINECART` - 动力矿车
+- `344`  EGG - 鸡蛋
+- `345`  COMPASS - 指南针
+- `346`  FISHING_ROD - 钓鱼竿
+- `347`  CLOCK `WATCH` - 钟
+- `348`  GLOWSTONE_DUST - 荧石粉
+- `349`  COD `RAW_FISH` - 生鱼
+    - `349:0`  COD - 生鱼
+    - `349:1`  SALMON - 生鲑鱼
+    - `349:2`  TROPICAL_FISH - 小丑鱼
+    - `349:3`  PUFFERFISH - 河豚
+- `350`  COOKED_COD `COOKED_FISH` - 熟鱼
+    - `350:0`  COOKED_COD - 熟鱼
+    - `350:1`  COOKED_SALMON - 熟鲑鱼
+- `351`  INK_SAC `INK_SACK` - 墨囊
+    - `351:0`  INK_SAC - 墨囊
+    - `351:1`  RED_DYE - 玫瑰红
+    - `351:2`  GREEN_DYE - 仙人掌绿
+    - `351:3`  COCOA_BEANS - 可可豆
+    - `351:4`  LAPIS_LAZULI - 青金石
+    - `351:5`  PURPLE_DYE - 紫色染料
+    - `351:6`  CYAN_DYE - 青色染料
+    - `351:7`  LIGHT_GRAY_DYE - 淡灰色染料
+    - `351:8`  GRAY_DYE - 灰色染料
+    - `351:9`  PINK_DYE - 粉红色染料
+    - `351:10`  LIME_DYE - 黄绿色染料
+    - `351:11`  YELLOW_DYE - 蒲公英黄
+    - `351:12`  LIGHT_BLUE_DYE - 淡蓝色染料
+    - `351:13`  MAGENTA_DYE - 品红色染料
+    - `351:14`  ORANGE_DYE - 橙色染料
+    - `351:15`  BONE_MEAL - 骨粉
+- `352`  BONE - 骨头
+- `353`  SUGAR - 糖
+- `354`  CAKE - 蛋糕
+- `355`  WHITE_BED `BED` - 白色床
+    - `355:0`  WHITE_BED - 白色床
+    - `355:1`  ORANGE_BED - 橙色床
+    - `355:2`  MAGENTA_BED - 品红色床
+    - `355:3`  LIGHT_BLUE_BED - 淡蓝色床
+    - `355:4`  YELLOW_BED - 黄色床
+    - `355:5`  LIME_BED - 黄绿色床
+    - `355:6`  PINK_BED - 粉红色床
+    - `355:7`  GRAY_BED - 灰色床
+    - `355:8`  LIGHT_GRAY_BED - 淡灰色床
+    - `355:9`  CYAN_BED - 青色床
+    - `355:10`  PURPLE_BED - 紫色床
+    - `355:11`  BLUE_BED - 蓝色床
+    - `355:12`  BROWN_BED - 棕色床
+    - `355:13`  GREEN_BED - 绿色床
+    - `355:14`  RED_BED - 红色床
+    - `355:15`  BLACK_BED - 黑色床
+- `356`  REPEATER `DIODE` - 红石中继器
+- `357`  COOKIE - 曲奇
+- `358`  MAP - 地图
+- `359`  SHEARS - 剪刀
+- `360`  MELON - 西瓜
+- `361`  PUMPKIN_SEEDS - 南瓜种子
+- `362`  MELON_SEEDS - 西瓜种子
+- `363`  BEEF `RAW_BEEF` - 生牛肉
+- `364`  COOKED_BEEF - 牛排
+- `365`  CHICKEN `RAW_CHICKEN` - 生鸡肉
+- `366`  COOKED_CHICKEN - 熟鸡肉
+- `367`  ROTTEN_FLESH - 腐肉
+- `368`  ENDER_PEARL - 末影珍珠
+- `369`  BLAZE_ROD - 烈焰棒
+- `370`  GHAST_TEAR - 恶魂之泪
+- `371`  GOLD_NUGGET - 金粒
+- `372`  NETHER_WART `NETHER_STALK` - 地狱疣
+- `373`  POTION - 药水
+- `374`  GLASS_BOTTLE - 玻璃瓶
+- `375`  SPIDER_EYE - 蜘蛛眼
+- `376`  FERMENTED_SPIDER_EYE - 发酵蛛眼
+- `377`  BLAZE_POWDER - 烈焰粉
+- `378`  MAGMA_CREAM - 岩浆膏
+- `379`  BREWING_STAND `BREWING_STAND_ITEM` - 酿造台
+- `380`  CAULDRON `CAULDRON_ITEM` - 炼药锅
+- `381`  ENDER_EYE `EYE_OF_ENDER` - 末影之眼
+- `382`  GLISTERING_MELON_SLICE `SPECKLED_MELON` - 闪烁的西瓜
+- `383`  INFESTED_STONE `MONSTER_EGG` - 生成
+    - `383:0`  INFESTED_STONE - 生成
+    - `383:1`  INFESTED_COBBLESTONE - 生成
+    - `383:2`  INFESTED_STONE_BRICKS - 生成
+    - `383:3`  INFESTED_MOSSY_STONE_BRICKS - 生成
+    - `383:4`  INFESTED_CRACKED_STONE_BRICKS - 生成
+    - `383:5`  INFESTED_CHISELED_STONE_BRICKS - 生成
+- `384`  EXPERIENCE_BOTTLE `EXP_BOTTLE` - 附魔之瓶
+- `385`  FIRE_CHARGE `FIREBALL` - 火焰弹
+- `386`  WRITABLE_BOOK `BOOK_AND_QUILL` - 书与笔
+- `387`  WRITTEN_BOOK - 成书
+- `388`  EMERALD - 绿宝石
+- `389`  ITEM_FRAME - 物品展示框
+- `390`  FLOWER_POT `FLOWER_POT_ITEM` - 花盆
+- `391`  CARROT `CARROT_ITEM` - 胡萝卜
+- `392`  POTATO `POTATO_ITEM` - 马铃薯
+- `393`  BAKED_POTATO - 烤马铃薯
+- `394`  POISONOUS_POTATO - 毒马铃薯
+- `395`  MAP `EMPTY_MAP` - 空地图
+- `396`  GOLDEN_CARROT - 金胡萝卜
+- `397`  SKELETON_SKULL `SKULL_ITEM` - 骷髅头颅
+    - `397:0`  SKELETON_SKULL - 骷髅头颅
+    - `397:1`  WITHER_SKELETON_SKULL - 凋灵骷髅头颅
+    - `397:2`  ZOMBIE_HEAD - 僵尸的头
+    - `397:3`  PLAYER_HEAD - 头
+    - `397:4`  CREEPER_HEAD - 爬行者的头
+    - `397:5`  DRAGON_HEAD - 龙首
+- `398`  CARROT_ON_A_STICK `CARROT_STICK` - 胡萝卜钓竿
+- `399`  NETHER_STAR - 下界之星
+- `400`  PUMPKIN_PIE - 南瓜派
+- `401`  FIREWORK_ROCKET `FIREWORK` - 烟花火箭
+- `402`  FIREWORK_STAR `FIREWORK_CHARGE` - 烟火之星
+- `403`  ENCHANTED_BOOK - 附魔书
+- `404`  COMPARATOR `REDSTONE_COMPARATOR` - 红石比较器
+- `405`  NETHER_BRICK `NETHER_BRICK_ITEM` - 地狱砖块
+- `406`  QUARTZ - 下界石英
+- `407`  TNT_MINECART `EXPLOSIVE_MINECART` - TNT矿车
+- `408`  HOPPER_MINECART - 漏斗矿车
+- `409`  PRISMARINE_SHARD - 海晶碎片
+- `410`  PRISMARINE_CRYSTALS - 海晶砂粒
+- `411`  RABBIT - 生兔肉
+- `412`  COOKED_RABBIT - 熟兔肉
+- `413`  RABBIT_STEW - 兔肉煲
+- `414`  RABBIT_FOOT - 兔子脚
+- `415`  RABBIT_HIDE - 兔子皮
+- `416`  ARMOR_STAND - 盔甲架
+- `417`  IRON_HORSE_ARMOR `IRON_BARDING` - 铁马铠
+- `418`  GOLDEN_HORSE_ARMOR `GOLD_BARDING` - 金马铠
+- `419`  DIAMOND_HORSE_ARMOR `DIAMOND_BARDING` - 钻石马铠
+- `420`  LEAD `LEASH` - 拴绳
+- `421`  NAME_TAG - 命名牌
+- `422`  COMMAND_BLOCK_MINECART `COMMAND_MINECART` - 命令方块矿车
+- `423`  MUTTON - 生羊肉
+- `424`  COOKED_MUTTON - 熟羊肉
+- `425`  BLACK_BANNER `BANNER` - 黑色旗帜
+    - `425:0`  BLACK_BANNER - 黑色旗帜
+    - `425:1`  RED_BANNER - 红色旗帜
+    - `425:2`  GREEN_BANNER - 绿色旗帜
+    - `425:3`  BROWN_BANNER - 棕色旗帜
+    - `425:4`  BLUE_BANNER - 蓝色旗帜
+    - `425:5`  PURPLE_BANNER - 紫色旗帜
+    - `425:6`  CYAN_BANNER - 青色旗帜
+    - `425:7`  LIGHT_GRAY_BANNER - 淡灰色旗帜
+    - `425:8`  GRAY_BANNER - 灰色旗帜
+    - `425:9`  PINK_BANNER - 粉红色旗帜
+    - `425:10`  LIME_BANNER - 黄绿色旗帜
+    - `425:11`  YELLOW_BANNER - 黄色旗帜
+    - `425:12`  LIGHT_BLUE_BANNER - 淡蓝色旗帜
+    - `425:13`  MAGENTA_BANNER - 品红色旗帜
+    - `425:14`  ORANGE_BANNER - 橙色旗帜
+    - `425:15`  WHITE_BANNER - 白色旗帜
+- `426`  END_CRYSTAL - 末影水晶
+- `427`  SPRUCE_DOOR `SPRUCE_DOOR_ITEM` - 云杉木门
+- `428`  BIRCH_DOOR `BIRCH_DOOR_ITEM` - 白桦木门
+- `429`  JUNGLE_DOOR `JUNGLE_DOOR_ITEM` - 丛林木门
+- `430`  ACACIA_DOOR `ACACIA_DOOR_ITEM` - 金合欢木门
+- `431`  DARK_OAK_DOOR `DARK_OAK_DOOR_ITEM` - 深色橡木门
+- `432`  CHORUS_FRUIT - 紫颂果
+- `433`  POPPED_CHORUS_FRUIT `CHORUS_FRUIT_POPPED` - 爆裂紫颂果
+- `434`  BEETROOT - 甜菜根
+- `435`  BEETROOT_SEEDS - 甜菜种子
+- `436`  BEETROOT_SOUP - 甜菜汤
+- `437`  DRAGON_BREATH `DRAGONS_BREATH` - 龙息
+- `438`  SPLASH_POTION - 喷溅药水
+- `439`  SPECTRAL_ARROW - 光灵箭
+- `440`  TIPPED_ARROW - 药箭
+- `441`  LINGERING_POTION - 滞留药水
+- `442`  SHIELD - 盾牌
+- `443`  ELYTRA - 鞘翅
+- `444`  SPRUCE_BOAT `BOAT_SPRUCE` - 云杉木船
+- `445`  BIRCH_BOAT `BOAT_BIRCH` - 白桦木船
+- `446`  JUNGLE_BOAT `BOAT_JUNGLE` - 丛林木船
+- `447`  ACACIA_BOAT `BOAT_ACACIA` - 金合欢木船
+- `448`  DARK_OAK_BOAT `BOAT_DARK_OAK` - 深色橡木船
+- `449`  TOTEM_OF_UNDYING `TOTEM` - 不死图腾
+- `450`  SHULKER_SHELL - 潜影壳
+- `452`  IRON_NUGGET - 铁粒
+- `453`  KNOWLEDGE_BOOK - 知识之书
+- `2256`  MUSIC_DISC_13 `GOLD_RECORD` - 音乐唱片
+- `2257`  MUSIC_DISC_CAT `GREEN_RECORD` - 音乐唱片
+- `2258`  MUSIC_DISC_BLOCKS `RECORD_3` - 音乐唱片
+- `2259`  MUSIC_DISC_CHIRP `RECORD_4` - 音乐唱片
+- `2260`  MUSIC_DISC_FAR `RECORD_5` - 音乐唱片
+- `2261`  MUSIC_DISC_MALL `RECORD_6` - 音乐唱片
+- `2262`  MUSIC_DISC_MELLOHI `RECORD_7` - 音乐唱片
+- `2263`  MUSIC_DISC_STAL `RECORD_8` - 音乐唱片
+- `2264`  MUSIC_DISC_STRAD `RECORD_9` - 音乐唱片
+- `2265`  MUSIC_DISC_WARD `RECORD_10` - 音乐唱片
+- `2266`  MUSIC_DISC_11 `RECORD_11` - 音乐唱片
+- `2267`  MUSIC_DISC_WAIT `RECORD_12` - 音乐唱片

@@ -72,7 +72,7 @@ dependencies {
     compileOnly 'io.lumine:Mythic-Dist:5.2.1'
 
     testImplementation baseProject
-    testImplementation 'org.bukkit:craftbukkit:1.12.1-R0.1-SNAPSHOT'
+    testImplementation 'org.spigotmc:spigot:1.12.2-R0.1-SNAPSHOT'
 //    testImplementation 'org.spigotmc:spigot-api:1.21.1-R0.1-SNAPSHOT'
 //    testImplementation 'org.bukkit:craftbukkit:1.21.1-R0.1-SNAPSHOT'
     testImplementation 'commons-lang:commons-lang:2.6'
@@ -80,9 +80,6 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok:1.18.34'
     testAnnotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.34'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
-    if (!System.env.JITPACK) {
-        testImplementation project("Module-NMS:V1_17_R1")
-    }
 }
 
 jar.archiveClassifier = "core"
