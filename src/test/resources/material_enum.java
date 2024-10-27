@@ -51,10 +51,6 @@ public enum ReMaterial {
 	DARK_OAK_SAPLING("SAPLING", "6:5"),
 	/** 基岩 **/
 	BEDROCK(null, "7"),
-	/** 空气 **/
-	WATER(null, "8", "9"),
-	/** 空气 **/
-	LAVA(null, "10", "11"),
 	/** 沙子 **/
 	SAND(null, "12", "12:0"),
 	/** 红沙 **/
@@ -103,8 +99,6 @@ public enum ReMaterial {
 	CUT_SANDSTONE("SANDSTONE", "24:2"),
 	/** 音符盒 **/
 	NOTE_BLOCK(null, "25"),
-	/** 红色床 **/
-	RED_BED("BED", "355:14", "26"),
 	/** 充能铁轨 **/
 	POWERED_RAIL(null, "27"),
 	/** 探测铁轨 **/
@@ -121,8 +115,6 @@ public enum ReMaterial {
 	DEAD_BUSH(null, "32"),
 	/** 活塞 **/
 	PISTON("PISTON_BASE", "33"),
-	/** 空气 **/
-	PISTON_HEAD("PISTON_EXTENSION", "34"),
 	/** 白色羊毛 **/
 	WHITE_WOOL("WOOL", "35", "35:0"),
 	/** 橙色羊毛 **/
@@ -155,8 +147,6 @@ public enum ReMaterial {
 	RED_WOOL("WOOL", "35:14"),
 	/** 黑色羊毛 **/
 	BLACK_WOOL("WOOL", "35:15"),
-	/** 空气 **/
-	MOVING_PISTON("PISTON_MOVING_PIECE", "36"),
 	/** 蒲公英 **/
 	DANDELION("YELLOW_FLOWER", "37"),
 	/** 虞美人 **/
@@ -186,7 +176,7 @@ public enum ReMaterial {
 	/** 铁块 **/
 	IRON_BLOCK(null, "42"),
 	/** 石台阶 **/
-	SMOOTH_STONE_SLAB("STEP", "44", "44:0", "43"),
+	SMOOTH_STONE_SLAB("STEP", "44", "44:0"),
 	/** 砂岩台阶 **/
 	SANDSTONE_SLAB("STEP", "44:1"),
 	/** 木台阶 **/
@@ -211,52 +201,38 @@ public enum ReMaterial {
 	OBSIDIAN(null, "49"),
 	/** 火把 **/
 	TORCH(null, "50"),
-	/** 空气 **/
-	FIRE(null, "51"),
 	/** 刷怪箱 **/
 	SPAWNER("MOB_SPAWNER", "52"),
 	/** 橡木楼梯 **/
 	OAK_STAIRS("WOOD_STAIRS", "53"),
 	/** 箱子 **/
 	CHEST(null, "54"),
-	/** 空气 **/
-	REDSTONE_WIRE(null, "55"),
 	/** 钻石矿石 **/
 	DIAMOND_ORE(null, "56"),
 	/** 钻石块 **/
 	DIAMOND_BLOCK(null, "57"),
 	/** 工作台 **/
 	CRAFTING_TABLE("WORKBENCH", "58"),
-	/** 小麦 **/
-	WHEAT(null, "296", "59"),
 	/** 耕地 **/
 	FARMLAND("SOIL", "60"),
 	/** 熔炉 **/
-	FURNACE(null, "61", "62"),
-	/** 空气 **/
-	OAK_SIGN("SIGN_POST", "63", "323"),
-	/** 空气 **/
-	OAK_DOOR("WOODEN_DOOR", "64", "324"),
+	FURNACE(null, "61"),
 	/** 梯子 **/
 	LADDER(null, "65"),
 	/** 铁轨 **/
 	RAIL("RAILS", "66"),
 	/** 圆石楼梯 **/
 	COBBLESTONE_STAIRS(null, "67"),
-	/** 空气 **/
-	OAK_WALL_SIGN("WALL_SIGN", "68"),
 	/** 拉杆 **/
 	LEVER(null, "69"),
 	/** 石质压力板 **/
 	STONE_PRESSURE_PLATE("STONE_PLATE", "70"),
-	/** 铁门 **/
-	IRON_DOOR(null, "330", "71"),
 	/** 木质压力板 **/
 	OAK_PRESSURE_PLATE("WOOD_PLATE", "72"),
 	/** 红石矿石 **/
-	REDSTONE_ORE(null, "73", "74"),
-	/** 空气 **/
-	REDSTONE_WALL_TORCH("REDSTONE_TORCH_OFF", "75", "76"),
+	REDSTONE_ORE(null, "73"),
+	/** 红石火把 **/
+	REDSTONE_WALL_TORCH("REDSTONE_TORCH_ON", "76"),
 	/** 按钮 **/
 	STONE_BUTTON(null, "77"),
 	/** 雪 **/
@@ -269,8 +245,6 @@ public enum ReMaterial {
 	CACTUS(null, "81"),
 	/** 粘土块 **/
 	CLAY(null, "82"),
-	/** 甘蔗 **/
-	SUGAR_CANE(null, "338", "83"),
 	/** 唱片机 **/
 	JUKEBOX(null, "84"),
 	/** 橡木栅栏 **/
@@ -283,14 +257,8 @@ public enum ReMaterial {
 	SOUL_SAND(null, "88"),
 	/** 荧石 **/
 	GLOWSTONE(null, "89"),
-	/** 空气 **/
-	NETHER_PORTAL("PORTAL", "90"),
 	/** 南瓜灯 **/
 	JACK_O_LANTERN(null, "91"),
-	/** 蛋糕 **/
-	CAKE(null, "354", "92"),
-	/** 空气 **/
-	REPEATER("DIODE_BLOCK_OFF", "93", "94", "356"),
 	/** 白色染色玻璃 **/
 	WHITE_STAINED_GLASS("STAINED_GLASS", "95", "95:0"),
 	/** 橙色染色玻璃 **/
@@ -339,10 +307,6 @@ public enum ReMaterial {
 	GLASS_PANE("THIN_GLASS", "102"),
 	/** 西瓜 **/
 	MELON(null, "360", "103"),
-	/** 空气 **/
-	PUMPKIN_STEM(null, "104"),
-	/** 空气 **/
-	MELON_STEM(null, "105"),
 	/** 藤蔓 **/
 	VINE(null, "106"),
 	/** 橡木栅栏门 **/
@@ -361,16 +325,8 @@ public enum ReMaterial {
 	NETHER_BRICK_FENCE("NETHER_FENCE", "113"),
 	/** 地狱砖楼梯 **/
 	NETHER_BRICK_STAIRS(null, "114"),
-	/** 空气 **/
-	NETHER_WART("NETHER_WARTS", "115", "372"),
 	/** 附魔台 **/
 	ENCHANTING_TABLE("ENCHANTMENT_TABLE", "116"),
-	/** 空气 **/
-	BREWING_STAND(null, "117", "379"),
-	/** 空气 **/
-	CAULDRON(null, "118", "380"),
-	/** 空气 **/
-	END_PORTAL("ENDER_PORTAL", "119"),
 	/** 末地传送门 **/
 	END_PORTAL_FRAME("ENDER_PORTAL_FRAME", "120"),
 	/** 末地石 **/
@@ -378,9 +334,9 @@ public enum ReMaterial {
 	/** 龙蛋 **/
 	DRAGON_EGG(null, "122"),
 	/** 红石灯 **/
-	REDSTONE_LAMP("REDSTONE_LAMP_OFF", "123", "124"),
+	REDSTONE_LAMP("REDSTONE_LAMP_OFF", "123"),
 	/** 橡木台阶 **/
-	OAK_SLAB("WOOD_STEP", "126", "126:0", "125"),
+	OAK_SLAB("WOOD_STEP", "126", "126:0"),
 	/** 云杉木台阶 **/
 	SPRUCE_SLAB("WOOD_STEP", "126:1"),
 	/** 桦木台阶 **/
@@ -391,8 +347,6 @@ public enum ReMaterial {
 	ACACIA_SLAB("WOOD_STEP", "126:4"),
 	/** 深色橡木台阶 **/
 	DARK_OAK_SLAB("WOOD_STEP", "126:5"),
-	/** 空气 **/
-	COCOA(null, "127"),
 	/** 砂岩楼梯 **/
 	SANDSTONE_STAIRS(null, "128"),
 	/** 绿宝石矿石 **/
@@ -401,8 +355,6 @@ public enum ReMaterial {
 	ENDER_CHEST(null, "130"),
 	/** 绊线钩 **/
 	TRIPWIRE_HOOK(null, "131"),
-	/** 空气 **/
-	TRIPWIRE(null, "132"),
 	/** 绿宝石块 **/
 	EMERALD_BLOCK(null, "133"),
 	/** 云杉木楼梯 **/
@@ -419,12 +371,6 @@ public enum ReMaterial {
 	COBBLESTONE_WALL("COBBLE_WALL", "139", "139:0"),
 	/** 苔石墙 **/
 	MOSSY_COBBLESTONE_WALL("COBBLE_WALL", "139:1"),
-	/** 空气 **/
-	FLOWER_POT(null, "140", "390"),
-	/** 空气 **/
-	CARROT(null, "141", "391"),
-	/** 空气 **/
-	POTATO(null, "142", "392"),
 	/** 按钮 **/
 	OAK_BUTTON("WOOD_BUTTON", "143"),
 	/** 铁砧 **/
@@ -439,10 +385,8 @@ public enum ReMaterial {
 	LIGHT_WEIGHTED_PRESSURE_PLATE("GOLD_PLATE", "147"),
 	/** 测重压力板（重质） **/
 	HEAVY_WEIGHTED_PRESSURE_PLATE("IRON_PLATE", "148"),
-	/** 空气 **/
-	COMPARATOR("REDSTONE_COMPARATOR_OFF", "149", "150", "404"),
 	/** 阳光传感器 **/
-	DAYLIGHT_DETECTOR(null, "151", "178"),
+	DAYLIGHT_DETECTOR(null, "151"),
 	/** 红石块 **/
 	REDSTONE_BLOCK(null, "152"),
 	/** 下界石英矿石 **/
@@ -573,10 +517,6 @@ public enum ReMaterial {
 	ROSE_BUSH("DOUBLE_PLANT", "175:4"),
 	/** 牡丹 **/
 	PEONY("DOUBLE_PLANT", "175:5"),
-	/** 白色旗帜 **/
-	WHITE_BANNER("BANNER", "425:15", "176"),
-	/** 空气 **/
-	WHITE_WALL_BANNER("WALL_BANNER", "177"),
 	/** 红砂岩 **/
 	RED_SANDSTONE(null, "179", "179:0"),
 	/** 錾制红砂岩 **/
@@ -585,8 +525,8 @@ public enum ReMaterial {
 	CUT_RED_SANDSTONE("RED_SANDSTONE", "179:2"),
 	/** 红砂岩楼梯 **/
 	RED_SANDSTONE_STAIRS(null, "180"),
-	/** 空气 **/
-	RED_SANDSTONE_SLAB("DOUBLE_STONE_SLAB2", "181", "182"),
+	/** 红砂岩台阶 **/
+	RED_SANDSTONE_SLAB("STONE_SLAB2", "182"),
 	/** 云杉木栅栏门 **/
 	SPRUCE_FENCE_GATE(null, "183"),
 	/** 白桦木栅栏门 **/
@@ -607,16 +547,6 @@ public enum ReMaterial {
 	DARK_OAK_FENCE(null, "191"),
 	/** 金合欢栅栏 **/
 	ACACIA_FENCE(null, "192"),
-	/** 空气 **/
-	SPRUCE_DOOR(null, "193", "427"),
-	/** 空气 **/
-	BIRCH_DOOR(null, "194", "428"),
-	/** 空气 **/
-	JUNGLE_DOOR(null, "195", "429"),
-	/** 空气 **/
-	ACACIA_DOOR(null, "196", "430"),
-	/** 空气 **/
-	DARK_OAK_DOOR(null, "197", "431"),
 	/** 末地烛 **/
 	END_ROD(null, "198"),
 	/** 紫颂植物 **/
@@ -630,21 +560,15 @@ public enum ReMaterial {
 	/** 紫珀楼梯 **/
 	PURPUR_STAIRS(null, "203"),
 	/** 紫珀台阶 **/
-	PURPUR_SLAB(null, "205", "204"),
+	PURPUR_SLAB(null, "205"),
 	/** 末地石砖 **/
 	END_STONE_BRICKS("END_BRICKS", "206"),
-	/** 空气 **/
-	BEETROOTS("BEETROOT_BLOCK", "207"),
 	/** 草径 **/
 	DIRT_PATH("GRASS_PATH", "208"),
-	/** 空气 **/
-	END_GATEWAY(null, "209"),
 	/** 循环型命令方块 **/
 	REPEATING_COMMAND_BLOCK("COMMAND_REPEATING", "210"),
 	/** 连锁型命令方块 **/
 	CHAIN_COMMAND_BLOCK("COMMAND_CHAIN", "211"),
-	/** 空气 **/
-	FROSTED_ICE(null, "212"),
 	/** 岩浆块 **/
 	MAGMA_BLOCK("MAGMA", "213"),
 	/** 地狱疣块 **/
@@ -869,6 +793,8 @@ public enum ReMaterial {
 	GOLDEN_HOE("GOLD_HOE", "294"),
 	/** 小麦种子 **/
 	WHEAT_SEEDS("SEEDS", "295"),
+	/** 小麦 **/
+	WHEAT(null, "296"),
 	/** 面包 **/
 	BREAD(null, "297"),
 	/** 皮革帽子 **/
@@ -923,6 +849,10 @@ public enum ReMaterial {
 	GOLDEN_APPLE(null, "322", "322:0"),
 	/** 金苹果 **/
 	ENCHANTED_GOLDEN_APPLE("GOLDEN_APPLE", "322:1"),
+	/** 告示牌 **/
+	OAK_SIGN("SIGN", "323"),
+	/** 橡木门 **/
+	OAK_DOOR("WOOD_DOOR", "324"),
 	/** 桶 **/
 	BUCKET(null, "325"),
 	/** 水桶 **/
@@ -933,6 +863,8 @@ public enum ReMaterial {
 	MINECART(null, "328"),
 	/** 鞍 **/
 	SADDLE(null, "329"),
+	/** 铁门 **/
+	IRON_DOOR(null, "330"),
 	/** 红石 **/
 	REDSTONE(null, "331"),
 	/** 雪球 **/
@@ -945,6 +877,8 @@ public enum ReMaterial {
 	MILK_BUCKET(null, "335"),
 	/** 粘土 **/
 	CLAY_BALL(null, "337"),
+	/** 甘蔗 **/
+	SUGAR_CANE(null, "338"),
 	/** 纸 **/
 	PAPER(null, "339"),
 	/** 书 **/
@@ -1013,6 +947,8 @@ public enum ReMaterial {
 	BONE(null, "352"),
 	/** 糖 **/
 	SUGAR(null, "353"),
+	/** 蛋糕 **/
+	CAKE(null, "354"),
 	/** 白色床 **/
 	WHITE_BED("BED", "355", "355:0"),
 	/** 橙色床 **/
@@ -1041,8 +977,12 @@ public enum ReMaterial {
 	BROWN_BED("BED", "355:12"),
 	/** 绿色床 **/
 	GREEN_BED("BED", "355:13"),
+	/** 红色床 **/
+	RED_BED("BED", "355:14"),
 	/** 黑色床 **/
 	BLACK_BED("BED", "355:15"),
+	/** 红石中继器 **/
+	REPEATER("DIODE", "356"),
 	/** 曲奇 **/
 	COOKIE(null, "357"),
 	/** 地图 **/
@@ -1071,6 +1011,8 @@ public enum ReMaterial {
 	GHAST_TEAR(null, "370"),
 	/** 金粒 **/
 	GOLD_NUGGET(null, "371"),
+	/** 地狱疣 **/
+	NETHER_WART("NETHER_STALK", "372"),
 	/** 药水 **/
 	POTION(null, "373"),
 	/** 玻璃瓶 **/
@@ -1083,6 +1025,10 @@ public enum ReMaterial {
 	BLAZE_POWDER(null, "377"),
 	/** 岩浆膏 **/
 	MAGMA_CREAM(null, "378"),
+	/** 酿造台 **/
+	BREWING_STAND("BREWING_STAND_ITEM", "379"),
+	/** 炼药锅 **/
+	CAULDRON("CAULDRON_ITEM", "380"),
 	/** 末影之眼 **/
 	ENDER_EYE("EYE_OF_ENDER", "381"),
 	/** 闪烁的西瓜 **/
@@ -1109,6 +1055,12 @@ public enum ReMaterial {
 	EMERALD(null, "388"),
 	/** 物品展示框 **/
 	ITEM_FRAME(null, "389"),
+	/** 花盆 **/
+	FLOWER_POT("FLOWER_POT_ITEM", "390"),
+	/** 胡萝卜 **/
+	CARROT("CARROT_ITEM", "391"),
+	/** 马铃薯 **/
+	POTATO("POTATO_ITEM", "392"),
 	/** 烤马铃薯 **/
 	BAKED_POTATO(null, "393"),
 	/** 毒马铃薯 **/
@@ -1139,6 +1091,8 @@ public enum ReMaterial {
 	FIREWORK_STAR("FIREWORK_CHARGE", "402"),
 	/** 附魔书 **/
 	ENCHANTED_BOOK(null, "403"),
+	/** 红石比较器 **/
+	COMPARATOR("REDSTONE_COMPARATOR", "404"),
 	/** 下界石英 **/
 	QUARTZ(null, "406"),
 	/** TNT矿车 **/
@@ -1207,8 +1161,20 @@ public enum ReMaterial {
 	MAGENTA_BANNER("BANNER", "425:13"),
 	/** 橙色旗帜 **/
 	ORANGE_BANNER("BANNER", "425:14"),
+	/** 白色旗帜 **/
+	WHITE_BANNER("BANNER", "425:15"),
 	/** 末影水晶 **/
 	END_CRYSTAL(null, "426"),
+	/** 云杉木门 **/
+	SPRUCE_DOOR("SPRUCE_DOOR_ITEM", "427"),
+	/** 白桦木门 **/
+	BIRCH_DOOR("BIRCH_DOOR_ITEM", "428"),
+	/** 丛林木门 **/
+	JUNGLE_DOOR("JUNGLE_DOOR_ITEM", "429"),
+	/** 金合欢木门 **/
+	ACACIA_DOOR("ACACIA_DOOR_ITEM", "430"),
+	/** 深色橡木门 **/
+	DARK_OAK_DOOR("DARK_OAK_DOOR_ITEM", "431"),
 	/** 紫颂果 **/
 	CHORUS_FRUIT(null, "432"),
 	/** 爆裂紫颂果 **/

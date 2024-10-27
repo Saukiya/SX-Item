@@ -72,7 +72,7 @@ public class TestMaterial {
                 // 低版本 从 高版本 的过时材质中遍历
                 val legacyName = "LEGACY_" + newKey;
                 if (!yaml_new.contains(legacyName)) {
-                    System.out.println("ERROR:" + legacyName + " >> " + key + " >> " + value);
+                    System.out.println("ERROR:" + String.format("%-5s", value) + String.format("%-30s", key) + legacyName);
                     yaml_error.set(key + "-" + legacyName, value);
                     continue;
                 }
@@ -81,14 +81,12 @@ public class TestMaterial {
 
             val translation = yaml_trans.getString(key, "NULL");
 
-            // 还原material
+            // 还原material名称
             val finalKey = materialRevert(key);
 
-            if (translation.equals("空气") && !newKey.equals("AIR")) {
-                System.out.println("IGNORE: " + key + " >> " + newKey + " >> " + value);
-            }
-            if (newKey.equals("AIR") && !finalKey.equals("AIR")) {
-                System.out.println("IGNORE: " + key + " >> " + newKey + " >> " + value);
+            // 当可能为AIR时, 排除材质
+            if ((newKey.equals("AIR") && !finalKey.equals("AIR")) || (translation.equals("空气") && !newKey.equals("AIR"))) {
+                System.out.println("IGNORE:" + String.format("%-5s", value) + String.format("%-30s", key) + newKey);
                 continue;
             }
 
@@ -113,18 +111,21 @@ public class TestMaterial {
         }
         yaml_input.save(new File(testResourcePath, "material_input.yml"));
         yaml_error.save(new File(testResourcePath, "material_error.yml"));
+
         String enumList = map_enum.entrySet().stream().map(entry -> "/** " + entry.getValue().getMiddle() + " **/\n\t" + entry.getKey() + "(" + (entry.getKey().equals(entry.getValue().getLeft()) ? null : "\"" + entry.getValue().getLeft() + "\"") + ", \"" + String.join("\", \"", entry.getValue().getRight()) + "\")").collect(Collectors.joining(",\n\t"));
         enumList = "public enum ReMaterial {\n\t" + enumList + ";\n\n}";
+        val enumSize = map_enum.values().stream().mapToInt(tuple -> tuple.getRight().size()).sum();
         Files.write(Paths.get(testResourcePath.getPath(), "material_enum.java"), enumList.getBytes());
+
         val markdownList = map_markdown.entrySet().stream().flatMap(entry -> {
             String first = " - `" + entry.getValue().getFirst().getLeft() + "`  " + entry.getValue().getFirst().getMiddle() + (entry.getValue().getFirst().getMiddle().equals(entry.getKey()) ? "" : " `" + entry.getKey() + "`") + " - " + entry.getValue().getFirst().getRight();
             if (entry.getValue().size() == 1) return Stream.of(first);
             return Stream.concat(Stream.of(first), IntStream.range(1, entry.getValue().size()).mapToObj(i -> "   - `" + entry.getValue().get(i).getLeft() + "`  " + entry.getValue().get(i).getMiddle() + " - " + entry.getValue().get(i).getRight()));
         }).collect(Collectors.toList());
-        markdownList.addFirst("## 兼容数字ID列表");
+        markdownList.addFirst("## 兼容数字ID列表 `" + enumSize + "`");
         FileUtils.writeLines(new File(testResourcePath, "material_info.md"), markdownList);
 
-        System.out.println("Material-Enum: " + map_enum.values().stream().mapToInt(tuple -> tuple.getRight().size()).sum());
+        System.out.println("Material-Enum: " + enumSize);
     }
 
     /**
