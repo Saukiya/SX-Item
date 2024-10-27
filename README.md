@@ -1,6 +1,6 @@
 # SX-Item
 
-[Minecraft-Plugin] 物品管理插件
+[Minecraft-SpigotPlugin] 物品管理插件
 
 [下载](https://github.com/Saukiya/SX-Item/releases/latest) ·
 [文档](https://www.maplex.top/archives/sxitem) ·
@@ -9,13 +9,23 @@
 [Spigot](https://www.spigotmc.org/resources/sx-item.119751) ·
 [~~MCBBS~~](https://www.mcbbs.net/thread-1471655-1-1.html)
 
+<!-- TOC -->
+
+* [SX-Item](#sx-item)
+  * [Support Server](#support-server)
+  * [Support Version](#support-version)
+  * [Extension](#extension)
+  * [Gradle](#gradle)
+
+<!-- TOC -->
+
 ## Support Server
 
 - Spigot
 - Paper
 - More...
 
-## Support version
+## Support Version
 
 | Version | Version |
 |:-------:|:-------:|
@@ -28,6 +38,12 @@
 | 1.16.5  | 1.21.1  |
 | 1.17.1  | 1.21.3  |
 | 1.18.2  |
+
+## Extension
+
+| Project                                                                 | Version                                                                                               | Author  |
+|-------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|---------|
+| [SX-Attribute](https://github.com/Saukiya/SX-Attribute/releases/latest) | ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/Saukiya/SX-Attribute?label=latest) | Saukiya |
 
 ## Gradle
 
