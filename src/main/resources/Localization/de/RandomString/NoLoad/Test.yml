@@ -1,6 +1,4 @@
-Test:
-  - 'Unterstützt das Laden von Unterordnern'
-  - 'Dateien/Ordner mit dem Präfix "NoLoad" werden nicht geladen'
-  - ''
-  - 'Die Standardkonfigurationsdateien werden beibehalten'
-  - 'unnötige Dateien können durch Löschen des Inhalts entfernt werden'
+de:
+  Test:
+    "0": 支持加载子文件夹, NoLoad前缀的文件/文件夹不会被加载
+    "1": 默认配置文件将会被保留, 不需要的可以将文件内容删除
