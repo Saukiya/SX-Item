@@ -1,6 +1,5 @@
-package github.saukiya.sxitem.data;
+package github.saukiya.tools.manager;
 
-import github.saukiya.sxitem.util.Util;
 import github.saukiya.tools.helper.PlaceholderHelper;
 import github.saukiya.tools.nms.NMS;
 import lombok.Getter;
@@ -20,6 +19,9 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * 脚本管理工具
+ */
 public class ScriptManager implements Listener {
 
 //    private final ConcurrentHashMap<String, CompiledScript> compiledScripts = new ConcurrentHashMap<>();
@@ -46,18 +48,31 @@ public class ScriptManager implements Listener {
     private boolean enabled;
 
     /**
-     * 初始化引擎模块 插件名会作为静态类调用
-     *
+     * 初始化引擎模块 默认引擎为js
+     * <pre>
+     * 插件名会作为静态类引用
+     * 读取插件下Scripts文件夹的脚本文件
+     * 并将Scripts/Global文件夹内的脚本作为全局变量
+     * </pre>
      * @param plugin
      */
     public ScriptManager(JavaPlugin plugin) {
         this(plugin, "js");
     }
 
+    /**
+     * 初始化引擎模块
+     * <pre>
+     * 插件名会作为静态类引用
+     * 读取插件下Scripts文件夹的脚本文件
+     * 并将Scripts/Global文件夹内的脚本作为全局变量
+     * </pre>
+     *
+     * @param plugin
+     */
     public ScriptManager(JavaPlugin plugin, String engineName) {
         this.plugin = plugin;
         this.engineName = engineName;
-        ;
         this.rootDirectory = new File(plugin.getDataFolder(), "Scripts");
         this.globalDirectory = new File(rootDirectory, "Global");
         reload();
@@ -100,7 +115,6 @@ public class ScriptManager implements Listener {
             // nashorn 参数
             System.setProperty("nashorn.args", "--language=es6");
         }
-
         engine = engineManager.getEngineByName(engineName);
         if (engine == null) {
             if (engineName.equals("js") && NMS.hasClass("org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory")) {
@@ -110,6 +124,7 @@ public class ScriptManager implements Listener {
                 throw new ScriptException("No Find ScriptEngine: " + engineName + (engineNames.isEmpty() ? "" : "Can Use: " + engineNames));
             }
         }
+
         globalBindings = engine.createBindings();
         // class路径在jdk8中不一致
         Class<?> clazz = Class.forName(System.getProperty("java.class.version").startsWith("52") ?
@@ -236,6 +251,8 @@ public class ScriptManager implements Listener {
      */
     public static class Utils {
 
+        public static final Random random = new Random();
+
         public static <T> List<T> mutableList(T... args) {
             return Arrays.stream(args).collect(Collectors.toList());
         }
@@ -248,12 +265,12 @@ public class ScriptManager implements Listener {
             return ChatColor.translateAlternateColorCodes('&', string);
         }
 
-        public static int randomInt(int min, int max) {
-            return Util.random(min, max);
+        public static int randomInt(int v1, int v2) {
+            return random.nextInt(1 + Math.abs(v2 - v1)) + Math.min(v1, v2);
         }
 
-        public static double randomDouble(double min, double max) {
-            return Util.random(min, max);
+        public static double randomDouble(double v1, double v2) {
+            return random.nextDouble() * (v2 - v1) + v1;
         }
     }
 }

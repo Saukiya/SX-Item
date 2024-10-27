@@ -68,7 +68,6 @@ configure([rootProject, baseProject]) {
 
 dependencies {
     implementation 'org.bstats:bstats-bukkit:2.2.1'
-    compileOnly 'org.openjdk.nashorn:nashorn-core:15.4'
     compileOnly 'io.lumine.xikage:MythicMobs:4.9.0'
     compileOnly 'io.lumine:Mythic-Dist:5.2.1'
 

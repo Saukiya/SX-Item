@@ -1,7 +1,6 @@
 package github.saukiya.sxitem;
 
 import github.saukiya.sxitem.command.*;
-import github.saukiya.sxitem.data.ScriptManager;
 import github.saukiya.sxitem.data.expression.ExpressionHandler;
 import github.saukiya.sxitem.data.expression.ExpressionManager;
 import github.saukiya.sxitem.data.expression.impl.*;
@@ -14,6 +13,7 @@ import github.saukiya.sxitem.util.Config;
 import github.saukiya.sxitem.util.Message;
 import github.saukiya.tools.command.MainCommand;
 import github.saukiya.tools.helper.PlaceholderHelper;
+import github.saukiya.tools.manager.ScriptManager;
 import github.saukiya.tools.nms.ComponentUtil;
 import github.saukiya.tools.nms.ItemUtil;
 import github.saukiya.tools.nms.MessageUtil;

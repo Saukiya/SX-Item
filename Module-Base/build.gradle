@@ -1,3 +1,4 @@
 dependencies {
     compileOnly 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
+    compileOnly 'org.openjdk.nashorn:nashorn-core:15.4'
 }
