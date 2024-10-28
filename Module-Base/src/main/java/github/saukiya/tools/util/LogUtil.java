@@ -65,7 +65,7 @@ public class LogUtil {
                 return String.format("[%s] [%02d:%02d:%02d] %s\n",
                         record.getLevel(),
                         hours, minutes, seconds,
-                        record.getMessage().substring(pluginNameIndex));
+                        record.getMessage().substring(Math.min(pluginNameIndex, record.getMessage().length())));
             }
         });
         plugin.getLogger().addHandler(fileHandler);

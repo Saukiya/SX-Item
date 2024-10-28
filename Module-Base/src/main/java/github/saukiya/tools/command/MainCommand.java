@@ -5,9 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
  */
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class MainCommand implements CommandExecutor, TabCompleter {
+public class MainCommand implements TabExecutor {
 
     final List<SubCommand> COMMANDS = new ArrayList<>();
 
@@ -64,15 +64,23 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     /**
      * 当插件开启时, 需调用启动函数, 同时会注册事件监听器
      *
-     * @param command 指令名称
+     * @param commandName 指令名称
      */
-    public void onEnable(String command) {
-        plugin.getCommand(command).setExecutor(this);
-        plugin.getCommand(command).setTabCompleter(this);
+    public void onEnable(String commandName) {
+        PluginCommand command = plugin.getCommand(commandName);
+        command.setExecutor(this);
+        command.setTabCompleter(this);
         Collections.sort(COMMANDS);
         COMMANDS.stream().filter(subCommand -> subCommand instanceof Listener).forEach(subCommand -> Bukkit.getPluginManager().registerEvents((Listener) subCommand, plugin));
         COMMANDS.forEach(SubCommand::onEnable);
         plugin.getLogger().info("Load " + COMMANDS.size() + " Commands");
+
+        for (String alias : command.getAliases()) {
+            PluginCommand aliasCommand = Bukkit.getPluginCommand(alias);
+            if (aliasCommand == null || plugin.equals(aliasCommand.getPlugin())) continue;
+            aliasCommand.setExecutor(this);
+            aliasCommand.setTabCompleter(this);
+        }
     }
 
     /**

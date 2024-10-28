@@ -14,4 +14,4 @@ libraries:
 
 commands:
   SxItem:
-    aliases: [ sxi,si ]
+    aliases: [ sxi, si ]
