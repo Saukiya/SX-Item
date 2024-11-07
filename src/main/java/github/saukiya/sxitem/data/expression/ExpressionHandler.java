@@ -230,6 +230,6 @@ public class ExpressionHandler extends StrLookup {
             }
             SXItem.getInst().getLogger().warning("No Random Type: " + str.substring(0, index));
         }
-        return str;
+        return null;
     }
 }
