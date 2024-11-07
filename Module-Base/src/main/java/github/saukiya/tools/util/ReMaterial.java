@@ -1328,15 +1328,16 @@ public enum ReMaterial {
      */
     @Nullable
     public static ItemStack getItem(String key) {
-        int index = key.indexOf(':');
-        if (index != -1) {
-            ReMaterial fullValue = Data.BY_ID.get(key);
-            if (fullValue != null) return fullValue.item();
-            key = key.substring(0, index);
-        }
-
         ReMaterial value = Data.BY_ID.get(key);
         if (value != null) return value.item();
+
+        int index = key.indexOf(':');
+        if (index != -1) {
+            key = key.substring(0, index);
+            value = Data.BY_ID.get(key);
+            if (value != null) return value.item();
+        }
+
         Material material = Material.matchMaterial(key);
         if (material != null) return new ItemStack(material);
         return null;
