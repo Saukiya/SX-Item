@@ -29,7 +29,7 @@ import java.util.List;
 public abstract class MessageUtil implements NMS {
 
     @Getter
-    private static final MessageUtil inst = NMS.getInst(MessageUtil.class, "v1_21_R1", "v1_16_R3", "v1_13_R2", "v1_12_R1", "v1_11_R1", "v1_8_R3");
+    private static final MessageUtil inst = NMS.getInst(MessageUtil.class, "v1_21_R1", "v1_20_R4", "v1_16_R3", "v1_13_R2", "v1_12_R1", "v1_11_R1", "v1_8_R3");
 
     /**
      * 复杂文本消息生成器
