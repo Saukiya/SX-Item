@@ -152,6 +152,7 @@ public class MythicMobsHelper {
     };
 
     public static void setup() {
+        if (!Config.getConfig().getBoolean(Config.COMPATIBILITY_MYTHIC_MOBS, true)) return;
         if (Bukkit.getPluginManager().isPluginEnabled("MythicMobs")) {
             if (NMS.hasClass("io.lumine.xikage.mythicmobs.mobs.MythicMob")) {
                 Bukkit.getPluginManager().registerEvents(handler = new V4Listener(), SXItem.getInst());

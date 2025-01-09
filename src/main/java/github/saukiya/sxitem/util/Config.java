@@ -18,6 +18,7 @@ public class Config {
     public static final String PROTECT_NBT = "ProtectNBT";
     public static final String GIVE_OVERFLOW_DROP = "GiveOverflowDrop";
     public static final String MOB_DROP_TO_PLAYER_INVENTORY = "MobDropToPlayerInventory";
+    public static final String COMPATIBILITY_MYTHIC_MOBS = "Compatibility.MythicMobs";
 
     @Getter
     private static YamlConfiguration config;
