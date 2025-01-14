@@ -1,0 +1,69 @@
+{
+  "tag": "+",
+  "left": {
+    "tag": "-",
+    "left": {
+      "value": 0.0
+    },
+    "right": {
+      "value": 3.0
+    }
+  },
+  "right": {
+    "tag": "+",
+    "left": {
+      "tag": "-",
+      "left": {
+        "tag": "*",
+        "left": {
+          "value": 4.0
+        },
+        "right": {
+          "tag": "-",
+          "left": {
+            "value": 10.0
+          },
+          "right": {
+            "tag": "/",
+            "left": {
+              "value": 6.0
+            },
+            "right": {
+              "value": 2.0
+            }
+          }
+        }
+      },
+      "right": {
+        "tag": "+",
+        "left": {
+          "value": 8.0
+        },
+        "right": {
+          "value": 3.0
+        }
+      }
+    },
+    "right": {
+      "tag": "+",
+      "left": {
+        "value": 5.0
+      },
+      "right": {
+        "tag": "/",
+        "left": {
+          "tag": "-",
+          "left": {
+            "value": 0.0
+          },
+          "right": {
+            "value": 7.0
+          }
+        },
+        "right": {
+          "value": 2.0
+        }
+      }
+    }
+  }
+}
