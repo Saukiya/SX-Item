@@ -1,20 +1,45 @@
 package github.saukiya.expression;
 
-import com.google.gson.Gson;
 import github.saukiya.expression.impl.*;
 import github.saukiya.tools.base.CharStack;
 import github.saukiya.tools.util.CalculatorUtil;
+import github.saukiya.tools.util.TimingsUtil;
 
 import java.util.Stack;
 
 public class ExpressionParser {
 
     public static void main(String[] args) {
-        String expression = "-3 + ((4 * (10 - (6 / 2))) - (8 % 3) + (5 + (-7) / 2))";
-        Node rootNode = parse(expression);
-        System.out.println(new Gson().toJson(rootNode));
-        System.out.println("Result-1: " + rootNode.evaluate());
-        System.out.println("Result-2: " + CalculatorUtil.calculator(expression));
+        String expression;
+        Node rootNode;
+        // 热身
+        expression = "-3 + ((4 * (10 - (6 / 2))) - (8 % 3) + (5 + (-7) / 2))";
+        for (int i = 0; i < 50000; i++) {
+            CalculatorUtil.calculator(expression);
+        }
+
+        expression = "-%CC% + ((4 * (10 - (6 / 2))) - (8 % %CC%) + (5 + (-7) / %BB%))";
+        rootNode = parse(expression);
+        for (int i = 0; i < 50000; i++) {
+            rootNode.evaluate();
+        }
+
+        // 开始测速
+        expression = "-3 + ((4 * (10 - (6 / 2))) - (8 % 3) + (5 + (-7) / 2))";
+        TimingsUtil timingsUtil = new TimingsUtil();
+        for (int i = 0; i < 200; i++) {
+            CalculatorUtil.calculator(expression);
+        }
+        timingsUtil.dot("1-JX+ZX * 1000");
+        timingsUtil.dot();
+
+        expression = "-%CC% + ((4 * (10 - (6 / 2))) - (8 % %CC%) + (5 + (-7) / %BB%))";
+        rootNode = parse(expression);
+        for (int i = 0; i < 200; i++) {
+            rootNode.evaluate();
+        }
+        timingsUtil.dot("2-JX+ZX * 1000");
+        timingsUtil.print();
     }
 
     public static Node parse(String expression) {
@@ -27,7 +52,16 @@ public class ExpressionParser {
         double num = 0;
         int numBits = 0;
         boolean canNegative = true;
+        StringBuilder dynamic = null;
         for (char c : expression.toCharArray()) {
+            if (dynamic != null) {
+                if (c == '%') {
+                    nodes.add(new DynamicNode(dynamic.toString()));
+                    dynamic = null;
+                    continue;
+                }
+                dynamic.append(c);
+            }
             switch (c) {
                 case '(':
                     canNegative = true;
@@ -53,10 +87,14 @@ public class ExpressionParser {
                         operator.push(c);
                         break;
                     }
+                case '%':
+                    if (canNegative) {
+                        dynamic = new StringBuilder();
+                        break;
+                    }
                 case '+':
                 case '*':
                 case '/':
-                case '%':
                     canNegative = true;
                     currentNode = numBits != 0 ? new ValueNode(num) : nodes.pop();
                     int priority = getPriority(c);
