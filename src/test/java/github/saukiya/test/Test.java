@@ -42,9 +42,9 @@ public class Test {
     static Pattern pattern = Pattern.compile("v(\\d+)_(\\d+)_R(\\d+)");
     static Pattern time_pattern = Pattern.compile("\\d+");
 
-    static JsonParser jsonParser = new JsonParser();
-    static Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    static Random random = new Random();
+    public static JsonParser jsonParser = new JsonParser();
+    public static Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    public static Random random = new Random();
 
 
     @SuppressWarnings({"SystemGetProperty", "Since15"})

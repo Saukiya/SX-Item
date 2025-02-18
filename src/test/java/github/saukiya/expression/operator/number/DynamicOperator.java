@@ -1,10 +1,10 @@
-package github.saukiya.expression.impl;
+package github.saukiya.expression.operator.number;
 
-import github.saukiya.expression.Node;
+import github.saukiya.expression.operator.NumberOperator;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class DynamicNode implements Node {
+public class DynamicOperator implements NumberOperator {
 
     private String variable;
 
@@ -17,8 +17,12 @@ public class DynamicNode implements Node {
                 return 2;
             case "CC":
                 return 3;
+            case "T1V2C32424":
+                return 4;
+            case "12B23":
+                return 5;
         }
-
+        System.out.println("????");
         return 0;
     }
 }

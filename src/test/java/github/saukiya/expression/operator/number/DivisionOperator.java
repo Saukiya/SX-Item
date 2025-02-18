@@ -1,13 +1,13 @@
-package github.saukiya.expression.impl;
+package github.saukiya.expression.operator.number;
 
-import github.saukiya.expression.Node;
+import github.saukiya.expression.operator.NumberOperator;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class DivisionNode implements Node {
+public class DivisionOperator implements NumberOperator {
 
-    private Node left;
-    private Node right;
+    private NumberOperator left;
+    private NumberOperator right;
 
     @Override
     public double evaluate() {
