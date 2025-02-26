@@ -110,15 +110,15 @@ public class ExpressionHandler extends StrLookup {
     public List<String> replace(List<String> list) {
         val result = new ArrayList<String>();
         for (String str : list) {
-            str = PlaceholderHelper.setPlaceholders(getPlayer(), ss.replace(str));
+            str = replace(ss.replace(str));
             if (str.indexOf('\n') != -1) {
                 String[] split = str.split("\n");
                 for (String s : split) {
-                    if (!s.contains("%DeleteLore%")) {
+                    if (!s.contains("<DeleteLore>")) {
                         result.add(s);
                     }
                 }
-            } else if (!str.contains("%DeleteLore%")) {
+            } else if (!str.contains("<DeleteLore>")) {
                 result.add(str);
             }
         }
@@ -226,7 +226,7 @@ public class ExpressionHandler extends StrLookup {
                     str = PlaceholderHelper.setPlaceholders(player, str);
                 }
                 str = random.replace(str.substring(index + 1), this);
-                return str != null ? str : "%DeleteLore%";
+                return str != null ? str : "$<DeleteLore>";
             }
             SXItem.getInst().getLogger().warning("No Random Type: " + str.substring(0, index));
         }

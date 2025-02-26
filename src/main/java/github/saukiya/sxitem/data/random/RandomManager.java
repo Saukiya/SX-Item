@@ -131,7 +131,7 @@ public class RandomManager {
      */
     protected static String loadDataString(Object value) {
         if (value == null) return null;
-        if (value instanceof List) value = String.join("\n", (List) value);
-        return value.toString().replace("/n", "\n").replace("\\n", "\n");
+        if (value instanceof List) value = String.join("\n", (List) value).replace("%DeleteLore%", "$<DeleteLore>");
+        return value.toString().replace("/n", "\n").replace("\\n", "\n").replace("%DeleteLore%", "$<DeleteLore>");
     }
 }

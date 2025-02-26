@@ -21,15 +21,15 @@ ShooterID: '261'
 WarriorID: <s:Warrior<l:Quality>ID>
 SwordsmanID: <s:Swordsman<l:Quality>ID>
 OrdinaryJudgment: # 75% Probability Delete this row
-  - '%DeleteLore%'
-  - '%DeleteLore%'
-  - '%DeleteLore%'
+  - ~
+  - ~
+  - ~
   - ''
 ExcellentJudgment: # 50% Probability Delete this row
-  - '%DeleteLore%'
+  - ~
   - ''
 EpicJudgment: # 25% Probability Delete this row
-  - '%DeleteLore%'
+  - ~
   - ''
   - ''
   - ''

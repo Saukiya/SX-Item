@@ -21,15 +21,15 @@ SchützeID: '261'
 KriegerID: <s:Krieger<l:Qualität>ID>
 SchwertkämpferID: <s:Schwertkämpfer<l:Qualität>ID>
 GewöhnlichEntscheidung: # 75% Zeile mit Wahrscheinlichkeit löschen
-  - '%DeleteLore%'
-  - '%DeleteLore%'
-  - '%DeleteLore%'
+  - ~
+  - ~
+  - ~
   - ''
 HervorragendEntscheidung: # 50% Zeile mit Wahrscheinlichkeit löschen
-  - '%DeleteLore%'
+  - ~
   - ''
 EpischEntscheidung: # 25% Zeile mit Wahrscheinlichkeit löschen
-  - '%DeleteLore%'
+  - ~
   - ''
   - ''
   - ''
