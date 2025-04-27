@@ -39,6 +39,8 @@
 | 1.17.1  | 1.21.3  |
 | 1.18.2  | 1.21.4  |
 
+要什么版本就发 [Issue](https://github.com/Saukiya/SX-Item/issues/new/choose)
+
 ## Extension
 
 | Project                                                                 | Version                                                                                               | Author  |
