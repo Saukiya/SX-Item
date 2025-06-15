@@ -136,11 +136,22 @@ public class NBTCommand extends SubCommand {
             }
             val messageBuilder = MessageUtil.getInst().builder();
             if (sender instanceof Player) {
-                messageBuilder
-                        .add("§4[X]").show("§cRemove " + path).runCommand("/si nbt remove " + path)
-                        .add("§8-§c[Type-" + typeShow.charAt(0) + "]").show(typeShow).suggestCommand(path)
-                        .add("§7 " + path).show(nbtShow).suggestCommand(nbtShow)
-                        .send(sender);
+                try {
+                    messageBuilder
+                            .add("§4[X]").show("§cRemove " + path).runCommand("/si nbt remove " + path)
+                            .add("§8-§c[Type-" + typeShow.charAt(0) + "]").show(typeShow).suggestCommand(path)
+                            .add("§7 " + path).show(nbtShow).suggestCommand(nbtShow)
+                            .send(sender);
+                } catch (Exception e) {
+                    // com.google.gson.JsonParseException: Disallowed chat character: '
+                    messageBuilder
+                            .add("§4[X]").show("§cRemove " + path).runCommand("/si nbt remove " + path)
+                            .add("§8-§c[Type-" + typeShow.charAt(0) + "]").show(typeShow).suggestCommand(path)
+                            .add("§7 " + path).show("&4Show Error")
+                            .send(sender);
+                    SXItem.getInst().getLogger().severe(e.getMessage());
+                    e.printStackTrace();
+                }
             } else {
                 messageBuilder
                         .add("§c " + String.format("%-32s", path))
