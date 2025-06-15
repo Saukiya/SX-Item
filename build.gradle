@@ -85,7 +85,6 @@ dependencies {
 jar.archiveClassifier = "core"
 processResources.expand(version: version, language: "~")
 buildCopyTask('buildLatestJar', "$rootDir\\build", "Latest")
-buildCopyTask('buildDebugJar', "$rootDir\\run\\plugins", "Debug")
 
 tasks.register('dependencyJar', Jar) {
     from rootProject.sourceSets.main.output.classesDirs

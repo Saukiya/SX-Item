@@ -159,10 +159,7 @@ Default-1:
   NBT:
     SX-Attribute.Attribute:
       - '词条一'
-      - '词条二'
-      - '词条三'
-      - 'SX-Attribute预留属性接口'
-      - '如需使用随机则需学习高等随机'
+      - 'SX-Attribute预留'
   ProtectNBT: #保护附魔NBT不被更新
     - "Enchantments"
   Update: true

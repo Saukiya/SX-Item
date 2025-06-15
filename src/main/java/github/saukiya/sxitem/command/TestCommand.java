@@ -59,7 +59,11 @@ public class TestCommand extends SubCommand {
         }
 
         Map<String, Object> input = new HashMap<>();
-        input.put("minecraft:dyed_color", Collections.singletonMap("rgb", 16747238));
+        if (NMS.compareTo(1, 21, 4) >= 0) {
+            input.put("minecraft:dyed_color", 16747238);
+        } else {
+            input.put("minecraft:dyed_color", Collections.singletonMap("rgb", 16747238));
+        }
         input.put("minecraft:enchantment_glint_override", true);
         input.put("minecraft:food", ComponentUtil.getGson().fromJson("{can_always_eat:true,eat_seconds:5,nutrition:3,saturation:1}", Map.class));
         val wrapper = ComponentUtil.getInst().getItemWrapper(item);

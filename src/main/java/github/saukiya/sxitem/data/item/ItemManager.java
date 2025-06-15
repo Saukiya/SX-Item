@@ -67,6 +67,8 @@ public class ItemManager implements Listener {
     @Getter
     private final HashSet<String> protectNbtList = new HashSet<>();
 
+    private boolean test;
+
     public ItemManager(JavaPlugin plugin) {
         this(plugin, plugin.getName() + ".ItemKey", plugin.getName() + ".HashCode");
     }
@@ -84,17 +86,30 @@ public class ItemManager implements Listener {
         plugin.getLogger().info("Loaded " + loadFunction.size() + " ItemGenerators");
         loadItemData();
         Bukkit.getPluginManager().registerEvents(this, plugin);
-        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            if (!checkPlayers.isEmpty()) {
-                List<Player> checkPlayers = new ArrayList<>(this.checkPlayers);
-                this.checkPlayers.clear();
-                for (Player player : checkPlayers) {
-                    if (player != null) {
-                        checkUpdateItem(player, player.getInventory().getContents());
+        try {
+            Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+                if (!checkPlayers.isEmpty()) {
+                    List<Player> checkPlayers = new ArrayList<>(this.checkPlayers);
+                    this.checkPlayers.clear();
+                    for (Player player : checkPlayers) {
+                        if (player != null) {
+                            checkUpdateItem(player, player.getInventory().getContents());
+                        }
                     }
                 }
-            }
-        }, 20, 20);
+            }, 20, 20);
+        } catch (Exception e) {
+            test = true;
+            SXItem.getInst().getLogger().info("folia?");
+        }
+    }
+
+    public void addCheck(Player player) {
+        if (test) {
+            checkUpdateItem(player, player.getInventory().getContents());
+            return;
+        }
+        checkPlayers.add(player);
     }
 
     /**
@@ -457,14 +472,14 @@ public class ItemManager implements Listener {
         if (event.getPlayer() instanceof Player) {
             Player player = (Player) event.getPlayer();
             if (player.equals(event.getInventory().getHolder())) {
-                checkPlayers.add(player);
+                addCheck(player);
             }
         }
     }
 
     @EventHandler
     void on(PlayerJoinEvent event) {
-        checkPlayers.add(event.getPlayer());
+        addCheck(event.getPlayer());
     }
 
     private void loadConfigs(File directory, Map<String, ConfigurationSection> configs, String path) {

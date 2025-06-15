@@ -151,10 +151,7 @@ Default-1:
   NBT:
     SX-Attribute.Attribute:
       - 'Entry 1'
-      - 'Entry 2'
-      - 'Entry 3'
       - 'SX-Attribute reserved attribute interface'
-      - 'If you need to use random, you need to learn advanced random.'
   ProtectNBT: #PROTECT ENCHANT FROM BEING UPDATED
     - "Enchantments"
   Update: true

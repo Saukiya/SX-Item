@@ -157,8 +157,6 @@ Default-1:
   NBT:
     SX-Attribute.Attribute:
       - 'Eintrag 1'
-      - 'Eintrag 2'
-      - 'Eintrag 3'
       - 'SX-Attribute Reservierte Attributschnittstelle'
   ProtectNBT: #Schützt VerzauberungNBT vor Aktualisierungen
     - "Enchantments"

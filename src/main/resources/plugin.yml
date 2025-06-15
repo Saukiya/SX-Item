@@ -4,6 +4,7 @@ version: $version
 authors: [ Saukiya, Ray_Hughes, Lounode ]
 language: $language
 api-version: 1.13
+folia-supported: true # SNAPSHOT
 website: https://github.com/Saukiya/SX-Item/releases
 softdepend:
   - PlaceholderAPI
