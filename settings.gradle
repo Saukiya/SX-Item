@@ -21,6 +21,7 @@ includeModule 'Module-NMS:V1_21_R1'
 includeModule 'Module-NMS:V1_21_R2'
 includeModule 'Module-NMS:V1_21_R3'
 includeModule 'Module-NMS:V1_21_R4'
+includeModule 'Module-NMS:V1_21_R5'
 
 def includeModule(String moduleName) {
     if (!file(moduleName.replace(':', "/")).exists()) return

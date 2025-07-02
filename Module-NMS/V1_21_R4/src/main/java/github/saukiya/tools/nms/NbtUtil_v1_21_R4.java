@@ -92,7 +92,7 @@ public class NbtUtil_v1_21_R4 extends NbtUtil {
             switch (((NBTBase) nbtBase).c().b()) {
                 case "TAG_Compound":
                     NBTTagCompound nbtTagCompound = (NBTTagCompound) nbtBase;
-                    return nbtTagCompound.e().stream().collect(Collectors.toMap(key -> key, key -> getNMSValue(nbtTagCompound.a(key))));
+                    return nbtTagCompound.g().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> getNMSValue(entry.getValue())));
                 case "TAG_List":
                     return ((NBTTagList) nbtBase).stream().map(this::getNMSValue).collect(Collectors.toList());
                 case "TAG_Byte_Array":
