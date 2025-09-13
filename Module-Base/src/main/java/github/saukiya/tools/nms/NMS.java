@@ -155,6 +155,7 @@ class Data {
         put("1.21.5", "v1_21_R4");
         put("1.21.6", "v1_21_R5");
         put("1.21.7", "v1_21_R5");
+        put("1.21.8", "v1_21_R5");
     }};
     protected static final String VERSION;
     protected static final int[] thisVersionSplit;
