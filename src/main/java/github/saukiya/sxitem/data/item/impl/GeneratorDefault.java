@@ -57,6 +57,7 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         }
         if (config.isConfigurationSection("NBT")) {
             this.nbt = convertConfig(config.getConfigurationSection("NBT"));
+            nbtFix(nbt);
         }
         if (config.isConfigurationSection("Components")) {
             component = ComponentUtil.getInst().valueToMap(convertConfig(config.getConfigurationSection("Components")));
@@ -234,7 +235,6 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         if (nbt != null || !handler.getLockMap().isEmpty()) {
             val wrapper = NbtUtil.getInst().getItemTagWrapper(item, nmsItem);
             wrapper.setAll((Map<Object, Object>) handler.replace(nbt));
-
             handler.getLockMap().forEach((key, value) -> wrapper.set(SXItem.getInst().getName() + ".Lock." + key, value));
             wrapper.save();
         }
@@ -285,5 +285,35 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         Map<String, Object> result = config.getValues(false);
         result.entrySet().stream().filter(entry -> entry.getValue() instanceof ConfigurationSection).forEachOrdered(entry -> result.put(entry.getKey(), convertConfig((ConfigurationSection) entry.getValue())));
         return result;
+    }
+    
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public void nbtFix(Map<String, Object> nbt) {
+        val attributeModifiers = nbt.get("AttributeModifiers");
+        if (attributeModifiers instanceof List) {
+            for (Object attributeModifier : (List<?>) attributeModifiers) {
+                if (attributeModifier instanceof Map) {
+                    val attributeModifierMap = (Map) attributeModifier; 
+                    val uuids = attributeModifierMap.get("UUID");
+                    if (uuids instanceof List) {
+                        val uuidsArray = ((List<?>) uuids).stream()
+                                .mapToInt(obj -> {
+                                    if (obj instanceof Number) {
+                                        return ((Number) obj).intValue();
+                                    } else if (obj instanceof String) {
+                                        try {
+                                            return Integer.parseInt((String) obj);
+                                        } catch (NumberFormatException ignored) {
+                                            SXItem.getInst().getLogger().warning("[" + key + "] UUID Convert Error: " + obj);
+                                        }
+                                    }
+                                    return 0;
+                                })
+                                .toArray();
+                        attributeModifierMap.put("UUID", uuidsArray);
+                    }
+                }
+            }
+        }
     }
 }
