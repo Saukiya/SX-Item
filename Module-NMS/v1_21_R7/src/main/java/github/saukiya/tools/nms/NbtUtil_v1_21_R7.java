@@ -12,8 +12,9 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.*;
 import net.minecraft.world.item.component.CustomData;
 import org.apache.commons.lang.Validate;
-import org.bukkit.craftbukkit.v1_21_R5.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_21_R6.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @SuppressWarnings({"NullableProblems", "unchecked", "unused"})
-public class NbtUtil_v1_21_R5 extends NbtUtil {
+public class NbtUtil_v1_21_R7 extends NbtUtil {
 
     @Override
     public ItemWrapper getItemTagWrapper(ItemStack itemStack) {
@@ -58,7 +59,7 @@ public class NbtUtil_v1_21_R5 extends NbtUtil {
     public NBTTagCompound getNMSItemNBT(Object nmsItem) {
         val dataComponentMap = ((net.minecraft.world.item.ItemStack) nmsItem).a();
         CustomData data = dataComponentMap.a(DataComponents.b);
-        return data != null ? data.d() : new NBTTagCompound();
+        return data != null ? data.b() : new NBTTagCompound();
     }
 
     @Override
@@ -90,32 +91,32 @@ public class NbtUtil_v1_21_R5 extends NbtUtil {
     @Override
     public Object getNMSValue(Object nbtBase) {
         if (nbtBase instanceof NBTBase) {
-            switch (((NBTBase) nbtBase).c().b()) {
+            switch (getType((NBTBase) nbtBase)) {
                 case "TAG_Compound":
                     NBTTagCompound nbtTagCompound = (NBTTagCompound) nbtBase;
-                    return nbtTagCompound.g().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> getNMSValue(entry.getValue())));
+                    return getSet(nbtTagCompound).stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> getNMSValue(entry.getValue())));
                 case "TAG_List":
                     return ((NBTTagList) nbtBase).stream().map(this::getNMSValue).collect(Collectors.toList());
                 case "TAG_Byte_Array":
-                    return ((NBTTagByteArray) nbtBase).e();
+                    return getByteArray((NBTTagByteArray) nbtBase);
                 case "TAG_Int_Array":
-                    return ((NBTTagIntArray) nbtBase).g();
+                    return getIntArray((NBTTagIntArray) nbtBase);
                 case "TAG_Long_Array":
-                    return ((NBTTagLongArray) nbtBase).g();
+                    return getLongArray((NBTTagLongArray) nbtBase);
                 case "TAG_String":
-                    return ((NBTTagString) nbtBase).k();
+                    return getString((NBTTagString) nbtBase);
                 case "TAG_Byte":
-                    return ((NBTTagByte) nbtBase).j();
+                    return getByte((NBTTagByte) nbtBase);
                 case "TAG_Short":
-                    return ((NBTTagShort) nbtBase).i();
+                    return getShort((NBTTagShort) nbtBase);
                 case "TAG_Int":
-                    return ((NBTTagInt) nbtBase).h();
+                    return getInt((NBTTagInt) nbtBase);
                 case "TAG_Long":
-                    return ((NBTTagLong) nbtBase).g();
+                    return getLong((NBTTagLong) nbtBase);
                 case "TAG_Float":
-                    return ((NBTTagFloat) nbtBase).l();
+                    return getFloat((NBTTagFloat) nbtBase);
                 case "TAG_Double":
-                    return ((NBTTagDouble) nbtBase).k();
+                    return getDouble((NBTTagDouble) nbtBase);
             }
         }
         return nbtBase;
@@ -186,7 +187,7 @@ public class NbtUtil_v1_21_R5 extends NbtUtil {
 
         @Override
         public void save() {
-            nmsItem.b(DataComponents.b, CustomData.a(handle));
+            setNMSItemNBT(nmsItem, handle);
             setNMSItem(itemStack, nmsItem);
         }
     }
@@ -202,8 +203,8 @@ public class NbtUtil_v1_21_R5 extends NbtUtil {
         protected NBTBase get(NBTTagCompound compound, String path) {
             Validate.notEmpty(path, "Cannot get to an empty path");
             int index = path.indexOf('.');
-            if (index == -1) return compound.a(path);
-            NBTBase base = compound.a(path.substring(0, index));
+            if (index == -1) return getNbtBase(compound, path);
+            NBTBase base = getNbtBase(compound, path.substring(0, index));
             if (base instanceof NBTTagCompound) {
                 return get((NBTTagCompound) base, path.substring(index + 1));
             }
@@ -214,7 +215,7 @@ public class NbtUtil_v1_21_R5 extends NbtUtil {
             Validate.notEmpty(path, "Cannot get to an empty path");
             int index = path.indexOf('.');
             if (index == -1) {
-                NBTBase ret = compound.a(path);
+                NBTBase ret = getNbtBase(compound, path);
                 if (value != null) {
                     compound.a(path, value);
                 } else {
@@ -222,7 +223,7 @@ public class NbtUtil_v1_21_R5 extends NbtUtil {
                 }
                 return ret;
             }
-            NBTBase base = compound.a(path.substring(0, index));
+            NBTBase base = getNbtBase(compound, path.substring(0, index));
             if (!(base instanceof NBTTagCompound)) {
                 if (value == null) return null;
                 compound.a(path.substring(0, index), base = new NBTTagCompound());
@@ -242,10 +243,10 @@ public class NbtUtil_v1_21_R5 extends NbtUtil {
 
         @Override
         public Set<String> keySet(String path) {
-            if (path == null) return handle.e();
+            if (path == null) return getKeySet(handle);
             NBTBase base = get(handle, path);
             if (base instanceof NBTTagCompound) {
-                return ((NBTTagCompound) base).e();
+                return getKeySet((NBTTagCompound) base);
             }
             return null;
         }
@@ -266,6 +267,7 @@ public class NbtUtil_v1_21_R5 extends NbtUtil {
             return get(handle, path);
         }
 
+        @NotNull
         @Override
         public NBTTagCompound getHandle() {
             return handle;
@@ -273,15 +275,79 @@ public class NbtUtil_v1_21_R5 extends NbtUtil {
 
         @Override
         public int size() {
-            return handle.i();
+            return getSize(handle);
         }
 
         @Override
         public void save(ItemStack itemStack) {
             net.minecraft.world.item.ItemStack nmsItem = getNMSItem(itemStack);
             if (nmsItem == null) return;
-            nmsItem.b(DataComponents.b, CustomData.a(handle));
+            setNMSItemNBT(nmsItem, handle);
             setNMSItem(itemStack, nmsItem);
         }
+    }
+
+    private static void setNMSItemNBT(net.minecraft.world.item.ItemStack nmsItem, NBTTagCompound nbt) {
+        nmsItem.b(DataComponents.b, CustomData.a(nbt));
+    }
+
+    private static int getSize(NBTTagCompound nbt) {
+        return nbt.i();
+    }
+
+    private static Set<String> getKeySet(NBTTagCompound base) {
+        return base.e();
+    }
+
+    private static Set<Map.Entry<String, NBTBase>> getSet(NBTTagCompound nbt) {
+        return nbt.g();
+    }
+
+    private static String getType(NBTBase nbtBase) {
+        return nbtBase.c().b();
+    }
+
+    private static byte[] getByteArray(NBTTagByteArray nbt) {
+        return nbt.e();
+    }
+
+    private static int[] getIntArray(NBTTagIntArray nbt) {
+        return nbt.g();
+    }
+
+    private static long[] getLongArray(NBTTagLongArray nbt) {
+        return nbt.g();
+    }
+
+    private static String getString(NBTTagString nbt) {
+        return nbt.k();
+    }
+
+    private static byte getByte(NBTTagByte nbt) {
+        return nbt.j();
+    }
+
+    private static short getShort(NBTTagShort nbt) {
+        return nbt.i();
+    }
+
+    private static int getInt(NBTTagInt nbt) {
+        return nbt.h();
+    }
+
+    private static long getLong(NBTTagLong nbt) {
+        return nbt.g();
+    }
+
+    private static float getFloat(NBTTagFloat nbt) {
+        return nbt.l();
+    }
+
+    private static double getDouble(NBTTagDouble nbt) {
+        return nbt.k();
+    }
+
+    private static NBTBase getNbtBase(NBTTagCompound compound, String path) {
+        return compound.a(path);
     }
 }
