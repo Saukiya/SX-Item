@@ -247,6 +247,7 @@ Default-4:
         - §7/sx save <ItemID> Import
         - ''
         - §cIt does not support automatic updates§7
+        - §cIt does not support random strings§7
 
 Default-5:
   Name: '&bSlow Sword'

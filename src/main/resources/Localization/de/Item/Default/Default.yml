@@ -253,6 +253,7 @@ Default-4:
         - §7/sx save ID Import
         - ''
         - §cEs unterstützt keine automatische Aktualisierung§7
+        - §cZufällige Zeichenfolgen werden nicht unterstützt§7
 
 Default-5:
   Name: '&bLangsames Schwert'

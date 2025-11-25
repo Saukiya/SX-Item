@@ -255,6 +255,7 @@ Default-4:
         - §7/sx save 编号 Import
         - ''
         - §c它不支持自动更新§7
+        - §c它不支持随机字符串§7
 
 Default-5:
   Name: '&b慢剑'
