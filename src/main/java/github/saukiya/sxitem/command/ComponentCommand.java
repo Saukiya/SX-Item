@@ -172,7 +172,7 @@ public class ComponentCommand extends SubCommand {
                 messageBuilder
                         .add("§4[X]").show("§cRemove " + key).runCommand("/si component remove " + key)
                         .add("§8-§c[" + key.substring(0, index) + "]").show(key).suggestCommand(key)
-                        .add(" §7" + key.substring(index + 1)).show(jsonString).suggestCommand(gson.toJson(entry.getValue()))
+                        .add(" §7" + key.substring(index + 1)).show(jsonString).suggestCommand(gson.toJson(entry.getValue()).replace('§', '&'))
                         .send(sender);
             } else {
                 messageBuilder
