@@ -225,19 +225,21 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
             }
             ItemUtil.getInst().addAttributes(item, attributeList);
         }
+        if (component != null || nbt != null || !handler.getLockMap().isEmpty()) {
+            Object nmsItem = NbtUtil.getInst().getNMSItem(item);
+            if (component != null) {
+                val dataComponentMap = ComponentUtil.getInst().valueToMap(handler.replace(component));
+                ComponentUtil.getInst().setDataComponentMap(nmsItem, dataComponentMap);
+            }
 
-        Object nmsItem = NbtUtil.getInst().getNMSItem(item);
-
-        if (component != null) {
-            val dataComponentMap = ComponentUtil.getInst().valueToMap(handler.replace(component));
-            ComponentUtil.getInst().setDataComponentMap(nmsItem, dataComponentMap);
-        }
-
-        if (nbt != null || !handler.getLockMap().isEmpty()) {
-            val wrapper = NbtUtil.getInst().getItemTagWrapper(item, nmsItem);
-            wrapper.setAll((Map<Object, Object>) handler.replace(nbt));
-            handler.getLockMap().forEach((key, value) -> wrapper.set(SXItem.getInst().getName() + ".Lock." + key, value));
-            wrapper.save();
+            if (nbt != null || !handler.getLockMap().isEmpty()) {
+                val wrapper = NbtUtil.getInst().getItemTagWrapper(item, nmsItem);
+                wrapper.setAll((Map<Object, Object>) handler.replace(nbt));
+                handler.getLockMap().forEach((key, value) -> wrapper.set(SXItem.getInst().getName() + ".Lock." + key, value));
+                wrapper.save();
+            } else {
+                NbtUtil.getInst().setNMSItem(item, nmsItem);
+            }
         }
         return item;
     }

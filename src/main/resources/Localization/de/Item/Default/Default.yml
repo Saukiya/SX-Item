@@ -356,11 +356,11 @@ Component-1:
     # Maximaler Stapel
     minecraft:max_stack_size: 99
     minecraft:food:
+      eat_seconds: '[float]<d:0.1_5>'
+      nutrition: '[int]<i:1_5>'
+      saturation: '[float]<d:1_5>'
       can_always_eat: true
-      eat_seconds: 1.6
       effects: [ ]
-      nutrition: 5
-      saturation: 10
     minecraft:lore:
       - '{"text":"§aHallo Welt Lores"}'
       - '{"text":"§bDies ist die zweite Zeile"}'
@@ -386,9 +386,9 @@ Component-2:
     minecraft:rarity: 'rare'
     # 1.21.1
     minecraft:food:
-      eat_seconds: 0.1
-      nutrition: 1
-      saturation: 1
+      eat_seconds: '[float]<d:0.1_5>'
+      nutrition: '[int]<i:1_5>'
+      saturation: '[float]<d:1_5>'
       can_always_eat: true
 
 # Gegenstände oder Dateien mit dem Präfix "NoLoad" werden nicht geladen
