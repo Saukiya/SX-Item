@@ -41,7 +41,7 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
 
     protected Map<String, Object> nbt;
 
-    protected Object component;
+    protected Map<String, Object> component;
 
     protected int hashCode;
 
@@ -60,7 +60,7 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
             nbtFix(nbt);
         }
         if (config.isConfigurationSection("Components")) {
-            component = ComponentUtil.getInst().valueToMap(convertConfig(config.getConfigurationSection("Components")));
+            component = convertConfig(config.getConfigurationSection("Components"));
         }
         this.hashCode = configString.hashCode();
         this.update = config.getBoolean("Update");
@@ -229,7 +229,8 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         Object nmsItem = NbtUtil.getInst().getNMSItem(item);
 
         if (component != null) {
-            ComponentUtil.getInst().setDataComponentMap(nmsItem, component);
+            val dataComponentMap = ComponentUtil.getInst().valueToMap(handler.replace(component));
+            ComponentUtil.getInst().setDataComponentMap(nmsItem, dataComponentMap);
         }
 
         if (nbt != null || !handler.getLockMap().isEmpty()) {

@@ -212,7 +212,7 @@ public class MythicMobsHelper {
             if (event.getKiller() instanceof Player) {
                 String mobType = event.getMobType().getInternalName();
                 Location mobLocation = event.getEntity().getLocation();
-                Map<String, String> mobMap = getMobMap(event.getMob());
+                Map<String, String> mobMap = isVersionGreaterThan490 ? getMobMap(event.getMob()) : EmptyMap.emptyMap();
                 Player player = (Player) event.getKiller();
                 List<ItemStack> drops = event.getDrops();
                 List<String> sxDropList = event.getMobType().getConfig().getStringList("SX-Drop");

@@ -14,7 +14,6 @@ import net.minecraft.world.item.component.CustomData;
 import org.apache.commons.lang.Validate;
 import org.bukkit.craftbukkit.v1_21_R6.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -267,7 +266,6 @@ public class NbtUtil_v1_21_R7 extends NbtUtil {
             return get(handle, path);
         }
 
-        @NotNull
         @Override
         public NBTTagCompound getHandle() {
             return handle;
