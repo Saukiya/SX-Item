@@ -42,7 +42,7 @@
 # API: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemFlag.html
 #
 #Color [Type:String] (Support Random)
-# Description: can be dyed (leather armor only) ，需要用十六进制AttrColor码 (不需要带#)
+# Description: can be dyed (leather armor only), need to use hexadecimal AttrColor code (do not need to bring#)
 # Format: "000000"
 #
 #Attributes [Type:List] (Support Random)
@@ -64,9 +64,9 @@
 #   HORSE_JUMP_STRENGTH              
 #   ZOMBIE_SPAWN_REINFORCEMENTS      
 # Operation:
-#   0   ADD_NUMBER              该模式直接在基值上进行加减法操作
-#   1   ADD_SCALAR              该模式将在Operation 0之后执行，并直接在属性值的作用倍率上进行加减法操作，也就是将当前的属性值进行倍率上的修改，而基础倍率为×1倍 (即不做改动)
-#   2   MULTIPLY_SCALAR_1       该模式将会在其他所有修饰 (包括其他的Operation 2修饰) 完成后，在最终倍率上执行加减法操作，并执行最终的倍乘。基础倍率同样为×1倍
+#   0   ADD_NUMBER              This mode performs addition and subtraction operations directly on the base value
+#   1   ADD_SCALAR              This mode will be executed after Operation 0, and the addition and subtraction operation will be directly performed on the action magnification of the attribute value, that is, the current attribute value will be modified on the magnification, and the basic magnification is × 1 (that is, no change)
+#   2   MULTIPLY_SCALAR_1       This mode will perform addition and subtraction operations on the final magnification and perform the final multiplication after all other modifications (including other Operation 2 modifications) are completed. The basic magnification is also × 1 times.
 # Slot: If the effective position is not filled in, it will take effect on all parts.
 #   HAND      
 #   OFF_HAND  
@@ -97,12 +97,22 @@
 #
 #NBT [Type:Map-?] (Support Random)
 # Description: Set NBT to item， can use /si nbt
+# Conversion type example: (only support byte/short/int/long/float/double)
+#   key1: '[int]<i:1_100>' # Convert integer string from 1-100 to int integer
+#   key2: '[double]<d:1_100>' # Convert decimal string from 1-100 to double decimal
+#
 # WIKI: https://minecraft.wiki/w/Item_format#Potion_Effects
 #
-#ItemComponents: Components [Type:Map-?]
+#ItemComponents: Components [Type:Map-?] (Support Random)
 # Support: 1.21.1+
 # Description: Highly custom items
-# WIKI: https://minecraft.wiki/w/Data_component_format#food
+# Format:
+#   minecraft:item_name: 'DefaultName(CannotBeModified)'
+# Conversion type example: (only support byte/short/int/long/float/double)
+#   key1: '[int]<i:1_100>' # Convert integer string from 1-100 to int integer
+#   key2: '[double]<d:1_100>' # Convert decimal string from 1-100 to double decimal
+#
+# WIKI: https://minecraft.wiki/w/Data_component_format
 #
 #ClearAttribute [Type:Boolean]
 # Description: Make items lose their original default attributes

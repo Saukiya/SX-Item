@@ -106,10 +106,13 @@
 #   key1: '[int]<i:1_100>' # 将1-100的整数字符串转为int整数
 #   key2: '[double]<d:1_100>' # 将1-100的小数字符串转为double小数
 #
-#堆叠组件: Components [Type:Map]
+#堆叠组件: Components [Type:Map] (支持随机)
 # 描述: 高度自定义物品 仅1.20.6+支持 (插件为1.21.1+)
 # 格式:
 #   minecraft:item_name: '默认名称(无法被铁砧修改)'
+# 转换类型示例: (只支持byte/short/int/long/float/double)
+#   key1: '[int]<i:1_100>' # 将1-100的整数字符串转为int整数
+#   key2: '[double]<d:1_100>' # 将1-100的小数字符串转为double小数
 # 参考WIKI: https://zh.minecraft.wiki/w/%E7%89%A9%E5%93%81%E5%A0%86%E5%8F%A0%E7%BB%84%E4%BB%B6
 #
 #清除属性 ClearAttribute [Type:Boolean]
@@ -355,10 +358,10 @@ Component-1:
     minecraft:max_stack_size: 99
     minecraft:food:
       can_always_eat: true
-      eat_seconds: 1.6
       effects: [ ]
-      nutrition: 5
-      saturation: 10
+      eat_seconds: '[double]<d:0.1_5>'
+      nutrition: '[int]<i:1_5>'
+      saturation: '[int]<i:1_5>'
     minecraft:lore:
       - '{"text":"§aHello World lores"}'
       - '{"text":"§bThis is the second line"}'
@@ -384,9 +387,9 @@ Component-2:
     minecraft:rarity: 'rare'
     # 1.21.1
     minecraft:food:
-      eat_seconds: 0.1
-      nutrition: 1
-      saturation: 1
+      eat_seconds: '[double]<d:0.1_5>'
+      nutrition: '[int]<i:1_5>'
+      saturation: '[int]<i:1_5>'
       can_always_eat: true
 
 #前缀是"NoLoad"的物品或文件不会被加载
