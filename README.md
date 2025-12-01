@@ -23,6 +23,7 @@
 
 - Spigot
 - Paper
+- Folia?
 - More...
 
 ## Support Version
