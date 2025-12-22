@@ -200,9 +200,16 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         }
 
         if (NMS.compareTo(1, 14, 1) >= 0) {
-            int customData = config.getInt("CustomModelData", -1);
-            if (customData != -1) {
-                meta.setCustomModelData(customData);
+            if (config.isString("CustomModelData")) {
+                val customDataStr = handler.replace(config.getString("CustomModelData"));
+                if (StringUtils.isNumeric(customDataStr)) {
+                    meta.setCustomModelData(Integer.parseInt(customDataStr));
+                }
+            } else {
+                int customData = config.getInt("CustomModelData", -1);
+                if (customData != -1) {
+                    meta.setCustomModelData(customData);
+                }
             }
         }
 
