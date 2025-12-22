@@ -12,7 +12,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.*;
 import net.minecraft.world.item.component.CustomData;
 import org.apache.commons.lang.Validate;
-import org.bukkit.craftbukkit.v1_21_R7.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_21_R6.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @SuppressWarnings({"NullableProblems", "unchecked", "unused"})
-public class NbtUtil_v1_21_R7 extends NbtUtil {
+public class NbtUtil_v1_21_R6 extends NbtUtil {
 
     @Override
     public ItemWrapper getItemTagWrapper(ItemStack itemStack) {

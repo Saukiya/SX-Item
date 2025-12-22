@@ -11,12 +11,12 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.MinecraftKey;
-import org.bukkit.craftbukkit.v1_21_R7.CraftRegistry;
+import org.bukkit.craftbukkit.v1_21_R6.CraftRegistry;
 
 import java.util.List;
 
 @SuppressWarnings({"rawtypes", "unchecked", "unused"})
-public class ComponentUtil_v1_21_R7 extends ComponentUtil {
+public class ComponentUtil_v1_21_R6 extends ComponentUtil {
 
     // Registries
     private final IRegistryCustom registry = CraftRegistry.getMinecraftRegistry();
@@ -86,7 +86,7 @@ public class ComponentUtil_v1_21_R7 extends ComponentUtil {
 
     @Override
     public void setComponentMapValue(Object dataComponentMap, String type, Object value) {
-        DataComponentType dataComponentType = BuiltInRegistries.am.a(MinecraftKey.c(type));
+        DataComponentType dataComponentType = BuiltInRegistries.an.a(MinecraftKey.c(type));
         PatchedDataComponentMap map = (PatchedDataComponentMap) dataComponentMap;
         map.b(dataComponentType, value);
     }
