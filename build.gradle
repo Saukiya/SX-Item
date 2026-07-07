@@ -85,6 +85,11 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.46'
 }
 
+test {
+    // Gradle 9: 存在测试源但无可发现的 JUnit 测试时默认会使构建失败, 这里关闭该行为
+    failOnNoDiscoveredTests = false
+}
+
 jar.archiveClassifier = "core"
 processResources.expand(version: version, language: "~")
 buildCopyTask('buildLatestJar', "$rootDir\\build", "Latest")
