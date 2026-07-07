@@ -83,6 +83,12 @@ public class SXItem extends JavaPlugin {
         ExpressionManager.register(new UUIDExpression(), 'u');
         ExpressionManager.register(new MaxExpression(), "max");
         ExpressionManager.register(new MinExpression(), "min");
+        ExpressionManager.register(new IfExpression(), "if");
+        ExpressionManager.register(new WhenExpression(), "when");
+        ExpressionManager.register(new EqualExpression(), "eq");
+        ExpressionManager.register(new LikeExpression(), "like");
+        ExpressionManager.register(new CompareExpression(), "cmp");
+        ExpressionManager.register(new NullExpression(), "null");
 
         ReMaterial.values();
         ComponentUtil.getInst();
