@@ -13,6 +13,7 @@ ScriptEngine: js
 # Um die Engine-Funktion zu deaktivieren...
 #ScriptEngine: ~
 # Globale geschützte NBT-Liste. [Schützt die folgenden NBTs vor Änderungen bei automatischen Updates]
+# Einträge, die mit "components." beginnen, schützen native Top-Level-Komponenten (erfordert 1.20.5+), z. B. components.minecraft:damage, components.minecraft:enchantments
 ProtectNBT:
   - "protect.data"
 # Wenn das Inventar voll ist, werden die Gegenstände beim Geben fallen gelassen. [mit einfachem Aufsammelschutz]

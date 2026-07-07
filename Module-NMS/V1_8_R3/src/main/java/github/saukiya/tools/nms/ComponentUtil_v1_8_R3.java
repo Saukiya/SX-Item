@@ -76,4 +76,9 @@ public class ComponentUtil_v1_8_R3 extends ComponentUtil {
     public void setComponentMapValue(Object dataComponentMap, String type, Object value) {
 
     }
+
+    @Override
+    public Object getComponentMapValue(Object dataComponentMap, String type) {
+        return null;
+    }
 }

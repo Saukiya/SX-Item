@@ -121,6 +121,7 @@
 # Format:
 # - "Enchantments" # Schützt Verzauberungseinträge vor automatischen Updates
 # - "!protect.data" # Hebt Einträge im globalen Schutz [Config.yml] auf
+# - "components.minecraft:damage" # Schützt native Top-Level-Komponente (erfordert 1.20.5+)
 #
 #Lokale-Zufälligkeit Random [Type:Map-?]
 # Beschreibung: Festlegen lokaler Zufallsvariablen für den Gegenstand

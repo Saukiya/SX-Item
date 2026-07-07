@@ -365,6 +365,7 @@ public class ItemManager implements Listener {
         wrapper.set(itemKey, updateIg.getKey());
         wrapper.set(hashCodeKey, updateIg.updateCode());
         updateIg.protectNBT(wrapper, oldWrapper, protectNbtList);
+        updateIg.protectComponents(newItem, item, protectNbtList);
 
         SXItemUpdateEvent event = new SXItemUpdateEvent(plugin, player, (IGenerator) updateIg, newItem, item);
         Bukkit.getPluginManager().callEvent(event);

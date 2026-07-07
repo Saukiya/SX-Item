@@ -159,6 +159,8 @@ class Data {
         put("1.21.9", "v1_21_R6");
         put("1.21.10", "v1_21_R6");
         put("1.21.11", "v1_21_R7");
+        put("26.1", "v26_1_R1");
+        put("26.2", "v26_2_R1");
     }};
     protected static final String VERSION;
     protected static final int[] thisVersionSplit;
@@ -195,8 +197,19 @@ class Data {
         }
         // paper
         versionSource = Bukkit.getServer().getBukkitVersion().split("-")[0];
-        if (REVERSION.containsKey(versionSource)) {
-            versionSource = REVERSION.get(versionSource);
+        String mapped = REVERSION.get(versionSource);
+        if (mapped == null) {
+            // 边界感知最长前缀匹配: 如 26.1.5 -> 26.1 -> v26_1_R1, 让补丁版无需逐个登记即可命中
+            String best = null;
+            for (String key : REVERSION.keySet()) {
+                if ((versionSource.equals(key) || versionSource.startsWith(key + ".")) && (best == null || key.length() > best.length())) {
+                    best = key;
+                }
+            }
+            if (best != null) mapped = REVERSION.get(best);
+        }
+        if (mapped != null) {
+            versionSource = mapped;
         } else {
             String[] split = versionSource.split("\\.");
             versionSource = "v" + split[0] + "_" + split[1] + "_R" + (split.length > 2 ? split[2] : "1");

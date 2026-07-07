@@ -123,6 +123,7 @@
 # 格式:
 # - "Enchantments" # 保护附魔词条不被自动更新
 # - "!protect.data" # 解除在全局保护[Config.yml]中的词条
+# - "components.minecraft:damage" # 保护原版顶级组件(需1.20.5+)
 #
 #局部随机 Random [Type:Map-?]
 # 描述: 设置物品的局部随机变量
