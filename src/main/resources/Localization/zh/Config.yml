@@ -12,6 +12,7 @@ ScriptEngine: js
 # 如果要禁用引擎功能
 #ScriptEngine: ~
 # 全局保护NBT列表 [自动更新时保护以下NBT不被更改]
+# 以 "components." 开头的条目保护原版顶级组件(需1.20.5+), 例: components.minecraft:damage、components.minecraft:enchantments
 ProtectNBT:
   - "protect.data"
 # 给予物品时背包满了则掉落 [简单的拾取保护,只防护玩家的拾取]

@@ -92,6 +92,12 @@ public class ComponentUtil_v1_21_R7 extends ComponentUtil {
     }
 
     @Override
+    public Object getComponentMapValue(Object dataComponentMap, String type) {
+        DataComponentType dataComponentType = BuiltInRegistries.am.a(MinecraftKey.c(type));
+        return ((PatchedDataComponentMap) dataComponentMap).a(dataComponentType);
+    }
+
+    @Override
     public List<String> getItemKeys() {
         return BuiltInRegistries.am.i().stream().map(MinecraftKey::toString).toList();
     }

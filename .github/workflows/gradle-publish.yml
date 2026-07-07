@@ -29,10 +29,11 @@ jobs:
     steps:
       - name: Check Out
         uses: actions/checkout@v4
-      - name: Set up JDK 21
+      # MC 26.x 服务端使用 Java 25 (字节码版本 69), 整个构建需在 JDK 25 上运行 (Gradle 9.1+ 支持)
+      - name: Set up JDK 25
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
+          java-version: '25'
           distribution: 'temurin'
           server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
           settings-path: ${{ github.workspace }} # location for the settings.xml file

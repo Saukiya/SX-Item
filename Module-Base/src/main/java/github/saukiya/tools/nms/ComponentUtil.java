@@ -25,7 +25,7 @@ import java.util.List;
 public abstract class ComponentUtil implements NMS {
 
     @Getter
-    private final static ComponentUtil inst = NMS.getInst(ComponentUtil.class, "v1_21_R7", "v1_21_R6", "v1_21_R1", "v1_20_R4", "v1_8_R3");
+    private final static ComponentUtil inst = NMS.getInst(ComponentUtil.class, "v26_2_R1", "v26_1_R1", "v1_21_R7", "v1_21_R6", "v1_21_R1", "v1_20_R4", "v1_8_R3");
 
     @Getter
     private final static Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -72,6 +72,15 @@ public abstract class ComponentUtil implements NMS {
     public abstract Object valueToMap(Object javaObject);
 
     public abstract void setComponentMapValue(Object dataComponentMap, String type, Object value);
+
+    /**
+     * 从 DataComponentMap 中读取指定类型的组件值 (原生NMS对象)
+     *
+     * @param dataComponentMap DataComponentMap
+     * @param type             组件类型ID, 如 minecraft:damage
+     * @return 组件值; 不存在时返回 null
+     */
+    public abstract Object getComponentMapValue(Object dataComponentMap, String type);
 
     /**
      * 获取 nmsItem 中的 DataComponentPatch

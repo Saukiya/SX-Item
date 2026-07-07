@@ -122,6 +122,7 @@
 # Format:
 # - "Enchantments" # Protect 'Enchantments' entries from being automatically updated
 # - "!protect.data" # Unprotect entries in global protection 'Config.yml'
+# - "components.minecraft:damage" # Protect vanilla top-level component (requires 1.20.5+)
 #
 #Random [Type:Map-?]
 # Description: Set the local random variable of the item.
