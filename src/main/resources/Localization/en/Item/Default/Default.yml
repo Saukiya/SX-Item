@@ -218,7 +218,7 @@ Default-3:
     - '&cu   - &7UUIDRandom&r [<u:random>]'
     - '&cj   - &7ScriptProcessing&r [<j:Default.itemScript#QAQ,QWQ,???,!!!>]'
     - '&cif  - &7Ternary&r [<if:<cmp:5 gt 3>?&aYes:&cNo>]'
-    - '&cwhen- &7Switch&r [<when:Epic$Epic:&cEpic|default:&7Ordinary>]'
+    - '&cwhen- &7Switch&r [<when:Epic\$Epic:&cEpic|default:&7Ordinary>]'
     - '&ceq  - &7Equals&r [<eq:AAA==AAA>]'
     - '&clike- &7FuzzyContains&r [<like:IronSword==Sword>]'
     - '&ccmp - &7Compare&r [<cmp:5.0 eq 5>] [<cmp:10 gt 9>]'

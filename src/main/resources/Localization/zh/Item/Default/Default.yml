@@ -219,7 +219,7 @@ Default-3:
     - '&cu   - &7UUID随机&r [<u:random>]'
     - '&cj   - &7脚本处理&r [<j:Default.itemScript#QAQ,QWQ,???,!!!>]'
     - '&cif  - &7三元条件&r [<if:<cmp:5 gt 3>?&a是:&c否>]'
-    - '&cwhen- &7多分支选择&r [<when:史诗$史诗:&c史诗|default:&7普通>]'
+    - '&cwhen- &7多分支选择&r [<when:史诗\$史诗:&c史诗|default:&7普通>]'
     - '&ceq  - &7相等判断&r [<eq:AAA==AAA>]'
     - '&clike- &7模糊包含&r [<like:钢铁长剑==长剑>]'
     - '&ccmp - &7比较大小&r [<cmp:5.0 eq 5>] [<cmp:10 gt 9>]'

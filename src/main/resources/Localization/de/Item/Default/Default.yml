@@ -217,7 +217,7 @@ Default-3:
     - '&cu   - &7UUID&r [<u:random>]'
     - '&cj   - &7Skript&r [<j:Default.itemScript#QAQ,QWQ,???,!!!>]'
     - '&cif  - &7Bedingung&r [<if:<cmp:5 gt 3>?&aJa:&cNein>]'
-    - '&cwhen- &7Auswahl&r [<when:Episch$Episch:&cEpisch|default:&7Gewöhnlich>]'
+    - '&cwhen- &7Auswahl&r [<when:Episch\$Episch:&cEpisch|default:&7Gewöhnlich>]'
     - '&ceq  - &7Gleichheit&r [<eq:AAA==AAA>]'
     - '&clike- &7UnscharfeSuche&r [<like:Eisenschwert==Schwert>]'
     - '&ccmp - &7Vergleich&r [<cmp:5.0 eq 5>] [<cmp:10 gt 9>]'
