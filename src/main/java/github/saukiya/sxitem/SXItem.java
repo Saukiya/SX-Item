@@ -20,7 +20,7 @@ import github.saukiya.tools.nms.MessageUtil;
 import github.saukiya.tools.nms.NbtUtil;
 import github.saukiya.tools.util.LocalizationUtil;
 import github.saukiya.tools.util.LogUtil;
-import github.saukiya.tools.util.ReMaterial;
+import github.saukiya.tools.util.XMaterial;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bstats.bukkit.Metrics;
@@ -32,6 +32,9 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Random;
 
+/**
+ * SX-Item 插件入口，负责在 Bukkit 生命周期内初始化配置、生成器和跨版本适配器。
+ */
 public class SXItem extends JavaPlugin {
 
     @Getter
@@ -90,7 +93,8 @@ public class SXItem extends JavaPlugin {
         ExpressionManager.register(new CompareExpression(), "cmp");
         ExpressionManager.register(new NullExpression(), "null");
 
-        ReMaterial.values();
+        // 提前完成枚举映射初始化，使首次物品请求不会承担跨版本材质表的冷启动开销。
+        XMaterial.values();
         ComponentUtil.getInst();
         NbtUtil.getInst();
         ItemUtil.getInst();

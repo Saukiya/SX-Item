@@ -7,7 +7,7 @@ import github.saukiya.sxitem.event.SXItemUpdateEvent;
 import github.saukiya.tools.base.Tuple;
 import github.saukiya.tools.nms.MessageUtil;
 import github.saukiya.tools.nms.NbtUtil;
-import github.saukiya.tools.util.ReMaterial;
+import github.saukiya.tools.util.XMaterial;
 import lombok.Getter;
 import lombok.val;
 import org.bukkit.Bukkit;
@@ -131,7 +131,7 @@ public class ItemManager implements Listener {
 
     @Deprecated
     public static Material getMaterial(String key) {
-        return ReMaterial.getMaterial(key);
+        return XMaterial.getMaterial(key);
     }
 
     /**
@@ -257,7 +257,7 @@ public class ItemManager implements Listener {
     @Nullable
     public IGenerator getGenerator(String itemKey) {
         IGenerator result = itemMap.get(itemKey);
-        if (result == null && ReMaterial.has(itemKey)) {
+        if (result == null && XMaterial.has(itemKey)) {
             return reMaterial;
         }
         return result;
@@ -276,7 +276,7 @@ public class ItemManager implements Listener {
      * 返回是否存在物品(或者材质ID)
      */
     public boolean hasItem(String itemKey) {
-        return itemMap.containsKey(itemKey) || ReMaterial.has(itemKey);
+        return itemMap.containsKey(itemKey) || XMaterial.has(itemKey);
     }
 
     /**
@@ -305,7 +305,7 @@ public class ItemManager implements Listener {
         if (generator != null) {
             return getItem(generator, player, args);
         } else {
-            ItemStack item = ReMaterial.getItem(itemKey);
+            ItemStack item = XMaterial.getItem(itemKey);
             if (item != null) return item;
         }
         return emptyItem;

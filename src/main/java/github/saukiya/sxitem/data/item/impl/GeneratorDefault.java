@@ -8,7 +8,7 @@ import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.data.random.INode;
 import github.saukiya.sxitem.util.Util;
 import github.saukiya.tools.nms.*;
-import github.saukiya.tools.util.ReMaterial;
+import github.saukiya.tools.util.XMaterial;
 import lombok.Getter;
 import lombok.val;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -30,8 +30,19 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * 默认物品生成器，负责把物品配置转换为可生成、可更新的 Bukkit 物品。
+ *
+ * <p>配置字段通常使用既有的规范拼写；材质 ID 字段额外兼容不同大小写，
+ * 避免 YAML 键名大小写差异使物品静默回退为默认材质。</p>
+ */
 @Getter
 public class GeneratorDefault extends IGenerator implements IUpdate {
+
+    /**
+     * 材质 ID 的规范配置键；精确拼写始终优先于兼容的大小写变体。
+     */
+    private static final String MATERIAL_ID_KEY = "ID";
 
     protected String displayName;
 
@@ -47,11 +58,19 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
 
     protected boolean update;
 
+    /**
+     * 创建默认物品生成器，并快照配置中需要跨多次生成复用的数据。
+     *
+     * @param key 物品配置键
+     * @param config 当前物品配置节点
+     * @param group 配置来源组
+     */
     @SuppressWarnings("DataFlowIssue")
     public GeneratorDefault(String key, ConfigurationSection config, String group) {
         super(key, config, group);
         this.displayName = config.getString("Name");
-        this.ids = config.isList("ID") ? config.getStringList("ID") : Collections.singletonList(config.getString(".ID", "APPLE"));
+        String materialIdKey = findKeyIgnoreCase(config, MATERIAL_ID_KEY);
+        this.ids = config.isList(materialIdKey) ? config.getStringList(materialIdKey) : Collections.singletonList(config.getString(materialIdKey, "APPLE"));
         if (config.isConfigurationSection("Random")) {
             SXItem.getRandomManager().loadRandom(this.randomMap = new HashMap<>(), config.getConfigurationSection("Random"));
         }
@@ -64,6 +83,18 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         }
         this.hashCode = configString.hashCode();
         this.update = config.getBoolean("Update");
+    }
+
+    /**
+     * 在当前配置节点中解析字段名，同时确保规范拼写在多个大小写变体并存时优先。
+     * Bukkit 的 YAML 键区分大小写，因此必须显式处理历史配置中的 {@code Id}/{@code id}。
+     */
+    private static String findKeyIgnoreCase(ConfigurationSection config, String canonicalKey) {
+        Set<String> keys = config.getKeys(false);
+        if (keys.contains(canonicalKey)) {
+            return canonicalKey;
+        }
+        return keys.stream().filter(key -> key.equalsIgnoreCase(canonicalKey)).findFirst().orElse(canonicalKey);
     }
 
     @Override
@@ -82,7 +113,7 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         if (displayName != null)
             return new TextComponent(ExpressionHandler.getInst().replace(displayName).replace('&', '§'));
         MessageUtil.Builder cb = MessageUtil.getInst().builder().add("§r");
-        Material material = ReMaterial.getMaterial(ExpressionHandler.getInst().replace(ids.get(0)));
+        Material material = XMaterial.getMaterial(ExpressionHandler.getInst().replace(ids.get(0)));
         if (material != null) cb.add(material);
         else cb.add(ids.get(0));
         if (ids.size() > 1) cb.add("..");
@@ -111,7 +142,7 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
     protected ItemStack getItem(Player player, ExpressionHandler handler) {
         String id = handler.replace(Util.random(ids));
 
-        ItemStack item = ReMaterial.getItem(id);
+        ItemStack item = XMaterial.getItem(id);
         if (item == null) {
             SXItem.getInst().getLogger().warning("Item-" + getKey() + " ID ERROR: " + id);
             return ItemManager.getEmptyItem();

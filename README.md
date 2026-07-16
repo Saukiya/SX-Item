@@ -48,11 +48,21 @@
 
 要什么版本就发 [Issue](https://github.com/Saukiya/SX-Item/issues/new/choose)
 
+### Java Compatibility
+
+插件核心及 Minecraft 1.8–1.17 的适配代码以 Java 8 字节码（class major 52）发布，可在仍使用 Java 8 的旧版服务端运行。Minecraft 1.18 及以上版本的 NMS 适配代码按照对应服务端要求使用 Java 17/21 字节码，并只会在匹配的服务端版本中加载。
+
 ## Extension
 
 | Project                                                                 | Version                                                                                               | Author  |
 |-------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|---------|
 | [SX-Attribute](https://github.com/Saukiya/SX-Attribute/releases/latest) | ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/Saukiya/SX-Attribute?label=latest) | Saukiya |
+
+## Material Compatibility
+
+物品配置的材质字段以 `ID` 为规范写法，同时兼容 `Id`、`id` 等大小写形式；多个形式并存时优先使用 `ID`。
+
+材质值由内置的 XMaterial 跨版本映射解析，并继续兼容旧数字 ID。若 XMaterial 中没有对应枚举，插件会回退到运行中服务端的 Bukkit `Material`，因此 Mohist 等混合服务端通过 KubeJS 注入的材质也可以直接使用。
 
 ## MythicMobs 原生战利品
 
@@ -74,6 +84,6 @@ repositories {
 }
 
 dependencies {
-  compileOnly 'com.github.Saukiya:SX-Item:4.5.3'
+  compileOnly 'com.github.Saukiya:SX-Item:4.5.4'
 }
 ```

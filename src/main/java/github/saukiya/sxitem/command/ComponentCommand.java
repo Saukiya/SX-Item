@@ -10,7 +10,7 @@ import github.saukiya.tools.command.SubCommand;
 import github.saukiya.tools.nms.ComponentUtil;
 import github.saukiya.tools.nms.MessageUtil;
 import github.saukiya.tools.nms.NMS;
-import github.saukiya.tools.util.ReMaterial;
+import github.saukiya.tools.util.XMaterial;
 import lombok.val;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -146,7 +146,7 @@ public class ComponentCommand extends SubCommand {
                 .add(item.getType().name())
                 .show(Message.NBT__CLICK_COPY.get())
                 .suggestCommand(item.getType().name());
-        String keys = ReMaterial.getKey(item.getType());
+        String keys = XMaterial.getKey(item.getType());
         if (!keys.isEmpty()) cb.add("-").add(keys).show(Message.NBT__CLICK_COPY.get()).suggestCommand(keys);
         cb.add("§7] §cItem-Components:");
         cb.send(sender);

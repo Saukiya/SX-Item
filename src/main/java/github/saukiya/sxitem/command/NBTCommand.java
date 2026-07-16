@@ -9,7 +9,7 @@ import github.saukiya.tools.nbt.TagList;
 import github.saukiya.tools.nbt.TagType;
 import github.saukiya.tools.nms.MessageUtil;
 import github.saukiya.tools.nms.NbtUtil;
-import github.saukiya.tools.util.ReMaterial;
+import github.saukiya.tools.util.XMaterial;
 import lombok.val;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -91,7 +91,7 @@ public class NBTCommand extends SubCommand {
                         .add(item.getType().name())
                         .show(Message.NBT__CLICK_COPY.get())
                         .suggestCommand(item.getType().name());
-                String keys = ReMaterial.getKey(item.getType());
+                String keys = XMaterial.getKey(item.getType());
                 if (!keys.isEmpty()) cb.add("-").add(keys).show(Message.NBT__CLICK_COPY.get()).suggestCommand(keys);
                 cb.add("] §cItem-NBT:").send(sender);
                 sendNBT(sender, tag, "");
