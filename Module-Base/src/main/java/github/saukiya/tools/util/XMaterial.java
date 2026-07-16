@@ -31,6 +31,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SpawnEggMeta;
 
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -2338,8 +2339,12 @@ public enum XMaterial {
     }
 
     /**
-     * Returns the stable XMaterial name when available and otherwise preserves the exact
-     * Bukkit enum name used by a runtime-injected material.
+     * Returns the stable XMaterial name when available and otherwise preserves the namespaced
+     * registry key of a runtime-injected material.
+     *
+     * <p>Mod loaders may expose an implementation-specific enum name that cannot be resolved
+     * after restart, while the registry key (for example {@code mod:item}) is the persistent
+     * identity understood by Bukkit's material matcher.</p>
      *
      * @param material Bukkit material
      * @return a reusable configuration key, or an empty string for {@code null}
@@ -2347,7 +2352,7 @@ public enum XMaterial {
     public static String getKey(Material material) {
         if (material == null) return "";
         Optional<XMaterial> matched = matchXMaterial(material.name());
-        return matched.isPresent() ? matched.get().name() : material.name();
+        return matched.isPresent() ? matched.get().name() : getRuntimeKey(material);
     }
 
     /**
@@ -2364,9 +2369,42 @@ public enum XMaterial {
         }
         for (Material material : Material.values()) {
             keys.add(material.name());
+            keys.add(getKey(material));
         }
         keys.addAll(CompatibilityData.BY_LEGACY_ID.keySet());
         return Collections.unmodifiableSet(keys);
+    }
+
+    /**
+     * Reads the Bukkit registry key reflectively so loading XMaterial on pre-1.13 servers does
+     * not link against an API method those runtimes do not provide. Such legacy runtimes have
+     * no namespaced material registry, so the enum name remains their only usable fallback.
+     */
+    private static String getRuntimeKey(Material material) {
+        Method getKeyMethod = RuntimeMaterialKey.GET_KEY_METHOD;
+        if (getKeyMethod == null) return material.name();
+        try {
+            Object key = getKeyMethod.invoke(material);
+            return key == null ? material.name() : key.toString();
+        } catch (ReflectiveOperationException | SecurityException ignored) {
+            return material.name();
+        }
+    }
+
+    /**
+     * Defers the optional Bukkit API lookup until a material outside the XMaterial table needs
+     * serialization, keeping the common vanilla path allocation-free.
+     */
+    private static final class RuntimeMaterialKey {
+        private static final Method GET_KEY_METHOD = findGetKeyMethod();
+
+        private static Method findGetKeyMethod() {
+            try {
+                return Material.class.getMethod("getKey");
+            } catch (NoSuchMethodException | SecurityException ignored) {
+                return null;
+            }
+        }
     }
 
     /**

@@ -147,8 +147,8 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
             SXItem.getInst().getLogger().warning("Item-" + getKey() + " ID ERROR: " + id);
             return ItemManager.getEmptyItem();
         }
-        int indexOf = id.lastIndexOf(':');
-        String durability = indexOf != -1 ? id.substring(indexOf + 1) : handler.replace(config.getString("Durability"));
+        String inlineDurability = extractInlineDurability(id);
+        String durability = inlineDurability != null ? inlineDurability : handler.replace(config.getString("Durability"));
         if (!StringUtils.isEmpty(durability)) {
             Material material = item.getType();
             if (durability.charAt(durability.length() - 1) == '%') {
@@ -282,6 +282,42 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         return item;
     }
 
+    /**
+     * Extracts the historical {@code material:durability} suffix without treating the colon in
+     * a mod registry key as a separator. An exact Bukkit material match always wins because a
+     * numeric namespaced path such as {@code mod:123} is legal and must remain intact.
+     *
+     * @param id configured material identifier
+     * @return inline durability expression, or {@code null} when the ID is only a material key
+     */
+    private static String extractInlineDurability(String id) {
+        int separator = id.lastIndexOf(':');
+        if (separator <= 0 || separator == id.length() - 1 || Material.matchMaterial(id) != null) return null;
+
+        String durability = id.substring(separator + 1);
+        if (!isDurabilityExpression(durability)) return null;
+        return XMaterial.has(id.substring(0, separator)) ? durability : null;
+    }
+
+    /**
+     * Accepts only the three durability forms consumed below: absolute shorts, remaining-value
+     * expressions prefixed by {@code <}, and percentages. This prevents arbitrary namespace
+     * paths from reaching numeric parsers.
+     */
+    private static boolean isDurabilityExpression(String value) {
+        try {
+            if (value.endsWith("%")) {
+                Double.parseDouble(value.substring(0, value.length() - 1));
+            } else {
+                String absolute = value.startsWith("<") ? value.substring(1) : value;
+                Short.parseShort(absolute);
+            }
+            return true;
+        } catch (NumberFormatException ignored) {
+            return false;
+        }
+    }
+
     @Override
     public boolean isUpdate() {
         return update;
@@ -303,7 +339,9 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
     public static void save(ItemStack item, ConfigurationSection config) {
         ItemMeta itemMeta = item.getItemMeta();
         config.set("Name", itemMeta.hasDisplayName() ? itemMeta.getDisplayName().replace('§', '&') : null);
-        config.set("ID", item.getType().name() + (item.getDurability() != 0 ? ":" + item.getDurability() : ""));
+        // XMaterial preserves vanilla compatibility names, while its runtime fallback retains
+        // the namespace required to resolve mod materials after the configuration is reloaded.
+        config.set("ID", XMaterial.getKey(item.getType()) + (item.getDurability() != 0 ? ":" + item.getDurability() : ""));
         if (item.getAmount() > 1)
             config.set("Amount", item.getAmount());
         if (itemMeta.hasLore())

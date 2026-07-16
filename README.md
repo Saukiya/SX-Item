@@ -84,6 +84,6 @@ repositories {
 }
 
 dependencies {
-  compileOnly 'com.github.Saukiya:SX-Item:4.5.4'
+  compileOnly 'com.github.Saukiya:SX-Item:4.5.5'
 }
 ```
