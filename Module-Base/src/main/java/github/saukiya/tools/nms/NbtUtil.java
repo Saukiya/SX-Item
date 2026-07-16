@@ -8,6 +8,7 @@ import github.saukiya.tools.nbt.TagType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
@@ -30,7 +31,20 @@ import java.io.DataOutput;
 public abstract class NbtUtil implements NMS {
 
     @Getter
-    private final static NbtUtil inst = NMS.getInst(NbtUtil.class);
+    /** 映射失败时使用 Bukkit PDC 降级层，避免第三方服务端让物品更新链路变成 null。 */
+    private final static NbtUtil inst = resolve();
+
+    private static NbtUtil resolve() {
+        NbtUtil mapped;
+        try {
+            mapped = NMS.getInst(NbtUtil.class);
+        } catch (LinkageError error) {
+            mapped = null;
+        }
+        if (mapped != null) return mapped;
+        Bukkit.getLogger().warning("[SX-NMS] NBT mapping unavailable; using Bukkit PDC fallback");
+        return new NbtUtilFallback();
+    }
 
     /**
      * 获取 ITEM-NBT封装器
