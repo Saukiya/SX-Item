@@ -6,7 +6,6 @@ import github.saukiya.sxitem.data.item.impl.GeneratorReMaterial;
 import github.saukiya.sxitem.event.SXItemMythicMobsGiveToInventoryEvent;
 import github.saukiya.sxitem.util.Config;
 import github.saukiya.sxitem.util.Util;
-import github.saukiya.tools.base.EmptyMap;
 import github.saukiya.tools.nms.NMS;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,9 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Item;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.Inventory;
@@ -29,6 +26,12 @@ import java.util.List;
 import java.util.Map;
 
 public class MythicMobsHelper {
+
+    /**
+     * MythicMobs 原生战利品类型名称。使用独立类型可以让 MM 负责概率、数量和战利品表流程，
+     * 同时保留旧版 SX-Drop 配置的兼容性。
+     */
+    static final String DROP_NAME = "sxitem";
 
     @Getter
     private static Listener handler;
@@ -155,10 +158,10 @@ public class MythicMobsHelper {
         if (!Config.getConfig().getBoolean(Config.COMPATIBILITY_MYTHIC_MOBS, true)) return;
         if (Bukkit.getPluginManager().isPluginEnabled("MythicMobs")) {
             if (NMS.hasClass("io.lumine.xikage.mythicmobs.mobs.MythicMob")) {
-                Bukkit.getPluginManager().registerEvents(handler = new V4Listener(), SXItem.getInst());
+                Bukkit.getPluginManager().registerEvents(handler = new MythicMobsV4Helper(), SXItem.getInst());
                 SXItem.getInst().getLogger().info("MythicMobsV4Helper Enabled");
             } else if (NMS.hasClass("io.lumine.mythic.api.mobs.MythicMob")) {
-                Bukkit.getPluginManager().registerEvents(handler = new V5Listener(), SXItem.getInst());
+                Bukkit.getPluginManager().registerEvents(handler = new MythicMobsV5Helper(), SXItem.getInst());
                 SXItem.getInst().getLogger().info("MythicMobsV5Helper Enabled");
             }
         } else {
@@ -175,6 +178,37 @@ public class MythicMobsHelper {
         return otherMap;
     }
 
+    /**
+     * 从原生掉落配置生成 SX 物品。参数值先经过 MythicMobs 当前掉落上下文解析，
+     * 因而 `{owner=<trigger.name>}` 等占位符不会在加载配置时被错误地固定。
+     */
+    static ItemStack createNativeDrop(String itemId, Map<String, String> parameters,
+                                              Player player, int amount) {
+        IGenerator generator = SXItem.getItemManager().getGenerator(itemId);
+        if (generator == null) return new ItemStack(Material.AIR);
+        Object param = generator instanceof GeneratorReMaterial ? itemId : parameters;
+        ItemStack item = SXItem.getItemManager().getItem(generator, player, param);
+        if (item.getType() != Material.AIR) item.setAmount(Math.max(1, amount));
+        return item;
+    }
+
+    static Map<String, String> mergeDropParameters(Map<String, String> parameters,
+                                                            Map<String, String> mobMap) {
+        Map<String, String> result = new HashMap<>(parameters);
+        result.putAll(mobMap);
+        return result;
+    }
+
+    static void handleDeath(String mobType, Location mobLocation, Map<String, String> mobMap,
+                            Player player, List<ItemStack> drops, List<String> sxDropList) {
+        deathHandler.death(mobType, mobLocation, mobMap, player, drops, sxDropList);
+    }
+
+    static void handleSpawn(String mobType, EntityEquipment mobEquipment,
+                            Map<String, String> mobMap, List<String> sxEquipmentList) {
+        spawnHandler.spawn(mobType, mobEquipment, mobMap, sxEquipmentList);
+    }
+
     public interface DeathHandler {
         void death(String mobType, Location mobLocation, Map<String, String> mobMap, Player player, List<ItemStack> drops, List<String> sxDropList);
     }
@@ -183,100 +217,4 @@ public class MythicMobsHelper {
         void spawn(String mobType, EntityEquipment mobEquipment, Map<String, String> mobMap, List<String> sxEquipmentList);
     }
 
-    public static class V4Listener implements Listener {
-
-        private boolean isVersionGreaterThan490;
-
-        V4Listener() {
-            try {
-                io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobSpawnEvent.class.getMethod("getMob");
-                isVersionGreaterThan490 = true;
-            } catch (NoSuchMethodException e) {
-                isVersionGreaterThan490 = false;
-            }
-        }
-
-        @EventHandler
-        void on(io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobSpawnEvent event) {
-            if (event.getEntity() instanceof LivingEntity) {
-                String mobType = event.getMobType().getInternalName();
-                EntityEquipment mobEquipment = ((LivingEntity) event.getEntity()).getEquipment();
-                Map<String, String> mobMap = isVersionGreaterThan490 ? getMobMap(event.getMob()) : EmptyMap.emptyMap();
-                List<String> sxEquipmentList = event.getMobType().getConfig().getStringList("SX-Equipment");
-                spawnHandler.spawn(mobType, mobEquipment, mobMap, sxEquipmentList);
-            }
-        }
-
-        @EventHandler
-        void on(io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobDeathEvent event) {
-            if (event.getKiller() instanceof Player) {
-                String mobType = event.getMobType().getInternalName();
-                Location mobLocation = event.getEntity().getLocation();
-                Map<String, String> mobMap = isVersionGreaterThan490 ? getMobMap(event.getMob()) : EmptyMap.emptyMap();
-                Player player = (Player) event.getKiller();
-                List<ItemStack> drops = event.getDrops();
-                List<String> sxDropList = event.getMobType().getConfig().getStringList("SX-Drop");
-                sxDropList.addAll(event.getMobType().getConfig().getStringList("SX-Drops"));
-                deathHandler.death(mobType, mobLocation, mobMap, player, drops, sxDropList);
-                event.setDrops(drops);
-            }
-        }
-
-        /**
-         * 依据 io.lumine.xikage.mythicmobs.mobs.ActiveMob 提供变量
-         *
-         * @param mob
-         */
-        public static Map<String, String> getMobMap(io.lumine.xikage.mythicmobs.mobs.ActiveMob mob) {
-            Map<String, String> map = new HashMap<>();
-            map.put("mob_level", Double.toString(mob.getLevel()));
-            map.put("mob_name_display", mob.getDisplayName());
-            map.put("mob_name_internal", mob.getType().getInternalName());
-            map.put("mob_uuid", mob.getUniqueId().toString());
-            return map;
-        }
-    }
-
-    public static class V5Listener implements Listener {
-
-        @EventHandler
-        void on(io.lumine.mythic.bukkit.events.MythicMobSpawnEvent event) {
-            if (event.getEntity() instanceof LivingEntity) {
-                String mobType = event.getMobType().getInternalName();
-                EntityEquipment mobEquipment = ((LivingEntity) event.getEntity()).getEquipment();
-                Map<String, String> mobMap = getMobMap(event.getMob());
-                List<String> sxEquipmentList = event.getMobType().getConfig().getStringList("SX-Equipment");
-                spawnHandler.spawn(mobType, mobEquipment, mobMap, sxEquipmentList);
-            }
-        }
-
-        @EventHandler
-        void on(io.lumine.mythic.bukkit.events.MythicMobDeathEvent event) {
-            if (event.getKiller() instanceof Player) {
-                String mobType = event.getMobType().getInternalName();
-                Location mobLocation = event.getEntity().getLocation();
-                Map<String, String> mobMap = getMobMap(event.getMob());
-                Player player = (Player) event.getKiller();
-                List<ItemStack> drops = event.getDrops();
-                List<String> sxDropList = event.getMobType().getConfig().getStringList("SX-Drop");
-                sxDropList.addAll(event.getMobType().getConfig().getStringList("SX-Drops"));
-                deathHandler.death(mobType, mobLocation, mobMap, player, drops, sxDropList);
-                event.setDrops(drops);
-            }
-        }
-
-        /**
-         * 依据 io.lumine.mythic.core.mobs.ActiveMob 提供变量
-         *
-         * @param mob
-         */
-        public static Map<String, String> getMobMap(io.lumine.mythic.core.mobs.ActiveMob mob) {
-            Map<String, String> map = new HashMap<>();
-            map.put("mob_level", Double.toString(mob.getLevel()));
-            map.put("mob_name_display", mob.getDisplayName());
-            map.put("mob_name_internal", mob.getType().getInternalName());
-            map.put("mob_uuid", mob.getUniqueId().toString());
-            return map;
-        }
-    }
 }

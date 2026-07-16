@@ -54,6 +54,17 @@
 |-------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|---------|
 | [SX-Attribute](https://github.com/Saukiya/SX-Attribute/releases/latest) | ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/Saukiya/SX-Attribute?label=latest) | Saukiya |
 
+## MythicMobs 原生战利品
+
+SX-Item 会在 MythicMobs 4/5 中注册 `sxitem` 战利品类型。数量、概率和战利品表组合由 MythicMobs 原生处理，物品参数则交给 SX-Item 生成器：
+
+```yaml
+Drops:
+  - sxitem{item=ExampleSword;owner=<trigger.name>;mob_level=<mob.level>} 1 0.25
+```
+
+`item` 也可以写成 `id`；除 `item`、`id`、`amount` 外的配置键都会作为生成器参数，并在实际掉落时按 MythicMobs 上下文解析。原有 `SX-Drop`/`SX-Drops` 配置仍然兼容。
+
 ## Gradle
 
 ```groovy
@@ -63,6 +74,6 @@ repositories {
 }
 
 dependencies {
-  compileOnly 'com.github.Saukiya:SX-Item:4.4.9'
+  compileOnly 'com.github.Saukiya:SX-Item:4.5.1'
 }
 ```
