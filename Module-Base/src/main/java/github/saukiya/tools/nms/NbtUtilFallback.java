@@ -32,25 +32,30 @@ final class NbtUtilFallback extends NbtUtil {
     private static final Map<ItemStack, TagCompound> MEMORY = new WeakHashMap<>();
 
     NbtUtilFallback() {
+        Method containerMethod = null;
+        Method valueMethod = null;
+        Method setterMethod = null;
+        Object typeValue = null;
+        Object keyValue = null;
         try {
             Class<?> meta = Class.forName("org.bukkit.inventory.meta.ItemMeta");
             Class<?> container = Class.forName("org.bukkit.persistence.PersistentDataContainer");
             Class<?> dataType = Class.forName("org.bukkit.persistence.PersistentDataType");
             Class<?> key = Class.forName("org.bukkit.NamespacedKey");
-            getContainer = meta.getMethod("getPersistentDataContainer");
-            getValue = container.getMethod("get", key, dataType);
-            setValue = container.getMethod("set", key, dataType, Object.class);
+            containerMethod = meta.getMethod("getPersistentDataContainer");
+            valueMethod = container.getMethod("get", key, dataType);
+            setterMethod = container.getMethod("set", key, dataType, Object.class);
             Field bytes = dataType.getField("BYTE_ARRAY");
-            byteArrayType = bytes.get(null);
+            typeValue = bytes.get(null);
             Object plugin = Bukkit.getPluginManager().getPlugin("SX-Item");
-            namespacedKey = key.getConstructor(org.bukkit.plugin.Plugin.class, String.class).newInstance(plugin, KEY);
+            keyValue = key.getConstructor(org.bukkit.plugin.Plugin.class, String.class).newInstance(plugin, KEY);
         } catch (Exception exception) {
-            getContainer = null;
-            getValue = null;
-            setValue = null;
-            byteArrayType = null;
-            namespacedKey = null;
         }
+        getContainer = containerMethod;
+        getValue = valueMethod;
+        setValue = setterMethod;
+        byteArrayType = typeValue;
+        namespacedKey = keyValue;
     }
 
     @Override
