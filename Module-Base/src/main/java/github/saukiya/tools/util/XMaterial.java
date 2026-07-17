@@ -31,7 +31,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SpawnEggMeta;
 
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -2339,12 +2338,12 @@ public enum XMaterial {
     }
 
     /**
-     * Returns the stable XMaterial name when available and otherwise preserves the namespaced
-     * registry key of a runtime-injected material.
+     * Returns the stable XMaterial name when available and otherwise preserves the Bukkit enum
+     * name of a runtime-injected material.
      *
-     * <p>Mod loaders may expose an implementation-specific enum name that cannot be resolved
-     * after restart, while the registry key (for example {@code mod:item}) is the persistent
-     * identity understood by Bukkit's material matcher.</p>
+     * <p>Hybrid servers commonly expose a mod item as {@code MODID_ITEM}; this is the identifier
+     * accepted by their Bukkit material matcher. The namespaced registry key may exist as
+     * metadata but is not necessarily accepted by {@link Material#matchMaterial(String)}.</p>
      *
      * @param material Bukkit material
      * @return a reusable configuration key, or an empty string for {@code null}
@@ -2352,7 +2351,7 @@ public enum XMaterial {
     public static String getKey(Material material) {
         if (material == null) return "";
         Optional<XMaterial> matched = matchXMaterial(material.name());
-        return matched.isPresent() ? matched.get().name() : getRuntimeKey(material);
+        return matched.isPresent() ? matched.get().name() : material.name();
     }
 
     /**
@@ -2376,38 +2375,6 @@ public enum XMaterial {
     }
 
     /**
-     * Reads the Bukkit registry key reflectively so loading XMaterial on pre-1.13 servers does
-     * not link against an API method those runtimes do not provide. Such legacy runtimes have
-     * no namespaced material registry, so the enum name remains their only usable fallback.
-     */
-    private static String getRuntimeKey(Material material) {
-        Method getKeyMethod = RuntimeMaterialKey.GET_KEY_METHOD;
-        if (getKeyMethod == null) return material.name();
-        try {
-            Object key = getKeyMethod.invoke(material);
-            return key == null ? material.name() : key.toString();
-        } catch (ReflectiveOperationException | SecurityException ignored) {
-            return material.name();
-        }
-    }
-
-    /**
-     * Defers the optional Bukkit API lookup until a material outside the XMaterial table needs
-     * serialization, keeping the common vanilla path allocation-free.
-     */
-    private static final class RuntimeMaterialKey {
-        private static final Method GET_KEY_METHOD = findGetKeyMethod();
-
-        private static Method findGetKeyMethod() {
-            try {
-                return Material.class.getMethod("getKey");
-            } catch (NoSuchMethodException | SecurityException ignored) {
-                return null;
-            }
-        }
-    }
-
-    /**
      * Resolves pre-flattening numeric IDs without eagerly allocating the compatibility map.
      * The index is intentionally local to this fork because upstream XMaterial accepts legacy
      * names and data values but no longer exposes SX-Item's historical numeric-ID API.
@@ -2425,6 +2392,15 @@ public enum XMaterial {
     private static Material matchRuntimeMaterial(String key) {
         Material material = Material.matchMaterial(key);
         if (material != null) return material;
+
+        // Hybrid servers often register MODID_ITEM as the Bukkit enum while exposing
+        // modid:item as its registry key. Accept both forms so configurations written by
+        // earlier SX-Item releases remain loadable after the saver returns to enum names.
+        int namespaceSeparator = key.indexOf(':');
+        if (namespaceSeparator > 0 && namespaceSeparator < key.length() - 1) {
+            material = Material.matchMaterial(key.replace(':', '_'));
+            if (material != null) return material;
+        }
 
         int separator = key.lastIndexOf(':');
         if (separator <= 0 || separator == key.length() - 1) return null;

@@ -346,7 +346,7 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         if (item.getAmount() > 1)
             config.set("Amount", item.getAmount());
         if (itemMeta.hasLore())
-            config.set("Lore", itemMeta.getLore().stream().map(s -> s.replace('§', '&')).collect(Collectors.toList()));
+            config.set("Lore", serializeLore(itemMeta.getLore()));
         if (itemMeta.hasEnchants())
             config.set("EnchantList", itemMeta.getEnchants().entrySet().stream().map(entry -> entry.getKey().getName() + ":" + entry.getValue()).collect(Collectors.toList()));
         if (!itemMeta.getItemFlags().isEmpty())
@@ -373,7 +373,11 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
 
         TagCompound itemNbt = nbtUtil.getItemTag(item);
         if (itemNbt != null && !itemNbt.isEmpty()) {
-            createSection(config, "NBT", itemNbt.getValue());
+            // Lore has an editable top-level representation. Keeping the raw JSON copy would
+            // overwrite expanded lines when NBT is applied after ItemMeta during item creation.
+            itemNbt.remove("display.Lore");
+            if (itemNbt.getMap("display").isEmpty()) itemNbt.remove("display");
+            if (!itemNbt.isEmpty()) createSection(config, "NBT", itemNbt.getValue());
         }
 
         ComponentUtil componentUtil = ComponentUtil.getInst();
@@ -395,6 +399,18 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
     private static void createSection(ConfigurationSection config, String path, Map<?, ?> values) {
         if (config.isConfigurationSection(path)) config.set(path, null);
         config.createSection(path, values);
+    }
+
+    /**
+     * Expands embedded newlines into independent YAML entries because Bukkit permits a single
+     * lore value to contain multiple rendered lines, while SX-Item's editable format requires
+     * one list element per visible line.
+     */
+    private static List<String> serializeLore(List<String> lore) {
+        return lore.stream()
+                .flatMap(line -> Arrays.stream(line.split("\\r?\\n", -1)))
+                .map(line -> line.replace('§', '&'))
+                .collect(Collectors.toList());
     }
 
     public static Map<String, Object> convertConfig(ConfigurationSection config) {
