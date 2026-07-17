@@ -8,6 +8,7 @@ import github.saukiya.sxitem.data.item.ItemManager;
 import github.saukiya.sxitem.data.random.INode;
 import github.saukiya.sxitem.util.Util;
 import github.saukiya.tools.nms.*;
+import github.saukiya.tools.nbt.TagCompound;
 import github.saukiya.tools.util.XMaterial;
 import lombok.Getter;
 import lombok.val;
@@ -358,6 +359,42 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
         if (itemMeta instanceof LeatherArmorMeta)
             config.set("Color", Integer.toHexString(((LeatherArmorMeta) itemMeta).getColor().asRGB()));
         config.set("SkullName", ItemUtil.getInst().getSkull(itemMeta));
+        saveNativeData(item, config);
+    }
+
+    /**
+     * Persists native item state as editable YAML sections instead of relying on Bukkit's opaque
+     * ItemStack serialization. Mod items commonly share one Bukkit material and keep their real
+     * identity in NBT or data components, so omitting either section changes the item on reload.
+     */
+    private static void saveNativeData(ItemStack item, ConfigurationSection config) {
+        NbtUtil nbtUtil = NbtUtil.getInst();
+        Object nmsItem = nbtUtil.getNMSItem(item);
+
+        TagCompound itemNbt = nbtUtil.getItemTag(item);
+        if (itemNbt != null && !itemNbt.isEmpty()) {
+            createSection(config, "NBT", itemNbt.getValue());
+        }
+
+        ComponentUtil componentUtil = ComponentUtil.getInst();
+        if (componentUtil == null) return;
+        Object componentMap = componentUtil.getDataComponentMap(nmsItem);
+        if (componentMap == null) return;
+
+        Object componentValue = componentUtil.mapToValue(componentMap);
+        if (componentValue instanceof Map && !((Map<?, ?>) componentValue).isEmpty()) {
+            createSection(config, "Components", (Map<?, ?>) componentValue);
+        }
+    }
+
+    /**
+     * Creates a real ConfigurationSection so the newly saved item can be loaded immediately from
+     * the in-memory configuration; assigning a raw Map would only become a section after a YAML
+     * save-and-reload cycle.
+     */
+    private static void createSection(ConfigurationSection config, String path, Map<?, ?> values) {
+        if (config.isConfigurationSection(path)) config.set(path, null);
+        config.createSection(path, values);
     }
 
     public static Map<String, Object> convertConfig(ConfigurationSection config) {
