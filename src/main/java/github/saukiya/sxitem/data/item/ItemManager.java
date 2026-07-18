@@ -34,7 +34,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * 物品管理器
+ * 管理 SXItem 生成器、持久化身份标记及玩家背包中的物品版本更新。
  */
 public class ItemManager implements Listener {
     @Getter
@@ -46,8 +46,10 @@ public class ItemManager implements Listener {
 
     private final JavaPlugin plugin;
 
+    /** 持久化在物品 NBT/PDC 中的 SXItem 编号，是跨监听器识别自定义物品的唯一标记。 */
     private final String itemKey;
 
+    /** 持久化在物品 NBT/PDC 中的生成配置版本，仅供支持自动更新的生成器使用。 */
     private final String hashCodeKey;
 
     private final String defaultType;
@@ -238,7 +240,7 @@ public class ItemManager implements Listener {
     }
 
     /**
-     * 通过识别物品key获取该物品的Id (需要支持接口IUpdate)
+     * 通过持久化身份标记获取 SXItem 编号。
      */
     @Nullable
     public String getItemKey(ItemStack item) {
@@ -246,6 +248,19 @@ public class ItemManager implements Listener {
             return NbtUtil.getInst().getItemTagWrapper(item).getString(itemKey);
         }
         return null;
+    }
+
+    /**
+     * 判断物品是否由 SXItem 生成。
+     *
+     * <p>只认持久化物品键而不比较名称或 Lore，避免普通物品因外观相同而被限制。</p>
+     *
+     * @param item 待识别物品
+     * @return 物品是否带有 SXItem 持久化标记
+     */
+    public boolean isSXItem(ItemStack item) {
+        String key = getItemKey(item);
+        return key != null && !key.isEmpty();
     }
 
     /**
@@ -264,7 +279,7 @@ public class ItemManager implements Listener {
     }
 
     /**
-     * 通过识别物品key获取该物品的生成器 (需要支持接口IUpdate)
+     * 通过持久化身份标记获取生成该物品的生成器。
      */
     @Nullable
     public IGenerator getGenerator(ItemStack item) {
@@ -318,11 +333,14 @@ public class ItemManager implements Listener {
     public ItemStack getItem(IGenerator generator, Player player, Object... args) {
         if (generator == null) return emptyItem;
         ItemStack item = generator.getItem(player, args);
-        if (item != emptyItem && item != null && generator instanceof IUpdate) {
-            NbtUtil.getInst().getItemTagWrapper(item).builder()
-                    .set(itemKey, generator.getKey())
-                    .set(hashCodeKey, ((IUpdate) generator).updateCode())
-                    .save();
+        if (item != emptyItem && item != null) {
+            NbtUtil.ItemWrapper wrapper = NbtUtil.getInst().getItemTagWrapper(item);
+            // 所有生成器都写入身份键，使导入型物品也能参与统一的安全限制与来源识别。
+            wrapper.set(itemKey, generator.getKey());
+            if (generator instanceof IUpdate) {
+                wrapper.set(hashCodeKey, ((IUpdate) generator).updateCode());
+            }
+            wrapper.save();
         }
         SXItemSpawnEvent event = new SXItemSpawnEvent(plugin, player, generator, item);
         Bukkit.getPluginManager().callEvent(event);

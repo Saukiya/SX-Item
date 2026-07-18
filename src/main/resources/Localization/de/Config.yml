@@ -20,3 +20,11 @@ ProtectNBT:
 GiveOverflowDrop: true
 # MythicMobs-Drops (SX-Item) gehen direkt in das Spielerinventar.
 MobDropToPlayerInventory: true
+# Nutzungsbeschraenkungen fuer SXItems. Eintraege koennen einzeln deaktiviert werden.
+Restrictions:
+  # SXItems duerfen nicht in Werkbaenke gelegt werden
+  CraftingTable: true
+  # SXItems duerfen nicht in Zaubertische gelegt werden
+  EnchantingTable: true
+  # SXItems duerfen nicht als Bloecke platziert werden
+  BlockPlace: true

@@ -19,3 +19,11 @@ ProtectNBT:
 GiveOverflowDrop: true
 # 史诗怪物掉落的SX物品直接进入玩家背包
 MobDropToPlayerInventory: true
+# SXItem 使用限制，关闭对应项可恢复原版行为
+Restrictions:
+  # 禁止放入合成台
+  CraftingTable: true
+  # 禁止放入附魔台
+  EnchantingTable: true
+  # 禁止作为方块放置
+  BlockPlace: true

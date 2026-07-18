@@ -7,6 +7,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.util.logging.Level;
 
+/**
+ * 管理本地化 Config.yml 的固定路径，并在重载时把运行参数同步到各功能模块。
+ */
 @Getter
 public class Config {
 
@@ -19,6 +22,10 @@ public class Config {
     public static final String GIVE_OVERFLOW_DROP = "GiveOverflowDrop";
     public static final String MOB_DROP_TO_PLAYER_INVENTORY = "MobDropToPlayerInventory";
     public static final String COMPATIBILITY_MYTHIC_MOBS = "Compatibility.MythicMobs";
+    /** 以下路径分别控制合成台、附魔台和方块放置限制，缺省时必须按启用处理。 */
+    public static final String RESTRICTION_CRAFTING_TABLE = "Restrictions.CraftingTable";
+    public static final String RESTRICTION_ENCHANTING_TABLE = "Restrictions.EnchantingTable";
+    public static final String RESTRICTION_BLOCK_PLACE = "Restrictions.BlockPlace";
 
     @Getter
     private static YamlConfiguration config;

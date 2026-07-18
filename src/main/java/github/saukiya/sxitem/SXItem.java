@@ -9,6 +9,7 @@ import github.saukiya.sxitem.data.item.impl.GeneratorDefault;
 import github.saukiya.sxitem.data.item.impl.GeneratorImport;
 import github.saukiya.sxitem.data.random.RandomManager;
 import github.saukiya.sxitem.helper.MythicMobsHelper;
+import github.saukiya.sxitem.listener.ItemRestrictionListener;
 import github.saukiya.sxitem.util.Config;
 import github.saukiya.sxitem.util.Message;
 import github.saukiya.tools.command.MainCommand;
@@ -111,6 +112,7 @@ public class SXItem extends JavaPlugin {
         scriptManager = new ScriptManager(this, Config.getConfig().getString(Config.SCRIPT_ENGINE, "js"));
         randomManager = new RandomManager(this);
         itemManager = new ItemManager(this);
+        Bukkit.getPluginManager().registerEvents(new ItemRestrictionListener(), this);
 
         Config.setup();
         PlaceholderHelper.setup(this, (player, params) -> ExpressionHandler.getInst().replace(params));

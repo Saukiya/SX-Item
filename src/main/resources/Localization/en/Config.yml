@@ -15,3 +15,11 @@ ProtectNBT:
 GiveOverflowDrop: true
 # SX-Items dropped by epic monsters go directly into player's inventory
 MobDropToPlayerInventory: true
+# SXItem usage restrictions. Disable an entry to restore vanilla behavior.
+Restrictions:
+  # Prevent placing SXItems into crafting tables
+  CraftingTable: true
+  # Prevent placing SXItems into enchanting tables
+  EnchantingTable: true
+  # Prevent placing SXItems as blocks
+  BlockPlace: true
