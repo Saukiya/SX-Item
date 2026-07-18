@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -30,7 +31,7 @@ public class ItemRestrictionListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
-        Inventory topInventory = event.getView().getTopInventory();
+        Inventory topInventory = getTopInventory(event);
         if (!isRestricted(topInventory.getType())) return;
 
         int rawSlot = event.getRawSlot();
@@ -54,7 +55,7 @@ public class ItemRestrictionListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onInventoryDrag(InventoryDragEvent event) {
-        Inventory topInventory = event.getView().getTopInventory();
+        Inventory topInventory = getTopInventory(event);
         if (!isRestricted(topInventory.getType()) || !isSXItem(event.getOldCursor())) return;
         if (event.getRawSlots().stream().anyMatch(slot -> slot < topInventory.getSize())) {
             event.setCancelled(true);
@@ -82,6 +83,16 @@ public class ItemRestrictionListener implements Listener {
             return Config.getConfig().getBoolean(Config.RESTRICTION_ENCHANTING_TABLE, true);
         }
         return false;
+    }
+
+    /**
+     * 获取交互界面的顶部背包，同时避开 {@code InventoryView} 在不同 Bukkit 版本间的类/接口 ABI 变化。
+     *
+     * <p>{@link InventoryInteractEvent#getInventory()} 始终返回该事件的主背包，也就是原先从视图取得的
+     * 顶部背包；直接走事件 API 可让同一份字节码同时运行在旧版类定义和新版接口定义上。</p>
+     */
+    private Inventory getTopInventory(InventoryInteractEvent event) {
+        return event.getInventory();
     }
 
     private boolean isSXItem(ItemStack item) {
