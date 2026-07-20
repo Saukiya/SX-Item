@@ -139,9 +139,9 @@ public class NBTCommand extends SubCommand {
                     messageBuilder
                             .add("§4[X]").show("§cRemove " + path).runCommand("/si nbt remove " + path)
                             .add("§8-§c[Type-" + typeShow.charAt(0) + "]").show(typeShow).suggestCommand(path)
-                            .add("§7 " + path).show(nbtShow).suggestCommand(nbtShow.replace("\n", "\\n"))
+                            // 新版服务端会拒绝点击事件中的换行和旧式颜色控制符，转换为可编辑的配置文本以避免整条消息发送失败。
+                            .add("§7 " + path).show(nbtShow).suggestCommand(nbtShow.replace("\n", "\\n").replace('§', '&'))
                             .send(sender);
-//                    // com.google.gson.JsonParseException: Disallowed chat character: '\n' -> suggestCommand()
             } else {
                 messageBuilder
                         .add("§c " + String.format("%-32s", path))
