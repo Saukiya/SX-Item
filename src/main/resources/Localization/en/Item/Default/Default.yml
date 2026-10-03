@@ -39,6 +39,7 @@
 # - "HIDE_ATTRIBUTES"
 # - "HIDE_UNBREAKABLE"
 # - "HIDE_POTION_EFFECTS"
+# On 1.21.5+, HIDE_PROFILE is translated to this component to hide player-head profile details.
 # API: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemFlag.html
 #
 #Color [Type:String] (Support Random)
@@ -108,6 +109,9 @@
 # Description: Highly custom items
 # Format:
 #   minecraft:item_name: 'DefaultName(CannotBeModified)'
+#   minecraft:tooltip_display:
+#     hidden_components:
+#       - minecraft:profile
 # Conversion type example: (only support byte/short/int/long/float/double)
 #   key1: '[int]<i:1_100>' # Convert integer string from 1-100 to int integer
 #   key2: '[double]<d:1_100>' # Convert decimal string from 1-100 to double decimal
@@ -395,6 +399,19 @@ Component-2:
       nutrition: '[int]<i:1_5>'
       saturation: '[float]<d:1_5>'
       can_always_eat: true
+
+# Example: set a player-head profile, then hide its tooltip entry (1.21.5+).
+Component-HideProfile:
+  ID: PLAYER_HEAD
+  Name: '&eHide Player Profile Tooltip'
+  Components:
+    # profile defines whose data appears on the head.
+    minecraft:profile:
+      name: Evtema3
+    # hidden_components takes component IDs; the profile stays on the item while its tooltip is hidden.
+    minecraft:tooltip_display:
+      hidden_components:
+        - minecraft:profile
 
 # Items prefixed with "NoLoad" will not be loaded
 NoLoad_Item:

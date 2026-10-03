@@ -45,6 +45,13 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
      */
     private static final String MATERIAL_ID_KEY = "ID";
 
+    /**
+     * 1.21.5 起 profile 提示由 tooltip_display 控制，保留 ItemFlagList 旧配置的兼容入口。
+     */
+    private static final String HIDE_PROFILE_FLAG = "HIDE_PROFILE";
+    private static final String TOOLTIP_DISPLAY_COMPONENT = "minecraft:tooltip_display";
+    private static final String PROFILE_COMPONENT = "minecraft:profile";
+
     protected String displayName;
 
     protected List<String> ids;
@@ -184,10 +191,15 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
             }
         }
 
+        boolean hideProfileWithComponents = NMS.compareTo(1, 21, 5) >= 0
+                && config.getStringList("ItemFlagList").contains(HIDE_PROFILE_FLAG);
         for (String flagName : config.getStringList("ItemFlagList")) {
             for (ItemFlag itemFlag : ItemFlag.values()) {
                 if (itemFlag.name().equals(flagName)) {
-                    meta.addItemFlags(itemFlag);
+                    // 高版本的 profile 提示需隐藏数据组件，旧 flag 本身无法隐藏该提示。
+                    if (!hideProfileWithComponents || !HIDE_PROFILE_FLAG.equals(flagName)) {
+                        meta.addItemFlags(itemFlag);
+                    }
                     break;
                 }
             }
@@ -264,11 +276,25 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
             }
             ItemUtil.getInst().addAttributes(item, attributeList);
         }
-        if (component != null || nbt != null || !handler.getLockMap().isEmpty()) {
+        if (component != null || hideProfileWithComponents || nbt != null || !handler.getLockMap().isEmpty()) {
             Object nmsItem = NbtUtil.getInst().getNMSItem(item);
-            if (component != null) {
-                val dataComponentMap = ComponentUtil.getInst().valueToMap(handler.replace(component));
-                ComponentUtil.getInst().setDataComponentMap(nmsItem, dataComponentMap);
+            if (component != null || hideProfileWithComponents) {
+                ComponentUtil componentUtil = ComponentUtil.getInst();
+                if (component != null) {
+                    Map<Object, Object> componentValues = (Map<Object, Object>) handler.replace(component);
+                    if (hideProfileWithComponents) {
+                        addHiddenProfile(componentValues);
+                    }
+                    val dataComponentMap = componentUtil.valueToMap(componentValues);
+                    componentUtil.setDataComponentMap(nmsItem, dataComponentMap);
+                } else {
+                    // 先复制现有映射再追加隐藏项，避免仅配置旧 flag 时丢失物品默认组件。
+                    Map<Object, Object> componentValues = (Map<Object, Object>) componentUtil.mapToValue(
+                            componentUtil.getDataComponentMap(nmsItem));
+                    componentValues = new HashMap<>(componentValues);
+                    addHiddenProfile(componentValues);
+                    componentUtil.setDataComponentMap(nmsItem, componentUtil.valueToMap(componentValues));
+                }
             }
 
             if (nbt != null || !handler.getLockMap().isEmpty()) {
@@ -281,6 +307,34 @@ public class GeneratorDefault extends IGenerator implements IUpdate {
             }
         }
         return item;
+    }
+
+    /**
+     * 将 profile 追加到 tooltip_display 的隐藏列表中，同时保留配置已有的其他隐藏组件。
+     */
+    @SuppressWarnings("unchecked")
+    private static void addHiddenProfile(Map<Object, Object> componentValues) {
+        Object configuredTooltip = componentValues.get(TOOLTIP_DISPLAY_COMPONENT);
+        // JavaOps may expose read-only nested collections, so copy the levels modified below.
+        Map<Object, Object> tooltipValues;
+        if (configuredTooltip instanceof Map) {
+            tooltipValues = new HashMap<>((Map<Object, Object>) configuredTooltip);
+        } else {
+            tooltipValues = new HashMap<>();
+        }
+        componentValues.put(TOOLTIP_DISPLAY_COMPONENT, tooltipValues);
+
+        Object configuredHiddenComponents = tooltipValues.get("hidden_components");
+        List<Object> hiddenComponents;
+        if (configuredHiddenComponents instanceof List) {
+            hiddenComponents = new ArrayList<>((List<Object>) configuredHiddenComponents);
+        } else {
+            hiddenComponents = new ArrayList<>();
+        }
+        tooltipValues.put("hidden_components", hiddenComponents);
+        if (!hiddenComponents.contains(PROFILE_COMPONENT)) {
+            hiddenComponents.add(PROFILE_COMPONENT);
+        }
     }
 
     /**

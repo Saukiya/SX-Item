@@ -39,6 +39,7 @@
 # - "HIDE_ATTRIBUTES"
 # - "HIDE_UNBREAKABLE"
 # - "HIDE_POTION_EFFECTS"
+# 1.21.5+：HIDE_PROFILE 会转成该组件隐藏玩家头颅的 profile 提示
 # 参考API: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemFlag.html
 #
 #物品染色 Color [Type:String] (支持随机)
@@ -110,6 +111,9 @@
 # 描述: 高度自定义物品 仅1.20.6+支持 (插件为1.21.1+)
 # 格式:
 #   minecraft:item_name: '默认名称(无法被铁砧修改)'
+#   minecraft:tooltip_display:
+#     hidden_components:
+#       - minecraft:profile
 # 转换类型示例: (只支持byte/short/int/long/float/double)
 #   key1: '[int]<i:1_100>' # 将1-100的整数字符串转为int整数
 #   key2: '[double]<d:1_100>' # 将1-100的小数字符串转为double小数
@@ -398,6 +402,19 @@ Component-2:
       nutrition: '[int]<i:1_5>'
       saturation: '[float]<d:1_5>'
       can_always_eat: true
+
+# 示例物品：用 profile 设置玩家头颅资料，再从提示中隐藏该组件（1.21.5+）。
+Component-HideProfile:
+  ID: PLAYER_HEAD
+  Name: '&e隐藏玩家资料提示'
+  Components:
+    # profile 指定头颅显示的玩家资料。
+    minecraft:profile:
+      name: Evtema3
+    # hidden_components 接受组件 ID 列表；profile 仍保留在物品上，只隐藏其提示。
+    minecraft:tooltip_display:
+      hidden_components:
+        - minecraft:profile
 
 #前缀是"NoLoad"的物品或文件不会被加载
 NoLoad_Item:

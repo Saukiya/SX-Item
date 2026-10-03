@@ -39,6 +39,7 @@
 # - "HIDE_ATTRIBUTES"
 # - "HIDE_UNBREAKABLE"
 # - "HIDE_POTION_EFFECTS"
+# Ab 1.21.5 blendet HIDE_PROFILE Profilinfos über diese Komponente aus.
 # API: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/ItemFlag.html
 #
 #Gegenstand-färben Color [Type:String] (Unterstützung zufällig)
@@ -111,6 +112,9 @@
 # Beschreibung: Hochgradig anpassbare Gegenstände, nur 1.20.6+ unterstützt (Plugin für 1.21.1+)
 # Format:
 #   minecraft:item_name: 'Standardname (kann nicht durch Amboss geändert werden)'
+#   minecraft:tooltip_display:
+#     hidden_components:
+#       - minecraft:profile
 # WIKI: https://de.minecraft.wiki/w/Gegenstandsdaten
 #
 #Attribute-löschen ClearAttribute [Type:Boolean]
@@ -397,6 +401,19 @@ Component-2:
       nutrition: '[int]<i:1_5>'
       saturation: '[float]<d:1_5>'
       can_always_eat: true
+
+# Beispiel: ein Spielerprofil auf dem Kopf setzen und den Profileintrag im Tooltip ausblenden (1.21.5+).
+Component-HideProfile:
+  ID: PLAYER_HEAD
+  Name: '&eSpielerprofil-Hinweis ausblenden'
+  Components:
+    # profile legt fest, wessen Daten auf dem Kopf erscheinen.
+    minecraft:profile:
+      name: Evtema3
+    # hidden_components erwartet Komponenten-IDs; das Profil bleibt auf dem Gegenstand erhalten.
+    minecraft:tooltip_display:
+      hidden_components:
+        - minecraft:profile
 
 # Gegenstände oder Dateien mit dem Präfix "NoLoad" werden nicht geladen
 NoLoad_Gegenstand:
