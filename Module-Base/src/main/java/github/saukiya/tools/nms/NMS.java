@@ -161,6 +161,7 @@ class Data {
         put("1.21.11", "v1_21_R7");
         put("26.1", "v26_1_R1");
         put("26.2", "v26_2_R1");
+        put("26.3", "v26_3_R1");
     }};
     protected static final String VERSION;
     protected static final int[] thisVersionSplit;
@@ -190,13 +191,20 @@ class Data {
      * So we have to use a method to detect and solve this problem
      */
     private static int[] getVersion() {
-        String versionSource = Bukkit.getServer() != null ? Bukkit.getServer().getClass().getPackage().getName().split("^.+\\.")[1] : "v1_17_R1";
-        Matcher matcher = VERSION_PATTERN.matcher(versionSource);
-        if (matcher.matches()) {
-            return IntStream.range(0, matcher.groupCount()).map(i -> Integer.parseInt(matcher.group(i + 1))).toArray();
+        String packageName = Bukkit.getServer() != null ? Bukkit.getServer().getClass().getPackage().getName() : null;
+        if (packageName != null) {
+            String[] packageSplit = packageName.split("^.+\\.");
+            // 1.20.5+ Paper 移除了 CraftBukkit 包的版本后缀, 此处仅对旧版服务端有效
+            if (packageSplit.length > 1) {
+                Matcher matcher = VERSION_PATTERN.matcher(packageSplit[1]);
+                if (matcher.matches()) {
+                    return IntStream.range(0, matcher.groupCount()).map(i -> Integer.parseInt(matcher.group(i + 1))).toArray();
+                }
+            }
         }
         // paper
-        versionSource = Bukkit.getServer().getBukkitVersion().split("-")[0];
+        String bukkitVersion = Bukkit.getServer() != null ? Bukkit.getServer().getBukkitVersion() : "1.17.1";
+        String versionSource = bukkitVersion.split("-")[0];
         String mapped = REVERSION.get(versionSource);
         if (mapped == null) {
             // 边界感知最长前缀匹配: 如 26.1.5 -> 26.1 -> v26_1_R1, 让补丁版无需逐个登记即可命中
@@ -211,11 +219,25 @@ class Data {
         if (mapped != null) {
             versionSource = mapped;
         } else {
+            // 26.3 起 Paper 的版本串形如 26.3.build.249, 第三段并非数字, 不能直接当作 R 号
             String[] split = versionSource.split("\\.");
-            versionSource = "v" + split[0] + "_" + split[1] + "_R" + (split.length > 2 ? split[2] : "1");
+            if (split.length >= 2 && split[0].matches("\\d+") && split[1].matches("\\d+")) {
+                String revision = split.length > 2 && split[2].matches("\\d+") ? split[2] : "1";
+                versionSource = "v" + split[0] + "_" + split[1] + "_R" + revision;
+            } else {
+                versionSource = null;
+            }
         }
-        Matcher reMatcher = VERSION_PATTERN.matcher(versionSource);
-        reMatcher.matches();
+        Matcher reMatcher = versionSource != null ? VERSION_PATTERN.matcher(versionSource) : null;
+        if (reMatcher == null || !reMatcher.matches()) {
+            // 兜底: 只取版本串中的 主.次 数字, 避免未知格式导致 NMS 静态初始化失败、插件无法加载
+            Matcher simple = Pattern.compile("(\\d+)\\.(\\d+)").matcher(bukkitVersion);
+            boolean found = simple.find();
+            int major = found ? Integer.parseInt(simple.group(1)) : 1;
+            int minor = found ? Integer.parseInt(simple.group(2)) : 17;
+            Bukkit.getLogger().warning("[SX-NMS] Unknown version format: " + bukkitVersion + ", fallback to v" + major + "_" + minor + "_R1");
+            return new int[]{major, minor, 1};
+        }
         return IntStream.range(0, reMatcher.groupCount()).map(i -> Integer.parseInt(reMatcher.group(i + 1))).toArray();
     }
 
