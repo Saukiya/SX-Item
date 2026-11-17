@@ -37,7 +37,7 @@ public abstract class NbtUtil implements NMS {
     private static NbtUtil resolve() {
         NbtUtil mapped;
         try {
-            mapped = NMS.getInst(NbtUtil.class);
+            mapped = NMS.getInst(NbtUtil.class, "v26_3_R1", "v26_2_R1", "v26_1_R1", "v1_21_R7", "v1_21_R6", "v1_21_R1", "v1_20_R4", "v1_8_R3");
         } catch (LinkageError error) {
             mapped = null;
         }
